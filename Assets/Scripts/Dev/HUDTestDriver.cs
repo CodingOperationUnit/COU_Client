@@ -8,6 +8,7 @@ public class HUDTestDriver : MonoBehaviour
 
     private InGameHUD hud;
     private AlarmView alarm;
+    private PauseWindow pause;
     private float elapsed;
     private int shownSeconds = -1;
     private int level = 1;
@@ -20,6 +21,7 @@ public class HUDTestDriver : MonoBehaviour
     {
         hud = UIManager.Instance.Get<InGameHUD>();
         alarm = UIManager.Instance.Get<AlarmView>();
+        pause = UIManager.Instance.Get<PauseWindow>();
         hud.SetLevel(level);
     }
 
@@ -65,5 +67,7 @@ public class HUDTestDriver : MonoBehaviour
         hud.SetKillCount(kills);
         hud.SetGold(gold);
         hud.SetExp(exp);
+        pause.SetKillCount(kills);
+        pause.SetGold(gold);
     }
 }

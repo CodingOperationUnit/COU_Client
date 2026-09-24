@@ -13,6 +13,12 @@ public class InGameHUD : UIView
     [SerializeField] private GameObject bossGroup;
     [SerializeField] private TMP_Text bossNameText;
     [SerializeField] private Image bossHpFill;
+    [SerializeField] private Button pauseButton;
+
+    private void Awake()
+    {
+        pauseButton.onClick.AddListener(() => UIManager.Instance.Open<PauseWindow>());
+    }
 
     public void SetTime(int seconds)
         => timerText.text = $"{seconds / 60:00}:{seconds % 60:00}";
