@@ -2,7 +2,12 @@ using UnityEngine;
 
 public class HUDTestDriver : MonoBehaviour
 {
+    [SerializeField] private GameObject dummyBoss;
+    [SerializeField] private int bossSeconds = 10;
+    [SerializeField] private int alarmLeadSeconds = 5;
+
     private InGameHUD hud;
+    private AlarmView alarm;
     private float elapsed;
     private int shownSeconds = -1;
     private int level = 1;
@@ -13,6 +18,7 @@ public class HUDTestDriver : MonoBehaviour
     private void Start()
     {
         hud = UIManager.Instance.Get<InGameHUD>();
+        alarm = UIManager.Instance.Get<AlarmView>();
         hud.SetLevel(level);
     }
 
@@ -23,6 +29,14 @@ public class HUDTestDriver : MonoBehaviour
         if (seconds == shownSeconds)
             return;
         shownSeconds = seconds;
+
+        if (seconds == bossSeconds - alarmLeadSeconds)
+            alarm.Show("보스 습격");
+        else if (seconds == bossSeconds)
+        {
+            alarm.Close();
+            dummyBoss.SetActive(true);
+        }
 
         kills += Random.Range(0, 30);
         gold += Random.Range(0, 20);
