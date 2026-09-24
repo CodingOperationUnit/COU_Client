@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class UIManager : MonoBehaviour
 {
@@ -14,6 +15,8 @@ public class UIManager : MonoBehaviour
     private readonly Dictionary<Type, UIView> views = new();
     private readonly List<UIPopup> popups = new();
 
+    private InputAction cancelAction;
+
     private void Awake()
     {
         Instance = this;
@@ -22,6 +25,14 @@ public class UIManager : MonoBehaviour
         Register(screenCanvas, UILayer.Screen);
         Register(popupCanvas, UILayer.Popup);
         Register(overlayCanvas, UILayer.Overlay);
+
+        cancelAction = InputSystem.actions.FindAction("UI/Cancel");
+    }
+
+    private void Update()
+    {
+        if (cancelAction.WasPressedThisFrame())
+            CloseTopPopup();
     }
 
     private void Register(Canvas canvas, UILayer layer)
