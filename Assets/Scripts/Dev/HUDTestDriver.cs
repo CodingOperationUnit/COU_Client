@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class HUDTestDriver : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class HUDTestDriver : MonoBehaviour
     private InGameHUD hud;
     private AlarmView alarm;
     private PauseWindow pause;
+    private BattleResultWindow result;
     private float elapsed;
     private int shownSeconds = -1;
     private int level = 1;
@@ -22,11 +24,17 @@ public class HUDTestDriver : MonoBehaviour
         hud = UIManager.Instance.Get<InGameHUD>();
         alarm = UIManager.Instance.Get<AlarmView>();
         pause = UIManager.Instance.Get<PauseWindow>();
+        result = UIManager.Instance.Get<BattleResultWindow>();
         hud.SetLevel(level);
     }
 
     private void Update()
     {
+        if (Keyboard.current.digit1Key.wasPressedThisFrame)
+            ShowResult(true);
+        else if (Keyboard.current.digit2Key.wasPressedThisFrame)
+            ShowResult(false);
+
         elapsed += Time.deltaTime;
         var seconds = (int)elapsed;
         if (seconds == shownSeconds)
@@ -69,5 +77,17 @@ public class HUDTestDriver : MonoBehaviour
         hud.SetExp(exp);
         pause.SetKillCount(kills);
         pause.SetGold(gold);
+    }
+
+    private void ShowResult(bool victory)
+    {
+        result.SetTime(shownSeconds);
+        result.SetChapter(victory ? 5 : 6);
+        result.SetBestTime(victory ? 900 : 520);
+        result.SetKillCount(kills);
+        result.SetBoxCount(victory ? 16 : 0);
+        result.SetGold(victory ? 83700 : 10000);
+        result.SetExp(victory ? 5600 : 1500);
+        result.Show(victory);
     }
 }

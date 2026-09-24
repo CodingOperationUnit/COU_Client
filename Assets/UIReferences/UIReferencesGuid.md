@@ -164,9 +164,11 @@ Pause\_HomePopup.jpg
 
 BattleResult\_Defeat.jpg
 
-[더미] 타이틀, 경과시간, 챕터, 최고시간, 킬수, 보상상자 수, 골드와 계정 EXP 보상, 확인 버튼. 확인 후 홈으로 이동하는 부분은 홈 씬이 생긴 뒤에 연결한다.
+[완료] 타이틀, 경과시간, 챕터, 최고시간, 킬수, 보상상자 수(없으면 빈 칸), 골드와 계정 EXP 보상(10000 이상은 K 축약). devUI에서 1키 승리, 2키 패배로 확인한다.
 
-[대기: 아웃게임 아이템] 장비, 설계도 보상
+[더미] 확인 버튼은 외형만 있다. 확인 후 홈으로 이동하는 부분은 홈 씬이 생긴 뒤에 연결한다.
+
+[대기: 아웃게임 아이템] 장비, 설계도 보상 (보상 그리드에 골드, EXP 칸만 있음)
 
 실패했을때 나오는 창
 
@@ -180,7 +182,7 @@ BattleResult\_Defeat.jpg
 
 BattleResult\_Victory.jpg
 
-[더미], [대기] 구분은 BattleResult\_Defeat.jpg와 같다.
+[완료], [더미], [대기] 구분은 BattleResult\_Defeat.jpg와 같다. 실패와 같은 BattleResultWindow를 쓰고 Show(victory)로 타이틀과 배너 색만 바꾼다.
 
 승리했을때 나오는 창
 
