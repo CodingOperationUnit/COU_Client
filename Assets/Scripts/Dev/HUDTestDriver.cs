@@ -14,6 +14,7 @@ public class HUDTestDriver : MonoBehaviour
     private int kills;
     private int gold;
     private float exp;
+    private int bossHp;
 
     private void Start()
     {
@@ -36,6 +37,19 @@ public class HUDTestDriver : MonoBehaviour
         {
             alarm.Close();
             dummyBoss.SetActive(true);
+            bossHp = 10;
+            hud.ShowBoss("좀비 대장");
+            hud.SetBossHp(1f);
+        }
+        else if (dummyBoss.activeSelf)
+        {
+            if (--bossHp == 0)
+            {
+                dummyBoss.SetActive(false);
+                hud.HideBoss();
+            }
+            else
+                hud.SetBossHp(bossHp / 10f);
         }
 
         kills += Random.Range(0, 30);
