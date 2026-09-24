@@ -11,18 +11,24 @@ public class VirtualJoystick : OnScreenControl, IPointerDownHandler, IDragHandle
     [SerializeField] private RectTransform knob;
     [SerializeField] private float radius = 165f;
 
+    private Vector2 homePosition;
+
     protected override string controlPathInternal
     {
         get => controlPath;
         set => controlPath = value;
     }
 
+    private void Awake()
+    {
+        homePosition = stickBase.anchoredPosition;
+    }
+
     public void OnPointerDown(PointerEventData eventData)
     {
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
             (RectTransform)transform, eventData.position, eventData.pressEventCamera, out var point);
-        stickBase.anchoredPosition = point;
-        stickBase.gameObject.SetActive(true);
+        stickBase.localPosition = point;
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -31,13 +37,13 @@ public class VirtualJoystick : OnScreenControl, IPointerDownHandler, IDragHandle
             stickBase, eventData.position, eventData.pressEventCamera, out var offset);
         offset = Vector2.ClampMagnitude(offset, radius);
         knob.anchoredPosition = offset;
-        SendValueToControl(offset / radius);
+        SendValueToControl(offset.normalized);
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
         knob.anchoredPosition = Vector2.zero;
-        stickBase.gameObject.SetActive(false);
+        stickBase.anchoredPosition = homePosition;
         SendValueToControl(Vector2.zero);
     }
 }
