@@ -3,11 +3,12 @@ using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(PlayerHealth))]
+[RequireComponent(typeof(PlayerStats))]
 public class PlayerMovement : MonoBehaviour
 {
     private Rigidbody2D rb;
     [SerializeField] private InputActionReference inputAction;
-    [SerializeField] private float speed = 5f;
+    private PlayerStats playerStats;
     private PlayerHealth playerHealth;
 
     public Vector2 FacingDirection { get; private set; }
@@ -18,6 +19,7 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         FacingDirection = Vector2.right;
+        playerStats = GetComponent<PlayerStats>();
         playerHealth = GetComponent<PlayerHealth>();
     }
 
@@ -43,7 +45,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.linearVelocity = input * speed;
+        rb.linearVelocity = input * playerStats.Speed;
     }
 
     private void HandleDied()

@@ -1,9 +1,12 @@
 using System;
 using UnityEngine;
 
+[RequireComponent(typeof(PlayerStats))]
 public class PlayerHealth : MonoBehaviour
 {
-    [SerializeField] [Min(1)] private int maxHealth = 100;
+    private PlayerStats playerStats;
+
+    private int maxHealth;
     public int MaxHealth => maxHealth;
 
     [SerializeField] [Min(1)] private int maxLives = 2;
@@ -26,8 +29,15 @@ public class PlayerHealth : MonoBehaviour
 
     private void Awake()
     {
-        CurrentHealth = maxHealth;
+        playerStats = GetComponent<PlayerStats>();
         CurrentLives = maxLives;
+    }
+
+    private void Start()
+    {
+        maxHealth = playerStats.FinalHp; // 뭐로 불러와야하지?
+
+        CurrentHealth = maxHealth;
     }
 
     public void GetDamage(int damage)
