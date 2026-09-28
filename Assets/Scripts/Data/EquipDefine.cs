@@ -2,6 +2,7 @@ using UnityEngine;
 
 public enum EquipSlotType
 {
+    Weapon,
     Armor,
     Belt,
     Gloves,
@@ -11,7 +12,7 @@ public enum EquipSlotType
 
 public enum ItemGrade
 {
-    Normal,    // 일반 (회색)
-    Superior,  // 우수 (초록)
+    General,   // 일반 (회색)
+    Super,  // 우수 (초록)
     Rare,      // 레어 (파랑)
 }
