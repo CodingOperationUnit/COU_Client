@@ -125,9 +125,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 156be5555660ea943b3c5482791338e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
-  MaxHealth: 100
-  TestDamage: 50
-  TestHeal: 20
+  maxHealth: 100
+  maxLives: 2
+  testDamage: 50
+  testHeal: 20
 --- !u!1 &7371924156998883624
 GameObject:
   m_ObjectHideFlags: 0
