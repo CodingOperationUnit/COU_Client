@@ -58,6 +58,43 @@ public class MainTestDriver : MonoBehaviour
             chapters[i] = new ChallengeChapterInfo { number = i + 1, stage = stages[i], challenges = new[] { challenge, challenge, challenge } };
         }
         UIManager.Instance.Get<ChallengeTab>().SetChapters(chapters);
+
+        var goldNodeTypes = new[]
+        {
+            new EvolutionNodeInfo { name = "공격력", value = "ATK +20", description = "더미 설명입니다.", iconColor = new Color32(0xE8, 0x28, 0x4F, 0xFF) },
+            new EvolutionNodeInfo { name = "체력", value = "HP +60", description = "체력이 세면 파워도 셉니다.", iconColor = new Color32(0xFF, 0xC6, 0x1A, 0xFF) },
+            new EvolutionNodeInfo { name = "방어력", value = "DEF +10", description = "더미 설명입니다.", iconColor = new Color32(0x0A, 0x90, 0xFF, 0xFF) },
+            new EvolutionNodeInfo { name = "회복", value = "HP 회복 +5", description = "더미 설명입니다.", iconColor = new Color32(0xC8, 0x64, 0x3C, 0xFF) }
+        };
+        var goldNodes = new EvolutionNodeInfo[40 * 3];
+        for (var i = 0; i < goldNodes.Length; i++)
+        {
+            goldNodes[i] = goldNodeTypes[i % goldNodeTypes.Length];
+            goldNodes[i].level = i / 3 + 1;
+            goldNodes[i].cost = goldNodes[i].level * 100;
+        }
+        var dnaNodeTypes = new[]
+        {
+            new EvolutionNodeInfo { name = "무기 숙련", value = "ATK +5%", description = "더미 설명입니다.", iconColor = new Color32(0xA0, 0xA7, 0xB4, 0xFF), cost = 1 },
+            new EvolutionNodeInfo { name = "지혜", value = "EXP +10%", description = "더미 설명입니다.", iconColor = new Color32(0xFF, 0xC6, 0x1A, 0xFF), cost = 1 }
+        };
+        var dnaLevels = new[] { 3, 5, 7, 9, 11, 13, 15, 20, 25, 30, 35, 40 };
+        var dnaNodes = new EvolutionNodeInfo[dnaLevels.Length];
+        for (var i = 0; i < dnaNodes.Length; i++)
+        {
+            dnaNodes[i] = dnaNodeTypes[i % dnaNodeTypes.Length];
+            dnaNodes[i].level = dnaLevels[i];
+        }
+        UIManager.Instance.Get<EvolutionTab>().Set(new EvolutionInfo
+        {
+            accountLevel = 14,
+            gold = 24200,
+            dna = 1,
+            goldNodes = goldNodes,
+            dnaNodes = dnaNodes,
+            unlockedGoldNodes = 40,
+            unlockedDnaNodes = 5
+        });
     }
 
     private void Update()
