@@ -309,7 +309,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerDebug
   playerHealth: {fileID: 596966427}
-  testDamage: 500
+  testDamage: 50
   testHeal: 20
 --- !u!4 &1486163993
 Transform:
