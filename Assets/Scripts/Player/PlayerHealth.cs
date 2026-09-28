@@ -5,8 +5,13 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField] [Min(1)] private int maxHealth = 100;
     public int MaxHealth => maxHealth;
 
-    [SerializeField] [Min(1)] private int maxLives = 3;
+    [SerializeField] [Min(1)] private int maxLives = 2;
     public int MaxLives => maxLives;
+
+    [SerializeField][Min(0f)] private float invulnerableTime = 0.5f;
+    private float invulnerableEndTime;
+    public bool IsInvulnerable => Time.time < invulnerableEndTime;
+
 
     public int CurrentHealth { get; private set; }
     public int CurrentLives { get; private set; }
@@ -24,6 +29,11 @@ public class PlayerHealth : MonoBehaviour
     public void GetDamage(int damage)
     {
         if (damage <= 0 || CurrentLives <= 0) return;
+        if (IsInvulnerable)
+        {
+            Debug.Log("무적 중 피해무시");
+            return;
+        }
         if (CurrentHealth - damage <= 0)
         {
             CurrentHealth = 0;
@@ -51,7 +61,10 @@ public class PlayerHealth : MonoBehaviour
         CurrentLives--;
         if (CurrentLives <= 0) Debug.Log("플레이어 사망 (추후 사망처리 로직 생성 후 수정)");
         else
+        { 
             CurrentHealth = maxHealth;
+            invulnerableEndTime = Time.time + invulnerableTime;
+        }
     }
 
     public void IncreaseLife()
@@ -62,6 +75,13 @@ public class PlayerHealth : MonoBehaviour
             CurrentLives++;
 
         Debug.Log("현재 목숨 : " + CurrentLives);
+    }
+
+    // For Debug (무적일때 플레이어 주위에 원 (플레이어 무적 시각적 확인))
+    private void OnDrawGizmos()
+    {
+        if (IsInvulnerable)
+            Gizmos.DrawWireSphere(transform.position, 1);
     }
 
     [ContextMenu("TestDamage")]
