@@ -1,7 +1,8 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Enemy : MonoBehaviour
+public class Enemy : MonoBehaviour, IPoolable
 {
     public EnemyData data;
 
@@ -11,6 +12,9 @@ public class Enemy : MonoBehaviour
 
     // 추적할 Player
     public GameObject player;
+
+    // IPoolable : 풀로 돌아가기 직전에 알림 (스포너가 구독해서 사용)
+    public event Action<GameObject> OnBeforeReturn;
 
     // 몬스터 초기화
     public void Init()
@@ -22,9 +26,17 @@ public class Enemy : MonoBehaviour
         isDead = false;
     }
 
-    void Start()
+    // IPoolable: 풀에서 꺼내질 때마다 호출됨
+    public void OnSpawn()
     {
         Init();
+    }
+
+    // IPoolable: 풀로 돌아갈 때 정리
+    public void OnDespawn()
+    {
+        // TODO : 풀로 돌아갈 때 정리할 내용
+        // 추후 공격 코루틴, 상태이상, 타이머 등이 생기면 여기서 정리
     }
 
     void Update()
@@ -83,12 +95,17 @@ public class Enemy : MonoBehaviour
     // 몬스터가 죽었을 때
     public void Die()
     {
+        // 몬스터가 죽은 상태면 return
+        if (isDead) { return; }
+
         isDead = true;
 
-        // 몬스터가 죽은 상태면 비활성화
-        gameObject.SetActive(false);
+        // 반납 알림
+        OnBeforeReturn?.Invoke(gameObject);
+        // 몬스터가 죽은 상태면 비활성화(Pool로 반납)
+        GameManager.ObjectPool.ReturnObject(gameObject);
 
-        // TODO : exp 보상 구현
+        // TODO : exp 보상 구현 Pool 이용하기
         //player.exp += data.exp;
     }
 }
