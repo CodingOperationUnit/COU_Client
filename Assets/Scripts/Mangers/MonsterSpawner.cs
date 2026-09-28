@@ -1,6 +1,5 @@
-using UnityEngine;
 
-public class MonsterSpawner : SingletonManager<MonsterSpawner>
+public class MonsterSpawner : MonoSingleton<MonsterSpawner>
 {
     
 }

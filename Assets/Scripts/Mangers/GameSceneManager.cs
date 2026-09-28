@@ -1,7 +1,7 @@
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
-public class GameSceneManager : SingletonManager<GameSceneManager>
+public class GameSceneManager : MonoSingleton<GameSceneManager>
 {
     private void Update()
     {

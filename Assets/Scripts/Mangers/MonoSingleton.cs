@@ -8,7 +8,7 @@ public static class GameManager
     }
 }
 
-public class SingletonManager<T> : MonoBehaviour where T : MonoBehaviour
+public class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
 {
     [SerializeField] private bool isDontDestroy = false;
     
@@ -21,8 +21,6 @@ public class SingletonManager<T> : MonoBehaviour where T : MonoBehaviour
             if (instance == null)
             {
                 instance = FindFirstObjectByType<T>() ?? new GameObject(typeof(T).Name).AddComponent<T>();
-
-                DontDestroyOnLoad(instance.transform.root.gameObject);
             }
 
             return instance;
@@ -40,7 +38,18 @@ public class SingletonManager<T> : MonoBehaviour where T : MonoBehaviour
 
         else if (instance != this)
         {
+            Transform root = transform.root;
+            
+            bool cleanUpRoot = isDontDestroy
+                && root != transform
+                && root != instance.transform.root;
+
+            if (cleanUpRoot) transform.SetParent(null);
+
             Destroy(gameObject);
+
+            if (cleanUpRoot && root.childCount == 0)
+                Destroy(root.gameObject);
         }
     }
     
