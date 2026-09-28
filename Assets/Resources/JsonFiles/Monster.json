@@ -1,0 +1,12 @@
+{
+  "datas": [
+    {
+      "monsterID": 1001,
+      "monsterName": "예시몬스터1",
+      "monsterMaxHealthPoint": 10,
+      "monsterExp": 3,
+      "monsterMoveSpeed": 2.5,
+      "monsterAttackPoint": 1
+    }
+  ]
+}
