@@ -5,8 +5,14 @@ public class ItemSlotView : MonoBehaviour
 {
     [SerializeField] private Image itemIcon;
     [SerializeField] private Image gradeIcon;
+    [SerializeField] private Button button;
 
     private OwnedItem boundItem;
+
+    private void Awake()
+    {
+        button.onClick.AddListener(OnClicked);
+    }
 
     public void Setup(OwnedItem item)
     {
@@ -19,4 +25,7 @@ public class ItemSlotView : MonoBehaviour
         gradeIcon.sprite = ItemDatabase.GetGradeIcon(data.SlotType, item.Grade);
         gradeIcon.enabled = gradeIcon.sprite != null;
     }
+
+    private void OnClicked()
+        => UIManager.Instance.Get<EquipDetailPopUp>().Show(boundItem);
 }
