@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 
-
 [Serializable]
 public class ItemData
 {
@@ -9,11 +8,11 @@ public class ItemData
     public string itemName;
     public string description;
     public string iconPath;
-    public string slotType;     
-    public string skillStartGrade;  // µî±Ş ½ºÅ³
+    public string slotType;
+    public string skillStartGrade;  // ë“±ê¸‰ ìŠ¤í‚¬
     public int hpBonus;
     public int attackBonus;
-    public string[] gradeSkills;  
+    public string[] gradeSkills;
 
     public EquipSlotType SlotType => Enum.Parse<EquipSlotType>(slotType);
     public ItemGrade SkillStartGrade => Enum.Parse<ItemGrade>(skillStartGrade);

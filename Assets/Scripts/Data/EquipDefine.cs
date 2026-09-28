@@ -11,7 +11,7 @@ public enum EquipSlotType
 
 public enum ItemGrade
 {
-    Normal,    // ÀÏ¹İ (È¸»ö)
-    Superior,  // ¿ì¼ö (ÃÊ·Ï)
-    Rare,      // ·¹¾î (ÆÄ¶û)
+    Normal,    // ì¼ë°˜ (íšŒìƒ‰)
+    Superior,  // ìš°ìˆ˜ (ì´ˆë¡)
+    Rare,      // ë ˆì–´ (íŒŒë‘)
 }

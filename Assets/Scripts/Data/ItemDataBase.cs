@@ -19,7 +19,6 @@ public static class ItemDatabase
 
     public static ItemData Get(string itemId) => items[itemId];
 
-    // 등급 아이콘: Resources/Grade/Normal.png, Rare.png, Legendary.png 로 고정 배치
     public static Sprite GetGradeIcon(ItemGrade grade)
         => Resources.Load<Sprite>($"Grade/{grade}");
 }
