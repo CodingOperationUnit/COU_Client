@@ -2,10 +2,8 @@ using UnityEngine;
 
 public static class GameManager
 {
-    public static GameSceneManager Scene
-    {
-        get { return GameSceneManager.Instance; }
-    }
+    public static GameSceneManager Scene { get { return GameSceneManager.Instance; } }
+    public static ObjectPoolManager ObjectPool { get { return ObjectPoolManager.Instance; } }
 }
 
 public class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
