@@ -11,6 +11,7 @@ public class PlayerVisual : MonoBehaviour
     private PlayerStats playerStats;
 
     private bool isFacingRight = true;
+    private string attackMotion;
 
     private void Awake()
     {
@@ -20,7 +21,12 @@ public class PlayerVisual : MonoBehaviour
 
     private void Start()
     {
-        weapon.SetActive(playerStats.EquippedWeapon != null);
+        var equippedWeapon = playerStats.EquippedWeapon;
+
+        weapon.SetActive(equippedWeapon != null);
+
+        if (equippedWeapon != null)
+            attackMotion = GetAttackMotion(equippedWeapon.weaponType);
     }
 
     private void Update()
@@ -34,4 +40,26 @@ public class PlayerVisual : MonoBehaviour
 
         visual.localScale = new Vector3(isFacingRight ? 1f : -1f, 1f, 1f);
     }
+
+    public void PlayAttackMotion()
+    {
+        if (attackMotion == null)
+        {
+            Debug.Log("[PlayerVisual] 장착 무기 없음: 공격 모션 없음");
+            return;
+        }
+
+        // 추후 애니메이션 연결: animator.SetTrigger(attackMotion);
+        Debug.Log("[PlayerVisual] 공격 모션 재생: " + attackMotion);
+    }
+
+    private static string GetAttackMotion(WeaponType weaponType) => weaponType switch
+    {
+        WeaponType.Sword => "Attack_Sword",
+        WeaponType.Blunt => "Attack_Blunt",
+        WeaponType.Bow => "Attack_Bow",
+        WeaponType.Gun => "Attack_Gun",
+        WeaponType.Throw => "Attack_Throw",
+        _ => "Attack_Default"
+    };
 }

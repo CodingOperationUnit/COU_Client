@@ -150,7 +150,14 @@ MonoBehaviour:
   skillDamage: 100
   speed: 9
   maxSpeed: 16
-  dummyEquipments: []
+  dummyEquipments:
+  - name: "\uB098\uBB34 \uBC29\uB9DD\uC774"
+    slot: 0
+    atk: 0
+    atkBonusPercent: 0
+    hp: 0
+    hpBonusPercent: 0
+    weaponType: 1
 --- !u!114 &2434059291400805180
 MonoBehaviour:
   m_ObjectHideFlags: 0
