@@ -2,11 +2,43 @@
   "datas": [
     {
       "monsterID": 1001,
-      "monsterName": "예시몬스터1",
+      "monsterName": "일반몬스터1",
+      "monsterMaxHealthPoint": 5,
+      "monsterExp": 3,
+      "monsterMoveSpeed": 1.0,
+      "monsterAttackPoint": 1
+    },
+    {
+      "monsterID": 1002,
+      "monsterName": "일반몬스터2",
       "monsterMaxHealthPoint": 10,
       "monsterExp": 3,
-      "monsterMoveSpeed": 2.5,
+      "monsterMoveSpeed": 1.0,
       "monsterAttackPoint": 1
+    },
+    {
+      "monsterID": 1003,
+      "monsterName": "일반몬스터3",
+      "monsterMaxHealthPoint": 10,
+      "monsterExp": 3,
+      "monsterMoveSpeed": 2.0,
+      "monsterAttackPoint": 2
+    },
+    {
+      "monsterID": 1004,
+      "monsterName": "일반몬스터4",
+      "monsterMaxHealthPoint": 15,
+      "monsterExp": 5,
+      "monsterMoveSpeed": 2.0,
+      "monsterAttackPoint": 1
+    },
+    {
+      "monsterID": 1005,
+      "monsterName": "일반몬스터5",
+      "monsterMaxHealthPoint": 15,
+      "monsterExp": 5,
+      "monsterMoveSpeed": 2.5,
+      "monsterAttackPoint": 2
     }
   ]
 }
