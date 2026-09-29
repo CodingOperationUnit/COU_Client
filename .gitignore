@@ -64,8 +64,9 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
-# Claude 
+# Claude
 CLAUDE.md
+AGENTS.md
 
 # VS Code
 .vscode/
