@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 
@@ -18,8 +19,9 @@ public class PlayerInventory : MonoBehaviour
 
     public IReadOnlyList<OwnedItem> Items => items;
 
-    // 로컬 저장 키. 
-    private const string SaveKey = "PlayerInventory.Save";
+
+    private const string SaveFileName = "inventory_save.json";
+    private static string SavePath => Path.Combine(Application.persistentDataPath, SaveFileName);
 
     [Serializable]
     private class SaveData
@@ -109,15 +111,17 @@ public class PlayerInventory : MonoBehaviour
     public void Save()
     {
         var data = new SaveData { gold = gold, items = items.ToArray() };
-        var json = JsonUtility.ToJson(data);
-        PlayerPrefs.SetString(SaveKey, json);
-        PlayerPrefs.Save();
+        var json = JsonUtility.ToJson(data, true);
+        File.WriteAllText(SavePath, json);
     }
 
 
     public void Load()
     {
-        var json = PlayerPrefs.GetString(SaveKey, string.Empty);
+        if (!File.Exists(SavePath))
+            return;
+
+        var json = File.ReadAllText(SavePath);
         if (string.IsNullOrEmpty(json))
             return;
 
@@ -141,10 +145,11 @@ public class PlayerInventory : MonoBehaviour
         }
     }
 
-    // 테스트
+    [ContextMenu("인벤토리 초기화")]
     public void ClearSave()
     {
-        PlayerPrefs.DeleteKey(SaveKey);
+        if (File.Exists(SavePath))
+            File.Delete(SavePath);
         items.Clear();
         equipped.Clear();
         OnInventoryChanged?.Invoke();
