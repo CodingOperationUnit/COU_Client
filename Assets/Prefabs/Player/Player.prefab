@@ -153,7 +153,7 @@ MonoBehaviour:
   dummyEquipments:
   - name: "\uB098\uBB34 \uBC29\uB9DD\uC774"
     slot: 0
-    atk: 0
+    atk: 100
     atkBonusPercent: 0
     hp: 0
     hpBonusPercent: 0
