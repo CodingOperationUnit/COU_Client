@@ -9,7 +9,7 @@ public class DropItemTestDriver : MonoBehaviour, ILootReceiver
     [SerializeField] private float spawnRange = 8f;
     [SerializeField] private float massSpawnRange = 30f;
     [SerializeField] private int massSpawnCount = 5000;
-    [SerializeField] private bool logLoot = true;
+    [SerializeField] private bool logLoot = false;
 
     private int lootCount;
 
