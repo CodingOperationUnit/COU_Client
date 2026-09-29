@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8231831995371430804}
   - component: {fileID: 3177316595384398918}
   - component: {fileID: 2300210516906745010}
+  - component: {fileID: -1673686483071733975}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -111,8 +112,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05cbb95bae2460745a0000dbf4457bf7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  speed: 5
   inputAction: {fileID: -1680190386980627800, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
+  speed: 5
 --- !u!114 &2300210516906745010
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -127,8 +128,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   maxHealth: 100
   maxLives: 2
+  invulnerableTime: 0.5
   testDamage: 50
   testHeal: 20
+--- !u!114 &-1673686483071733975
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2129776847289895548}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8ec51bec3bd8074493c9e9a7d33efd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerStats
+  atk: 100
+  hp: 1000
+  criticalDamage: 200
+  skillDamage: 100
+  speed: 9
+  maxSpeed: 16
+  dummyEquipments: []
 --- !u!1 &7371924156998883624
 GameObject:
   m_ObjectHideFlags: 0
