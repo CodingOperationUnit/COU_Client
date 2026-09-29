@@ -12,6 +12,7 @@ public class ItemData
     public string grade;           
     public int hpBonus;
     public int attackBonus;
+    public int moveSpeedBonus;
     public string[] gradeSkills; 
 
     public EquipSlotType SlotType => Enum.Parse<EquipSlotType>(slotType);

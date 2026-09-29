@@ -168,7 +168,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemSlotView
   itemIcon: {fileID: 3691389049350482006}
   gradeIcon: {fileID: 2016300126792259477}
-  button: {fileID: 0}
+  button: {fileID: -3062444217487401672}
 --- !u!114 &-3062444217487401672
 MonoBehaviour:
   m_ObjectHideFlags: 0

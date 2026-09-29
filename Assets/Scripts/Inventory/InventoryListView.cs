@@ -1,9 +1,10 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class InventoryListView : MonoBehaviour
 {
-    [SerializeField] private Transform content;          
+    [SerializeField] private Transform content;
     [SerializeField] private ItemSlotView itemSlotPrefab;
 
     private readonly List<ItemSlotView> pool = new();
@@ -22,7 +23,7 @@ public class InventoryListView : MonoBehaviour
 
     private void Refresh()
     {
-        var items = PlayerInventory.Instance.Items;
+        var items = PlayerInventory.Instance.Items.Where(i => !i.isEquipped).ToList();
 
         while (pool.Count < items.Count)
             pool.Add(Instantiate(itemSlotPrefab, content));

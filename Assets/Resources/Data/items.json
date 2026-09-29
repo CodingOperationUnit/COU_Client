@@ -9,6 +9,7 @@
       "grade": "General",
       "hpBonus": 20,
       "attackBonus": 0,
+      "moveSpeedBonus": 0,
       "gradeSkills": [ "최대 체력 +5%", "최대 체력 +10%", "방어력 +5, 피격 시 5% 확률로 피해 무효" ]
     },
     {
@@ -20,6 +21,7 @@
       "grade": "Super",
       "hpBonus": 35,
       "attackBonus": 0,
+      "moveSpeedBonus": 0,
       "gradeSkills": [ "최대 체력 +8%", "최대 체력 +12%", "방어력 +8, 받는 피해 5% 감소" ]
     },
     {
@@ -31,6 +33,7 @@
       "grade": "Rare",
       "hpBonus": 55,
       "attackBonus": 5,
+      "moveSpeedBonus": 0,
       "gradeSkills": [ "최대 체력 +10%", "최대 체력 +15%", "방어력 +12, 받는 피해 8% 감소" ]
     },
     {
@@ -42,6 +45,7 @@
       "grade": "General",
       "hpBonus": 5,
       "attackBonus": 2,
+      "moveSpeedBonus": 3,
       "gradeSkills": [ "이동속도 +3%", "이동속도 +5%, 공격력 +5%", "회피율 +3%" ]
     },
     {
@@ -53,6 +57,7 @@
       "grade": "Super",
       "hpBonus": 10,
       "attackBonus": 4,
+      "moveSpeedBonus": 4,
       "gradeSkills": [ "이동속도 +4%", "이동속도 +6%, 공격력 +8%", "회피율 +4%" ]
     },
     {
@@ -64,7 +69,25 @@
       "grade": "Rare",
       "hpBonus": 15,
       "attackBonus": 8,
+      "moveSpeedBonus": 5,
       "gradeSkills": [ "이동속도 +5%", "이동속도 +8%, 공격력 +12%", "회피율 +5%, 회피 성공 시 다음 공격 피해 +10%" ]
+    },
+    {
+      "itemId": 2004,
+      "itemName": "군용 벨트",
+      "description": "평범한 디자인으로 군에서 흔히 착용",
+      "iconPath": "Equip/Inven/Item/Equip/Icon/Belt/Belt_00",
+      "slotType": "Belt",
+      "grade": "General",
+      "hpBonus": 38,
+      "attackBonus": 0,
+      "moveSpeedBonus": 0,
+      "gradeSkills": [
+        "HP +10%",
+        "레어/보스를 처치하면 사기를 회복하고 히어로에게 1 즉시 지급",
+        "레벨업 발동 시 3초 동안 무적 상태 획득: 피해 감소 및 이동속도 +100%, 모든 쿨타임 감소 최대화",
+        "HP +15%"
+      ]
     },
     {
       "itemId": 3001,
@@ -75,6 +98,7 @@
       "grade": "General",
       "hpBonus": 0,
       "attackBonus": 5,
+      "moveSpeedBonus": 0,
       "gradeSkills": [ "공격력 +5%", "공격력 +8%, 치명타 확률 +3%", "치명타 피해 +10%" ]
     },
     {
@@ -86,6 +110,7 @@
       "grade": "Super",
       "hpBonus": 0,
       "attackBonus": 9,
+      "moveSpeedBonus": 0,
       "gradeSkills": [ "공격력 +7%", "공격력 +10%, 치명타 확률 +5%", "치명타 피해 +15%" ]
     },
     {
@@ -97,6 +122,7 @@
       "grade": "Rare",
       "hpBonus": 3,
       "attackBonus": 14,
+      "moveSpeedBonus": 0,
       "gradeSkills": [ "공격력 +9%", "공격력 +12%, 치명타 확률 +7%", "치명타 피해 +20%, 적 처치 시 짧은 시간 공격속도 증가" ]
     },
     {
@@ -108,6 +134,7 @@
       "grade": "General",
       "hpBonus": 8,
       "attackBonus": 3,
+      "moveSpeedBonus": 0,
       "gradeSkills": [ "최대 체력 +4%", "최대 체력 +6%, 3초마다 최대 체력의 1% 회복", "받는 치유량 +10%" ]
     },
     {
@@ -119,6 +146,7 @@
       "grade": "Super",
       "hpBonus": 15,
       "attackBonus": 5,
+      "moveSpeedBonus": 0,
       "gradeSkills": [ "최대 체력 +6%", "최대 체력 +8%, 3초마다 최대 체력의 1.5% 회복", "받는 치유량 +15%" ]
     },
     {
@@ -130,6 +158,7 @@
       "grade": "Rare",
       "hpBonus": 20,
       "attackBonus": 10,
+      "moveSpeedBonus": 0,
       "gradeSkills": [ "최대 체력 +8%", "최대 체력 +10%, 3초마다 최대 체력의 2% 회복", "받는 치유량 +20%, 체력 30% 이하 시 회복량 2배" ]
     },
     {
@@ -141,6 +170,7 @@
       "grade": "General",
       "hpBonus": 10,
       "attackBonus": 0,
+      "moveSpeedBonus": 4,
       "gradeSkills": [ "이동속도 +4%", "이동속도 +6%, 조이스틱 반응속도 +5%", "이동 중 회피율 +3%" ]
     },
     {
@@ -152,6 +182,7 @@
       "grade": "Super",
       "hpBonus": 18,
       "attackBonus": 2,
+      "moveSpeedBonus": 6,
       "gradeSkills": [ "이동속도 +6%", "이동속도 +8%, 조이스틱 반응속도 +8%", "이동 중 회피율 +5%" ]
     },
     {
@@ -163,6 +194,7 @@
       "grade": "Rare",
       "hpBonus": 25,
       "attackBonus": 4,
+      "moveSpeedBonus": 8,
       "gradeSkills": [ "이동속도 +8%", "이동속도 +10%, 조이스틱 반응속도 +10%", "이동 중 회피율 +8%, 피격 후 0.5초간 이동속도 +20%" ]
     },
     {
@@ -174,6 +206,7 @@
       "grade": "General",
       "hpBonus": 0,
       "attackBonus": 8,
+      "moveSpeedBonus": 0,
       "gradeSkills": [ "공격력 +8%", "공격력 +12%, 치명타 확률 +3%", "치명타 피해 +15%" ]
     },
     {
@@ -185,6 +218,7 @@
       "grade": "Super",
       "hpBonus": 0,
       "attackBonus": 14,
+      "moveSpeedBonus": 0,
       "gradeSkills": [ "공격력 +10%", "공격력 +15%, 치명타 확률 +5%", "치명타 피해 +20%" ]
     },
     {
@@ -196,6 +230,7 @@
       "grade": "Rare",
       "hpBonus": 5,
       "attackBonus": 22,
+      "moveSpeedBonus": 0,
       "gradeSkills": [ "공격력 +12%", "공격력 +18%, 치명타 확률 +8%", "치명타 피해 +25%, 적 처치 시 짧은 시간 공격력 +10%" ]
     }
   ]
