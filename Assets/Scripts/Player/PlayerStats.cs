@@ -1,4 +1,3 @@
-using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -16,6 +15,8 @@ public class PlayerStats : MonoBehaviour
 
     [Header("Equipped (Dummy)")]
     [SerializeField] private List<DummyEquipment> dummyEquipments = new();
+
+    public DummyEquipment EquippedWeapon { get; private set; }
 
     public int FinalAtk { get; private set; }
     public int FinalHp { get; private set; }
@@ -41,6 +42,10 @@ public class PlayerStats : MonoBehaviour
             {
                 Debug.LogWarning("중복된 장비");
                 continue;
+            }
+            if (item.slot == EquipSlotType.Weapon)
+            {
+                EquippedWeapon = item;
             }
 
             totalAtk += item.atk;
