@@ -4,6 +4,7 @@ public static class GameManager
 {
     public static GameSceneManager Scene { get { return GameSceneManager.Instance; } }
     public static ObjectPoolManager ObjectPool { get { return ObjectPoolManager.Instance; } }
+    public static DropItemManager DropItem { get { return DropItemManager.Instance; } }
 }
 
 public class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour

@@ -264,4 +264,45 @@ public enum DropItemType : byte
 - **Enemy 연동**: Enemy.Die 연동과 드롭 테이블은 범위 밖이며 후속 작업이다.
 
 ## 검증 결과
-- (#12 수행 후 기록)
+환경: 에디터 Play Mode(`DropItemTestScene`), 창이 포커스되지 않은 상태로 `Application.runInBackground = true`를 두고 약 30fps(33ms)로 측정했다. 조작은 Unity CLI `eval`로 했고, 수치는 `ProfilerRecorder`로 수집했다. 잡 워커 수는 19다.
+
+**기능**
+| 항목 | 결과 |
+|---|---|
+| 루팅거리 밖 Grounded 정지 | 통과. 13종 스폰 후 Grounded 13, Attract 0이 유지됐다 |
+| 반발 → 추적 → 도달, OnLoot 1회 | 통과. 반경 2 안의 7개가 각각 1회씩 OnLoot됐다(total 1~7) |
+| 루팅거리 런타임 변경 | 통과. 2 → 2.5로 바꾸자 해당 범위의 2개(Potion, ExpGem3)가 곧바로 루팅됐다 |
+| 자석은 Grounded 경험치잼만 | 통과. 잼 100 + 골드 100 + 기타에서 잼만 흡수되고 골드 100, Magnet, Bomb은 그대로 남았다 |
+| 풀 반환·재사용 | 통과. 재스폰 100개 뒤에도 뷰 총수가 207로 그대로였다(Instantiate 없음) |
+| 씬 전환 후 잔존 엔티티 | 통과. SampleScene 로드 후 DropItem, DropItemConfig, LootTarget이 모두 0이고 DropItemManager도 0이다(Hierarchy 창 대신 쿼리 카운트로 확인) |
+| 플레이어 위치 겹침 스폰 | 통과. NaN 없이 루팅됐다 |
+| 매니저 Awake 전 등록 | 코드 경로로만 확인했다. `RegisterReceiver`는 필드만 대입하고, `Instance`는 `FindFirstObjectByType`로 씬의 매니저를 찾는다. 실행 순서를 강제로 바꾼 테스트는 하지 않았다 |
+| 종료·전환 시 매니저 재생성 | 통과. 플레이 종료와 씬 전환 모두 "Some objects were not cleaned up" 경고가 없었다 |
+| 튜닝값 런타임 반영 | 통과. chaseStartSpeed, chaseAcceleration을 변경한 값이 곧바로 이동 속도에 반영됐다 |
+| 리시버 해제·파괴 | 해제 시 LootTarget이 파괴되고 흡수 중인 50개가 제자리에 정지했다. 재등록하면 재개된다. 리시버 GameObject를 파괴하면 LootTarget이 0이 된다 |
+
+**성능** (단위 ms, 평균 / 최대)
+| 항목 | 드롭 0개 | Grounded 5000 | 자석(잼 2500 흡수) |
+|---|---|---|---|
+| LootDetectionSystem (메인) | 0.002 / 0.029 | 0.003 / 0.016 | 0.004 / 0.017 |
+| LootDetectionJob (Burst, 워커) | 0 | 0.039 / 0.256 | 0.031 / 0.125 |
+| AttractMovementSystem (메인) | 0.003 / 0.017 | 0.003 / 0.029 | 0.019 / 0.123 |
+| AttractMovementJob (Burst) | 0 | 0 | 0.029 / 0.198 |
+| ViewSyncJob (Burst, 전체 스레드 합) | 0 | 0 | 0.117 / 0.917 |
+| ViewSyncJob 중 메인 스레드 몫 | - | - | 0.045 / 0.247 |
+| LateUpdate 전체 | 0.051 / 0.24 | 0.050 / 0.17 | 0.58 / 3.9 |
+| GC Allocated In Frame (중앙값) | 14,793 B | 14,793 B | 14,793 B |
+| Batches / SetPass | 2 / 2 | 약 1,568 / 10 | 약 1,367 / 10 |
+
+- **Grounded 비용**: 5000개일 때도 드롭 0개와 메인 스레드 비용 차이가 없다(시스템 메인 비용 0.003ms 수준). 감지 잡은 151/301 프레임에서만 실행됐다(30fps에서 15Hz).
+- **GC**: 에디터 자체 할당(eval 서버, 인스펙터 등) 때문에 매 프레임 약 14.8KB가 잡힌다. 드롭 0개, Grounded 5000, 흡수 중 모두 중앙값이 같아서 정상 상태의 드롭 추가 할당은 0으로 판단했다. 최대값 스파이크(~1.9MB)는 Grounded 전용 구간에서도 발생해 에디터 쪽으로 보이지만 에디터 안에서는 분리할 수 없다. 개발 빌드 Profiler로 재확인이 필요하다.
+- **자석 스파이크**: `AttractAllExpGems()` 호출 자체는 0.11~0.12ms다(2500개, 청크 단위 구조 변경). 흡수 구간의 최대 비용은 LateUpdate 3.9ms로, 한 프레임에 수백 개가 도달해 `OnLoot` + `ReturnObject`(SetActive false)가 몰리는 프레임이다. 테스트 드라이버의 OnLoot 로그를 켜면 11ms로 오른다.
+- **ViewSyncJob 병렬 분배**: 전체 스레드 합(0.117) 대비 메인 스레드 몫이 0.045라서 나머지는 워커에서 실행됐다. Timeline에서 눈으로 확인하지는 않았다.
+- **Burst**: 세 잡 모두 `(Burst)` 마커에서만 샘플이 잡히고 관리 코드 마커는 0이다. 시스템 OnUpdate도 `Burst Jobs/Default World ...System` 마커로 등록돼 있다.
+- **TransformAccessArray 재구성**: 흡수 중인 아이템이 없을 때 5000개를 Spawn해도 `GetComponentOrderVersion<Attract>()`가 0 → 0으로 그대로여서 재구성이 일어나지 않는다. 재구성은 `RemoveAtSwapBack` + `Add`로 해서 관리 배열을 할당하지 않는다.
+- **Spawn 비용**: 5000개 연속 Spawn에 95ms가 걸렸다(개당 약 19µs, 첫 생성이라 Instantiate 포함).
+- **렌더링**: 임시 스프라이트가 텍스처 4종에 색까지 달라서 5000개에 Batches 약 1,568이 나온다. 로직 비용과 별개이며 SpriteAtlas 도입 후 다시 측정해야 한다.
+
+**구현 중 수정**
+- 감지 주기: `elapsed = 0`으로 리셋하면 30fps에서 나머지가 버려져 10Hz로 떨어졌다(91/239 프레임). `elapsed %= DetectInterval`로 바꿔 15Hz를 유지하게 했다. 히치가 생겨도 몰아서 실행하지 않는다.
+- Sorting: 드롭 프리팹은 `sortingOrder = -1`로 두었다(Player 프리팹은 Default/0). 레이어 규칙이 정해지면 조정한다.
