@@ -1,11 +1,9 @@
 using UnityEngine;
 
-[SkillId( 3 )]
 public sealed class Skill_Shuriken : SkillBase
 {
     public override void Activate()
     {
-        // TODO: 자동 타겟팅 및 투사체 발사 로직 (Player/Monster 구현 후 작성 예정)
         FindNearestTarget();
         FireProjectile();
 
@@ -14,12 +12,31 @@ public sealed class Skill_Shuriken : SkillBase
 
     private Transform FindNearestTarget()
     {
-        // TODO: 자동 타겟팅 및 투사체 발사 로직 (Player/Monster 구현 후 작성 예정)
         return null;
     }
 
-    private void FireProjectile()
+    protected override void FireLevel1()
     {
-        // TODO: 자동 타겟팅 및 투사체 발사 로직 (Player/Monster 구현 후 작성 예정)
+
+    }
+
+    protected override void FireLevel2()
+    {
+
+    }
+
+    protected override void FireLevel3()
+    {
+
+    }
+
+    protected override void FireLevel4()
+    {
+
+    }
+
+    protected override void FireLevel5()
+    {
+
     }
 }

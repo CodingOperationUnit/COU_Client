@@ -1,11 +1,9 @@
 using UnityEngine;
 
-[SkillId( 1 )]
 public sealed class Skill_Katana : SkillBase
 {
     public override void Activate()
     {
-        // TODO: 자동 타겟팅 및 투사체 발사 로직 (Player/Monster 구현 후 작성 예정)
         FindNearestTarget();
         FireProjectile();
 
@@ -14,12 +12,31 @@ public sealed class Skill_Katana : SkillBase
 
     private Transform FindNearestTarget()
     {
-        // TODO: 자동 타겟팅 및 투사체 발사 로직 (Player/Monster 구현 후 작성 예정)
         return null;
     }
 
-    private void FireProjectile()
+    protected override void FireLevel1()
     {
-        // TODO: 자동 타겟팅 및 투사체 발사 로직 (Player/Monster 구현 후 작성 예정)
+        throw new System.NotImplementedException();
+    }
+
+    protected override void FireLevel2()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    protected override void FireLevel3()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    protected override void FireLevel4()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    protected override void FireLevel5()
+    {
+        throw new System.NotImplementedException();
     }
 }
