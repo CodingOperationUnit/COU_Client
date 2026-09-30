@@ -20,7 +20,7 @@ public class MonsterData
     [NonSerialized] private MonsterType parsedType;
     public MonsterType Type => parsedType;
 
-    // MonsterDatabase.Load()에서 JSON을 읽은 직후 한 번 호출
+    // JsonDataManager에서 JSON을 읽은 직후 한 번 호출
     public void OnLoaded()
     {
         if (!Enum.TryParse(type, out parsedType))
