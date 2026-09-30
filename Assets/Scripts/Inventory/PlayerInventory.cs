@@ -44,11 +44,13 @@ public class PlayerInventory : MonoBehaviour
         if (pause) Save();
     }
 
-    public void AddItem(long itemId)
+    public OwnedItem AddItem(long itemId)
     {
-        items.Add(new OwnedItem(itemId));
+        var item = new OwnedItem(itemId);
+        items.Add(item);
         OnInventoryChanged?.Invoke();
         Save();
+        return item;
     }
 
     public OwnedItem GetEquipped(EquipSlotType slot)
@@ -114,7 +116,6 @@ public class PlayerInventory : MonoBehaviour
         var json = JsonUtility.ToJson(data, true);
         File.WriteAllText(SavePath, json);
     }
-
 
     public void Load()
     {

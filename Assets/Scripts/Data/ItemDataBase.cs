@@ -19,6 +19,8 @@ public static class ItemDatabase
 
     public static ItemData Get(long itemId) => items[itemId];
 
+    public static IEnumerable<ItemData> GetAll() => items.Values;
+
     public static Sprite GetGradeIcon(EquipSlotType slotType, ItemGrade grade)
     {
         var folder = slotType == EquipSlotType.Weapon ? "Weapon" : "Equip";
