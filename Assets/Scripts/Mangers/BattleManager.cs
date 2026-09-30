@@ -104,6 +104,14 @@ public class BattleManager : MonoBehaviour
         hud.SetExp(exp / (float)RequiredExp);
     }
 
+    public void AddKill()
+    {
+        if (ended) return;
+
+        kills++;
+        hud.SetKillCount(kills);
+    }
+
     private void HandlePlayerDied()
     {
         EndBattle(false);

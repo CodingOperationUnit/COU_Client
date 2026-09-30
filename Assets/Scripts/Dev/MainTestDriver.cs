@@ -14,8 +14,14 @@ public class MainTestDriver : MonoBehaviour
         topBar.SetExp(0.05f);
         topBar.SetStamina(67, 60);
         topBar.SetCoin(1);
-        topBar.SetGem(5750);
-        topBar.SetGold(24200);
+        topBar.SetGem(PlayerInventory.Instance.Gem);
+        topBar.SetGold(PlayerInventory.Instance.Gold);
+
+        PlayerInventory.Instance.OnInventoryChanged += () =>
+        {
+            topBar.SetGem(PlayerInventory.Instance.Gem);
+            topBar.SetGold(PlayerInventory.Instance.Gold);
+        };
 
         var tabBar = UIManager.Instance.Get<TabBar>();
         tabBar.SetBadge(0, "!");

@@ -14,7 +14,7 @@ public sealed class LinearProjectile : SkillProjectile
 
     private void Update()
     {
-        transform.Translate(Vector3.forward * _speed * Time.deltaTime);
+        transform.Translate(dir * _speed * Time.deltaTime);
 
         _elapsed += Time.deltaTime;
 

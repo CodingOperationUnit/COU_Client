@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,7 +7,7 @@ public class SkillObjectPool : MonoSingleton<SkillObjectPool>
     private readonly Dictionary<GameObject, Queue<GameObject>> _pools = new();
     private readonly Dictionary<GameObject, GameObject> _instanceToPrefab = new();
 
-    public GameObject Get(GameObject prefab, Vector3 position, Quaternion rotation)
+    public GameObject Get(GameObject prefab, Vector3 position, Quaternion rotation, Action<GameObject> initialize = null)
     {
         if(prefab == null)
         {
@@ -41,6 +42,7 @@ public class SkillObjectPool : MonoSingleton<SkillObjectPool>
         _instanceToPrefab.TryAdd(instance, prefab);
 
         instance.transform.SetPositionAndRotation(position, rotation);
+        initialize?.Invoke(instance);
         instance.SetActive(true);
         instance.GetComponent<ISkillPoolable>()?.OnSpawn();
 
