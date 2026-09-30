@@ -23,13 +23,15 @@ public class PauseWindow : UIView
     public override void Open()
     {
         base.Open();
-        Time.timeScale = 0f;
+        if (BattleManager.Instance != null)
+            BattleManager.Instance.RequestPause(this);
     }
 
     public override void Close()
     {
         base.Close();
-        Time.timeScale = 1f;
+        if (BattleManager.Instance != null)
+            BattleManager.Instance.ReleasePause(this);
     }
 
     public void SetKillCount(int kills)

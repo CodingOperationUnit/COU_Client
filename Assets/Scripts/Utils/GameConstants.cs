@@ -9,6 +9,8 @@ public static class GameConstants
     {
         public const string MANAGERS_TEST_SCENE = "ManagersTestScene";
         public const string MANAGERS_TEST_SCENE_2 = "ManagersTestScene_2";
+        public const string LOGIN_SCENE = "LogInScene";
+        public const string MAIN_SCENE = "MainScene";
     }
     
     // 파일 경로 관련 상수

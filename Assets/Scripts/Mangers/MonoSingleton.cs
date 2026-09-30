@@ -6,7 +6,9 @@ public static class GameManager
     public static ObjectPoolManager ObjectPool { get { return ObjectPoolManager.Instance; } }
     public static LocalSaveLoadManager LocalSaveLoad { get { return LocalSaveLoadManager.Instance; } }
     public static LocalLoginManager LocalLogin { get { return LocalLoginManager.Instance; } }
+    public static DataManager Data { get { return DataManager.Instance; } }
     public static DropItemManager DropItem { get { return DropItemManager.Instance; } }
+    public static UIManager UI { get { return UIManager.Instance; } }
 }
 
 public class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
