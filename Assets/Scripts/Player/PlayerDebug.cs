@@ -37,6 +37,28 @@ public class PlayerDebug : MonoBehaviour
 
         if (Keyboard.current.digit4Key.wasPressedThisFrame && playerVisual != null)
             playerVisual.PlayAttackMotion();
+
+        if (Keyboard.current.digit6Key.wasPressedThisFrame)
+            LogPlayerManager();
+    }
+
+    private void LogPlayerManager()
+    {
+        var player = PlayerManager.Instance;
+
+        if (player == null)
+        {
+            Debug.LogWarning("[PlayerDebug] PlayerManager.Instance가 없습니다.");
+            return;
+        }
+
+        Debug.Log("[PlayerDebug] PlayerManager 확인" +
+                  " / 방향: " + player.Movement.FacingDirection +
+                  " / 공격력: " + player.Stats.FinalAtk +
+                  " / 치명타 확률: " + player.Stats.CriticalChance + "%" +
+                  " / 체력: " + player.Health.CurrentHealth + "/" + player.Health.MaxHealth +
+                  " / 사망: " + player.Health.IsDead +
+                  " / 무기: " + (player.Stats.EquippedWeapon != null ? player.Stats.EquippedWeapon.name : "없음"));
     }
 
     private void OnGUI()
@@ -44,8 +66,8 @@ public class PlayerDebug : MonoBehaviour
         if (!Debug.isDebugBuild) return;
 
         GUI.skin.label.fontSize = 24;
-        GUI.Label(new Rect(10, 10, 500, 300),
-            "[1] Damage\n[2] Heal\n[3] Restore Life\n[4] Attack Motion\n\n" +
+        GUI.Label(new Rect(10, 10, 500, 330),
+            "[1] Damage\n[2] Heal\n[3] Restore Life\n[4] Attack Motion\n[6] PlayerManager Log\n\n" +
             "HP : " + playerHealth.CurrentHealth + " / " + playerHealth.MaxHealth + "\n\n" +
             "Life : " + playerHealth.CurrentLives + " / " + playerHealth.MaxLives);
     }
