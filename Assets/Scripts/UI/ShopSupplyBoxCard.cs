@@ -11,15 +11,39 @@ public class ShopSupplyBoxCard : MonoBehaviour
     [SerializeField] private ItemGrade maxGrade;
     [SerializeField] private int gemCost;
 
+    [SerializeField] private Color affordableColor = new Color(0.243f, 0.702f, 0.008f, 1f);
+    [SerializeField] private Color normalColor = new Color(1f, 1f, 1f, 0.15f);
+
     private void Awake()
     {
         actionButton.onClick.AddListener(OnActionButtonClicked);
     }
 
+    private void OnEnable()
+    {
+        PlayerInventory.Instance.OnInventoryChanged += UpdateAffordability;
+        UpdateAffordability();
+    }
+
+    private void OnDisable()
+    {
+        if (PlayerInventory.Instance != null)
+            PlayerInventory.Instance.OnInventoryChanged -= UpdateAffordability;
+    }
+
+    private void UpdateAffordability()
+    {
+        var affordable = PlayerInventory.Instance.Gem >= gemCost;
+        actionButton.targetGraphic.color = affordable ? affordableColor : normalColor;
+    }
+
     private void OnActionButtonClicked()
     {
         if (!PlayerInventory.Instance.TrySpendGem(gemCost))
+        {
+            UIManager.Instance.Get<LogPopup>().Show("알림", "보석이 부족합니다.");
             return;
+        }
 
         var pool = ItemDatabase.GetAll()
             .Where(data => data.Grade >= minGrade && data.Grade <= maxGrade)

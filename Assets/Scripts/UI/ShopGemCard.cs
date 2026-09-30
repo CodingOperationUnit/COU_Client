@@ -14,6 +14,6 @@ public class ShopGemCard : MonoBehaviour
     private void OnCardClicked()
     {
         PlayerInventory.Instance.AddGem(gemAmount);
-        UIManager.Instance.Get<GemPurchaseSuccessPopup>().Show();
+        UIManager.Instance.Get<LogPopup>().Show("구매 완료!", "보석이 성공적으로 지급되었습니다!");
     }
 }

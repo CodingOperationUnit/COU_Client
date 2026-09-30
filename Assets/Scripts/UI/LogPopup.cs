@@ -1,8 +1,11 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GoldPurchaseSuccessPopup : UIPopup
+public class LogPopup : UIPopup
 {
+    [SerializeField] private TMP_Text titleText;
+    [SerializeField] private TMP_Text bodyText;
     [SerializeField] private Button closeButton;
     [SerializeField] private Button dimButton;
 
@@ -12,8 +15,10 @@ public class GoldPurchaseSuccessPopup : UIPopup
         dimButton.onClick.AddListener(Close);
     }
 
-    public void Show()
+    public void Show(string title, string body)
     {
+        titleText.text = title;
+        bodyText.text = body;
         Open();
     }
 }
