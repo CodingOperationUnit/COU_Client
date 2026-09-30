@@ -6,7 +6,7 @@ public class LocalSaveLoadManager : MonoSingleton<LocalSaveLoadManager>
     // 로그인 검증 성공 후 호출 후 JSON에서 읽은 데이터를 DataManager에 전달
     public bool LoadPlayerAfterLogin(string playerID)
     {
-        if (GameManager.Data.isPlayerDataLoaded)
+        if (GameManager.PlayerData.isPlayerDataLoaded)
         {
             Debug.LogWarning("현재 계정에서 로그아웃한 뒤 로드하세요.");
             return false;
@@ -22,7 +22,7 @@ public class LocalSaveLoadManager : MonoSingleton<LocalSaveLoadManager>
                 return false;
             }
 
-            GameManager.Data.SetPlayerDataFromLocal(data);
+            GameManager.PlayerData.SetPlayerDataFromLocal(data);
         }
         catch (Exception exception)
         {
@@ -30,17 +30,17 @@ public class LocalSaveLoadManager : MonoSingleton<LocalSaveLoadManager>
             return false;
         }
 
-        GameManager.Data.NotifyPlayerDataChanged();
+        GameManager.PlayerData.NotifyPlayerDataChanged();
         return true;
     }
     
     // DataManager의 현재 플레이어 데이터를 JSON으로 저장
     public bool SaveCurrentPlayerData()
     {
-        return SavePlayerData(GameManager.Data);
+        return SavePlayerData(GameManager.PlayerData);
     }
 
-    private bool SavePlayerData(DataManager dataManager)
+    private bool SavePlayerData(PlayerDataManager dataManager)
     {
         if (dataManager == null || !dataManager.isPlayerDataLoaded)
         {
@@ -73,7 +73,7 @@ public class LocalSaveLoadManager : MonoSingleton<LocalSaveLoadManager>
     // 저장 성공 후 DataManager의 플레이어 데이터를 해제
     public bool Logout()
     {
-        var dataManager = GameManager.Data;
+        var dataManager = GameManager.PlayerData;
 
         if (!dataManager.isPlayerDataLoaded)
             return true;
@@ -103,7 +103,7 @@ public class LocalSaveLoadManager : MonoSingleton<LocalSaveLoadManager>
     private void SaveIfLoaded()
     {
         // 종료 과정에서 Singleton.Instance 접근으로 매니저가 새로 생성되지 않도록 기존 객체만 조회
-        var dataManager = FindFirstObjectByType<DataManager>();
+        var dataManager = FindFirstObjectByType<PlayerDataManager>();
 
         if (dataManager != null && dataManager.isPlayerDataLoaded)
         {

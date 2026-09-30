@@ -3,12 +3,14 @@ using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(PlayerHealth))]
+[RequireComponent(typeof(PlayerStats))]
 public class PlayerMovement : MonoBehaviour
 {
-    private Rigidbody2D rb;
     [SerializeField] private InputActionReference inputAction;
-    [SerializeField] private float speed = 5f;
+
+    private Rigidbody2D rb;
     private PlayerHealth playerHealth;
+    private PlayerStats playerStats;
 
     public Vector2 FacingDirection { get; private set; }
 
@@ -17,8 +19,9 @@ public class PlayerMovement : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        FacingDirection = Vector2.right;
         playerHealth = GetComponent<PlayerHealth>();
+        playerStats = GetComponent<PlayerStats>();
+        FacingDirection = Vector2.right;
     }
 
     private void OnEnable()
@@ -43,7 +46,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.linearVelocity = input * speed;
+        rb.linearVelocity = input * playerStats.Speed;
     }
 
     private void HandleDied()
@@ -53,7 +56,7 @@ public class PlayerMovement : MonoBehaviour
         Debug.Log("이동 중단");
     }
 
-    // For Debug (Check Player Direction)
+    // For Debug (바라보는 방향 표시)
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;

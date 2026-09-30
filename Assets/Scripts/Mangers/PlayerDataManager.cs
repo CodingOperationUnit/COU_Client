@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class DataManager : MonoSingleton<DataManager>
+public class PlayerDataManager : MonoSingleton<PlayerDataManager>
 {
     public PlayerSaveData currentData { get; private set; }
 

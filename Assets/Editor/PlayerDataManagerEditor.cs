@@ -1,8 +1,8 @@
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(DataManager))]
-public class DataManagerEditor : Editor
+[CustomEditor(typeof(PlayerDataManager))]
+public class PlayerDataManagerEditor : Editor
 {
     public override void OnInspectorGUI()
     {
@@ -14,7 +14,7 @@ public class DataManagerEditor : Editor
             "현재 플레이어 데이터",
             EditorStyles.boldLabel);
 
-        var manager = (DataManager)target;
+        var manager = (PlayerDataManager)target;
         var data = manager.currentData;
 
         if (data == null)
