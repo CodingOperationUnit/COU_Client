@@ -1,0 +1,28 @@
+{
+  "datas": [
+    {
+      "bossAttackID": 1,
+      "monsterID": 3001,
+      "attackType": "Melee",
+      "cooldown": 5.0,
+      "range": 3.0,
+      "damage": 10
+    },
+    {
+      "bossAttackID": 2,
+      "monsterID": 3001,
+      "attackType": "Ranged",
+      "cooldown": 3.0,
+      "range": 5.0,
+      "damage": 10
+    },
+    {
+      "bossAttackID": 3,
+      "monsterID": 3001,
+      "attackType": "Area",
+      "cooldown": 8.0,
+      "range": 2.0,
+      "damage": 10
+    }
+  ]
+}

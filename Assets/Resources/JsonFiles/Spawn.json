@@ -1,0 +1,70 @@
+{
+  "datas": [
+    {
+      "spawnEventID": 1,
+      "stageID": 1,
+      "eventType": "Normal",
+      "startTime": 0.0,
+      "endTime": 30.0,
+      "monsterID": 1001,
+      "spawnInterval": 1.0,
+      "spawnCount": 1,
+      "repeat": true
+    },
+    {
+      "spawnEventID": 2,
+      "stageID": 1,
+      "eventType": "Normal",
+      "startTime": 30.0,
+      "endTime": 60.0,
+      "monsterID": 1002,
+      "spawnInterval": 2.0,
+      "spawnCount": 1,
+      "repeat": true
+    },
+    {
+      "spawnEventID": 3,
+      "stageID": 1,
+      "eventType": "Elite",
+      "startTime": 45.0,
+      "endTime": 45.0,
+      "monsterID": 2001,
+      "spawnInterval": 0.0,
+      "spawnCount": 1,
+      "repeat": false
+    },
+    {
+      "spawnEventID": 4,
+      "stageID": 1,
+      "eventType": "Horde",
+      "startTime": 60.0,
+      "endTime": 90.0,
+      "monsterID": 1001,
+      "spawnInterval": 0.5,
+      "spawnCount": 2,
+      "repeat": true
+    },
+    {
+      "spawnEventID": 5,
+      "stageID": 1,
+      "eventType": "Elite",
+      "startTime": 75.0,
+      "endTime": 75.0,
+      "monsterID": 2002,
+      "spawnInterval": 0.0,
+      "spawnCount": 1,
+      "repeat": false
+    },
+    {
+      "spawnEventID": 6,
+      "stageID": 1,
+      "eventType": "Boss",
+      "startTime": 150.0,
+      "endTime": 150.0,
+      "monsterID": 3001,
+      "spawnInterval": 0.0,
+      "spawnCount": 1,
+      "repeat": false
+    }
+  ]
+}
