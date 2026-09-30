@@ -1,8 +1,10 @@
 ﻿using System;
 using UnityEngine;
 
+// 몬스터 등급. Monster.json의 "type" 문자열을 enum으로 바꿔서 쓴다.
 public enum MonsterType { Normal, Elite, Boss }
 
+// 몬스터 기본 정보
 [Serializable]
 public class MonsterData
 {

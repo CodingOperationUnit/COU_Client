@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1336512524560405698}
   - component: {fileID: 3913235986493633786}
   - component: {fileID: 8231831995371430804}
+  - component: {fileID: 6667368002391727752}
   - component: {fileID: 3177316595384398918}
   - component: {fileID: 2300210516906745010}
   - component: {fileID: -1673686483071733975}
@@ -101,6 +102,18 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.5
+--- !u!114 &6667368002391727752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2129776847289895548}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6305b2acfb2d6c488cc6040b9f2708e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerManager
 --- !u!114 &3177316595384398918
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -114,7 +127,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   inputAction: {fileID: -1680190386980627800, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
-  speed: 5
 --- !u!114 &2300210516906745010
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -127,7 +139,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 156be5555660ea943b3c5482791338e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
-  maxHealth: 100
   maxLives: 2
   invulnerableTime: 0.5
   testDamage: 50
@@ -147,6 +158,7 @@ MonoBehaviour:
   atk: 100
   hp: 1000
   criticalDamage: 200
+  criticalChance: 5
   skillDamage: 100
   speed: 9
   maxSpeed: 16
@@ -158,6 +170,7 @@ MonoBehaviour:
     hp: 0
     hpBonusPercent: 0
     weaponType: 1
+  inventoryWeaponType: 1
 --- !u!114 &2434059291400805180
 MonoBehaviour:
   m_ObjectHideFlags: 0

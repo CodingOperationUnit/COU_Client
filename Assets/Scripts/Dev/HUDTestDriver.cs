@@ -3,6 +3,14 @@ using UnityEngine.InputSystem;
 
 public class HUDTestDriver : MonoBehaviour
 {
+    private static readonly string[] DummySkillNames = { "쿠나이", "리볼버", "수리검", "카타나" };
+    private static readonly int[][] LuckTrainPatterns =
+    {
+        new[] { 2 },
+        new[] { 1, 6, 11 },
+        new[] { 14, 15, 0, 1, 2 },
+    };
+
     [SerializeField] private GameObject dummyBoss;
     [SerializeField] private int bossSeconds = 10;
     [SerializeField] private int alarmLeadSeconds = 5;
@@ -11,6 +19,8 @@ public class HUDTestDriver : MonoBehaviour
     private AlarmView alarm;
     private PauseWindow pause;
     private BattleResultWindow result;
+    private LuckTrainWindow luckTrain;
+    private int luckTrainPattern;
     private float elapsed;
     private int shownSeconds = -1;
     private int level = 1;
@@ -25,7 +35,11 @@ public class HUDTestDriver : MonoBehaviour
         alarm = UIManager.Instance.Get<AlarmView>();
         pause = UIManager.Instance.Get<PauseWindow>();
         result = UIManager.Instance.Get<BattleResultWindow>();
+        luckTrain = UIManager.Instance.Get<LuckTrainWindow>();
         hud.SetLevel(level);
+
+        for (var i = 0; i < 16; i++)
+            luckTrain.SetSlot(i, DummySkillNames[i % DummySkillNames.Length]);
     }
 
     private void Update()
@@ -34,6 +48,8 @@ public class HUDTestDriver : MonoBehaviour
             ShowResult(true);
         else if (Keyboard.current.digit2Key.wasPressedThisFrame)
             ShowResult(false);
+        else if (Keyboard.current.digit3Key.wasPressedThisFrame)
+            ShowLuckTrain();
 
         elapsed += Time.deltaTime;
         var seconds = (int)elapsed;
@@ -89,5 +105,15 @@ public class HUDTestDriver : MonoBehaviour
         result.SetGold(victory ? 83700 : 10000);
         result.SetExp(victory ? 5600 : 1500);
         result.Show(victory);
+    }
+
+    private void ShowLuckTrain()
+    {
+        var selected = LuckTrainPatterns[luckTrainPattern];
+        luckTrainPattern = (luckTrainPattern + 1) % LuckTrainPatterns.Length;
+
+        for (var i = 0; i < selected.Length; i++)
+            luckTrain.SetReward(i, DummySkillNames[selected[i] % DummySkillNames.Length], i + 1, $"Lv.{i + 1}");
+        luckTrain.Show(selected, selected.Length, 200 * selected.Length);
     }
 }
