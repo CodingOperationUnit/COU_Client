@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class LocalLoginManager : MonoSingleton<LocalLoginManager>
 {
-    public bool isLoggedIn => GameManager.LocalSaveLoad.isPlayerDataLoaded;
-    public string currentPlayerID => GameManager.LocalSaveLoad.currentData?.playerID;
+    public bool isLoggedIn => GameManager.PlayerData.isPlayerDataLoaded;
+    public string currentPlayerID => GameManager.PlayerData.currentPlayerID;
 
     public bool SignUp(string playerID, string password, out string message)
     {
@@ -119,13 +119,6 @@ public class LocalLoginManager : MonoSingleton<LocalLoginManager>
             if (account == null || account.password != password)
             {
                 message = "아이디 또는 비밀번호가 일치하지 않습니다.";
-                return false;
-            }
-
-            // 입력값 대신 계정에 기록된 ID로 파일을 조회합니다.
-            if (!GameManager.LocalSaveLoad.LoadPlayerAfterLogin(account.playerID))
-            {
-                message = "플레이어 데이터를 불러오지 못했습니다.";
                 return false;
             }
 

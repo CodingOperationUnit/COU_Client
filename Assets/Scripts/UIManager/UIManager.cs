@@ -3,13 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class UIManager : MonoBehaviour
+public class UIManager : MonoSingleton<UIManager>
 {
-    public static UIManager Instance { get; private set; }
-
-    [SerializeField] private Canvas hudCanvas;
-    [SerializeField] private Canvas screenCanvas;
-    [SerializeField] private Canvas popupCanvas;
     [SerializeField] private Canvas overlayCanvas;
 
     private readonly Dictionary<Type, UIView> views = new();
@@ -17,13 +12,14 @@ public class UIManager : MonoBehaviour
 
     private InputAction cancelAction;
 
-    private void Awake()
-    {
-        Instance = this;
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void Bootstrap()
+        => Instantiate(Resources.Load<UIManager>("UI/UIManager"));
 
-        Register(hudCanvas, UILayer.HUD);
-        Register(screenCanvas, UILayer.Screen);
-        Register(popupCanvas, UILayer.Popup);
+    protected override void Awake()
+    {
+        base.Awake();
+
         Register(overlayCanvas, UILayer.Overlay);
 
         cancelAction = InputSystem.actions.FindAction("UI/Cancel");
@@ -35,12 +31,24 @@ public class UIManager : MonoBehaviour
             CloseTopPopup();
     }
 
-    private void Register(Canvas canvas, UILayer layer)
+    internal void Register(Canvas canvas, UILayer layer)
     {
         foreach (var view in canvas.GetComponentsInChildren<UIView>(true))
         {
             view.Layer = layer;
-            views.Add(view.GetType(), view);
+            views[view.GetType()] = view;
+        }
+    }
+
+    internal void Unregister(IEnumerable<UIView> targets)
+    {
+        foreach (var view in targets)
+        {
+            if (views.TryGetValue(view.GetType(), out var registered) && registered == view)
+                views.Remove(view.GetType());
+
+            if (view is UIPopup popup)
+                popups.Remove(popup);
         }
     }
 
