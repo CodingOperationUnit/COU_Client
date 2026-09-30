@@ -14,16 +14,26 @@ public static class SkillDataBase
 
         _dataById = new Dictionary<int, SkillData>();
 
-        SkillData[] allData = Resources.LoadAll<SkillData>("Data/Skills");
+        TextAsset json = Resources.Load<TextAsset>("JsonFiles/Skill");
 
-        foreach(SkillData data in allData)
+        if(json == null)
         {
-            _dataById[data.SkillId] = data;
+            Debug.LogError("[SkillDataBase] Resources/JsonFiles/Skill.json을 찾을 수 없습니다.");
+            return;
+        }
+
+        SkillDataListWrapper wrapper = JsonUtility.FromJson<SkillDataListWrapper>(json.text);
+
+        foreach(SkillData data in wrapper.datas)
+        {
+            _dataById[data.ID] = data;
         }
     }
 
     public static SkillData Get(int skillId)
     {
+        Load();
+
         return _dataById.GetValueOrDefault(skillId);
     }
 }

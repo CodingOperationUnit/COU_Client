@@ -64,8 +64,7 @@ public class LocalSaveLoadManager : MonoSingleton<LocalSaveLoadManager>
         }
         catch (Exception exception)
         {
-            Debug.LogError(
-                $"플레이어 데이터 저장 실패: {exception.Message}");
+            Debug.LogError($"플레이어 데이터 저장 실패: {exception.Message}");
             return false;
         }
     }
