@@ -15,6 +15,10 @@ public class PlayerInventory : MonoBehaviour
     [SerializeField] private int gold = 500000;
     public int Gold => gold;
 
+    // 보석 테스트용
+    [SerializeField] private int gem = 0;
+    public int Gem => gem;
+
     public event Action OnInventoryChanged;
 
     public IReadOnlyList<OwnedItem> Items => items;
@@ -27,6 +31,7 @@ public class PlayerInventory : MonoBehaviour
     private class SaveData
     {
         public int gold;
+        public int gem;
         public OwnedItem[] items;
     }
 
@@ -51,6 +56,31 @@ public class PlayerInventory : MonoBehaviour
         OnInventoryChanged?.Invoke();
         Save();
         return item;
+    }
+
+    public void AddGem(int amount)
+    {
+        gem += amount;
+        OnInventoryChanged?.Invoke();
+        Save();
+    }
+
+    public void AddGold(int amount)
+    {
+        gold += amount;
+        OnInventoryChanged?.Invoke();
+        Save();
+    }
+
+    public bool TrySpendGem(int amount)
+    {
+        if (gem < amount)
+            return false;
+
+        gem -= amount;
+        OnInventoryChanged?.Invoke();
+        Save();
+        return true;
     }
 
     public OwnedItem GetEquipped(EquipSlotType slot)
@@ -112,7 +142,7 @@ public class PlayerInventory : MonoBehaviour
 
     public void Save()
     {
-        var data = new SaveData { gold = gold, items = items.ToArray() };
+        var data = new SaveData { gold = gold, gem = gem, items = items.ToArray() };
         var json = JsonUtility.ToJson(data, true);
         File.WriteAllText(SavePath, json);
     }
@@ -131,6 +161,7 @@ public class PlayerInventory : MonoBehaviour
             return;
 
         gold = data.gold;
+        gem = data.gem;
 
         items.Clear();
         equipped.Clear();
@@ -156,10 +187,11 @@ public class PlayerInventory : MonoBehaviour
         OnInventoryChanged?.Invoke();
     }
 
-    [ContextMenu("골드 100000 추가")]
-    public void DebugAddGold()
+    [ContextMenu("골드/보석 초기화")]
+    public void ResetCurrency()
     {
-        gold += 100000;
+        gold = 500000;
+        gem = 0;
         OnInventoryChanged?.Invoke();
         Save();
     }
