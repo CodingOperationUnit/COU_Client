@@ -21,12 +21,10 @@ public class PlayerVisual : MonoBehaviour
 
     private void Start()
     {
-        var equippedWeapon = playerStats.EquippedWeapon;
+        weapon.SetActive(playerStats.HasWeapon);
 
-        weapon.SetActive(equippedWeapon != null);
-
-        if (equippedWeapon != null)
-            attackMotion = GetAttackMotion(equippedWeapon.weaponType);
+        if (playerStats.HasWeapon)
+            attackMotion = GetAttackMotion(playerStats.EquippedWeaponType);
     }
 
     private void Update()

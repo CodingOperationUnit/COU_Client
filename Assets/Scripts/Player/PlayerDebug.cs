@@ -53,12 +53,13 @@ public class PlayerDebug : MonoBehaviour
         }
 
         Debug.Log("[PlayerDebug] PlayerManager 확인" +
+                  " / 장비 출처: " + (player.Stats.UsesInventory ? "인벤토리" : "더미") +
                   " / 방향: " + player.Movement.FacingDirection +
                   " / 공격력: " + player.Stats.FinalAtk +
                   " / 치명타 확률: " + player.Stats.CriticalChance + "%" +
                   " / 체력: " + player.Health.CurrentHealth + "/" + player.Health.MaxHealth +
                   " / 사망: " + player.Health.IsDead +
-                  " / 무기: " + (player.Stats.EquippedWeapon != null ? player.Stats.EquippedWeapon.name : "없음"));
+                  " / 무기: " + (player.Stats.HasWeapon ? player.Stats.EquippedWeaponName : "없음"));
     }
 
     private void OnGUI()
