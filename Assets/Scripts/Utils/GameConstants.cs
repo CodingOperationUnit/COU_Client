@@ -18,5 +18,6 @@ public static class GameConstants
     {
         public const string ACCOUNT_SAVE_PATH = "accounts.json";
         public const string PLAYER_DIRECTORY = "Players";
+        public const string MonsterData_Json_Path = "JsonFiles/Monster";
     }
 }

@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class LocalLoginManager : MonoSingleton<LocalLoginManager>
 {
-    public bool isLoggedIn => GameManager.Data.isPlayerDataLoaded;
-    public string currentPlayerID => GameManager.Data.currentPlayerID;
+    public bool isLoggedIn => GameManager.PlayerData.isPlayerDataLoaded;
+    public string currentPlayerID => GameManager.PlayerData.currentPlayerID;
 
     public bool SignUp(string playerID, string password, out string message)
     {
