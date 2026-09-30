@@ -3,17 +3,6 @@ using UnityEngine;
 
 public class PlayerStats : MonoBehaviour
 {
-    [Header("Base Stats")]
-    [SerializeField][Min(1)] private int atk = 100;    // 임시 스탯
-    [SerializeField][Min(1)] private int hp = 1000;    // 임시 스탯
-
-    // 아래 치명타, 스킬 피해, 이동 속도, 이동 속도 상한은 임시 값이다.
-    [SerializeField][Min(1)] private int criticalDamage = 200;
-    [SerializeField][Range(0, 100)] private int criticalChance = 5;
-    [SerializeField][Min(1)] private int skillDamage = 100;
-    [SerializeField][Min(1f)] private float speed = 9f;
-    [SerializeField][Min(1f)] private float maxSpeed = 16f;
-
     [Header("Equipped (Dummy) - 인벤토리가 없는 씬에서만 사용")]
     [SerializeField] private List<DummyEquipment> dummyEquipments = new();
 
@@ -29,6 +18,8 @@ public class PlayerStats : MonoBehaviour
     private string equippedWeaponName;
     private bool usesInventory;
 
+    private static PlayerBaseStatData Base => PlayerDatabase.BaseStats;
+
     public int FinalAtk { get { EnsureCalculated(); return finalAtk; } }
     public int FinalHp { get { EnsureCalculated(); return finalHp; } }
     public bool HasWeapon { get { EnsureCalculated(); return hasWeapon; } }
@@ -36,15 +27,14 @@ public class PlayerStats : MonoBehaviour
     public string EquippedWeaponName { get { EnsureCalculated(); return equippedWeaponName; } }
     public bool UsesInventory { get { EnsureCalculated(); return usesInventory; } }
 
-    public int CriticalDamage => criticalDamage;
-    public int CriticalChance => criticalChance;
-    public int SkillDamage => skillDamage;
-    public float Speed => speed;
-    public float MaxSpeed => maxSpeed;
+    public int CriticalDamage => Base.criticalDamage;
+    public int CriticalChance => Base.criticalChance;
+    public int SkillDamage => Base.skillDamage;
+    public float Speed => Base.moveSpeed;
+    public float MaxSpeed => Base.maxMoveSpeed;
 
     private void Start()
     {
-        // 아무도 읽지 않았더라도 Start에서 한 번은 계산해 로그로 확인
         EnsureCalculated();
     }
 
@@ -59,7 +49,8 @@ public class PlayerStats : MonoBehaviour
             CalculateFromDummy();
 
         Debug.Log("[PlayerStats] 장비 출처: " + (usesInventory ? "인벤토리" : "더미") +
-                  " / Atk: " + finalAtk + ", Hp: " + finalHp +
+                  " / 기본 Atk: " + Base.attack + ", 기본 Hp: " + Base.hp +
+                  " / 최종 Atk: " + finalAtk + ", 최종 Hp: " + finalHp +
                   " / 무기: " + (hasWeapon ? equippedWeaponName + " (" + equippedWeaponType + ")" : "없음"));
     }
 
@@ -72,8 +63,8 @@ public class PlayerStats : MonoBehaviour
         int totalHp = inventory.GetTotalStat(item => item.ScaledHp);
 
         // 장비 데이터에 공격력·체력 보너스 % 필드가 없어 0%로 계산 (필드 추가 시 교체)
-        finalAtk = CalculateStat(atk, totalAtk, 0);
-        finalHp = CalculateStat(hp, totalHp, 0);
+        finalAtk = CalculateStat(Base.attack, totalAtk, 0);
+        finalHp = CalculateStat(Base.hp, totalHp, 0);
 
         var weapon = inventory.GetEquipped(EquipSlotType.Weapon);
         hasWeapon = weapon != null;
@@ -113,8 +104,8 @@ public class PlayerStats : MonoBehaviour
             totalHpBonus += item.hpBonusPercent;
         }
 
-        finalAtk = CalculateStat(atk, totalAtk, totalAtkBonus);
-        finalHp = CalculateStat(hp, totalHp, totalHpBonus);
+        finalAtk = CalculateStat(Base.attack, totalAtk, totalAtkBonus);
+        finalHp = CalculateStat(Base.hp, totalHp, totalHpBonus);
     }
 
     private int CalculateStat(int baseStat, int addStat, int bonusPercent)
