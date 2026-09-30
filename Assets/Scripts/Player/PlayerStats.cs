@@ -8,10 +8,13 @@ public class PlayerStats : MonoBehaviour
     [SerializeField] [Min(1)] private int hp = 1000; // 임시 스탯
 
     // 아래 치명타 피해, 스킬 피해, 이동 속도, 이동 속도 상한은 임시 코드이다.
+    [SerializeField][Range(0, 100)] private int criticalChance = 5; // 임시 값 (%)
     [SerializeField][Min(1)] private int criticalDamage = 200;
     [SerializeField][Min(1)] private int skillDamage = 100;
     [SerializeField][Min(1f)] private float speed = 9f;
-    [SerializeField][Min(1f)] private float maxSpeed = 16f;
+    [SerializeField][Min(1f)] private float maxSpeed = 16f;    
+
+    
 
     [Header("Equipped (Dummy)")]
     [SerializeField] private List<DummyEquipment> dummyEquipments = new();
@@ -22,6 +25,7 @@ public class PlayerStats : MonoBehaviour
     public int FinalHp { get; private set; }
 
 
+    public int CriticalChance => criticalChance;
     public int CriticalDamage => criticalDamage;
     public int SkillDamage => skillDamage;
     public float Speed => speed;
