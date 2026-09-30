@@ -6,8 +6,10 @@ public class PlayerDebug : MonoBehaviour
     [SerializeField] private PlayerHealth playerHealth;
     [SerializeField] private int testDamage = 50;
     [SerializeField] private int testHeal = 20;
+    [SerializeField] private float dropSpawnRange = 5f;
 
     private PlayerVisual playerVisual;
+    private PlayerLootReceiver lootReceiver;
 
     private void Awake()
     {
@@ -19,6 +21,19 @@ public class PlayerDebug : MonoBehaviour
         }
 
         playerVisual = playerHealth.GetComponent<PlayerVisual>();
+        lootReceiver = playerHealth.GetComponent<PlayerLootReceiver>();
+    }
+
+    private void OnEnable()
+    {
+        if (lootReceiver != null)
+            lootReceiver.OnLooted += LogLooted;
+    }
+
+    private void OnDisable()
+    {
+        if (lootReceiver != null)
+            lootReceiver.OnLooted -= LogLooted;
     }
 
     private void Update()
@@ -38,8 +53,24 @@ public class PlayerDebug : MonoBehaviour
         if (Keyboard.current.digit4Key.wasPressedThisFrame && playerVisual != null)
             playerVisual.PlayAttackMotion();
 
+        if (Keyboard.current.digit5Key.wasPressedThisFrame)
+            SpawnAllDropItems();
+
         if (Keyboard.current.digit6Key.wasPressedThisFrame)
             LogPlayerManager();
+    }
+
+    private void SpawnAllDropItems()
+    {
+        Vector2 center = playerHealth.transform.position;
+
+        for (int i = 0; i <= (int)DropItemType.Bomb; i++)
+            GameManager.DropItem.Spawn((DropItemType)i, center + Random.insideUnitCircle * dropSpawnRange);
+    }
+
+    private void LogLooted(DropItemType type)
+    {
+        Debug.Log("[PlayerDebug] OnLooted: " + type);
     }
 
     private void LogPlayerManager()
@@ -59,6 +90,7 @@ public class PlayerDebug : MonoBehaviour
                   " / 치명타 확률: " + player.Stats.CriticalChance + "%" +
                   " / 체력: " + player.Health.CurrentHealth + "/" + player.Health.MaxHealth +
                   " / 사망: " + player.Health.IsDead +
+                  " / 루팅 범위: " + player.Loot.LootRadius +
                   " / 무기: " + (player.Stats.HasWeapon ? player.Stats.EquippedWeaponName : "없음"));
     }
 
@@ -67,8 +99,8 @@ public class PlayerDebug : MonoBehaviour
         if (!Debug.isDebugBuild) return;
 
         GUI.skin.label.fontSize = 24;
-        GUI.Label(new Rect(10, 10, 500, 330),
-            "[1] Damage\n[2] Heal\n[3] Restore Life\n[4] Attack Motion\n[6] PlayerManager Log\n\n" +
+        GUI.Label(new Rect(10, 10, 500, 360),
+            "[1] Damage\n[2] Heal\n[3] Restore Life\n[4] Attack Motion\n[5] Spawn Drop Items\n[6] PlayerManager Log\n\n" +
             "HP : " + playerHealth.CurrentHealth + " / " + playerHealth.MaxHealth + "\n\n" +
             "Life : " + playerHealth.CurrentLives + " / " + playerHealth.MaxLives);
     }

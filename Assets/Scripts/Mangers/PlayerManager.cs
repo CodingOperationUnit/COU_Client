@@ -4,6 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerHealth))]
 [RequireComponent(typeof(PlayerStats))]
 [RequireComponent(typeof(PlayerVisual))]
+[RequireComponent(typeof(PlayerLootReceiver))]
 public class PlayerManager : MonoBehaviour
 {
     public static PlayerManager Instance { get; private set; }
@@ -12,6 +13,7 @@ public class PlayerManager : MonoBehaviour
     public PlayerHealth Health { get; private set; }
     public PlayerStats Stats { get; private set; }
     public PlayerVisual Visual { get; private set; }
+    public PlayerLootReceiver Loot { get; private set; }
 
     private void Awake()
     {
@@ -27,6 +29,7 @@ public class PlayerManager : MonoBehaviour
         Health = GetComponent<PlayerHealth>();
         Stats = GetComponent<PlayerStats>();
         Visual = GetComponent<PlayerVisual>();
+        Loot = GetComponent<PlayerLootReceiver>();
     }
 
     private void OnDestroy()

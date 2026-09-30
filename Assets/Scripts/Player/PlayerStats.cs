@@ -32,6 +32,7 @@ public class PlayerStats : MonoBehaviour
     public int SkillDamage => Base.skillDamage;
     public float Speed => Base.moveSpeed;
     public float MaxSpeed => Base.maxMoveSpeed;
+    public float LootRadius => Base.lootRadius;
 
     private void Start()
     {
