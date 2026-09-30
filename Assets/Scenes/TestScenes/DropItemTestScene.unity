@@ -155,7 +155,7 @@ MonoBehaviour:
   spawnRange: 8
   massSpawnRange: 30
   massSpawnCount: 5000
-  logLoot: 1
+  logLoot: 0
 --- !u!212 &301628
 SpriteRenderer:
   serializedVersion: 2
