@@ -8,9 +8,7 @@ public abstract class SkillBase
     protected float cooldownTimer;
     protected SkillProjectile projectilePrefab;
     protected Transform owner;
-
-    // 테스트
-    public Vector2 dir;
+    protected PlayerMovement movement;
 
     public int Level => level;
 
@@ -23,10 +21,9 @@ public abstract class SkillBase
         level = 0;
     }
 
-    // 테스트
-    public void Initialize_Dir(Vector2 dir)
+    public void BindPlayerMovement(PlayerMovement movement)
     {
-        this.dir = dir;
+        this.movement = movement;
     }
 
     public virtual bool CanActivate()
@@ -77,17 +74,27 @@ public abstract class SkillBase
             return;
         }
 
-        Vector3 position = owner != null ? owner.position : Vector3.zero;
-        Vector3 forward = direction != Vector2.zero ? new Vector3(direction.x, 0.0f, direction.y) : Vector3.forward;
-        float damage = skillData.Damage;
-
-        SkillObjectPool.Instance.Get(projectilePrefab.gameObject, position, Quaternion.LookRotation(forward), instance =>
+        SkillObjectPool.Instance.Get(projectilePrefab.gameObject, owner.position, Quaternion.identity, instance =>
         {
-            if(instance.TryGetComponent(out SkillProjectile projectile))
+            if (instance.TryGetComponent(out SkillProjectile projectile))
             {
-                projectile.Init(damage);
+                projectile.Init(1.0f, direction);
             }
         });
+
+
+
+        //Vector2 position = owner != null ? owner.position : Vector3.zero;
+        //Vector3 forward = direction != Vector2.zero ? new Vector3(direction.x, 0.0f, direction.y) : Vector3.forward;
+        //float damage = skillData.Damage;
+
+        //SkillObjectPool.Instance.Get(projectilePrefab.gameObject, owner.position, Quaternion.LookRotation(forward), instance =>
+        //{
+        //    if(instance.TryGetComponent(out SkillProjectile projectile))
+        //    {
+        //        projectile.Init(damage);
+        //    }
+        //});
     }
 
     protected virtual void FireProjectile()

@@ -17,7 +17,7 @@ public sealed class Skill_Revolver : SkillBase
 
     protected override void FireLevel1()
     {
-        SpawnProjectile(dir);
+        SpawnProjectile(movement.FacingDirection);
     }
 
     protected override void FireLevel2()

@@ -1,16 +1,20 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class SkillController : MonoBehaviour
 {
     private const int MaxSkillSlots = 3;
 
     private readonly List<SkillBase> _activeSkills = new();
-
-    // 테스트
-    [HideInInspector] public Vector2 dir;
+    private PlayerMovement _playerMovement;
 
     public IReadOnlyList<SkillBase> ActiveSkills => _activeSkills;
+
+    private void Awake()
+    {
+        _playerMovement = GetComponent<PlayerMovement>();
+    }
 
     private void Update()
     {
@@ -24,36 +28,32 @@ public class SkillController : MonoBehaviour
             }
         }
 
+        Keyboard keyboard = Keyboard.current;
+
+        if(keyboard == null)
+        {
+            return;
+        }
+
         // 테스트
-        if (Input.GetKeyDown(KeyCode.Keypad1))
+        if(keyboard.digit1Key.wasPressedThisFrame)
         {
             EquipSkill(1);
 
             Debug.Log("스킬: Shuriken");
         }
 
-        if (Input.GetKeyDown(KeyCode.Keypad2))
+        if(keyboard.digit2Key.wasPressedThisFrame)
         {
             EquipSkill(2);
             Debug.Log("스킬: Revolver");
         }
 
-        if (Input.GetKeyDown(KeyCode.Keypad3))
+        if(keyboard.digit3Key.wasPressedThisFrame)
         {
             EquipSkill(3);
             Debug.Log("스킬: Katana");
         }
-
-        Vector2 input = Vector2.zero;
-        if (Input.GetKey(KeyCode.W)) input.y += 1;
-
-        if (Input.GetKey(KeyCode.S)) input.y -= 1;
-
-        if (Input.GetKey(KeyCode.D)) input.x += 1;
-
-        if (Input.GetKey(KeyCode.A)) input.x -= 1;
-
-        if (input != Vector2.zero) dir = input.normalized;
     }
 
     public bool EquipSkill(int skillId)
@@ -74,11 +74,8 @@ public class SkillController : MonoBehaviour
 
         // 테스트 ( 플레이어의 트랜스폼을 넣을 예정 )
         skill.SetOwner(transform);
-
+        skill.BindPlayerMovement(_playerMovement);
         skill.SetProjectilePrefab(SkillManager.Instance.GetProjectilePrefab(skillId));
-
-        // 테스트
-        skill.Initialize_Dir(dir);
 
         skill.Levelup();
         _activeSkills.Add(skill);
