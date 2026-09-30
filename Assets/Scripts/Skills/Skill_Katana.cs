@@ -17,7 +17,7 @@ public sealed class Skill_Katana : SkillBase
 
     protected override void FireLevel1()
     {
-        throw new System.NotImplementedException();
+        SpawnProjectile(movement.FacingDirection);
     }
 
     protected override void FireLevel2()

@@ -6,10 +6,12 @@ public abstract class SkillProjectile : MonoBehaviour, ISkillPoolable
     public event Action<GameObject> OnBeforeReturn;
 
     protected float damage;
+    protected Vector2 dir;
 
-    public void Init(float damageValue)
+    public void Init(float damageValue, Vector2 dir)
     {
         damage = damageValue;
+        this.dir = dir;
     }
 
     public void OnSpawn()
