@@ -17,7 +17,7 @@ public sealed class Skill_Revolver : SkillBase
 
     protected override void FireLevel1()
     {
-        throw new System.NotImplementedException();
+        SpawnProjectile(dir);
     }
 
     protected override void FireLevel2()

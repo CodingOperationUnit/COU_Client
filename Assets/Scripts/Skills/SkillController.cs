@@ -8,7 +8,7 @@ public class SkillController : MonoBehaviour
     private readonly List<SkillBase> _activeSkills = new();
 
     // 테스트
-    public Vector2 _dir;
+    [HideInInspector] public Vector2 dir;
 
     public IReadOnlyList<SkillBase> ActiveSkills => _activeSkills;
 
@@ -27,20 +27,20 @@ public class SkillController : MonoBehaviour
         // 테스트
         if (Input.GetKeyDown(KeyCode.Keypad1))
         {
-            EquipSkill(11);
+            EquipSkill(1);
 
-            Debug.Log($"스킬: Bullet");
+            Debug.Log("스킬: Shuriken");
         }
 
         if (Input.GetKeyDown(KeyCode.Keypad2))
         {
-            EquipSkill(21);
-            Debug.Log("스킬: Shuriken");
+            EquipSkill(2);
+            Debug.Log("스킬: Revolver");
         }
 
         if (Input.GetKeyDown(KeyCode.Keypad3))
         {
-            EquipSkill(31);
+            EquipSkill(3);
             Debug.Log("스킬: Katana");
         }
 
@@ -53,7 +53,7 @@ public class SkillController : MonoBehaviour
 
         if (Input.GetKey(KeyCode.A)) input.x -= 1;
 
-        if (input != Vector2.zero) _dir = input.normalized;
+        if (input != Vector2.zero) dir = input.normalized;
     }
 
     public bool EquipSkill(int skillId)
@@ -71,6 +71,14 @@ public class SkillController : MonoBehaviour
         {
             return false;
         }
+
+        // 테스트 ( 플레이어의 트랜스폼을 넣을 예정 )
+        skill.SetOwner(transform);
+
+        skill.SetProjectilePrefab(SkillManager.Instance.GetProjectilePrefab(skillId));
+
+        // 테스트
+        skill.Initialize_Dir(dir);
 
         skill.Levelup();
         _activeSkills.Add(skill);
