@@ -1,0 +1,10 @@
+{
+  "attack": 100,
+  "hp": 1000,
+  "criticalDamage": 200,
+  "criticalChance": 5,
+  "skillDamage": 100,
+  "moveSpeed": 9.0,
+  "maxMoveSpeed": 16.0,
+  "lootRadius": 2.0
+}

@@ -2,11 +2,63 @@
   "datas": [
     {
       "monsterID": 1001,
-      "monsterName": "예시몬스터1",
+      "monsterName": "일반몬스터1",
+      "type": "Normal",
+      "monsterMaxHealthPoint": 5,
+      "monsterExp": 3,
+      "monsterMoveSpeed": 1.0,
+      "monsterAttackPoint": 1,
+      "monsterAsset": "Enemy/goblin"
+    },
+    {
+      "monsterID": 1002,
+      "monsterName": "일반몬스터2",
+      "type": "Normal",
       "monsterMaxHealthPoint": 10,
       "monsterExp": 3,
+      "monsterMoveSpeed": 2.0,
+      "monsterAttackPoint": 1,
+      "monsterAsset": "Enemy/slime"
+    },
+    {
+      "monsterID": 1003,
+      "monsterName": "일반몬스터3",
+      "type": "Normal",
+      "monsterMaxHealthPoint": 15,
+      "monsterExp": 5,
       "monsterMoveSpeed": 2.5,
-      "monsterAttackPoint": 1
+      "monsterAttackPoint": 2,
+      "monsterAsset": "Enemy/goblin_archer"
+    },
+    {
+      "monsterID": 2001,
+      "monsterName": "엘리트몬스터1",
+      "type": "Elite",
+      "monsterMaxHealthPoint": 20,
+      "monsterExp": 10,
+      "monsterMoveSpeed": 1.0,
+      "monsterAttackPoint": 3,
+      "monsterAsset": "Enemy/goblin_green_warrior"
+    },
+    {
+      "monsterID": 2002,
+      "monsterName": "엘리트몬스터2",
+      "type": "Elite",
+      "monsterMaxHealthPoint": 30,
+      "monsterExp": 10,
+      "monsterMoveSpeed": 1.0,
+      "monsterAttackPoint": 3,
+      "monsterAsset": "Enemy/orange_slime_king"
+    },
+    {
+      "monsterID": 3001,
+      "monsterName": "보스몬스터1",
+      "type": "Boss",
+      "monsterMaxHealthPoint": 50,
+      "monsterExp": 100,
+      "monsterMoveSpeed": 3.0,
+      "monsterAttackPoint": 10,
+      "monsterAsset": "Enemy/skull_warrior"
     }
   ]
 }

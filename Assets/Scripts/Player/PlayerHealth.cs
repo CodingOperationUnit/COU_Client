@@ -1,12 +1,15 @@
 using System;
 using UnityEngine;
 
+[RequireComponent(typeof(PlayerStats))]
 public class PlayerHealth : MonoBehaviour
 {
-    [SerializeField] [Min(1)] private int maxHealth = 100;
+    private PlayerStats playerStats;
+
+    private int maxHealth;
     public int MaxHealth => maxHealth;
 
-    [SerializeField] [Min(1)] private int maxLives = 2;
+    [SerializeField][Min(1)] private int maxLives = 2;
     public int MaxLives => maxLives;
 
     [SerializeField][Min(0f)] private float invulnerableTime = 0.5f;
@@ -26,8 +29,14 @@ public class PlayerHealth : MonoBehaviour
 
     private void Awake()
     {
-        CurrentHealth = maxHealth;
+        playerStats = GetComponent<PlayerStats>();
         CurrentLives = maxLives;
+    }
+
+    private void Start()
+    {
+        maxHealth = playerStats.FinalHp;
+        CurrentHealth = maxHealth;
     }
 
     public void GetDamage(int damage)
@@ -38,6 +47,7 @@ public class PlayerHealth : MonoBehaviour
             Debug.Log("무적 중 피해무시");
             return;
         }
+
         if (CurrentHealth - damage <= 0)
         {
             CurrentHealth = 0;
@@ -52,6 +62,7 @@ public class PlayerHealth : MonoBehaviour
     public void Heal(int heal)
     {
         if (heal <= 0 || IsDead) return;
+
         if (CurrentHealth + heal >= maxHealth)
             CurrentHealth = maxHealth;
         else
@@ -63,6 +74,7 @@ public class PlayerHealth : MonoBehaviour
     private void DecreaseLife()
     {
         CurrentLives--;
+
         if (IsDead)
         {
             Debug.Log("플레이어 사망");
@@ -79,13 +91,12 @@ public class PlayerHealth : MonoBehaviour
     {
         if (CurrentLives >= maxLives || IsDead)
             return;
-        else
-            CurrentLives++;
 
+        CurrentLives++;
         Debug.Log("현재 목숨 : " + CurrentLives);
     }
 
-    // For Debug (무적일때 플레이어 주위에 원 (플레이어 무적 시각적 확인))
+    // For Debug (무적일 때 플레이어 주위에 원 표시)
     private void OnDrawGizmos()
     {
         if (IsInvulnerable)
@@ -93,19 +104,19 @@ public class PlayerHealth : MonoBehaviour
     }
 
     [ContextMenu("TestDamage")]
-    public void TestGetDamage()
+    private void TestGetDamage()
     {
         GetDamage(testDamage);
     }
 
     [ContextMenu("TestHeal")]
-    public void TestHeal()
+    private void TestHeal()
     {
         Heal(testHeal);
     }
 
     [ContextMenu("TestIncreaseLife")]
-    public void TestIncreaseLife()
+    private void TestIncreaseLife()
     {
         IncreaseLife();
     }

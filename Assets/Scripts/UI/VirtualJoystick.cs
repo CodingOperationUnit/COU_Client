@@ -2,11 +2,13 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.Layouts;
 using UnityEngine.InputSystem.OnScreen;
+using UnityEngine.Serialization;
 
 public class VirtualJoystick : OnScreenControl, IPointerDownHandler, IDragHandler, IPointerUpHandler
 {
     [InputControl(layout = "Vector2")]
-    [SerializeField] private string controlPath = "<Gamepad>/leftStick";
+    [FormerlySerializedAs("controlPath")]
+    [SerializeField] private string m_ControlPath = "<Gamepad>/leftStick";
     [SerializeField] private RectTransform stickBase;
     [SerializeField] private RectTransform knob;
     [SerializeField] private float radius = 165f;
@@ -15,8 +17,8 @@ public class VirtualJoystick : OnScreenControl, IPointerDownHandler, IDragHandle
 
     protected override string controlPathInternal
     {
-        get => controlPath;
-        set => controlPath = value;
+        get => m_ControlPath;
+        set => m_ControlPath = value;
     }
 
     private void Awake()
