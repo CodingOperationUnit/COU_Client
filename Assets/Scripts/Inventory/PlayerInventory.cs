@@ -136,6 +136,53 @@ public class PlayerInventory : MonoBehaviour
         return levelsGained;
     }
 
+    // 합성 재료
+    public int CountSynthesisMaterials(OwnedItem item)
+        => items.Count(i => i != item && i.itemId == item.itemId && i.Grade == item.Grade);
+
+    public bool CanSynthesize(OwnedItem item)
+        => item != null
+        && item.CanSynthesize
+        && CountSynthesisMaterials(item) >= ItemLevelConfig.SynthesisMaterialCount;
+
+
+    // 단일 합성 (같은 재료 두개)
+    public bool TrySynthesize(OwnedItem item)
+    {
+        if (!CanSynthesize(item))
+            return false;
+
+        var materials = items
+            .Where(i => i != item && i.itemId == item.itemId && i.Grade == item.Grade)
+            .Take(ItemLevelConfig.SynthesisMaterialCount)
+            .ToList();
+
+        if (materials.Count < ItemLevelConfig.SynthesisMaterialCount)
+            return false;
+
+        foreach (var material in materials)
+        {
+            if (material.isEquipped)
+                Unequip(material.Data.SlotType);
+
+            items.Remove(material);
+        }
+
+        item.grade = item.NextGrade;
+        OnInventoryChanged?.Invoke();
+        Save();
+        return true;
+    }
+
+    // 일괄 합성
+    public int BatchSynthesize(OwnedItem item)
+    {
+        var tiersGained = 0;
+        while (TrySynthesize(item))
+            tiersGained++;
+        return tiersGained;
+    }
+
     public int GetTotalStat(Func<OwnedItem, int> selector)
         => equipped.Values.Sum(selector);
 

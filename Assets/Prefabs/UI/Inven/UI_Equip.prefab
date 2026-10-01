@@ -2561,6 +2561,7 @@ GameObject:
   - component: {fileID: 5476969942405029273}
   - component: {fileID: 8079549967684594694}
   - component: {fileID: 3772891698524698053}
+  - component: {fileID: 133104956243454005}
   m_Layer: 5
   m_Name: AddButton
   m_TagString: Untagged
@@ -3643,3 +3644,15 @@ MonoBehaviour:
   button: {fileID: 3502477264302960538}
   label: {fileID: 7717496526997424058}
   listView: {fileID: 9064629737341279553}
+--- !u!114 &133104956243454005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7061656117668164609}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19c7151120a54c2fb071b3a7b4b4aaa8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SynthesisEntryButton
