@@ -82,14 +82,19 @@ public class PlayerInventory : MonoBehaviour
         record.bestSurvivalSeconds = Mathf.Max(record.bestSurvivalSeconds, result.Seconds);
 
         // 보상상자: 최저 등급 장비를 상자 개수만큼 무작위 지급
+        var rewards = new List<OwnedItem>();
         var pool = ItemDatabase.GetAll().Where(item => item.Grade == ItemGrade.General).ToList();
         if (pool.Count > 0)
         {
             for (var i = 0; i < result.RewardBoxes; i++)
-                items.Add(new OwnedItem(pool[UnityEngine.Random.Range(0, pool.Count)].itemId));
+                rewards.Add(new OwnedItem(pool[UnityEngine.Random.Range(0, pool.Count)].itemId));
         }
+        items.AddRange(rewards);
 
         PersistAndNotify();
+
+        if (rewards.Count > 0)
+            UIManager.Instance.Get<RewardBoxResultPopup>().Show(rewards);
     }
 
     // private void OnApplicationQuit() => Save();
