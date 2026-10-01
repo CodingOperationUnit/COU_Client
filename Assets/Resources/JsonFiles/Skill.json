@@ -17,18 +17,28 @@
       "Cooldown": 2.0,
       "Speed": 10.0,
       "Damage": 2.0,
-      "Range": 20.0,
+      "Range": 10.0,
       "Description": "리볼버"
     },
     {
       "ID": 3,
       "Name": "Katana",
-      "Type": "nearest",
+      "Type": "forward",
       "Cooldown": 0.75,
       "Speed": 6.0,
       "Damage": 1.25,
       "Range": 2.0,
       "Description": "카타나"
+    },
+    {
+      "ID": 4,
+      "Name": "Missile",
+      "Type": "nearest",
+      "Cooldown": 1.5,
+      "Speed": 2.0,
+      "Damage": 0.8,
+      "Range": 7.0,
+      "Description": "미사일"
     }
   ]
 }
