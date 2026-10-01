@@ -28,7 +28,7 @@ public abstract class SkillProjectile : MonoBehaviour, ISkillPoolable
 
     protected virtual void ApplyDamage(Enemy target)
     {
-        target.Damaged(Mathf.RoundToInt(skillData.Damage));
+        target.Damaged(Mathf.RoundToInt(skillData.Damage * launchInfo.DamageMultiplier));
     }
 
     protected void ReturnToPool()
