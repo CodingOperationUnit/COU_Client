@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 public class SkillController : MonoBehaviour
 {
-    private const int MaxSkillSlots = 3;
+    public const int MaxSkillSlots = 3;
 
     private readonly List<SkillBase> _activeSkills = new();
 
