@@ -3,24 +3,32 @@ using UnityEngine;
 
 public class BattleManager : MonoBehaviour
 {
+    private const int OptionCount = 3;
+
     public static BattleManager Instance { get; private set; }
 
     [SerializeField] private PlayerHealth playerHealth;
     [SerializeField] private PlayerLootReceiver lootReceiver;
+    [SerializeField] private SkillController skillController;
     [SerializeField] private MonsterSpawner spawner;
+    [SerializeField] private int startingSkillId = 1;
+    [SerializeField] private int[] skillPoolIds = { 1, 2, 3 };
     [SerializeField] private int victorySeconds = 900;
     [SerializeField] private int expGem1Value = 10;
     [SerializeField] private int baseRequiredExp = 20;
     [SerializeField] private int requiredExpIncrement = 6;
+    [SerializeField] private float healRewardRatio = 0.3f;
 
     [Header("Test")]
     [SerializeField] private int testExp;
 
     private readonly HashSet<object> pauseRequests = new();
+    private readonly List<int> candidates = new();
 
     private InGameHUD hud;
     private BattleResultWindow resultWindow;
     private PauseWindow pauseWindow;
+    private SkillSelectWindow selectWindow;
 
     private float elapsed;
     private int seconds;
@@ -56,11 +64,16 @@ public class BattleManager : MonoBehaviour
         hud = UIManager.Instance.Get<InGameHUD>();
         resultWindow = UIManager.Instance.Get<BattleResultWindow>();
         pauseWindow = UIManager.Instance.Get<PauseWindow>();
+        selectWindow = UIManager.Instance.Get<SkillSelectWindow>();
+
+        selectWindow.OnSelected += HandleSkillSelected;
 
         hud.SetTime(0);
         hud.SetKillCount(0);
         hud.SetLevel(level);
         hud.SetExp(0f);
+
+        skillController.EquipSkill(startingSkillId);
     }
 
     private void Update()
@@ -111,6 +124,9 @@ public class BattleManager : MonoBehaviour
 
         hud.SetLevel(level);
         hud.SetExp(exp / (float)RequiredExp);
+
+        if (pendingLevelUps > 0 && !selectWindow.IsOpen)
+            ShowSelection();
     }
 
     public void AddKill()
@@ -138,10 +154,82 @@ public class BattleManager : MonoBehaviour
         EndBattle(false);
     }
 
+    private void ShowSelection()
+    {
+        candidates.Clear();
+        foreach (var skillId in skillPoolIds)
+        {
+            var skill = FindActiveSkill(skillId);
+            var available = skill != null
+                ? skill.Level < SkillBase.MaxLevel
+                : skillController.ActiveSkills.Count < SkillController.MaxSkillSlots;
+            if (available)
+                candidates.Add(skillId);
+        }
+
+        // 부분 Fisher–Yates: 앞의 count개를 무작위 후보로 채운다
+        var count = Mathf.Min(candidates.Count, OptionCount);
+        for (var i = 0; i < count; i++)
+        {
+            var pick = Random.Range(i, candidates.Count);
+            (candidates[i], candidates[pick]) = (candidates[pick], candidates[i]);
+
+            var skill = FindActiveSkill(candidates[i]);
+            var data = SkillDataBase.Get(candidates[i]);
+            selectWindow.SetOption(i, data.Name, data.Description, skill == null ? 1 : skill.Level + 1, skill == null);
+        }
+
+        if (count == 0)
+        {
+            selectWindow.SetOption(0, "회복", $"HP {healRewardRatio:0%}", 0, false);
+            count = 1;
+        }
+
+        selectWindow.SetWeaponSlots(skillController.ActiveSkills.Count);
+        RequestPause(selectWindow);
+        selectWindow.Show(count);
+    }
+
+    private void HandleSkillSelected(int index)
+    {
+        if (candidates.Count == 0)
+            playerHealth.Heal(Mathf.RoundToInt(playerHealth.MaxHealth * healRewardRatio));
+        else if (FindActiveSkill(candidates[index]) != null)
+            skillController.LevelUpSkill(candidates[index]);
+        else
+            skillController.EquipSkill(candidates[index]);
+
+        pendingLevelUps--;
+        if (pendingLevelUps > 0)
+        {
+            ShowSelection();
+            return;
+        }
+
+        selectWindow.Close();
+        ReleasePause(selectWindow);
+    }
+
+    private SkillBase FindActiveSkill(int skillId)
+    {
+        foreach (var skill in skillController.ActiveSkills)
+        {
+            if (skill.SkillId == skillId) return skill;
+        }
+        return null;
+    }
+
     private void EndBattle(bool victory)
     {
         if (ended) return;
         ended = true;
+
+        if (selectWindow.IsOpen)
+        {
+            selectWindow.Close();
+            ReleasePause(selectWindow);
+        }
+        pendingLevelUps = 0;
 
         RequestPause(resultWindow);
         resultWindow.SetTime(seconds);
