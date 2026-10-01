@@ -4,8 +4,9 @@ using UnityEngine;
 [Serializable]
 public struct StageInfo
 {
-    public string name;
-    public string description;
-    public int bestTime;
+    public int stageID;
+    public string stageName;
     public Color illustrationColor;
+    public float duration;
+    public string stageDescription;
 }

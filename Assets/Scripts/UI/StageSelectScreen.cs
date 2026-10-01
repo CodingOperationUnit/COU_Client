@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -14,7 +15,8 @@ public class StageSelectScreen : UIView, IDragHandler, IEndDragHandler
     [SerializeField] private Button backButton;
     [SerializeField] private float swipeThreshold = 100f;
 
-    private StageInfo[] stages;
+    private StageData[] stages;
+    private Dictionary<int, StageRecordSaveData> records; // PlayerSaveData.stageRecordList를 stageID로 조회하기 쉽게 변환한 것
     private int selected;
     private int index;
 
@@ -30,15 +32,14 @@ public class StageSelectScreen : UIView, IDragHandler, IEndDragHandler
         Show(selected);
     }
 
-    public void SetStages(StageInfo[] stages, int selected)
+    public void SetStages(StageData[] stages, Dictionary<int, StageRecordSaveData> records, int selected)
     {
         this.stages = stages;
+        this.records = records;
         this.selected = selected;
     }
 
-    public void OnDrag(PointerEventData eventData)
-    {
-    }
+    public void OnDrag(PointerEventData eventData) { }
 
     public void OnEndDrag(PointerEventData eventData)
     {
@@ -53,9 +54,9 @@ public class StageSelectScreen : UIView, IDragHandler, IEndDragHandler
     {
         index = Mathf.Clamp(target, 0, stages.Length - 1);
         var stage = stages[index];
-        titleText.text = stage.name;
-        illustration.color = stage.illustrationColor;
-        descriptionText.text = stage.description;
+        titleText.text = stage.stageName;
+        illustration.color = stage.IllustrationColor;
+        descriptionText.text = stage.stageDescription;
         ShowSide(prevIllustration, index - 1);
         ShowSide(nextIllustration, index + 1);
     }
@@ -65,13 +66,17 @@ public class StageSelectScreen : UIView, IDragHandler, IEndDragHandler
         var exists = sideIndex >= 0 && sideIndex < stages.Length;
         side.gameObject.SetActive(exists);
         if (exists)
-            side.color = stages[sideIndex].illustrationColor;
+            side.color = stages[sideIndex].IllustrationColor;
     }
 
     private void Select()
     {
         selected = index;
-        UIManager.Instance.Get<BattleTab>().SetStage(stages[selected]);
+        var stage = stages[selected];
+        records.TryGetValue(stage.stageID, out var record);
+        var bestTime = record != null ? Mathf.RoundToInt(record.bestSurvivalSeconds) : 0;
+
+        UIManager.Instance.Get<BattleTab>().SetStage(stage, bestTime);
         Close();
     }
 }

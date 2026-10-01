@@ -306,7 +306,8 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
 
                 if (loadedDatas.ContainsKey(data.stageID))
                     throw new InvalidOperationException($"중복된 Stage ID: {data.stageID}");
-
+                
+                data.OnLoaded();
                 loadedDatas.Add(data.stageID, data);
             }
 

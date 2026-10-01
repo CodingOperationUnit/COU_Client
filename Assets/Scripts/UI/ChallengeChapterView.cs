@@ -30,10 +30,10 @@ public class ChallengeChapterView : MonoBehaviour
     public void Set(ChallengeChapterInfo chapter)
     {
         this.chapter = chapter;
-        titleText.text = chapter.stage.name;
+        titleText.text = chapter.stage.stageName;
         for (var i = 0; i < cards.Length; i++)
         {
-            cards[i].illustration.color = chapter.stage.illustrationColor;
+            cards[i].illustration.color = chapter.stage.IllustrationColor;
             cards[i].rewarded.SetActive(chapter.challenges[i].rewarded);
         }
     }
