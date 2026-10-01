@@ -700,10 +700,6 @@ PrefabInstance:
       propertyPath: 'm_Cameras.Array.data[0]'
       value: 
       objectReference: {fileID: 1226636480}
-    - target: {fileID: 5223595056861878676, guid: ddf2cdd10591fe24994fba07b40bb824, type: 3}
-      propertyPath: orthographic size
-      value: 8
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -868,7 +864,6 @@ MonoBehaviour:
   spawner: {fileID: 1842085652}
   startingSkillId: 1
   skillPoolIds: 010000000200000003000000
-  victorySeconds: 900
   expGem1Value: 10
   baseRequiredExp: 20
   requiredExpIncrement: 6
