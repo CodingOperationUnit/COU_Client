@@ -157,7 +157,27 @@ public abstract class Enemy : MonoBehaviour, IPoolable
     {
         // TODO : 우선은 ExpGem1 고정 -> monsterExp에 따른 잼 등급 나눠야 함
         GameManager.DropItem.Spawn(DropItemType.ExpGem1, transform.position);
+
+        switch (Type)
+        {
+            case MonsterType.Elite:
+                DropBoxes(DropItemType.LuckyBox, 1);
+                DropBoxes(DropItemType.RewardBox, 2);
+                break;
+            case MonsterType.Boss:
+                DropBoxes(DropItemType.RewardBox, 5);
+                break;
+        }
+
         OnDied?.Invoke(this);
+    }
+
+    private void DropBoxes(DropItemType type, int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            GameManager.DropItem.Spawn(type, transform.position);
+        }
     }
 
     // 테스트용 피격, 죽음
