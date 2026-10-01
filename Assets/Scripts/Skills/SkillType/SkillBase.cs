@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public abstract class SkillBase
+public abstract class SkillBase<TInitData>
 {
     public const int MaxLevel = 5;
 
@@ -11,11 +11,8 @@ public abstract class SkillBase
 
     protected SkillData skillData;
     protected int level = 0;
-    protected float cooldownTimer;
-    protected Vector2 fireDirection;
-    protected Transform fireTarget;
 
-    protected SkillProjectile projectilePrefab;
+    protected SkillObject<TInitData> prefab;
     protected Transform transform;
     protected PlayerMovement movement;
     protected PlayerStats stats;
@@ -45,7 +42,7 @@ public abstract class SkillBase
 
     public void SetPrefab(SkillProjectile prefab)
     {
-        projectilePrefab = prefab;
+        this.prefab = prefab;
     }
 
     // 쿨타임이 끝났고, 사거리 안에 적이 있을 때만 발동
@@ -124,13 +121,13 @@ public abstract class SkillBase
 
     protected void SpawnProjectile(Vector2 direction)
     {
-        if(projectilePrefab == null)
+        if(prefab == null)
         {
             Debug.LogWarning($"[SkillBase] 발사체 프리팹이 없습니다: {SkillId}");
             return;
         }
 
-        SkillObjectPool.Instance.Get(projectilePrefab.gameObject, transform.position, Quaternion.identity, instance =>
+        SkillObjectPool.Instance.Get(prefab.gameObject, transform.position, Quaternion.identity, instance =>
         {
             if (instance.TryGetComponent(out SkillProjectile projectile))
             {
