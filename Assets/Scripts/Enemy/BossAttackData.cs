@@ -21,7 +21,7 @@ public class BossAttackData
     [NonSerialized] private BossAttackType parsedAttackType;
     public BossAttackType AttackType => parsedAttackType;
 
-    // MonsterDatabase.Load()에서 JSON을 읽은 직후 한 번 호출
+    // JsonDataManager에서 JSON을 읽은 직후 한 번 호출
     public void OnLoaded()
     {
         if (!Enum.TryParse(attackType, out parsedAttackType))

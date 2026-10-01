@@ -25,7 +25,7 @@ public class SpawnEventData
     [NonSerialized] private SpawnEventType parsedEventType;
     public SpawnEventType EventType => parsedEventType;
 
-    // MonsterDatabase.Load()에서 JSON을 읽은 직후 한 번 호출
+    // JsonDataManager에서 JSON을 읽은 직후 한 번 호출
     public void OnLoaded()
     {
         if (!Enum.TryParse(eventType, out parsedEventType))

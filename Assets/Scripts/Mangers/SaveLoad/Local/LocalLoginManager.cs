@@ -54,17 +54,11 @@ public class LocalLoginManager : MonoSingleton<LocalLoginManager>
             // 계정 목록 저장이 실패했을 때 남을 수 있는 파일도 보호합니다.
             if (SaveLoadHelper.LoadPlayer(playerID) != null)
             {
-                message = "해당 아이디의 게임 데이터가 이미 있습니다. "
-                          + "저장 상태를 확인해 주세요.";
+                message = "해당 아이디의 게임 데이터가 이미 있습니다. " + "저장 상태를 확인해 주세요.";
                 return false;
             }
 
-            var playerData = new PlayerSaveData
-            {
-                playerID = playerID,
-                gold = 0,
-                exp = 0
-            };
+            var playerData = PlayerSaveData.CreateDefault(playerID);
 
             SaveLoadHelper.SavePlayer(playerData);
             accountData.accounts.Add(new LocalAccountData

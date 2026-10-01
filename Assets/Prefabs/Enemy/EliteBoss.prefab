@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 5078269183229674546}
   - component: {fileID: 3457560908250777593}
   - component: {fileID: 711798654628914199}
-  - component: {fileID: 1746966730440758341}
+  - component: {fileID: 4816407247960463197}
   m_Layer: 9
-  m_Name: Enemy
+  m_Name: EliteBoss
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 9002175542074042391}
@@ -98,7 +98,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &1746966730440758341
+--- !u!114 &4816407247960463197
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -107,9 +107,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 2456992414015291868}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4661f9ca5f810db42a51a0cac51d8098, type: 3}
+  m_Script: {fileID: 11500000, guid: 52cfc64745a9be743a319868da585675, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Monster
+  m_EditorClassIdentifier: Assembly-CSharp::BossMonster
   attackRange: 0.6
   attackInterval: 1
   currentHp: 0

@@ -29,7 +29,48 @@ public class PlayerSaveData
 {
     public string playerID;
     
-    // 보유 장비, 골드, 스테이지 정보 등을 작성 예정
     public int gold;
-    public int exp;
+    public int gem;
+
+    public int stamina;
+    public int accountLevel = 1;
+    public int accountExp;
+
+    public List<EquipmentSaveData> equipmentList = new List<EquipmentSaveData>();
+    public List<StageRecordSaveData> stageRecordList = new List<StageRecordSaveData>();
+
+    public static PlayerSaveData CreateDefault(string playerID)
+    {
+        if (string.IsNullOrWhiteSpace(playerID))
+            throw new ArgumentException("플레이어 ID가 필요합니다.");
+
+        return new PlayerSaveData
+        {
+            playerID = playerID,
+            gold = 0,
+            gem = 0,
+            stamina = 60,
+            accountLevel = 1,
+            accountExp = 0,
+            equipmentList = new List<EquipmentSaveData>(),
+            stageRecordList = new List<StageRecordSaveData>()
+        };
+    }
+}
+
+[Serializable]
+public class EquipmentSaveData
+{
+    public string instanceId;
+    public long itemId;
+    public int level = 1;
+    public bool isEquipped;
+}
+
+[Serializable]
+public class StageRecordSaveData
+{
+    public int stageID;
+    public bool isCleared;
+    public float bestSurvivalSeconds;
 }
