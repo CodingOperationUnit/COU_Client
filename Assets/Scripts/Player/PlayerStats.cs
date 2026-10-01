@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PlayerStats : MonoBehaviour
 {
-    [Header("Equipped (Dummy) - 인벤토리가 없는 씬에서만 사용")]
+    [Header("Equipped (Dummy) - 로그인 없이 실행한 테스트에서만 사용")]
     [SerializeField] private List<DummyEquipment> dummyEquipments = new();
 
     private bool isCalculated;
@@ -13,7 +15,7 @@ public class PlayerStats : MonoBehaviour
     private WeaponType equippedWeaponType;
     private string equippedWeaponName;
     private int startingSkillId;
-    private bool usesInventory;
+    private string equipmentSource;
 
     private static PlayerBaseStatData Base => PlayerDatabase.BaseStats;
 
@@ -23,7 +25,8 @@ public class PlayerStats : MonoBehaviour
     public WeaponType EquippedWeaponType { get { EnsureCalculated(); return equippedWeaponType; } }
     public string EquippedWeaponName { get { EnsureCalculated(); return equippedWeaponName; } }
     public int StartingSkillId { get { EnsureCalculated(); return startingSkillId; } }   // 0이면 시작 스킬 없음
-    public bool UsesInventory { get { EnsureCalculated(); return usesInventory; } }
+    public string EquipmentSource { get { EnsureCalculated(); return equipmentSource; } } // 인벤토리 / 계정 데이터 / 더미
+    public bool UsesInventory => EquipmentSource != "더미";
 
     public int CriticalDamage => Base.criticalDamage;
     public int CriticalChance => Base.criticalChance;
@@ -44,31 +47,86 @@ public class PlayerStats : MonoBehaviour
 
         startingSkillId = WeaponSkillTable.NoSkill;
 
-        if (PlayerInventory.Instance != null)
-            CalculateFromInventory();
+        if (IsPlayerDataLoaded() && PlayerInventory.Instance != null)
+        {
+            equipmentSource = "인벤토리";
+            CalculateFromEquipped(GetEquippedFromInventory(PlayerInventory.Instance));
+        }
+        else if (IsPlayerDataLoaded())
+        {
+            equipmentSource = "계정 데이터";
+            CalculateFromEquipped(GetEquippedFromSaveData(GameManager.PlayerData.currentData));
+        }
         else
+        {
+            equipmentSource = "더미";
             CalculateFromDummy();
+        }
 
-        Debug.Log("[PlayerStats] 장비 출처: " + (usesInventory ? "인벤토리" : "더미") +
+        Debug.Log("[PlayerStats] 장비 출처: " + equipmentSource +
                   " / 기본 Atk: " + Base.attack + ", 기본 Hp: " + Base.hp +
                   " / 최종 Atk: " + finalAtk + ", 최종 Hp: " + finalHp +
                   " / 무기: " + (hasWeapon ? equippedWeaponName + " (" + equippedWeaponType + ")" : "없음") +
                   " / 시작 스킬: " + (startingSkillId == WeaponSkillTable.NoSkill ? "없음" : startingSkillId.ToString()));
     }
 
-    private void CalculateFromInventory()
+    private static bool IsPlayerDataLoaded()
     {
-        usesInventory = true;
-        var inventory = PlayerInventory.Instance;
+        var dataManager = GameManager.PlayerData;
+        return dataManager != null && dataManager.isPlayerDataLoaded;
+    }
 
-        int totalAtk = inventory.GetTotalStat(item => item.ScaledAttack);
-        int totalHp = inventory.GetTotalStat(item => item.ScaledHp);
+    // 메인·테스트 씬: 인벤토리에서 부위별 장착 장비를 모은다
+    private static List<OwnedItem> GetEquippedFromInventory(PlayerInventory inventory)
+    {
+        var result = new List<OwnedItem>();
+
+        foreach (EquipSlotType slot in Enum.GetValues(typeof(EquipSlotType)))
+        {
+            var item = inventory.GetEquipped(slot);
+            if (item != null)
+                result.Add(item);
+        }
+
+        return result;
+    }
+
+    // 전투 씬: 계정 데이터의 장비 목록에서 장착된 것만 OwnedItem으로 복원 (PlayerInventory.Load와 같은 방식)
+    private static List<OwnedItem> GetEquippedFromSaveData(PlayerSaveData data)
+    {
+        ItemDatabase.Load();
+
+        var bySlot = new Dictionary<EquipSlotType, OwnedItem>();
+        if (data.equipmentList == null) return bySlot.Values.ToList();
+
+        foreach (var saved in data.equipmentList)
+        {
+            if (!saved.isEquipped) continue;
+
+            var item = new OwnedItem(saved.itemId)
+            {
+                instanceId = saved.instanceId,
+                level = saved.level,
+                isEquipped = true,
+                grade = saved.grade
+            };
+
+            bySlot[item.Data.SlotType] = item;
+        }
+
+        return bySlot.Values.ToList();
+    }
+
+    private void CalculateFromEquipped(List<OwnedItem> equipped)
+    {
+        int totalAtk = equipped.Sum(item => item.ScaledAttack);
+        int totalHp = equipped.Sum(item => item.ScaledHp);
 
         // 장비 데이터에 공격력·체력 보너스 % 필드가 없어 0%로 계산 (필드 추가 시 교체)
         finalAtk = CalculateStat(Base.attack, totalAtk, 0);
         finalHp = CalculateStat(Base.hp, totalHp, 0);
 
-        var weapon = inventory.GetEquipped(EquipSlotType.Weapon);
+        var weapon = equipped.Find(item => item.Data.SlotType == EquipSlotType.Weapon);
         hasWeapon = weapon != null;
         if (!hasWeapon) return;
 
@@ -84,8 +142,6 @@ public class PlayerStats : MonoBehaviour
 
     private void CalculateFromDummy()
     {
-        usesInventory = false;
-
         int totalAtk = 0;
         int totalAtkBonus = 0;
         int totalHp = 0;
