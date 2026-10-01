@@ -1,7 +1,5 @@
 using UnityEngine;
 
-public class ProjectileSkillBase : SkillBase
+public abstract class ProjectileSkillBase : SkillBase
 {
-    protected float cooldownTimer;
-    protected Transform fireTarget;
 }

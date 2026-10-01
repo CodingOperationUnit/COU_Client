@@ -79,7 +79,7 @@ public class SkillController : MonoBehaviour
             return false;
         }
 
-        skill.SetSkillController(this);
+        skill.SetContext(new SkillContext(transform, PlayerMovement, PlayerStats));
         skill.SetPrefab(SkillManager.Instance.GetProjectilePrefab(skillId));
 
         skill.Levelup();

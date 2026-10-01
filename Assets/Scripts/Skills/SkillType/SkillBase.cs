@@ -1,18 +1,25 @@
 using System;
 using UnityEngine;
 
-public abstract class SkillBase<TInitData>
+public abstract class SkillBase
 {
     public const int MaxLevel = 5;
 
+    protected float cooldownTimer;
+    protected Vector2 fireDirection;
+    protected Transform fireTarget;
+
+    // 수정 예정
+    // ==============================================================================================================
     // 레벨당 배율 (레벨 1 = 1.0 기준으로 누적)
     private const float CooldownMultiplierPerLevel = 0.758f;
     private const float DamageMultiplierPerLevel = 1.2f;
+    // ==============================================================================================================
 
     protected SkillData skillData;
     protected int level = 0;
 
-    protected SkillObject<TInitData> prefab;
+    protected GameObject prefab;
     protected Transform transform;
     protected PlayerMovement movement;
     protected PlayerStats stats;
@@ -32,17 +39,16 @@ public abstract class SkillBase<TInitData>
         level = 0;
     }
 
-    public void SetSkillController(SkillController controller)
+    public void SetContext(SkillContext context)
     {
-        transform = controller.transform;
-        movement = controller.PlayerMovement;
-        stats = controller.PlayerStats;
-
+        transform = context.Owner;
+        movement = context.Movement;
+        stats = context.Stats;
     }
 
     public void SetPrefab(SkillProjectile prefab)
     {
-        this.prefab = prefab;
+        this.prefab = prefab.gameObject;
     }
 
     // 쿨타임이 끝났고, 사거리 안에 적이 있을 때만 발동
@@ -119,21 +125,26 @@ public abstract class SkillBase<TInitData>
         level = Math.Clamp(level - 1, 1, MaxLevel);
     }
 
-    protected void SpawnProjectile(Vector2 direction)
+    protected void Spawn<TInitData>(Vector3 position, TInitData initData)
     {
-        if(prefab == null)
+        if (prefab == null)
         {
-            Debug.LogWarning($"[SkillBase] 발사체 프리팹이 없습니다: {SkillId}");
+            Debug.LogWarning($"[SkillBase] 프리팹이 없습니다: {SkillId}");
             return;
         }
 
-        SkillObjectPool.Instance.Get(prefab.gameObject, transform.position, Quaternion.identity, instance =>
+        SkillObjectPool.Instance.Get(prefab, position, Quaternion.identity, instance =>
         {
-            if (instance.TryGetComponent(out SkillProjectile projectile))
+            if (instance.TryGetComponent(out SkillObject<TInitData> skillObject))
             {
-                projectile.Init(skillData, new ProjectileLaunchInfo(direction, fireTarget, DamageMultiplier));
+                skillObject.Init(initData);
             }
         });
+    }
+
+    protected void SpawnProjectile(Vector2 direction)
+    {
+        Spawn(transform.position, new ProjectileData(skillData, direction, fireTarget, DamageMultiplier));
     }
 
     protected virtual void FireProjectile()
