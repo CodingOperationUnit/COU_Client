@@ -54,6 +54,44 @@ public class PlayerInventory : MonoBehaviour
         Load();
     }
 
+    private void Start()
+    {
+        ClaimBattleResult();
+    }
+
+    // 직전 전투 결과(골드, 계정 경험치, 보상상자)를 지급하고 비운다
+    private void ClaimBattleResult()
+    {
+        var result = BattleResult.Last;
+        if (result == null || !GameManager.PlayerData.isPlayerDataLoaded)
+            return;
+
+        BattleResult.Last = null;
+
+        var data = GameManager.PlayerData.currentData;
+        data.gold += result.Gold;
+        data.accountExp += result.AccountExp;
+
+        var record = data.stageRecordList.FirstOrDefault(r => r.stageID == result.StageID);
+        if (record == null)
+        {
+            record = new StageRecordSaveData { stageID = result.StageID };
+            data.stageRecordList.Add(record);
+        }
+        record.isCleared |= result.Victory;
+        record.bestSurvivalSeconds = Mathf.Max(record.bestSurvivalSeconds, result.Seconds);
+
+        // 보상상자: 최저 등급 장비를 상자 개수만큼 무작위 지급
+        var pool = ItemDatabase.GetAll().Where(item => item.Grade == ItemGrade.General).ToList();
+        if (pool.Count > 0)
+        {
+            for (var i = 0; i < result.RewardBoxes; i++)
+                items.Add(new OwnedItem(pool[UnityEngine.Random.Range(0, pool.Count)].itemId));
+        }
+
+        PersistAndNotify();
+    }
+
     // private void OnApplicationQuit() => Save();
     //
     // private void OnApplicationPause(bool pause)
