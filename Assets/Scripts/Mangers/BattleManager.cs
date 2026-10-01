@@ -6,7 +6,10 @@ public class BattleManager : MonoBehaviour
     public static BattleManager Instance { get; private set; }
 
     [SerializeField] private PlayerHealth playerHealth;
+    [SerializeField] private PlayerLootReceiver lootReceiver;
+    [SerializeField] private MonsterSpawner spawner;
     [SerializeField] private int victorySeconds = 900;
+    [SerializeField] private int expGem1Value = 10;
     [SerializeField] private int baseRequiredExp = 20;
     [SerializeField] private int requiredExpIncrement = 6;
 
@@ -17,6 +20,7 @@ public class BattleManager : MonoBehaviour
 
     private InGameHUD hud;
     private BattleResultWindow resultWindow;
+    private PauseWindow pauseWindow;
 
     private float elapsed;
     private int seconds;
@@ -36,17 +40,22 @@ public class BattleManager : MonoBehaviour
     private void OnEnable()
     {
         playerHealth.OnDied += HandlePlayerDied;
+        lootReceiver.OnLooted += HandleLooted;
+        spawner.OnEnemyKilled += HandleEnemyKilled;
     }
 
     private void OnDisable()
     {
         playerHealth.OnDied -= HandlePlayerDied;
+        lootReceiver.OnLooted -= HandleLooted;
+        spawner.OnEnemyKilled -= HandleEnemyKilled;
     }
 
     private void Start()
     {
         hud = UIManager.Instance.Get<InGameHUD>();
         resultWindow = UIManager.Instance.Get<BattleResultWindow>();
+        pauseWindow = UIManager.Instance.Get<PauseWindow>();
 
         hud.SetTime(0);
         hud.SetKillCount(0);
@@ -110,6 +119,18 @@ public class BattleManager : MonoBehaviour
 
         kills++;
         hud.SetKillCount(kills);
+        pauseWindow.SetKillCount(kills);
+    }
+
+    private void HandleEnemyKilled(Enemy enemy)
+    {
+        AddKill();
+    }
+
+    private void HandleLooted(DropItemType type)
+    {
+        if (type == DropItemType.ExpGem1)
+            AddExp(expGem1Value);
     }
 
     private void HandlePlayerDied()
