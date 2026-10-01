@@ -71,7 +71,7 @@ public class EquipDetailPopUp : UIPopup
         hpText.transform.parent.gameObject.SetActive(data.hpBonus > 0);
         hpText.text = $"HP {boundItem.ScaledHp}";
 
-        levelText.text = $"레벨: {boundItem.level}/{ItemLevelConfig.MaxLevel}";
+        levelText.text = $"레벨: {boundItem.level}/{boundItem.MaxLevel}";
 
         skillListText.text = string.Join("\n", data.gradeSkills.Select(FormatSkillLine));
 

@@ -72,4 +72,5 @@ public static class ItemDatabase
         var folder = slotType == EquipSlotType.Weapon ? "Weapon" : "Equip";
         return Resources.Load<Sprite>($"Equip/Inven/Item/{folder}/Grade/{grade}");
     }
+
 }

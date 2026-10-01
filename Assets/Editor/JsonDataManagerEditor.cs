@@ -11,7 +11,6 @@ public class JsonDataManagerEditor : Editor
     private readonly HashSet<int> expandedBossAttacks = new();
     private readonly HashSet<int> expandedSpawnEvents = new();
     private readonly HashSet<int> expandedStages = new();
-    private readonly HashSet<long> expandedItems = new();
     private readonly HashSet<int> expandedSkills = new();
 
     public override void OnInspectorGUI()
@@ -27,8 +26,6 @@ public class JsonDataManagerEditor : Editor
             data => $"스테이지 {data.stageID} / {data.eventType}", DrawSpawnEvent);
         DrawDictionary("스테이지 데이터", manager.StageDataDic, expandedStages,
             data => data.stageName, DrawStage);
-        DrawDictionary("아이템 데이터", manager.ItemDataDic, expandedItems,
-            data => data.itemName, DrawItem);
         DrawDictionary("스킬 데이터", manager.SkillDataDic, expandedSkills,
             data => data.Name, DrawSkill);
     }
@@ -127,31 +124,6 @@ public class JsonDataManagerEditor : Editor
         EditorGUILayout.TextField("설명", data.stageDescription ?? string.Empty);
         EditorGUILayout.TextField("UI 색깔 문자열", data.illustrationColor ?? string.Empty);
         EditorGUILayout.ColorField("UI 색깔 (파싱됨)", data.IllustrationColor);
-    }
-
-    private static void DrawItem(ItemData data)
-    {
-        EditorGUILayout.LongField("아이템 ID", data.itemId);
-        EditorGUILayout.TextField("이름", data.itemName ?? string.Empty);
-        EditorGUILayout.TextField("설명", data.description ?? string.Empty);
-        EditorGUILayout.TextField("아이콘 경로", data.iconPath ?? string.Empty);
-        EditorGUILayout.TextField("장착 슬롯", data.slotType ?? string.Empty);
-        EditorGUILayout.TextField("등급", data.grade ?? string.Empty);
-        EditorGUILayout.IntField("체력 보너스", data.hpBonus);
-        EditorGUILayout.IntField("공격력 보너스", data.attackBonus);
-        EditorGUILayout.IntField("이동 속도 보너스", data.moveSpeedBonus);
-
-        int skillCount = data.gradeSkills?.Length ?? 0;
-        EditorGUILayout.IntField("등급 효과 수", skillCount);
-
-        using (new EditorGUI.IndentLevelScope())
-        {
-            for (int i = 0; i < skillCount; i++)
-            {
-                EditorGUILayout.TextField(
-                    $"효과 {i + 1}", data.gradeSkills[i] ?? string.Empty);
-            }
-        }
     }
 
     private static void DrawSkill(SkillData data)
