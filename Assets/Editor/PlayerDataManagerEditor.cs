@@ -29,7 +29,8 @@ public class PlayerDataManagerEditor : Editor
             EditorGUILayout.TextField("플레이어 ID", data.playerID ?? string.Empty);
             EditorGUILayout.IntField("골드", data.gold);
             EditorGUILayout.IntField("보석", data.gem);
-            EditorGUILayout.IntField("스태미나", data.stamina);
+            EditorGUILayout.IntField("현재 스태미나", data.currentStamina);
+            EditorGUILayout.IntField("최대 스태미나", data.maxStamina);
             EditorGUILayout.IntField("계정 레벨", data.accountLevel);
             EditorGUILayout.IntField("계정 경험치", data.accountExp);
         }
