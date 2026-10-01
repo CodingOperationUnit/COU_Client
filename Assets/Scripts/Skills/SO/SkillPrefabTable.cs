@@ -6,7 +6,7 @@ using UnityEngine;
 public class SkillPrefabEntry
 {
     public int SkillId;
-    public SkillProjectile Prefab;
+    public SkillObjectBase Prefab;
 }
 
 [CreateAssetMenu(fileName = "SkillPrefabTable", menuName = "Skill/SkillPrefabTable")]
@@ -14,16 +14,16 @@ public class SkillPrefabTable : ScriptableObject
 {
     [SerializeField] private List<SkillPrefabEntry> _entries = new();
 
-    private Dictionary<int, SkillProjectile> _prefabById;
+    private Dictionary<int, SkillObjectBase> _prefabById;
 
-    public SkillProjectile Get(int skillId)
+    public SkillObjectBase Get(int skillId)
     {
         if(_prefabById == null)
         {
             Build();
         }
 
-        if(!_prefabById.TryGetValue(skillId, out SkillProjectile prefab))
+        if(!_prefabById.TryGetValue(skillId, out SkillObjectBase prefab))
         {
             Debug.LogWarning($"[SkillPrefabTable] 등록되지 않은 스킬 프리팹입니다: {skillId}");
             return null;
@@ -34,7 +34,7 @@ public class SkillPrefabTable : ScriptableObject
 
     private void Build()
     {
-        _prefabById = new Dictionary<int, SkillProjectile>();
+        _prefabById = new Dictionary<int, SkillObjectBase>();
 
         foreach(SkillPrefabEntry entry in _entries)
         {

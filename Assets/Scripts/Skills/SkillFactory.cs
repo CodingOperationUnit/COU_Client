@@ -9,6 +9,7 @@ public static class SkillFactory
         { 1, () => new Skill_Shuriken() },
         { 2, () => new Skill_Revolver() },
         { 3, () => new Skill_Katana() },
+        { 4, () => new Skill_Planet() },
     };
 
     public static SkillBase Create(int skillId)

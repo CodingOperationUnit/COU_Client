@@ -43,7 +43,7 @@ public readonly struct AutoData
     }
 }
 
-public abstract class SkillObject<TInitData> : MonoBehaviour, ISkillPoolable
+public abstract class SkillObject<TInitData> : SkillObjectBase, ISkillPoolable
 {
     public event Action<GameObject> OnBeforeReturn;
     protected SkillData skillData;

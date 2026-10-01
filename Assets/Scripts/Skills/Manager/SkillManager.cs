@@ -12,7 +12,7 @@ public class SkillManager : MonoSingleton<SkillManager>
             return null;
         }
 
-        SkillProjectile prefab = _prefabTable.Get(skillId);
+        SkillObjectBase prefab = _prefabTable.Get(skillId);
 
         return prefab != null ? prefab.gameObject : null;
     }
