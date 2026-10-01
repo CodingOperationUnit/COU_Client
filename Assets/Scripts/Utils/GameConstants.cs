@@ -22,5 +22,7 @@ public static class GameConstants
         public const string SpawnData_Json_Path = "JsonFiles/Spawn";
         public const string StageData_Json_Path = "JsonFiles/Stage";
         public const string MonsterData_Json_Path = "JsonFiles/Monster";
+        public const string ItemData_Json_Path = "JsonFiles/Item";
+        public const string SkillData_Json_Path = "JsonFiles/Skill";
     }
 }

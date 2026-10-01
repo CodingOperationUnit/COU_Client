@@ -7,6 +7,8 @@ using UnityEngine;
 
 public class JsonDataManager : MonoSingleton<JsonDataManager>
 {
+    #region Fields
+
     private Dictionary<int, MonsterData> monsterDataDic;
     public Dictionary<int, MonsterData> MonsterDataDic => monsterDataDic;
 
@@ -18,6 +20,14 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
 
     private Dictionary<int, StageData> stageDataDic;
     public IReadOnlyDictionary<int, StageData> StageDataDic => stageDataDic;
+    
+    private Dictionary<long, ItemData> itemDataDic;
+    public IReadOnlyDictionary<long, ItemData> ItemDataDic => itemDataDic;
+
+    private Dictionary<int, SkillData> skillDataDic;
+    public IReadOnlyDictionary<int, SkillData> SkillDataDic => skillDataDic;
+
+    #endregion
 
     protected override void Awake()
     {
@@ -29,8 +39,11 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
         LoadBossAttackData();
         LoadSpawnData();
         LoadStageData();
-
+        LoadItemData();
+        LoadSkillData();
     }
+
+    #region GetMethod
 
     public MonsterData GetMonsterDataFromJson(int monsterID)
     {
@@ -94,6 +107,38 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
         Debug.LogWarning($"등록되지 않은 Stage ID: {stageID}");
         return null;
     }
+    
+    public ItemData GetItemDataFromJson(long itemID)
+    {
+        if (itemDataDic == null)
+        {
+            Debug.LogError("Item 데이터가 초기화되지 않았습니다.");
+            return null;
+        }
+
+        if (itemDataDic.TryGetValue(itemID, out ItemData data))
+            return data;
+
+        Debug.LogWarning($"등록되지 않은 Item ID: {itemID}");
+        return null;
+    }
+
+    public SkillData GetSkillDataFromJson(int skillID)
+    {
+        if (skillDataDic == null)
+        {
+            Debug.LogError("Skill 데이터가 초기화되지 않았습니다.");
+            return null;
+        }
+
+        if (skillDataDic.TryGetValue(skillID, out SkillData data))
+            return data;
+
+        Debug.LogWarning($"등록되지 않은 Skill ID: {skillID}");
+        return null;
+    }
+
+    #endregion
     
     #region LoadData
     
@@ -270,6 +315,94 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
         catch (Exception exception)
         {
             Debug.LogError($"Stage 데이터 로드 실패: {exception.Message}");
+        }
+    }
+    
+    private void LoadItemData()
+    {
+        if (itemDataDic != null) return;
+    
+        try
+        {
+            TextAsset jsonFile = Resources.Load<TextAsset>(GameConstants.Paths.ItemData_Json_Path);
+            if (jsonFile == null)
+                throw new InvalidOperationException($"JSON 파일이 없습니다: {GameConstants.Paths.ItemData_Json_Path}");
+    
+            JObject root = JObject.Parse(jsonFile.text);
+            JArray rows = root["datas"] as JArray;
+    
+            if (rows == null || rows.Count == 0)
+                throw new InvalidOperationException("Item 데이터 목록이 비어 있습니다.");
+    
+            var loadedDatas = new Dictionary<long, ItemData>();
+    
+            foreach (JToken row in rows)
+            {
+                if (!(row is JObject))
+                    throw new InvalidOperationException("Item 데이터 항목이 객체 형식이 아닙니다.");
+    
+                ItemData data = row.ToObject<ItemData>();
+    
+                if (data == null || data.itemId <= 0)
+                    throw new InvalidOperationException("Item 데이터 또는 ID가 올바르지 않습니다.");
+    
+                if (loadedDatas.ContainsKey(data.itemId))
+                    throw new InvalidOperationException($"중복된 Item ID: {data.itemId}");
+    
+                loadedDatas.Add(data.itemId, data);
+            }
+    
+            itemDataDic = loadedDatas;
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"Item 데이터 로드 실패: {exception.Message}");
+        }
+    }
+    
+    private void LoadSkillData()
+    {
+        if (skillDataDic != null) return;
+    
+        try
+        {
+            TextAsset jsonFile = Resources.Load<TextAsset>(GameConstants.Paths.SkillData_Json_Path);
+            if (jsonFile == null)
+                throw new InvalidOperationException($"JSON 파일이 없습니다: {GameConstants.Paths.SkillData_Json_Path}");
+    
+            JObject root = JObject.Parse(jsonFile.text);
+            JArray rows = root["datas"] as JArray;
+    
+            if (rows == null || rows.Count == 0)
+                throw new InvalidOperationException("Skill 데이터 목록이 비어 있습니다.");
+    
+            var loadedDatas = new Dictionary<int, SkillData>();
+    
+            foreach (JToken row in rows)
+            {
+                if (!(row is JObject))
+                    throw new InvalidOperationException("Skill 데이터 항목이 객체 형식이 아닙니다.");
+    
+                SkillData data = row.ToObject<SkillData>();
+    
+                if (data == null || data.ID <= 0)
+                    throw new InvalidOperationException("Skill 데이터 또는 ID가 올바르지 않습니다.");
+    
+                if (loadedDatas.ContainsKey(data.ID))
+                    throw new InvalidOperationException($"중복된 Skill ID: {data.ID}");
+    
+                // Newtonsoft 역직렬화 후 Unity 콜백을 직접 호출하여
+                // Type 문자열을 TargetType 열거형으로 변환합니다.
+                data.OnAfterDeserialize();
+    
+                loadedDatas.Add(data.ID, data);
+            }
+    
+            skillDataDic = loadedDatas;
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"Skill 데이터 로드 실패: {exception.Message}");
         }
     }
 

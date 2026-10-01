@@ -11,6 +11,8 @@ public class JsonDataManagerEditor : Editor
     private readonly HashSet<int> expandedBossAttacks = new();
     private readonly HashSet<int> expandedSpawnEvents = new();
     private readonly HashSet<int> expandedStages = new();
+    private readonly HashSet<long> expandedItems = new();
+    private readonly HashSet<int> expandedSkills = new();
 
     public override void OnInspectorGUI()
     {
@@ -25,10 +27,16 @@ public class JsonDataManagerEditor : Editor
             data => $"스테이지 {data.stageID} / {data.eventType}", DrawSpawnEvent);
         DrawDictionary("스테이지 데이터", manager.StageDataDic, expandedStages,
             data => data.stageName, DrawStage);
+        DrawDictionary("아이템 데이터", manager.ItemDataDic, expandedItems,
+            data => data.itemName, DrawItem);
+        DrawDictionary("스킬 데이터", manager.SkillDataDic, expandedSkills,
+            data => data.Name, DrawSkill);
     }
 
-    private static void DrawDictionary<T>(string title, IReadOnlyDictionary<int, T> datas,
-        HashSet<int> expandedIDs, Func<T, string> getLabel, Action<T> drawData) where T : class
+    private static void DrawDictionary<TKey, T>(string title, IReadOnlyDictionary<TKey, T> datas,
+        HashSet<TKey> expandedIDs, Func<T, string> getLabel, Action<T> drawData)
+        where TKey : IComparable<TKey>
+        where T : class
     {
         EditorGUILayout.Space();
         EditorGUILayout.LabelField(title, EditorStyles.boldLabel);
@@ -41,10 +49,10 @@ public class JsonDataManagerEditor : Editor
 
         EditorGUILayout.LabelField("등록 수", datas.Count.ToString());
 
-        var ids = new List<int>(datas.Keys);
+        var ids = new List<TKey>(datas.Keys);
         ids.Sort();
 
-        foreach (int id in ids)
+        foreach (TKey id in ids)
         {
             T data = datas[id];
             if (data == null)
@@ -116,6 +124,44 @@ public class JsonDataManagerEditor : Editor
         EditorGUILayout.IntField("스테이지 ID", data.stageID);
         EditorGUILayout.TextField("이름", data.stageName ?? string.Empty);
         EditorGUILayout.FloatField("진행 시간 (초)", data.duration);
+    }
+
+    private static void DrawItem(ItemData data)
+    {
+        EditorGUILayout.LongField("아이템 ID", data.itemId);
+        EditorGUILayout.TextField("이름", data.itemName ?? string.Empty);
+        EditorGUILayout.TextField("설명", data.description ?? string.Empty);
+        EditorGUILayout.TextField("아이콘 경로", data.iconPath ?? string.Empty);
+        EditorGUILayout.TextField("장착 슬롯", data.slotType ?? string.Empty);
+        EditorGUILayout.TextField("등급", data.grade ?? string.Empty);
+        EditorGUILayout.IntField("체력 보너스", data.hpBonus);
+        EditorGUILayout.IntField("공격력 보너스", data.attackBonus);
+        EditorGUILayout.IntField("이동 속도 보너스", data.moveSpeedBonus);
+
+        int skillCount = data.gradeSkills?.Length ?? 0;
+        EditorGUILayout.IntField("등급 효과 수", skillCount);
+
+        using (new EditorGUI.IndentLevelScope())
+        {
+            for (int i = 0; i < skillCount; i++)
+            {
+                EditorGUILayout.TextField(
+                    $"효과 {i + 1}", data.gradeSkills[i] ?? string.Empty);
+            }
+        }
+    }
+
+    private static void DrawSkill(SkillData data)
+    {
+        EditorGUILayout.IntField("스킬 ID", data.ID);
+        EditorGUILayout.TextField("이름", data.Name ?? string.Empty);
+        EditorGUILayout.TextField("설명", data.Description ?? string.Empty);
+        EditorGUILayout.TextField("타겟 종류 문자열", data.Type ?? string.Empty);
+        EditorGUILayout.EnumPopup("타겟 종류", data.TargetType);
+        EditorGUILayout.FloatField("쿨다운 (초)", data.Cooldown);
+        EditorGUILayout.FloatField("속도", data.Speed);
+        EditorGUILayout.FloatField("피해량", data.Damage);
+        EditorGUILayout.FloatField("사거리", data.Range);
     }
 
     public override bool RequiresConstantRepaint()
