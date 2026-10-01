@@ -39,21 +39,21 @@ public class SkillController : MonoBehaviour
         }
 
         // 테스트
-        if(keyboard.digit1Key.wasPressedThisFrame)
-        {
-            if(EquipSkill(1)) Debug.Log("스킬: Shuriken");
-        }
+        //if(keyboard.digit1Key.wasPressedThisFrame)
+        //{
+        //    if(EquipSkill(1)) Debug.Log("스킬: Shuriken");
+        //}
 
-        if(keyboard.digit2Key.wasPressedThisFrame)
-        {
-            if (EquipSkill(2)) Debug.Log("스킬: Revolver");
-        }
+        //if(keyboard.digit2Key.wasPressedThisFrame)
+        //{
+        //    if (EquipSkill(2)) Debug.Log("스킬: Revolver");
+        //}
 
-        if(keyboard.digit3Key.wasPressedThisFrame)
-        {
-            if (EquipSkill(3)) Debug.Log("스킬: Katana");
+        //if(keyboard.digit3Key.wasPressedThisFrame)
+        //{
+        //    if (EquipSkill(3)) Debug.Log("스킬: Katana");
 
-        }
+        //}
     }
 
     public bool EquipSkill(int skillId)
