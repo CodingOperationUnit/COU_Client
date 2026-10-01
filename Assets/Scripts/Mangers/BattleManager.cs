@@ -17,6 +17,7 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private int baseRequiredExp = 20;
     [SerializeField] private int requiredExpIncrement = 6;
     [SerializeField] private float healRewardRatio = 0.3f;
+    [SerializeField] private float bossVictoryDelay = 2f;
 
     [Header("Test")]
     [SerializeField] private int testExp;
@@ -36,6 +37,7 @@ public class BattleManager : MonoBehaviour
     private int exp;
     private int pendingLevelUps;
     private bool ended;
+    private float victoryTimer;
 
     private int RequiredExp => baseRequiredExp + requiredExpIncrement * (level - 1);
 
@@ -80,6 +82,16 @@ public class BattleManager : MonoBehaviour
     private void Update()
     {
         if (ended) return;
+
+        if (victoryTimer > 0f)
+        {
+            victoryTimer -= Time.deltaTime;
+            if (victoryTimer <= 0f)
+            {
+                EndBattle(true);
+                return;
+            }
+        }
 
         elapsed += Time.deltaTime;
         var current = (int)elapsed;
@@ -143,7 +155,7 @@ public class BattleManager : MonoBehaviour
 
     private void HandleBossKilled(Enemy boss)
     {
-        EndBattle(true);
+        victoryTimer = bossVictoryDelay;
     }
 
     private void HandleLooted(DropItemType type)
