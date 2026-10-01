@@ -9,10 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5078269183229674546}
-  - component: {fileID: 9222847461725470591}
   - component: {fileID: 3457560908250777593}
   - component: {fileID: 711798654628914199}
-  m_Layer: 0
+  - component: {fileID: 4816407247960463197}
+  m_Layer: 9
   m_Name: EliteBoss
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35,23 +35,6 @@ Transform:
   - {fileID: 9002175542074042391}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &9222847461725470591
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2456992414015291868}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50745194e995f0647848a865fbee073a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  attackRange: 0.6
-  attackInterval: 1
-  currentHp: 0
-  isDead: 0
-  player: {fileID: 0}
 --- !u!58 &3457560908250777593
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -115,6 +98,23 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &4816407247960463197
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2456992414015291868}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52cfc64745a9be743a319868da585675, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossMonster
+  attackRange: 0.6
+  attackInterval: 1
+  currentHp: 0
+  isDead: 0
+  player: {fileID: 2129776847289895548, guid: ddf2cdd10591fe24994fba07b40bb824, type: 3}
 --- !u!1 &5214109458787997363
 GameObject:
   m_ObjectHideFlags: 0
@@ -125,7 +125,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9002175542074042391}
   - component: {fileID: 6894254765569232408}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
