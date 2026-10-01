@@ -3,6 +3,12 @@ using UnityEngine;
 
 public abstract class SkillBase
 {
+    public const int MaxLevel = 5;
+
+    // 레벨당 배율 (레벨 1 = 1.0 기준으로 누적)
+    private const float CooldownMultiplierPerLevel = 0.758f;
+    private const float DamageMultiplierPerLevel = 1.2f;
+
     protected SkillData skillData;
     protected int level = 0;
     protected float cooldownTimer;
@@ -15,6 +21,9 @@ public abstract class SkillBase
     protected PlayerStats stats;
 
     public int Level => level;
+
+    public float CooldownMultiplier => Mathf.Pow(CooldownMultiplierPerLevel, Mathf.Max(level - 1, 0));
+    public float DamageMultiplier => Mathf.Pow(DamageMultiplierPerLevel, Mathf.Max(level - 1, 0));
 
     public int SkillId => skillData != null ? skillData.ID : -1;
     public float Range => skillData != null ? skillData.Range : 0.0f;
@@ -100,17 +109,17 @@ public abstract class SkillBase
 
     protected void ResetCooldown()
     {
-        cooldownTimer = skillData != null ? skillData.Cooldown : 0.01f;
+        cooldownTimer = skillData != null ? skillData.Cooldown * CooldownMultiplier : 0.01f;
     }
 
     public virtual void Levelup()
     {
-        level = Math.Clamp(level + 1, 1, 5);
+        level = Math.Clamp(level + 1, 1, MaxLevel);
     }
 
     public virtual void LevelDown()
     {
-        level = Math.Clamp(level - 1, 1, 5);
+        level = Math.Clamp(level - 1, 1, MaxLevel);
     }
 
     protected void SpawnProjectile(Vector2 direction)
@@ -125,7 +134,7 @@ public abstract class SkillBase
         {
             if (instance.TryGetComponent(out SkillProjectile projectile))
             {
-                projectile.Init(skillData, new ProjectileLaunchInfo(direction, fireTarget));
+                projectile.Init(skillData, new ProjectileLaunchInfo(direction, fireTarget, DamageMultiplier));
             }
         });
     }

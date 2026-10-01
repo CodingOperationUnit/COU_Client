@@ -145,7 +145,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 544105666}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!20 &544105668
 Camera:
   m_ObjectHideFlags: 0
@@ -297,6 +297,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInventory
   gold: 500000
+  gem: 0
 --- !u!4 &616673703
 Transform:
   m_ObjectHideFlags: 0
@@ -476,6 +477,14 @@ PrefabInstance:
     - target: {fileID: 2129776847289895548, guid: ddf2cdd10591fe24994fba07b40bb824, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 5131941939266425546, guid: ddf2cdd10591fe24994fba07b40bb824, type: 3}
+      propertyPath: m_Cameras.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866245441092528645, guid: ddf2cdd10591fe24994fba07b40bb824, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

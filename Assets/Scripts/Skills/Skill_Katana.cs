@@ -16,21 +16,21 @@ public sealed class Skill_Katana : SkillBase
 
     protected override void FireLevel2()
     {
-        throw new System.NotImplementedException();
+        FireLevel1();
     }
 
     protected override void FireLevel3()
     {
-        throw new System.NotImplementedException();
+        FireLevel1();
     }
 
     protected override void FireLevel4()
     {
-        throw new System.NotImplementedException();
+        FireLevel1();
     }
 
     protected override void FireLevel5()
     {
-        throw new System.NotImplementedException();
+        FireLevel1();
     }
 }

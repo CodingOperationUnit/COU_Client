@@ -65,6 +65,17 @@
       "spawnInterval": 0.0,
       "spawnCount": 1,
       "repeat": false
+    },
+    {
+      "spawnEventID": 7,
+      "stageID": 1,
+      "eventType": "Normal",
+      "startTime": 10.0,
+      "endTime": 150.0,
+      "monsterID": 4001,
+      "spawnInterval": 20.0,
+      "spawnCount": 1,
+      "repeat": true
     }
   ]
 }

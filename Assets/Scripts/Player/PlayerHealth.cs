@@ -4,6 +4,8 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerStats))]
 public class PlayerHealth : MonoBehaviour
 {
+    [SerializeField] private HPBar hpBar;
+
     private PlayerStats playerStats;
 
     private int maxHealth;
@@ -37,6 +39,7 @@ public class PlayerHealth : MonoBehaviour
     {
         maxHealth = playerStats.FinalHp;
         CurrentHealth = maxHealth;
+        UpdateHpBar();
     }
 
     public void GetDamage(int damage)
@@ -56,6 +59,7 @@ public class PlayerHealth : MonoBehaviour
         else
             CurrentHealth -= damage;
 
+        UpdateHpBar();
         Debug.Log("현재 체력 : " + CurrentHealth + ", 현재 목숨 : " + CurrentLives);
     }
 
@@ -68,8 +72,12 @@ public class PlayerHealth : MonoBehaviour
         else
             CurrentHealth += heal;
 
+        UpdateHpBar();
         Debug.Log("현재 체력 : " + CurrentHealth);
     }
+
+    private void UpdateHpBar()
+        => hpBar.SetRatio((float)CurrentHealth / maxHealth);
 
     private void DecreaseLife()
     {

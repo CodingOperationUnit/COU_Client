@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 public class SkillController : MonoBehaviour
 {
-    private const int MaxSkillSlots = 3;
+    public const int MaxSkillSlots = 3;
 
     private readonly List<SkillBase> _activeSkills = new();
 
@@ -39,21 +39,21 @@ public class SkillController : MonoBehaviour
         }
 
         // 테스트
-        if(keyboard.digit1Key.wasPressedThisFrame)
-        {
-            if(EquipSkill(1)) Debug.Log("스킬: Shuriken");
-        }
+        //if(keyboard.digit1Key.wasPressedThisFrame)
+        //{
+        //    if(EquipSkill(1)) Debug.Log("스킬: Shuriken");
+        //}
 
-        if(keyboard.digit2Key.wasPressedThisFrame)
-        {
-            if (EquipSkill(2)) Debug.Log("스킬: Revolver");
-        }
+        //if(keyboard.digit2Key.wasPressedThisFrame)
+        //{
+        //    if (EquipSkill(2)) Debug.Log("스킬: Revolver");
+        //}
 
-        if(keyboard.digit3Key.wasPressedThisFrame)
-        {
-            if (EquipSkill(3)) Debug.Log("스킬: Katana");
+        //if(keyboard.digit3Key.wasPressedThisFrame)
+        //{
+        //    if (EquipSkill(3)) Debug.Log("스킬: Katana");
 
-        }
+        //}
     }
 
     public bool EquipSkill(int skillId)
@@ -84,6 +84,19 @@ public class SkillController : MonoBehaviour
 
         skill.Levelup();
         _activeSkills.Add(skill);
+        return true;
+    }
+
+    public bool LevelUpSkill(int skillId)
+    {
+        SkillBase skill = _activeSkills.Find(s => s.SkillId == skillId);
+
+        if(skill == null || skill.Level >= SkillBase.MaxLevel)
+        {
+            return false;
+        }
+
+        skill.Levelup();
         return true;
     }
 

@@ -16,21 +16,21 @@ public sealed class Skill_Shuriken : SkillBase
 
     protected override void FireLevel2()
     {
-
+        FireLevel1();
     }
 
     protected override void FireLevel3()
     {
-
+        FireLevel1();
     }
 
     protected override void FireLevel4()
     {
-
+        FireLevel1();
     }
 
     protected override void FireLevel5()
     {
-
+        FireLevel1();
     }
 }

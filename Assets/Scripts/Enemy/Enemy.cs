@@ -144,17 +144,40 @@ public abstract class Enemy : MonoBehaviour, IPoolable
         // 보상 (giveReward)
         // - true  (기본) : 플레이어가 잡음 → 경험치 드롭 + OnDied(킬 수 집계)
         // - false        : 보스 등장 정리 등 "강제로 치움" → 보상/킬 없이 반납만
-        if (giveReward)
-        {
-            // TODO : 우선은 ExpGem1 고정 -> monsterExp에 따른 잼 등급 나눠야 함
-            GameManager.DropItem.Spawn(DropItemType.ExpGem1, transform.position);
-            OnDied?.Invoke(this);
-        }
+        if (giveReward) { GiveReward(); }
 
         // 반납 알림
         OnBeforeReturn?.Invoke(gameObject);
         // 몬스터가 죽은 상태면 비활성화(Pool로 반납)
         GameManager.ObjectPool.ReturnObject(gameObject);
+    }
+
+    // 처치 보상(자식용): 드롭 + 킬 수 집계
+    protected virtual void GiveReward()
+    {
+        // TODO : 우선은 ExpGem1 고정 -> monsterExp에 따른 잼 등급 나눠야 함
+        GameManager.DropItem.Spawn(DropItemType.ExpGem1, transform.position);
+
+        switch (Type)
+        {
+            case MonsterType.Elite:
+                DropBoxes(DropItemType.LuckyBox, 1);
+                DropBoxes(DropItemType.RewardBox, 2);
+                break;
+            case MonsterType.Boss:
+                DropBoxes(DropItemType.RewardBox, 5);
+                break;
+        }
+
+        OnDied?.Invoke(this);
+    }
+
+    private void DropBoxes(DropItemType type, int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            GameManager.DropItem.Spawn(type, transform.position);
+        }
     }
 
     // 테스트용 피격, 죽음

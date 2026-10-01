@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public sealed class MeleeProjectile : SkillProjectile
@@ -32,7 +33,15 @@ public sealed class MeleeProjectile : SkillProjectile
 
     private void DamageInRange()
     {
-        // TODO: _range 내 타겟 판정 (Monster 구현 후 작성 예정)
-        ApplyDamage();
+        // Damaged → Die가 순회 중 스포너 목록에서 적을 제거하므로 역순으로 순회
+        IReadOnlyList<Enemy> enemies = MonsterSpawner.Instance.SpawnedEnemies;
+
+        for(int i = enemies.Count - 1; i >= 0; i--)
+        {
+            if(Vector2.Distance(transform.position, enemies[i].transform.position) <= _range)
+            {
+                ApplyDamage(enemies[i]);
+            }
+        }
     }
 }
