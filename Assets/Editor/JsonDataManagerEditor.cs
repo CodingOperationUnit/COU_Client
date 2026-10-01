@@ -124,6 +124,9 @@ public class JsonDataManagerEditor : Editor
         EditorGUILayout.IntField("스테이지 ID", data.stageID);
         EditorGUILayout.TextField("이름", data.stageName ?? string.Empty);
         EditorGUILayout.FloatField("진행 시간 (초)", data.duration);
+        EditorGUILayout.TextField("설명", data.stageDescription ?? string.Empty);
+        EditorGUILayout.TextField("UI 색깔 문자열", data.illustrationColor ?? string.Empty);
+        EditorGUILayout.ColorField("UI 색깔 (파싱됨)", data.IllustrationColor);
     }
 
     private static void DrawItem(ItemData data)

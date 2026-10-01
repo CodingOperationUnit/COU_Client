@@ -5,7 +5,7 @@ using UnityEngine;
 public struct ChallengeChapterInfo
 {
     public int number;
-    public StageInfo stage;
+    public StageData stage;
     public ChallengeInfo[] challenges;
 }
 

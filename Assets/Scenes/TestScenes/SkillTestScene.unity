@@ -188,6 +188,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 5131941939266425546, guid: ddf2cdd10591fe24994fba07b40bb824, type: 3}
+      propertyPath: m_Cameras.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -251,6 +255,22 @@ PrefabInstance:
     - target: {fileID: 5078269183229674546, guid: 60409ea8d34556f4faba102d20a07d67, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6894254765569232408, guid: 60409ea8d34556f4faba102d20a07d67, type: 3}
+      propertyPath: m_Size.x
+      value: 11.99
+      objectReference: {fileID: 0}
+    - target: {fileID: 6894254765569232408, guid: 60409ea8d34556f4faba102d20a07d67, type: 3}
+      propertyPath: m_Size.y
+      value: 11.69
+      objectReference: {fileID: 0}
+    - target: {fileID: 6894254765569232408, guid: 60409ea8d34556f4faba102d20a07d67, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: f48fdcc0c8e4345ccbff384d0b92e2d1, type: 3}
+    - target: {fileID: 6894254765569232408, guid: 60409ea8d34556f4faba102d20a07d67, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 9222847461725470591, guid: 60409ea8d34556f4faba102d20a07d67, type: 3}
