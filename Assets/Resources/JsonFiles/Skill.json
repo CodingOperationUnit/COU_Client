@@ -4,20 +4,20 @@
       "ID": 1,
       "Name": "Shuriken",
       "Type": "nearest",
-      "Cooldown": 0.5,
+      "Cooldown": 1.0,
       "Speed": 4.0,
-      "Damage": 2.0,
-      "Range": 3.0,
+      "Damage": 1.0,
+      "Range": 5.0,
       "Description": "수리검"
     },
     {
       "ID": 2,
       "Name": "Revolver",
       "Type": "forward",
-      "Cooldown": 1.0,
+      "Cooldown": 2.0,
       "Speed": 10.0,
-      "Damage": 4.0,
-      "Range": 5.0,
+      "Damage": 2.0,
+      "Range": 20.0,
       "Description": "리볼버"
     },
     {
@@ -27,7 +27,7 @@
       "Cooldown": 0.75,
       "Speed": 6.0,
       "Damage": 1.25,
-      "Range": 1.0,
+      "Range": 2.0,
       "Description": "카타나"
     }
   ]
