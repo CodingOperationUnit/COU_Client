@@ -5,6 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerStats))]
 [RequireComponent(typeof(PlayerVisual))]
 [RequireComponent(typeof(PlayerLootReceiver))]
+[RequireComponent(typeof(SkillController))]
 public class PlayerManager : MonoBehaviour
 {
     public static PlayerManager Instance { get; private set; }
@@ -14,6 +15,7 @@ public class PlayerManager : MonoBehaviour
     public PlayerStats Stats { get; private set; }
     public PlayerVisual Visual { get; private set; }
     public PlayerLootReceiver Loot { get; private set; }
+    public SkillController Skills { get; private set; }
 
     private void Awake()
     {
@@ -30,6 +32,25 @@ public class PlayerManager : MonoBehaviour
         Stats = GetComponent<PlayerStats>();
         Visual = GetComponent<PlayerVisual>();
         Loot = GetComponent<PlayerLootReceiver>();
+        Skills = GetComponent<SkillController>();
+    }
+
+    private void OnEnable()
+    {
+        if (Health != null)
+            Health.OnDied += HandleDied;
+    }
+
+    private void OnDisable()
+    {
+        if (Health != null)
+            Health.OnDied -= HandleDied;
+    }
+
+    private void HandleDied()
+    {
+        if (Skills != null)
+            Skills.enabled = false;
     }
 
     private void OnDestroy()
