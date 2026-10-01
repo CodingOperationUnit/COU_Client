@@ -5025,6 +5025,7 @@ MonoBehaviour:
   illustration: {fileID: 8816115046642754308}
   illustrationButton: {fileID: 2287695679260197011}
   staminaCostText: {fileID: 7414752358579962076}
+  gameStartButton: {fileID: 3723622019022309614}
 --- !u!1 &7560917193528547353
 GameObject:
   m_ObjectHideFlags: 0

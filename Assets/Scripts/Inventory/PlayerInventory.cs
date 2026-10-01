@@ -14,30 +14,10 @@ public class PlayerInventory : MonoBehaviour
     // 골드와 보석을 PlayerSaveData에서 읽어오도록 구현
     public int Gold => GameManager.PlayerData.currentData.gold;
     public int Gem => GameManager.PlayerData.currentData.gem;
-    
-    // // 골드 테스트용
-    // [SerializeField] private int gold = 500000;
-    // public int Gold => gold;
-    //
-    // // 보석 테스트용
-    // [SerializeField] private int gem = 0;
-    // public int Gem => gem;
 
     public event Action OnInventoryChanged;
 
     public IReadOnlyList<OwnedItem> Items => items;
-
-
-    // private const string SaveFileName = "inventory_save.json";
-    // private static string SavePath => Path.Combine(Application.persistentDataPath, SaveFileName);
-
-    // [Serializable]
-    // private class SaveData
-    // {
-    //     public int gold;
-    //     public int gem;
-    //     public OwnedItem[] items;
-    // }
 
     private void Awake()
     {
@@ -54,39 +34,65 @@ public class PlayerInventory : MonoBehaviour
         Load();
     }
 
-    // private void OnApplicationQuit() => Save();
-    //
-    // private void OnApplicationPause(bool pause)
-    // {
-    //     if (pause) Save();
-    // }
+    private void Start()
+    {
+        ClaimBattleResult();
+    }
+
+    // 직전 전투 결과(골드, 계정 경험치, 보상상자)를 지급하고 비운다
+    private void ClaimBattleResult()
+    {
+        var result = BattleResult.Last;
+        if (result == null || !GameManager.PlayerData.isPlayerDataLoaded)
+            return;
+
+        BattleResult.Last = null;
+
+        var data = GameManager.PlayerData.currentData;
+        data.gold += result.Gold;
+        data.accountExp += result.AccountExp;
+
+        var record = data.stageRecordList.FirstOrDefault(r => r.stageID == result.StageID);
+        if (record == null)
+        {
+            record = new StageRecordSaveData { stageID = result.StageID };
+            data.stageRecordList.Add(record);
+        }
+        record.isCleared |= result.Victory;
+        record.bestSurvivalSeconds = Mathf.Max(record.bestSurvivalSeconds, result.Seconds);
+
+        // 보상상자: 최저 등급 장비를 상자 개수만큼 무작위 지급
+        var rewards = new List<OwnedItem>();
+        var pool = ItemDatabase.GetAll().Where(item => item.Grade == ItemGrade.General).ToList();
+        if (pool.Count > 0)
+        {
+            for (var i = 0; i < result.RewardBoxes; i++)
+                rewards.Add(new OwnedItem(pool[UnityEngine.Random.Range(0, pool.Count)].itemId));
+        }
+        items.AddRange(rewards);
+
+        PersistAndNotify();
+
+        if (rewards.Count > 0)
+            UIManager.Instance.Get<RewardBoxResultPopup>().Show(rewards);
+    }
     
     public OwnedItem AddItem(long itemId)
     {
         var item = new OwnedItem(itemId);
         items.Add(item);
-        // OnInventoryChanged?.Invoke();
-        // Save();
         PersistAndNotify();
         return item;
     }
 
     public void AddGem(int amount)
     {
-        // gem += amount;
-        // OnInventoryChanged?.Invoke();
-        // Save();
-
         GameManager.PlayerData.currentData.gem += amount;
         PersistAndNotify();
     }
 
     public void AddGold(int amount)
     {
-        // gold += amount;
-        // OnInventoryChanged?.Invoke();
-        // Save();
-
         GameManager.PlayerData.currentData.gold += amount;
         PersistAndNotify();
     }
@@ -97,8 +103,6 @@ public class PlayerInventory : MonoBehaviour
             return false;
 
         GameManager.PlayerData.currentData.gold -= amount;
-        // OnInventoryChanged?.Invoke();
-        // Save();
         PersistAndNotify();
         return true;
     }
@@ -115,8 +119,6 @@ public class PlayerInventory : MonoBehaviour
 
         item.isEquipped = true;
         equipped[slot] = item;
-        // OnInventoryChanged?.Invoke();
-        // Save();
         PersistAndNotify();
     }
 
@@ -127,8 +129,6 @@ public class PlayerInventory : MonoBehaviour
 
         item.isEquipped = false;
         equipped.Remove(slot);
-        // OnInventoryChanged?.Invoke();
-        // Save();
         PersistAndNotify();
     }
 
@@ -144,8 +144,6 @@ public class PlayerInventory : MonoBehaviour
 
         GameManager.PlayerData.currentData.gold -= cost;
         item.level++;
-        // OnInventoryChanged?.Invoke();
-        // Save();
         PersistAndNotify();
         return true;
     }
@@ -159,6 +157,53 @@ public class PlayerInventory : MonoBehaviour
         return levelsGained;
     }
 
+    // 합성 재료
+    public int CountSynthesisMaterials(OwnedItem item)
+        => items.Count(i => i != item && i.itemId == item.itemId && i.Grade == item.Grade);
+
+    public bool CanSynthesize(OwnedItem item)
+        => item != null
+        && item.CanSynthesize
+        && CountSynthesisMaterials(item) >= ItemLevelConfig.SynthesisMaterialCount;
+
+
+    // 단일 합성 (같은 재료 두개)
+    public bool TrySynthesize(OwnedItem item)
+    {
+        if (!CanSynthesize(item))
+            return false;
+
+        var materials = items
+            .Where(i => i != item && i.itemId == item.itemId && i.Grade == item.Grade)
+            .Take(ItemLevelConfig.SynthesisMaterialCount)
+            .ToList();
+
+        if (materials.Count < ItemLevelConfig.SynthesisMaterialCount)
+            return false;
+
+        foreach (var material in materials)
+        {
+            if (material.isEquipped)
+                Unequip(material.Data.SlotType);
+
+            items.Remove(material);
+        }
+
+        item.grade = item.NextGrade;
+        OnInventoryChanged?.Invoke();
+        Save();
+        return true;
+    }
+
+    // 일괄 합성
+    public int BatchSynthesize(OwnedItem item)
+    {
+        var tiersGained = 0;
+        while (TrySynthesize(item))
+            tiersGained++;
+        return tiersGained;
+    }
+
     public int GetTotalStat(Func<OwnedItem, int> selector)
         => equipped.Values.Sum(selector);
 
@@ -166,16 +211,13 @@ public class PlayerInventory : MonoBehaviour
     // OwnedItem 리스트 -> PlayerSaveData,equipmentList로 되돌려서 계정 JSON에 저장
     public void Save()
     {
-        // var data = new SaveData { gold = gold, gem = gem, items = items.ToArray() };
-        // var json = JsonUtility.ToJson(data, true);
-        // File.WriteAllText(SavePath, json);
-
         GameManager.PlayerData.currentData.equipmentList = items.Select(item => new EquipmentSaveData()
         {
             instanceId = item.instanceId,
             itemId = item.itemId,
             level = item.level,
-            isEquipped = item.isEquipped
+            isEquipped = item.isEquipped,
+            grade = item.grade
         }).ToList();
 
         GameManager.LocalSaveLoad.SaveCurrentPlayerData();
@@ -183,33 +225,6 @@ public class PlayerInventory : MonoBehaviour
 
     public void Load()
     {
-        // if (!File.Exists(SavePath))
-        //     return;
-        //
-        // var json = File.ReadAllText(SavePath);
-        // if (string.IsNullOrEmpty(json))
-        //     return;
-        //
-        // var data = JsonUtility.FromJson<SaveData>(json);
-        // if (data == null)
-        //     return;
-        //
-        // gold = data.gold;
-        // gem = data.gem;
-        //
-        // items.Clear();
-        // equipped.Clear();
-        //
-        // if (data.items == null)
-        //     return;
-        //
-        // foreach (var item in data.items)
-        // {
-        //     items.Add(item);
-        //     if (item.isEquipped)
-        //         equipped[item.Data.SlotType] = item;
-        // }
-        
         items.Clear();
         equipped.Clear();
 
@@ -222,7 +237,8 @@ public class PlayerInventory : MonoBehaviour
             {
                 instanceId = saved.instanceId,
                 level = saved.level,
-                isEquipped = saved.isEquipped
+                isEquipped = saved.isEquipped,
+                grade = saved.grade
             };
             
             items.Add(item);

@@ -92,6 +92,7 @@ public class EquipmentSaveData
     public long itemId;
     public int level = 1;
     public bool isEquipped;
+    public ItemGrade grade;
 }
 
 [Serializable]

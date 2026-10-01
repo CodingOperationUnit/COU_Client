@@ -50,7 +50,13 @@ public class MonsterSpawner : MonoSingleton<MonsterSpawner>
 
     private void Start()
     {
-        SetupStage(stageId);
+        int targetStageID = stageId;
+        if (GameManager.Scene != null && GameManager.Scene.TryConsumePendingStageId(out int selectedStageID))
+        {
+            targetStageID = selectedStageID;
+        }
+        
+        SetupStage(targetStageID);
     }
 
     // 스테이지 시작

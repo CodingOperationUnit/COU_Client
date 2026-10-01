@@ -75,7 +75,6 @@ public class StageSelectScreen : UIView, IDragHandler, IEndDragHandler
         var stage = stages[selected];
         records.TryGetValue(stage.stageID, out var record);
         var bestTime = record != null ? Mathf.RoundToInt(record.bestSurvivalSeconds) : 0;
-
         UIManager.Instance.Get<BattleTab>().SetStage(stage, bestTime);
         Close();
     }
