@@ -32,7 +32,9 @@ public class PlayerSaveData
     public int gold;
     public int gem;
 
-    public int stamina;
+    public int currentStamina;
+    public int maxStamina;
+    
     public int accountLevel = 1;
     public int accountExp;
 
@@ -49,7 +51,8 @@ public class PlayerSaveData
             playerID = playerID,
             gold = 0,
             gem = 0,
-            stamina = 60,
+            maxStamina = 60,
+            currentStamina = 60,
             accountLevel = 1,
             accountExp = 0,
             equipmentList = new List<EquipmentSaveData>(),
