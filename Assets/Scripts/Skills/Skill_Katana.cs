@@ -4,20 +4,14 @@ public sealed class Skill_Katana : SkillBase
 {
     public override void Activate()
     {
-        FindNearestTarget();
         FireProjectile();
 
         ResetCooldown();
     }
 
-    private Transform FindNearestTarget()
-    {
-        return null;
-    }
-
     protected override void FireLevel1()
     {
-        SpawnProjectile(movement.FacingDirection);
+        SpawnProjectile(fireDirection);
     }
 
     protected override void FireLevel2()

@@ -24,6 +24,11 @@ public class SkillData : ISerializationCallbackReceiver
 
     public void OnAfterDeserialize()
     {
+        if(string.IsNullOrEmpty(Type))
+        {
+            return;
+        }
+
         if(!Enum.TryParse(Type, true, out TargetType))
         {
             Debug.LogWarning($"[SkillData] 알 수 없는 Type입니다: {Type} (ID: {ID})");

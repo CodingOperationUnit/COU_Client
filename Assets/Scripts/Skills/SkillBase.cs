@@ -6,13 +6,18 @@ public abstract class SkillBase
     protected SkillData skillData;
     protected int level = 0;
     protected float cooldownTimer;
+    protected Vector2 fireDirection;
+    protected Transform fireTarget;
+
     protected SkillProjectile projectilePrefab;
-    protected Transform owner;
+    protected Transform transform;
     protected PlayerMovement movement;
+    protected PlayerStats stats;
 
     public int Level => level;
 
     public int SkillId => skillData != null ? skillData.ID : -1;
+    public float Range => skillData != null ? skillData.Range : 0.0f;
 
     public void Initialize(SkillData data)
     {
@@ -21,14 +26,66 @@ public abstract class SkillBase
         level = 0;
     }
 
-    public void BindPlayerMovement(PlayerMovement movement)
+    public void SetSkillController(SkillController controller)
     {
-        this.movement = movement;
+        transform = controller.transform;
+        movement = controller.PlayerMovement;
+        stats = controller.PlayerStats;
+
     }
 
+    public void SetPrefab(SkillProjectile prefab)
+    {
+        projectilePrefab = prefab;
+    }
+
+    // 쿨타임이 끝났고, 사거리 안에 적이 있을 때만 발동
     public virtual bool CanActivate()
     {
-        return cooldownTimer <= 0.0f;
+        if(cooldownTimer > 0.0f)
+        {
+            return false;
+        }
+
+        return FindFireDirection();
+    }
+
+    // 사거리 안의 적을 찾아서 발사 방향(fireDirection)을 정함. 적이 없으면 false
+    private bool FindFireDirection()
+    {
+        Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, skillData.Range, LayerMask.GetMask("Enemy"));
+
+        if (enemies.Length == 0)
+        {
+            return false;
+        }
+
+        // Forward: 플레이어가 바라보는 방향
+        if(skillData.TargetType == SkillTargetType.Forward)
+        {
+            fireDirection = movement.FacingDirection;
+            fireTarget = null;
+            return true;
+        }
+
+        // Nearest: 사거리 안에서 가장 가까운 적 방향
+        Collider2D nearest = enemies[0];
+        float minDistance = Vector2.Distance(transform.position, nearest.transform.position);
+
+        foreach(Collider2D enemy in enemies)
+        {
+            float distance = Vector2.Distance(transform.position, enemy.transform.position);
+
+            if(distance < minDistance)
+            {
+                minDistance = distance;
+                nearest = enemy;
+            }
+        }
+
+        fireDirection = (nearest.transform.position - transform.position).normalized;
+        fireTarget = nearest.transform;
+        return true;
     }
 
     public void ReduceCooldown(float deltaTime)
@@ -56,16 +113,6 @@ public abstract class SkillBase
         level = Math.Clamp(level - 1, 1, 5);
     }
 
-    public void SetOwner(Transform ownerTransform)
-    {
-        owner = ownerTransform;
-    }
-
-    public void SetProjectilePrefab(SkillProjectile prefab)
-    {
-        projectilePrefab = prefab;
-    }
-
     protected void SpawnProjectile(Vector2 direction)
     {
         if(projectilePrefab == null)
@@ -74,27 +121,13 @@ public abstract class SkillBase
             return;
         }
 
-        SkillObjectPool.Instance.Get(projectilePrefab.gameObject, owner.position, Quaternion.identity, instance =>
+        SkillObjectPool.Instance.Get(projectilePrefab.gameObject, transform.position, Quaternion.identity, instance =>
         {
             if (instance.TryGetComponent(out SkillProjectile projectile))
             {
-                projectile.Init(1.0f, direction);
+                projectile.Init(skillData, new ProjectileLaunchInfo(direction, fireTarget));
             }
         });
-
-
-
-        //Vector2 position = owner != null ? owner.position : Vector3.zero;
-        //Vector3 forward = direction != Vector2.zero ? new Vector3(direction.x, 0.0f, direction.y) : Vector3.forward;
-        //float damage = skillData.Damage;
-
-        //SkillObjectPool.Instance.Get(projectilePrefab.gameObject, owner.position, Quaternion.LookRotation(forward), instance =>
-        //{
-        //    if(instance.TryGetComponent(out SkillProjectile projectile))
-        //    {
-        //        projectile.Init(damage);
-        //    }
-        //});
     }
 
     protected virtual void FireProjectile()

@@ -15,12 +15,19 @@ public class ItemData
     public int moveSpeedBonus;
     public string[] gradeSkills; 
 
-    public EquipSlotType SlotType => Enum.Parse<EquipSlotType>(slotType);
-    public ItemGrade Grade => Enum.Parse<ItemGrade>(grade);
-}
+    [NonSerialized] private EquipSlotType parsedSlotType;
+    [NonSerialized] private ItemGrade parsedGrade;
 
-[Serializable]
-public class ItemDataListWrapper
-{
-    public ItemData[] items;
+    public EquipSlotType SlotType => parsedSlotType;
+    public ItemGrade Grade => parsedGrade;
+
+    // ItemDatabase.Load()에서 JSON을 읽은 직후 한 번 호출
+    public void OnLoaded()
+    {
+        if (!Enum.TryParse(slotType, out parsedSlotType))
+            Debug.LogWarning($"[ItemData] {itemId}의 slotType \"{slotType}\"을(를) 알 수 없어 Weapon으로 처리합니다.");
+
+        if (!Enum.TryParse(grade, out parsedGrade))
+            Debug.LogWarning($"[ItemData] {itemId}의 grade \"{grade}\"을(를) 알 수 없어 General로 처리합니다.");
+    }
 }
