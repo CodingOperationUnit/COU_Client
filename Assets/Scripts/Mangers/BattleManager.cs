@@ -11,7 +11,6 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private PlayerLootReceiver lootReceiver;
     [SerializeField] private SkillController skillController;
     [SerializeField] private MonsterSpawner spawner;
-    [SerializeField] private int startingSkillId = 1;
     [SerializeField] private int[] skillPoolIds = { 1, 2, 3 };
     [SerializeField] private int expGem1Value = 10;
     [SerializeField] private int[] goldValues = { 10, 30, 100, 300 }; // 임시 값: Gold1~4, 기획 확정 후 조정
@@ -82,8 +81,6 @@ public class BattleManager : MonoBehaviour
         hud.SetGold(0);
         hud.SetLevel(level);
         hud.SetExp(0f);
-
-        skillController.EquipSkill(startingSkillId);
     }
 
     private void Update()
