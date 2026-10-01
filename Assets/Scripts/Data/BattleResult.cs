@@ -7,4 +7,5 @@ public class BattleResult
     public int Seconds;
     public int Kills;
     public int Gold;
+    public int RewardBoxes;
 }

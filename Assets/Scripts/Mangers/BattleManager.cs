@@ -35,6 +35,7 @@ public class BattleManager : MonoBehaviour
     private int seconds;
     private int kills;
     private int gold;
+    private int rewardBoxes;
     private int level = 1;
     private int exp;
     private int pendingLevelUps;
@@ -176,6 +177,8 @@ public class BattleManager : MonoBehaviour
             AddExp(expGem1Value);
         else if (type >= DropItemType.Gold1 && type <= DropItemType.Gold4)
             AddGold(goldValues[type - DropItemType.Gold1]);
+        else if (type == DropItemType.RewardBox && !ended)
+            rewardBoxes++;
     }
 
     private void HandlePlayerDied()
@@ -265,13 +268,15 @@ public class BattleManager : MonoBehaviour
             Victory = victory,
             Seconds = seconds,
             Kills = kills,
-            Gold = gold
+            Gold = gold,
+            RewardBoxes = rewardBoxes
         };
 
         RequestPause(resultWindow);
         resultWindow.SetTime(seconds);
         resultWindow.SetKillCount(kills);
         resultWindow.SetGold(gold);
+        resultWindow.SetBoxCount(rewardBoxes);
         resultWindow.Show(victory);
     }
 
