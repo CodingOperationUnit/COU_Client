@@ -5,16 +5,21 @@ using UnityEngine;
 public class PlayerLuckTrain : MonoBehaviour
 {
     private const int SlotCount = 16;
+    private const int FiveChancePercent = 10;    // 5개 10%
+    private const int ThreeChancePercent = 20;   // 3개 20% (나머지 70%는 1개)
 
     [SerializeField][Min(0)] private int goldMin = 100;   // 임시 값
     [SerializeField][Min(0)] private int goldMax = 300;   // 임시 값
+
+    [Header("Test")]
+    // 0이면 확률대로, 1/3/5면 해당 개수로
+    [SerializeField] private int testForcedCount = 0;
 
     private SkillController skillController;
 
     private LuckTrainWindow window;
     private SkillSelectWindow selectWindow;
     private BattleResultWindow resultWindow;
-    private bool windowsResolved;
 
     private int pending;
     private bool isShowing;
@@ -68,7 +73,6 @@ public class PlayerLuckTrain : MonoBehaviour
             return;
         }
 
-        // 레벨업 선택 창이 우선 (WP03)
         if (selectWindow != null && selectWindow.IsOpen) return;
 
         ShowNext();
@@ -99,7 +103,7 @@ public class PlayerLuckTrain : MonoBehaviour
             window.SetSlot(i, SkillDataBase.Get(skillId).Name);
         }
 
-        int[] selected = { Random.Range(0, SlotCount) };
+        int[] selected = DrawSelection(candidates);
 
         selectedSkillIds.Clear();
         var previewLevels = new Dictionary<int, int>();
@@ -125,6 +129,129 @@ public class PlayerLuckTrain : MonoBehaviour
         window.Show(selected, selected.Length, rewardGold);
         isShowing = true;
     }
+
+
+    private int[] DrawSelection(List<SkillBase> candidates)
+    {
+        int rolled = RollCount();
+        int[] result = null;
+
+        if (rolled == 5)
+            result = TryDrawFive(BuildRemain(candidates));
+
+        if (result == null && rolled >= 3)
+            result = TryDrawSpread(3, BuildRemain(candidates));
+
+        if (result == null)
+            result = TryDrawSpread(1, BuildRemain(candidates));
+
+        Debug.Log("[PlayerLuckTrain] 추첨: " + rolled + "개" +
+                  (result.Length != rolled ? " → " + result.Length + "개 (강등)" : "") +
+                  " / 칸: " + string.Join(", ", result));
+
+        return result;
+    }
+
+    private int RollCount()
+    {
+        if (testForcedCount == 1 || testForcedCount == 3 || testForcedCount == 5)
+            return testForcedCount;
+
+        int roll = Random.Range(0, 100);
+        if (roll < FiveChancePercent) return 5;
+        if (roll < FiveChancePercent + ThreeChancePercent) return 3;
+        return 1;
+    }
+
+    private static Dictionary<int, int> BuildRemain(List<SkillBase> candidates)
+    {
+        var remain = new Dictionary<int, int>();
+        foreach (var skill in candidates)
+            remain[skill.SkillId] = SkillBase.MaxLevel - skill.Level;
+        return remain;
+    }
+
+    private int[] TryDrawFive(Dictionary<int, int> remain)
+    {
+        var validStarts = new List<int>();
+
+        for (int start = 0; start < SlotCount; start++)
+        {
+            var counts = new Dictionary<int, int>();
+            bool valid = true;
+
+            for (int k = 0; k < 5; k++)
+            {
+                int skillId = slotSkillIds[(start + k) % SlotCount];
+                counts.TryGetValue(skillId, out int count);
+                counts[skillId] = ++count;
+
+                if (count > remain[skillId])
+                {
+                    valid = false;
+                    break;
+                }
+            }
+
+            if (valid)
+                validStarts.Add(start);
+        }
+
+        if (validStarts.Count == 0) return null;
+
+        int s = validStarts[Random.Range(0, validStarts.Count)];
+        var result = new int[5];
+        for (int k = 0; k < 5; k++)
+            result[k] = (s + k) % SlotCount;
+
+        return result;
+    }
+
+    private int[] TryDrawSpread(int count, Dictionary<int, int> remain)
+    {
+        var order = new int[SlotCount];
+        for (int i = 0; i < SlotCount; i++)
+            order[i] = i;
+
+        for (int i = SlotCount - 1; i > 0; i--)
+        {
+            int j = Random.Range(0, i + 1);
+            (order[i], order[j]) = (order[j], order[i]);
+        }
+
+        var picked = new List<int>();
+
+        foreach (int index in order)
+        {
+            if (picked.Count == count) break;
+            if (IsAdjacentToAny(index, picked)) continue;
+
+            int skillId = slotSkillIds[index];
+            if (remain[skillId] <= 0) continue;
+
+            picked.Add(index);
+            remain[skillId]--;
+        }
+
+        if (picked.Count < count) return null;
+
+        picked.Sort();
+        return picked.ToArray();
+    }
+
+    private static bool IsAdjacentToAny(int index, List<int> picked)
+    {
+        int next = (index + 1) % SlotCount;
+        int prev = (index + SlotCount - 1) % SlotCount;
+
+        foreach (int p in picked)
+        {
+            if (p == next || p == prev) return true;
+        }
+        return false;
+    }
+
+    // ===== 결과 적용·정리 =====
 
     private void HandleFinished()
     {
@@ -166,17 +293,16 @@ public class PlayerLuckTrain : MonoBehaviour
 
     private bool ResolveWindows()
     {
-        if (windowsResolved) return window != null;
-        windowsResolved = true;
+        if (window != null) return true;
 
         window = TryGetView<LuckTrainWindow>();
+        if (window == null) return false;
+
         selectWindow = TryGetView<SkillSelectWindow>();
         resultWindow = TryGetView<BattleResultWindow>();
+        window.OnFinished += HandleFinished;
 
-        if (window != null)
-            window.OnFinished += HandleFinished;
-
-        return window != null;
+        return true;
     }
 
     private static T TryGetView<T>() where T : UIView
