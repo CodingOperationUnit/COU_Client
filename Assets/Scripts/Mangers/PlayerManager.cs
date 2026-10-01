@@ -38,6 +38,12 @@ public class PlayerManager : MonoBehaviour
         LuckTrain = GetComponent<PlayerLuckTrain>();
     }
 
+    private void Start()
+    {
+        if (Instance != this) return;
+        EquipStartingSkill();
+    }
+
     private void OnEnable()
     {
         if (Health != null)
@@ -60,5 +66,28 @@ public class PlayerManager : MonoBehaviour
     {
         if (Instance == this)
             Instance = null;
+    }
+
+    private void EquipStartingSkill()
+    {
+        int skillId = Stats.StartingSkillId;
+
+        if (skillId == WeaponSkillTable.NoSkill)
+        {
+            Debug.Log("[PlayerManager] 시작 스킬 없음 (장착 무기 없음 또는 매핑 없음)");
+            return;
+        }
+
+        foreach (var skill in Skills.ActiveSkills)
+        {
+            if (skill.SkillId == skillId)
+            {
+                Debug.LogWarning("[PlayerManager] 시작 스킬 " + skillId + "이 이미 등록되어 있습니다. 배틀 매니저의 시작 스킬 하드코딩이 남아 있는지 확인하세요.");
+                return;
+            }
+        }
+
+        bool result = Skills.EquipSkill(skillId);
+        Debug.Log("[PlayerManager] 시작 스킬 " + skillId + " 등록: " + (result ? "성공" : "실패"));
     }
 }

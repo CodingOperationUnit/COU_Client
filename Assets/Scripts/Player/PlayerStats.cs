@@ -6,16 +6,13 @@ public class PlayerStats : MonoBehaviour
     [Header("Equipped (Dummy) - 인벤토리가 없는 씬에서만 사용")]
     [SerializeField] private List<DummyEquipment> dummyEquipments = new();
 
-    [Header("Inventory Temp")]
-    // 임시: ItemData에 무기 종류 필드가 추가되기 전까지 인벤토리 무기에 사용할 종류
-    [SerializeField] private WeaponType inventoryWeaponType = WeaponType.Blunt;
-
     private bool isCalculated;
     private int finalAtk;
     private int finalHp;
     private bool hasWeapon;
     private WeaponType equippedWeaponType;
     private string equippedWeaponName;
+    private int startingSkillId;
     private bool usesInventory;
 
     private static PlayerBaseStatData Base => PlayerDatabase.BaseStats;
@@ -25,6 +22,7 @@ public class PlayerStats : MonoBehaviour
     public bool HasWeapon { get { EnsureCalculated(); return hasWeapon; } }
     public WeaponType EquippedWeaponType { get { EnsureCalculated(); return equippedWeaponType; } }
     public string EquippedWeaponName { get { EnsureCalculated(); return equippedWeaponName; } }
+    public int StartingSkillId { get { EnsureCalculated(); return startingSkillId; } }   // 0이면 시작 스킬 없음
     public bool UsesInventory { get { EnsureCalculated(); return usesInventory; } }
 
     public int CriticalDamage => Base.criticalDamage;
@@ -44,6 +42,8 @@ public class PlayerStats : MonoBehaviour
         if (isCalculated) return;
         isCalculated = true;
 
+        startingSkillId = WeaponSkillTable.NoSkill;
+
         if (PlayerInventory.Instance != null)
             CalculateFromInventory();
         else
@@ -52,7 +52,8 @@ public class PlayerStats : MonoBehaviour
         Debug.Log("[PlayerStats] 장비 출처: " + (usesInventory ? "인벤토리" : "더미") +
                   " / 기본 Atk: " + Base.attack + ", 기본 Hp: " + Base.hp +
                   " / 최종 Atk: " + finalAtk + ", 최종 Hp: " + finalHp +
-                  " / 무기: " + (hasWeapon ? equippedWeaponName + " (" + equippedWeaponType + ")" : "없음"));
+                  " / 무기: " + (hasWeapon ? equippedWeaponName + " (" + equippedWeaponType + ")" : "없음") +
+                  " / 시작 스킬: " + (startingSkillId == WeaponSkillTable.NoSkill ? "없음" : startingSkillId.ToString()));
     }
 
     private void CalculateFromInventory()
@@ -69,8 +70,16 @@ public class PlayerStats : MonoBehaviour
 
         var weapon = inventory.GetEquipped(EquipSlotType.Weapon);
         hasWeapon = weapon != null;
-        equippedWeaponName = hasWeapon ? weapon.Data.itemName : null;
-        equippedWeaponType = inventoryWeaponType;
+        if (!hasWeapon) return;
+
+        equippedWeaponName = weapon.Data.itemName;
+        startingSkillId = WeaponSkillTable.GetSkillByItem(weapon.itemId);
+
+        if (!WeaponSkillTable.TryGetTypeBySkill(startingSkillId, out equippedWeaponType))
+        {
+            equippedWeaponType = WeaponType.Blunt;
+            Debug.LogWarning("[PlayerStats] 무기 매핑이 없습니다: " + equippedWeaponName + " (" + weapon.itemId + "). 스킬 없이 시작, 무기 종류는 Blunt");
+        }
     }
 
     private void CalculateFromDummy()
@@ -97,6 +106,7 @@ public class PlayerStats : MonoBehaviour
                 hasWeapon = true;
                 equippedWeaponName = item.name;
                 equippedWeaponType = item.weaponType;
+                startingSkillId = WeaponSkillTable.GetSkillByType(item.weaponType);
             }
 
             totalAtk += item.atk;
