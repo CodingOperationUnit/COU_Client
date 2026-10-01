@@ -7,13 +7,15 @@ public readonly struct ProjectileData
     public readonly Vector2 Direction;
     public readonly Transform Target; // Á÷¼± ÅºÈ¯Àº null
     public readonly float DamageMultiplier;
+    public readonly int PierceCount;
 
-    public ProjectileData(SkillData data, Vector2 direction, Transform target = null, float damageMultiplier = 1.0f)
+    public ProjectileData(SkillData data, Vector2 direction, Transform target = null, float damageMultiplier = 1.0f, int pierceCount = 1)
     {
         Data = data;
         Direction = direction.normalized;
         Target = target;
         DamageMultiplier = damageMultiplier;
+        PierceCount = pierceCount;
     }
 }
 
