@@ -73,12 +73,9 @@ public class StageSelectScreen : UIView, IDragHandler, IEndDragHandler
     {
         selected = index;
         var stage = stages[selected];
-        GameManager.Scene.ChangeScene(GameConstants.SceneNames.BATTLE_SCENE, stage.stageID);
-        
-        // records.TryGetValue(stage.stageID, out var record);
-        // var bestTime = record != null ? Mathf.RoundToInt(record.bestSurvivalSeconds) : 0;
-        //
-        // UIManager.Instance.Get<BattleTab>().SetStage(stage, bestTime);
-        // Close();
+        records.TryGetValue(stage.stageID, out var record);
+        var bestTime = record != null ? Mathf.RoundToInt(record.bestSurvivalSeconds) : 0;
+        UIManager.Instance.Get<BattleTab>().SetStage(stage, bestTime);
+        Close();
     }
 }
