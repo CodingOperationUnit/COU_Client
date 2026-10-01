@@ -56,7 +56,7 @@ public class MonsterSpawner : MonoSingleton<MonsterSpawner>
             targetStageID = selectedStageID;
         }
         
-        SetupStage(stageId);
+        SetupStage(targetStageID);
     }
 
     // 스테이지 시작

@@ -261,8 +261,7 @@ public class PlayerLuckTrain : MonoBehaviour
             Debug.Log("[PlayerLuckTrain] 스킬 " + skillId + " 등급 상승: " + (result ? "성공" : "실패"));
         }
 
-        // TODO: 배틀 매니저에 전투 골드 추가 함수가 생기면 교체
-        Debug.Log("[PlayerLuckTrain] 행운열차 골드 " + rewardGold + " 전달 예정 (배틀 매니저 함수 대기)");
+        BattleManager.Instance?.AddGold(rewardGold);
 
         BattleManager.Instance?.ReleasePause(this);
         isShowing = false;

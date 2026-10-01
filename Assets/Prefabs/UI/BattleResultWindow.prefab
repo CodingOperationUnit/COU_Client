@@ -773,6 +773,7 @@ MonoBehaviour:
   boxCountText: {fileID: 7804095187237502873}
   goldText: {fileID: 7552516605900475855}
   expText: {fileID: 2552930599409393389}
+  confirmButton: {fileID: 3210162525558889633}
 --- !u!1 &3685669263231593636
 GameObject:
   m_ObjectHideFlags: 0
