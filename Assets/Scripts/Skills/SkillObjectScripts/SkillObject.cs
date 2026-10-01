@@ -21,11 +21,13 @@ public readonly struct AoEData
 {
     public readonly SkillData Data;
     public readonly Vector2 Loacl;
+    public readonly float DamageMultiplier;
 
-    public AoEData(SkillData data, Vector2 loacl)
+    public AoEData(SkillData data, Vector2 loacl, float damageMultiplier = 1.0f)
     {
         Data = data;
         Loacl = loacl;
+        DamageMultiplier = damageMultiplier;
     }
 }
 

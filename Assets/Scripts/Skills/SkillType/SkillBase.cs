@@ -5,10 +5,6 @@ public abstract class SkillBase
 {
     public const int MaxLevel = 5;
 
-    protected float cooldownTimer;
-    protected Vector2 fireDirection;
-    protected Transform fireTarget;
-
     // 수정 예정
     // ==============================================================================================================
     // 레벨당 배율 (레벨 1 = 1.0 기준으로 누적)
@@ -25,6 +21,7 @@ public abstract class SkillBase
     protected PlayerStats stats;
 
     public int Level => level;
+    public bool IsEquipped { get; private set; }
 
     public float CooldownMultiplier => Mathf.Pow(CooldownMultiplierPerLevel, Mathf.Max(level - 1, 0));
     public float DamageMultiplier => Mathf.Pow(DamageMultiplierPerLevel, Mathf.Max(level - 1, 0));
@@ -32,10 +29,9 @@ public abstract class SkillBase
     public int SkillId => skillData != null ? skillData.ID : -1;
     public float Range => skillData != null ? skillData.Range : 0.0f;
 
-    public void Initialize(SkillData data)
+    public virtual void Initialize(SkillData data)
     {
         skillData = data;
-        cooldownTimer = data.Cooldown;
         level = 0;
     }
 
@@ -46,134 +42,75 @@ public abstract class SkillBase
         stats = context.Stats;
     }
 
-    public void SetPrefab(SkillProjectile prefab)
+    // 프리팹이 필요 없는 스킬(패시브 등)은 null이 들어올 수 있음
+    public void SetPrefab(GameObject prefab)
     {
-        this.prefab = prefab.gameObject;
+        this.prefab = prefab;
     }
 
-    // 쿨타임이 끝났고, 사거리 안에 적이 있을 때만 발동
-    public virtual bool CanActivate()
-    {
-        if(cooldownTimer > 0.0f)
-        {
-            return false;
-        }
+    // 매 프레임 호출. 발동 방식은 스킬 유형마다 다르므로 서브클래스가 구현
+    public abstract void Tick(float deltaTime);
 
-        return FindFireDirection();
+    public void Equip()
+    {
+        IsEquipped = true;
+        OnEquip();
     }
 
-    // 사거리 안의 적을 찾아서 발사 방향(fireDirection)을 정함. 적이 없으면 false
-    private bool FindFireDirection()
+    public void Unequip()
     {
-        Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, skillData.Range, LayerMask.GetMask("Enemy"));
-
-        if (enemies.Length == 0)
-        {
-            return false;
-        }
-
-        // Forward: 플레이어가 바라보는 방향
-        if(skillData.TargetType == SkillTargetType.Forward)
-        {
-            fireDirection = movement.FacingDirection;
-            fireTarget = null;
-            return true;
-        }
-
-        // Nearest: 사거리 안에서 가장 가까운 적 방향
-        Collider2D nearest = enemies[0];
-        float minDistance = Vector2.Distance(transform.position, nearest.transform.position);
-
-        foreach(Collider2D enemy in enemies)
-        {
-            float distance = Vector2.Distance(transform.position, enemy.transform.position);
-
-            if(distance < minDistance)
-            {
-                minDistance = distance;
-                nearest = enemy;
-            }
-        }
-
-        fireDirection = (nearest.transform.position - transform.position).normalized;
-        fireTarget = nearest.transform;
-        return true;
-    }
-
-    public void ReduceCooldown(float deltaTime)
-    {
-        if (cooldownTimer > 0.0f)
-        {
-            cooldownTimer -= deltaTime;
-        }
-    }
-
-    public abstract void Activate();
-
-    protected void ResetCooldown()
-    {
-        cooldownTimer = skillData != null ? skillData.Cooldown * CooldownMultiplier : 0.01f;
+        IsEquipped = false;
+        OnUnequip();
     }
 
     public virtual void Levelup()
     {
         level = Math.Clamp(level + 1, 1, MaxLevel);
+        NotifyLevelChanged();
     }
 
     public virtual void LevelDown()
     {
         level = Math.Clamp(level - 1, 1, MaxLevel);
+        NotifyLevelChanged();
     }
 
-    protected void Spawn<TInitData>(Vector3 position, TInitData initData)
+    // 장착된 상태에서 레벨이 바뀔 때만 훅 호출 (장착 전 최초 레벨 설정은 OnEquip에서 처리)
+    private void NotifyLevelChanged()
     {
-        if (prefab == null)
+        if(IsEquipped)
+        {
+            OnLevelChanged();
+        }
+    }
+
+    protected virtual void OnEquip()
+    {
+    }
+
+    protected virtual void OnUnequip()
+    {
+    }
+
+    protected virtual void OnLevelChanged()
+    {
+    }
+
+    // 풀에서 스킬 오브젝트를 꺼내 초기화. 초기화 인자 구조체 타입(TInitData)은 호출부에서 추론됨
+    protected GameObject Spawn<TInitData>(Vector3 position, TInitData initData)
+    {
+        if(prefab == null)
         {
             Debug.LogWarning($"[SkillBase] 프리팹이 없습니다: {SkillId}");
-            return;
+            return null;
         }
 
-        SkillObjectPool.Instance.Get(prefab, position, Quaternion.identity, instance =>
+        return SkillObjectPool.Instance.Get(prefab, position, Quaternion.identity, instance =>
         {
-            if (instance.TryGetComponent(out SkillObject<TInitData> skillObject))
+            if(instance.TryGetComponent(out SkillObject<TInitData> skillObject))
             {
                 skillObject.Init(initData);
             }
         });
     }
-
-    protected void SpawnProjectile(Vector2 direction)
-    {
-        Spawn(transform.position, new ProjectileData(skillData, direction, fireTarget, DamageMultiplier));
-    }
-
-    protected virtual void FireProjectile()
-    {
-        switch (level)
-        {
-            case 1:
-                FireLevel1();
-                break;
-            case 2:
-                FireLevel2();
-                break;
-            case 3:
-                FireLevel3();
-                break;
-            case 4:
-                FireLevel4();
-                break;
-            case 5:
-                FireLevel5();
-                break;
-            default:
-                break;
-        }
-    }
-
-    protected abstract void FireLevel1();
-    protected abstract void FireLevel2();
-    protected abstract void FireLevel3();
-    protected abstract void FireLevel4();
-    protected abstract void FireLevel5();
 }

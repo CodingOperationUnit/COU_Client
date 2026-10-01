@@ -4,7 +4,7 @@ public class SkillManager : MonoSingleton<SkillManager>
 {
     [SerializeField] private SkillPrefabTable _prefabTable;
 
-    public SkillProjectile GetProjectilePrefab(int skillId)
+    public GameObject GetPrefab(int skillId)
     {
         if(_prefabTable == null)
         {
@@ -12,6 +12,8 @@ public class SkillManager : MonoSingleton<SkillManager>
             return null;
         }
 
-        return _prefabTable.Get(skillId);
+        SkillProjectile prefab = _prefabTable.Get(skillId);
+
+        return prefab != null ? prefab.gameObject : null;
     }
 }
