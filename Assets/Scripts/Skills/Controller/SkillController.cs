@@ -144,6 +144,14 @@ public class SkillController : MonoBehaviour
                 Debug.Log("스킬: Katana");
             }
         }
+
+        if (keyboard.digit3Key.wasPressedThisFrame)
+        {
+            if (EquipSkill(4))
+            {
+                Debug.Log("스킬: Planet");
+            }
+        }
     }
 #endif
 }

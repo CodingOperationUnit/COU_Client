@@ -32,6 +32,16 @@
     },
     {
       "ID": 4,
+      "Name": "Planet",
+      "Type": "none",
+      "Cooldown": 0.0,
+      "Speed": 120.0,
+      "Damage": 1.0,
+      "Range": 2.0,
+      "Description": "행성"
+    },
+    {
+      "ID": 5,
       "Name": "Missile",
       "Type": "nearest",
       "Cooldown": 1.5,
