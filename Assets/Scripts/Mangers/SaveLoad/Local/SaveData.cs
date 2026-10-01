@@ -56,8 +56,32 @@ public class PlayerSaveData
             accountLevel = 1,
             accountExp = 0,
             equipmentList = new List<EquipmentSaveData>(),
-            stageRecordList = new List<StageRecordSaveData>()
+            stageRecordList = CreateDefaultStageRecords()
         };
+    }
+
+    private static List<StageRecordSaveData> CreateDefaultStageRecords()
+    {
+        var stageDataDic = GameManager.JsonData.StageDataDic;
+        var records = new List<StageRecordSaveData>();
+
+        if (stageDataDic == null)
+        {
+            Debug.LogWarning("[PlayerSaveData] 스테이지 데이터가 로드되지 않아 기록을 초기화하지 못했습니다.");
+            return records;
+        }
+
+        foreach (var stageID in stageDataDic.Keys)
+        {
+            records.Add(new StageRecordSaveData
+            {
+                stageID = stageID,
+                isCleared = false,
+                bestSurvivalSeconds = 0f
+            });
+        }
+
+        return records;
     }
 }
 

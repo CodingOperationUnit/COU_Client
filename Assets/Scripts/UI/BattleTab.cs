@@ -15,13 +15,13 @@ public class BattleTab : UIView
         illustrationButton.onClick.AddListener(() => UIManager.Instance.Open<StageSelectScreen>());
     }
 
-    public void SetStage(StageInfo stage)
+    public void SetStage(StageData stage, int bestTime)
     {
-        stageNameText.text = stage.name;
-        bestTimeText.text = stage.bestTime > 0
-            ? $"최장 생존시간: {stage.bestTime / 60:00}:{stage.bestTime % 60:00}"
+        stageNameText.text = stage.stageName;
+        bestTimeText.text = bestTime > 0
+            ? $"최장 생존시간: {bestTime / 60:00}:{bestTime % 60:00}"
             : "최장 생존시간:";
-        illustration.color = stage.illustrationColor;
+        illustration.color = stage.IllustrationColor;
     }
 
     public void SetStaminaCost(int cost)
