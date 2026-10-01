@@ -8,6 +8,7 @@ public class MonsterSpawner : MonoSingleton<MonsterSpawner>
     [Header("Prefab")]
     [SerializeField] private GameObject normalPrefab;      // 일반 몬스터용
     [SerializeField] private GameObject eliteBossPrefab;   // 엘리트·보스 공용
+    [SerializeField] private GameObject boxPrefab;         // 상자용
 
     [Header("Player")]
     [SerializeField] private GameObject player;
@@ -157,10 +158,18 @@ public class MonsterSpawner : MonoSingleton<MonsterSpawner>
             ClearAllEnemies(giveReward: false);
 
         // 풀(프리팹) 선택
-        GameObject prefab = data.Type == MonsterType.Normal ? normalPrefab : eliteBossPrefab;
+        GameObject prefab = data.Type switch
+        {
+            MonsterType.Normal => normalPrefab,
+            MonsterType.Box => boxPrefab,
+            _ => eliteBossPrefab
+        };
+
+        // 상자는 움직이지 않으므로 화면 안에, 나머지는 플레이어 주변 원 위에 스폰
+        Vector3 spawnPosition = data.Type == MonsterType.Box ? GetRandomScreenPosition() : GetRandomSpawnPosition();
 
         // 오브젝트 풀에서 몬스터 가져오기
-        GameObject obj = GameManager.ObjectPool.GetObject(prefab, GetRandomSpawnPosition(), Quaternion.identity);
+        GameObject obj = GameManager.ObjectPool.GetObject(prefab, spawnPosition, Quaternion.identity);
 
         // 가져온 GameObject에서 Enemy 컴포넌트 가져오기
         Enemy enemy = obj.GetComponent<Enemy>();
@@ -194,7 +203,25 @@ public class MonsterSpawner : MonoSingleton<MonsterSpawner>
     {
         Enemy[] targets = spawnedEnemies.ToArray();
         foreach (Enemy enemy in targets)
+        {
+            // 상자는 보스 등장에도 지우지 않음
+            if (enemy.Type == MonsterType.Box) { continue; }
             enemy.Die(giveReward);
+        }
+    }
+
+    // 카메라 화면 안의 랜덤 위치
+    private Vector3 GetRandomScreenPosition()
+    {
+        Camera cam = Camera.main;
+        float halfHeight = cam.orthographicSize;
+        float halfWidth = halfHeight * cam.aspect;
+        Vector3 center = cam.transform.position;
+
+        return new Vector3(
+            center.x + Random.Range(-halfWidth, halfWidth),
+            center.y + Random.Range(-halfHeight, halfHeight),
+            0f);
     }
 
     // 플레이어 주변 원 위의 랜덤 위치

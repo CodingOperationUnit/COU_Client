@@ -47,6 +47,7 @@ MonoBehaviour:
   isDontDestroy: 0
   normalPrefab: {fileID: 2456992414015291868, guid: 60409ea8d34556f4faba102d20a07d67, type: 3}
   eliteBossPrefab: {fileID: 2456992414015291868, guid: 653139eb652e8934dbcb38877a6be6ce, type: 3}
+  boxPrefab: {fileID: 2456992414015291868, guid: 93532239cde294c48b98b01bb516e6e2, type: 3}
   player: {fileID: 0}
   stageId: 1
   spawnRadius: 10
