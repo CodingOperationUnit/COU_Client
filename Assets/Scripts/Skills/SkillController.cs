@@ -87,6 +87,19 @@ public class SkillController : MonoBehaviour
         return true;
     }
 
+    public bool LevelUpSkill(int skillId)
+    {
+        SkillBase skill = _activeSkills.Find(s => s.SkillId == skillId);
+
+        if(skill == null || skill.Level >= SkillBase.MaxLevel)
+        {
+            return false;
+        }
+
+        skill.Levelup();
+        return true;
+    }
+
     // For Debug (장착된 스킬별 탐지 사거리 표시)
     private void OnDrawGizmos()
     {

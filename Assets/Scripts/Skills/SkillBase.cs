@@ -3,6 +3,8 @@ using UnityEngine;
 
 public abstract class SkillBase
 {
+    public const int MaxLevel = 5;
+
     protected SkillData skillData;
     protected int level = 0;
     protected float cooldownTimer;
@@ -105,12 +107,12 @@ public abstract class SkillBase
 
     public virtual void Levelup()
     {
-        level = Math.Clamp(level + 1, 1, 5);
+        level = Math.Clamp(level + 1, 1, MaxLevel);
     }
 
     public virtual void LevelDown()
     {
-        level = Math.Clamp(level - 1, 1, 5);
+        level = Math.Clamp(level - 1, 1, MaxLevel);
     }
 
     protected void SpawnProjectile(Vector2 direction)
