@@ -13,7 +13,6 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private MonsterSpawner spawner;
     [SerializeField] private int startingSkillId = 1;
     [SerializeField] private int[] skillPoolIds = { 1, 2, 3 };
-    [SerializeField] private int victorySeconds = 900;
     [SerializeField] private int expGem1Value = 10;
     [SerializeField] private int baseRequiredExp = 20;
     [SerializeField] private int requiredExpIncrement = 6;
@@ -50,6 +49,7 @@ public class BattleManager : MonoBehaviour
         playerHealth.OnDied += HandlePlayerDied;
         lootReceiver.OnLooted += HandleLooted;
         spawner.OnEnemyKilled += HandleEnemyKilled;
+        spawner.OnBossKilled += HandleBossKilled;
     }
 
     private void OnDisable()
@@ -57,6 +57,7 @@ public class BattleManager : MonoBehaviour
         playerHealth.OnDied -= HandlePlayerDied;
         lootReceiver.OnLooted -= HandleLooted;
         spawner.OnEnemyKilled -= HandleEnemyKilled;
+        spawner.OnBossKilled -= HandleBossKilled;
     }
 
     private void Start()
@@ -86,9 +87,6 @@ public class BattleManager : MonoBehaviour
         seconds = current;
 
         hud.SetTime(seconds);
-
-        if (seconds >= victorySeconds)
-            EndBattle(true);
     }
 
     private void OnDestroy()
@@ -141,6 +139,11 @@ public class BattleManager : MonoBehaviour
     private void HandleEnemyKilled(Enemy enemy)
     {
         AddKill();
+    }
+
+    private void HandleBossKilled(Enemy boss)
+    {
+        EndBattle(true);
     }
 
     private void HandleLooted(DropItemType type)
