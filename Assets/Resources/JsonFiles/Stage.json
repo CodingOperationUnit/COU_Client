@@ -1,0 +1,14 @@
+{
+  "datas": [
+    {
+      "stageID": 1,
+      "stageName": "Forest",
+      "duration": 150.0
+    },
+    {
+      "stageID": 2,
+      "stageName": "Desert",
+      "duration": 150.0
+    }
+  ]
+}

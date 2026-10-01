@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class LocalLoginManager : MonoSingleton<LocalLoginManager>
 {
-    public bool isLoggedIn => GameManager.LocalSaveLoad.isPlayerDataLoaded;
-    public string currentPlayerID => GameManager.LocalSaveLoad.currentData?.playerID;
+    public bool isLoggedIn => GameManager.PlayerData.isPlayerDataLoaded;
+    public string currentPlayerID => GameManager.PlayerData.currentPlayerID;
 
     public bool SignUp(string playerID, string password, out string message)
     {
@@ -54,17 +54,11 @@ public class LocalLoginManager : MonoSingleton<LocalLoginManager>
             // 계정 목록 저장이 실패했을 때 남을 수 있는 파일도 보호합니다.
             if (SaveLoadHelper.LoadPlayer(playerID) != null)
             {
-                message = "해당 아이디의 게임 데이터가 이미 있습니다. "
-                          + "저장 상태를 확인해 주세요.";
+                message = "해당 아이디의 게임 데이터가 이미 있습니다. " + "저장 상태를 확인해 주세요.";
                 return false;
             }
 
-            var playerData = new PlayerSaveData
-            {
-                playerID = playerID,
-                gold = 0,
-                exp = 0
-            };
+            var playerData = PlayerSaveData.CreateDefault(playerID);
 
             SaveLoadHelper.SavePlayer(playerData);
             accountData.accounts.Add(new LocalAccountData
@@ -119,13 +113,6 @@ public class LocalLoginManager : MonoSingleton<LocalLoginManager>
             if (account == null || account.password != password)
             {
                 message = "아이디 또는 비밀번호가 일치하지 않습니다.";
-                return false;
-            }
-
-            // 입력값 대신 계정에 기록된 ID로 파일을 조회합니다.
-            if (!GameManager.LocalSaveLoad.LoadPlayerAfterLogin(account.playerID))
-            {
-                message = "플레이어 데이터를 불러오지 못했습니다.";
                 return false;
             }
 

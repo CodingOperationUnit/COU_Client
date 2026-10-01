@@ -9,6 +9,8 @@ public static class GameConstants
     {
         public const string MANAGERS_TEST_SCENE = "ManagersTestScene";
         public const string MANAGERS_TEST_SCENE_2 = "ManagersTestScene_2";
+        public const string LOGIN_SCENE = "LogInScene";
+        public const string MAIN_SCENE = "MainScene";
     }
     
     // 파일 경로 관련 상수
@@ -16,5 +18,11 @@ public static class GameConstants
     {
         public const string ACCOUNT_SAVE_PATH = "accounts.json";
         public const string PLAYER_DIRECTORY = "Players";
+        public const string BossAttackData_Json_Path = "JsonFiles/BossAttack";
+        public const string SpawnData_Json_Path = "JsonFiles/Spawn";
+        public const string StageData_Json_Path = "JsonFiles/Stage";
+        public const string MonsterData_Json_Path = "JsonFiles/Monster";
+        public const string ItemData_Json_Path = "JsonFiles/Item";
+        public const string SkillData_Json_Path = "JsonFiles/Skill";
     }
 }

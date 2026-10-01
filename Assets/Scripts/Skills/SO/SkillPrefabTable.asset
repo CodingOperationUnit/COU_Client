@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dd3fde3b1c4dd44490de3c958b86261, type: 3}
+  m_Name: SkillPrefabTable
+  m_EditorClassIdentifier: Assembly-CSharp::SkillPrefabTable
+  _entries:
+  - SkillId: 1
+    Prefab: {fileID: 821606016448725858, guid: 9346524f58e0db64ab65bb660a2cf16d, type: 3}
+  - SkillId: 2
+    Prefab: {fileID: 923992019297904548, guid: cb940683502f36140815de2a5a14f98b, type: 3}
+  - SkillId: 3
+    Prefab: {fileID: 4062432481004325295, guid: 51c416e7e70d5e848bf818f081fef0a0, type: 3}

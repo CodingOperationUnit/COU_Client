@@ -5,16 +5,19 @@ public abstract class SkillProjectile : MonoBehaviour, ISkillPoolable
 {
     public event Action<GameObject> OnBeforeReturn;
 
-    protected float damage;
+    protected SkillData skillData;
+    protected ProjectileLaunchInfo launchInfo;
 
-    public void Init(float damageValue)
+    public void Init(SkillData data, in ProjectileLaunchInfo info)
     {
-        damage = damageValue;
+        skillData = data;
+        launchInfo = info;
+        OnLaunch();
     }
 
     public void OnSpawn()
     {
-        OnLaunch();
+        // 데이터가 필요한 초기화는 Init에서 처리한다
     }
 
     public void OnDespawn()

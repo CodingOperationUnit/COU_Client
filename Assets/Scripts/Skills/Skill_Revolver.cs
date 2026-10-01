@@ -4,20 +4,14 @@ public sealed class Skill_Revolver : SkillBase
 {
     public override void Activate()
     {
-        SetFireDirection();
         FireProjectile();
 
         ResetCooldown();
     }
 
-    private Transform SetFireDirection()
-    {
-        return null;
-    }
-
     protected override void FireLevel1()
     {
-        throw new System.NotImplementedException();
+        SpawnProjectile(fireDirection);
     }
 
     protected override void FireLevel2()
