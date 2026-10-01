@@ -14,30 +14,10 @@ public class PlayerInventory : MonoBehaviour
     // 골드와 보석을 PlayerSaveData에서 읽어오도록 구현
     public int Gold => GameManager.PlayerData.currentData.gold;
     public int Gem => GameManager.PlayerData.currentData.gem;
-    
-    // // 골드 테스트용
-    // [SerializeField] private int gold = 500000;
-    // public int Gold => gold;
-    //
-    // // 보석 테스트용
-    // [SerializeField] private int gem = 0;
-    // public int Gem => gem;
 
     public event Action OnInventoryChanged;
 
     public IReadOnlyList<OwnedItem> Items => items;
-
-
-    // private const string SaveFileName = "inventory_save.json";
-    // private static string SavePath => Path.Combine(Application.persistentDataPath, SaveFileName);
-
-    // [Serializable]
-    // private class SaveData
-    // {
-    //     public int gold;
-    //     public int gem;
-    //     public OwnedItem[] items;
-    // }
 
     private void Awake()
     {
@@ -96,40 +76,23 @@ public class PlayerInventory : MonoBehaviour
         if (rewards.Count > 0)
             UIManager.Instance.Get<RewardBoxResultPopup>().Show(rewards);
     }
-
-    // private void OnApplicationQuit() => Save();
-    //
-    // private void OnApplicationPause(bool pause)
-    // {
-    //     if (pause) Save();
-    // }
     
     public OwnedItem AddItem(long itemId)
     {
         var item = new OwnedItem(itemId);
         items.Add(item);
-        // OnInventoryChanged?.Invoke();
-        // Save();
         PersistAndNotify();
         return item;
     }
 
     public void AddGem(int amount)
     {
-        // gem += amount;
-        // OnInventoryChanged?.Invoke();
-        // Save();
-
         GameManager.PlayerData.currentData.gem += amount;
         PersistAndNotify();
     }
 
     public void AddGold(int amount)
     {
-        // gold += amount;
-        // OnInventoryChanged?.Invoke();
-        // Save();
-
         GameManager.PlayerData.currentData.gold += amount;
         PersistAndNotify();
     }
@@ -140,8 +103,6 @@ public class PlayerInventory : MonoBehaviour
             return false;
 
         GameManager.PlayerData.currentData.gold -= amount;
-        // OnInventoryChanged?.Invoke();
-        // Save();
         PersistAndNotify();
         return true;
     }
@@ -158,8 +119,6 @@ public class PlayerInventory : MonoBehaviour
 
         item.isEquipped = true;
         equipped[slot] = item;
-        // OnInventoryChanged?.Invoke();
-        // Save();
         PersistAndNotify();
     }
 
@@ -170,8 +129,6 @@ public class PlayerInventory : MonoBehaviour
 
         item.isEquipped = false;
         equipped.Remove(slot);
-        // OnInventoryChanged?.Invoke();
-        // Save();
         PersistAndNotify();
     }
 
@@ -187,8 +144,6 @@ public class PlayerInventory : MonoBehaviour
 
         GameManager.PlayerData.currentData.gold -= cost;
         item.level++;
-        // OnInventoryChanged?.Invoke();
-        // Save();
         PersistAndNotify();
         return true;
     }
@@ -256,10 +211,6 @@ public class PlayerInventory : MonoBehaviour
     // OwnedItem 리스트 -> PlayerSaveData,equipmentList로 되돌려서 계정 JSON에 저장
     public void Save()
     {
-        // var data = new SaveData { gold = gold, gem = gem, items = items.ToArray() };
-        // var json = JsonUtility.ToJson(data, true);
-        // File.WriteAllText(SavePath, json);
-
         GameManager.PlayerData.currentData.equipmentList = items.Select(item => new EquipmentSaveData()
         {
             instanceId = item.instanceId,
@@ -274,33 +225,6 @@ public class PlayerInventory : MonoBehaviour
 
     public void Load()
     {
-        // if (!File.Exists(SavePath))
-        //     return;
-        //
-        // var json = File.ReadAllText(SavePath);
-        // if (string.IsNullOrEmpty(json))
-        //     return;
-        //
-        // var data = JsonUtility.FromJson<SaveData>(json);
-        // if (data == null)
-        //     return;
-        //
-        // gold = data.gold;
-        // gem = data.gem;
-        //
-        // items.Clear();
-        // equipped.Clear();
-        //
-        // if (data.items == null)
-        //     return;
-        //
-        // foreach (var item in data.items)
-        // {
-        //     items.Add(item);
-        //     if (item.isEquipped)
-        //         equipped[item.Data.SlotType] = item;
-        // }
-        
         items.Clear();
         equipped.Clear();
 
