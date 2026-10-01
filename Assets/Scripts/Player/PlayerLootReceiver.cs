@@ -1,16 +1,18 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerHealth))]
 [RequireComponent(typeof(PlayerStats))]
 public class PlayerLootReceiver : MonoBehaviour, ILootReceiver
 {
-    [SerializeField][Min(0)] private int potionHealAmount = 300; // 임시 값: 기획 확정 후 조정
+    [SerializeField][Min(0)] private int potionHealAmount = 300;   // 임시 값: 기획 후 조정
+    [SerializeField][Min(0)] private int bombDamageToStrong = 300; // 임시 값: 엘리트/보스에게 주는 폭탄 피해
 
     private PlayerHealth playerHealth;
     private PlayerStats playerStats;
 
-    // Potion, Magnet을 제외한 아이템 획득 알림 (경험치, 골드, 상자, 폭탄)
+    // Potion, Magnet, Bomb을 제외한 아이템 획득 알림 (경험치, 골드, 상자)
     public event Action<DropItemType> OnLooted;
 
     public Vector2 Position => transform.position;
@@ -30,7 +32,6 @@ public class PlayerLootReceiver : MonoBehaviour, ILootReceiver
 
     private void OnDisable()
     {
-        // 가이드: OnDisable/OnDestroy에서는 GameManager.DropItem을 호출하지 않는다
         playerHealth.OnDied -= HandleDied;
     }
 
@@ -46,10 +47,47 @@ public class PlayerLootReceiver : MonoBehaviour, ILootReceiver
                 GameManager.DropItem.AttractAllExpGems();
                 break;
 
+            case DropItemType.Bomb:
+                ApplyBomb();
+                break;
+
             default:
                 OnLooted?.Invoke(type);
                 break;
         }
+    }
+
+    private void ApplyBomb()
+    {
+        var spawner = FindFirstObjectByType<MonsterSpawner>();
+        if (spawner == null)
+        {
+            Debug.Log("[PlayerLootReceiver] 폭탄: 씬에 MonsterSpawner가 없어 효과 없음");
+            return;
+        }
+
+        var targets = new List<Enemy>(spawner.SpawnedEnemies);
+
+        int killed = 0;
+        int damaged = 0;
+
+        foreach (var enemy in targets)
+        {
+            if (enemy == null || enemy.isDead) continue;
+
+            if (enemy.Type == MonsterType.Normal)
+            {
+                enemy.Die();
+                killed++;
+            }
+            else
+            {
+                enemy.Damaged(bombDamageToStrong);
+                damaged++;
+            }
+        }
+
+        Debug.Log("[PlayerLootReceiver] 폭탄: 일반 몬스터 " + killed + "마리 처치, 엘리트·보스 " + damaged + "마리에게 " + bombDamageToStrong + " 피해");
     }
 
     private void HandleDied()
@@ -65,4 +103,11 @@ public class PlayerLootReceiver : MonoBehaviour, ILootReceiver
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(transform.position, playerStats.LootRadius);
     }
+
+    // 전투 씬 테스트용: 아이템을 먹은 것처럼 효과만 실행
+    [ContextMenu("TestBomb")]
+    private void TestBomb() => OnLoot(DropItemType.Bomb);
+
+    [ContextMenu("TestMagnet")]
+    private void TestMagnet() => OnLoot(DropItemType.Magnet);
 }
