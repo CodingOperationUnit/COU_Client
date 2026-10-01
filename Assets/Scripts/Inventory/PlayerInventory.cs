@@ -222,7 +222,8 @@ public class PlayerInventory : MonoBehaviour
             instanceId = item.instanceId,
             itemId = item.itemId,
             level = item.level,
-            isEquipped = item.isEquipped
+            isEquipped = item.isEquipped,
+            grade = item.grade
         }).ToList();
 
         GameManager.LocalSaveLoad.SaveCurrentPlayerData();
@@ -269,7 +270,8 @@ public class PlayerInventory : MonoBehaviour
             {
                 instanceId = saved.instanceId,
                 level = saved.level,
-                isEquipped = saved.isEquipped
+                isEquipped = saved.isEquipped,
+                grade = saved.grade
             };
             
             items.Add(item);
