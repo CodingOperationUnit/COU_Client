@@ -14,6 +14,7 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private int startingSkillId = 1;
     [SerializeField] private int[] skillPoolIds = { 1, 2, 3 };
     [SerializeField] private int expGem1Value = 10;
+    [SerializeField] private int[] goldValues = { 10, 30, 100, 300 }; // 임시 값: Gold1~4, 기획 확정 후 조정
     [SerializeField] private int baseRequiredExp = 20;
     [SerializeField] private int requiredExpIncrement = 6;
     [SerializeField] private float healRewardRatio = 0.3f;
@@ -33,6 +34,7 @@ public class BattleManager : MonoBehaviour
     private float elapsed;
     private int seconds;
     private int kills;
+    private int gold;
     private int level = 1;
     private int exp;
     private int pendingLevelUps;
@@ -73,6 +75,7 @@ public class BattleManager : MonoBehaviour
 
         hud.SetTime(0);
         hud.SetKillCount(0);
+        hud.SetGold(0);
         hud.SetLevel(level);
         hud.SetExp(0f);
 
@@ -148,6 +151,15 @@ public class BattleManager : MonoBehaviour
         pauseWindow.SetKillCount(kills);
     }
 
+    public void AddGold(int amount)
+    {
+        if (ended) return;
+
+        gold += amount;
+        hud.SetGold(gold);
+        pauseWindow.SetGold(gold);
+    }
+
     private void HandleEnemyKilled(Enemy enemy)
     {
         AddKill();
@@ -162,6 +174,8 @@ public class BattleManager : MonoBehaviour
     {
         if (type == DropItemType.ExpGem1)
             AddExp(expGem1Value);
+        else if (type >= DropItemType.Gold1 && type <= DropItemType.Gold4)
+            AddGold(goldValues[type - DropItemType.Gold1]);
     }
 
     private void HandlePlayerDied()
@@ -246,9 +260,18 @@ public class BattleManager : MonoBehaviour
         }
         pendingLevelUps = 0;
 
+        BattleResult.Last = new BattleResult
+        {
+            Victory = victory,
+            Seconds = seconds,
+            Kills = kills,
+            Gold = gold
+        };
+
         RequestPause(resultWindow);
         resultWindow.SetTime(seconds);
         resultWindow.SetKillCount(kills);
+        resultWindow.SetGold(gold);
         resultWindow.Show(victory);
     }
 
