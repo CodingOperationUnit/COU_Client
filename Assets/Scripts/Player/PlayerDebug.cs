@@ -86,8 +86,23 @@ public class PlayerDebug : MonoBehaviour
             return;
         }
 
-        bool result = player.Skills.EquipSkill(skillId);
-        Debug.Log("[PlayerDebug] 스킬 " + skillId + " 장착/레벨업: " + (result ? "성공" : "실패"));
+        bool owned = false;
+        foreach (var skill in player.Skills.ActiveSkills)
+        {
+            if (skill.SkillId == skillId)
+            {
+                owned = true;
+                break;
+            }
+        }
+
+        // 보유 스킬은 레벨업, 미보유 스킬은 장착
+        // (스킬 담당자 규칙: EquipSkill은 첫 장착 때만, 이후 레벨업은 LevelUpSkill)
+        bool result = owned
+            ? player.Skills.LevelUpSkill(skillId)
+            : player.Skills.EquipSkill(skillId);
+
+        Debug.Log("[PlayerDebug] 스킬 " + skillId + (owned ? " 레벨업: " : " 장착: ") + (result ? "성공" : "실패"));
     }
 
     private void LogLooted(DropItemType type)

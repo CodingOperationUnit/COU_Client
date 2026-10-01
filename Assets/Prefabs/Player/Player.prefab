@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2979754372917612474}
   - component: {fileID: 5450531229243372019}
   - component: {fileID: 2642803821938928930}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,8 @@ GameObject:
   - component: {fileID: 7386405383787856107}
   - component: {fileID: 5866245441092528645}
   - component: {fileID: 2995784205717459434}
-  m_Layer: 0
+  - component: {fileID: 1840985785695172938}
+  m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -273,6 +274,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerLootReceiver
   potionHealAmount: 300
+  bombDamageToStrong: 300
 --- !u!114 &5866245441092528645
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -299,6 +301,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerDirectionArrow
   arrow: {fileID: 6848891374809624801}
   radius: 0.95
+--- !u!114 &1840985785695172938
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2129776847289895548}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f421bca108a5e484a9800f8cdf4563d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerLuckTrain
+  goldMin: 100
+  goldMax: 300
 --- !u!1 &2240187345407955799
 GameObject:
   m_ObjectHideFlags: 0
@@ -309,7 +325,7 @@ GameObject:
   m_Component:
   - component: {fileID: 897109720624873424}
   - component: {fileID: 301000170291458742}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: DummyWeapon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -401,7 +417,7 @@ GameObject:
   - component: {fileID: 6260344605068055044}
   - component: {fileID: 2091260103389674752}
   - component: {fileID: 3779503732491818854}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -475,7 +491,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6848891374809624801}
   - component: {fileID: 6611965942634762811}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: DirectionArrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -568,7 +584,7 @@ GameObject:
   - component: {fileID: 5223595056861878676}
   - component: {fileID: 2182432449192164291}
   - component: {fileID: 5131941939266425546}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -704,7 +720,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2142037021102209447}
   - component: {fileID: 5691836233997612363}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Visual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -797,7 +813,7 @@ GameObject:
   - component: {fileID: 5406726010797512218}
   - component: {fileID: 352363207451506010}
   - component: {fileID: 7742480188802111559}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: HPBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}

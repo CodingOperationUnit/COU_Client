@@ -4,6 +4,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(PlayerHealth))]
 [RequireComponent(typeof(PlayerStats))]
+[RequireComponent(typeof(PlayerLuckTrain))]
 public class PlayerLootReceiver : MonoBehaviour, ILootReceiver
 {
     [SerializeField][Min(0)] private int potionHealAmount = 300;   // 임시 값: 기획 후 조정
@@ -11,6 +12,7 @@ public class PlayerLootReceiver : MonoBehaviour, ILootReceiver
 
     private PlayerHealth playerHealth;
     private PlayerStats playerStats;
+    private PlayerLuckTrain luckTrain;
 
     // Potion, Magnet, Bomb을 제외한 아이템 획득 알림 (경험치, 골드, 상자)
     public event Action<DropItemType> OnLooted;
@@ -22,6 +24,7 @@ public class PlayerLootReceiver : MonoBehaviour, ILootReceiver
     {
         playerHealth = GetComponent<PlayerHealth>();
         playerStats = GetComponent<PlayerStats>();
+        luckTrain = GetComponent<PlayerLuckTrain>();
     }
 
     private void OnEnable()
@@ -51,7 +54,12 @@ public class PlayerLootReceiver : MonoBehaviour, ILootReceiver
                 ApplyBomb();
                 break;
 
+            case DropItemType.LuckyBox:
+                luckTrain.Add();
+                break;
+
             default:
+                // ExpGem1~4, Gold1~4, RewardBox 및 이후 추가되는 아이템 → 배틀 매니저 등 구독자가 처리
                 OnLooted?.Invoke(type);
                 break;
         }

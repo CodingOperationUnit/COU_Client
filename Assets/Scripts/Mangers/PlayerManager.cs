@@ -6,6 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerVisual))]
 [RequireComponent(typeof(PlayerLootReceiver))]
 [RequireComponent(typeof(SkillController))]
+[RequireComponent(typeof(PlayerLuckTrain))]
 public class PlayerManager : MonoBehaviour
 {
     public static PlayerManager Instance { get; private set; }
@@ -16,6 +17,7 @@ public class PlayerManager : MonoBehaviour
     public PlayerVisual Visual { get; private set; }
     public PlayerLootReceiver Loot { get; private set; }
     public SkillController Skills { get; private set; }
+    public PlayerLuckTrain LuckTrain { get; private set; }
 
     private void Awake()
     {
@@ -33,6 +35,7 @@ public class PlayerManager : MonoBehaviour
         Visual = GetComponent<PlayerVisual>();
         Loot = GetComponent<PlayerLootReceiver>();
         Skills = GetComponent<SkillController>();
+        LuckTrain = GetComponent<PlayerLuckTrain>();
     }
 
     private void OnEnable()
