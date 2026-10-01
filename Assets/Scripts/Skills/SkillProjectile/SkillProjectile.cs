@@ -26,9 +26,9 @@ public abstract class SkillProjectile : MonoBehaviour, ISkillPoolable
 
     protected abstract void OnLaunch();
 
-    protected virtual void ApplyDamage()
+    protected virtual void ApplyDamage(Enemy target)
     {
-        // TODO: 타겟 판정 및 데미지 적용 (Monster 구현 후 작성 예정)
+        target.Damaged(Mathf.RoundToInt(skillData.Damage));
     }
 
     protected void ReturnToPool()
