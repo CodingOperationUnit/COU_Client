@@ -4,14 +4,22 @@ using UnityEngine;
 
 public class InventoryListView : MonoBehaviour
 {
+    public enum SortMode { Slot, Level, Grade }
+
     [SerializeField] private Transform content;
     [SerializeField] private ItemSlotView itemSlotPrefab;
 
+    [SerializeField] private SynthesisWindow synthesisWindowRef;
+
     private readonly List<ItemSlotView> pool = new();
+
+    public SortMode CurrentSortMode { get; private set; } = SortMode.Slot;
 
     private void OnEnable()
     {
         PlayerInventory.Instance.OnInventoryChanged += Refresh;
+        if (synthesisWindowRef != null)
+            synthesisWindowRef.OnShown += Refresh;
         Refresh();
     }
 
@@ -19,21 +27,40 @@ public class InventoryListView : MonoBehaviour
     {
         if (PlayerInventory.Instance != null)
             PlayerInventory.Instance.OnInventoryChanged -= Refresh;
+        if (synthesisWindowRef != null)
+            synthesisWindowRef.OnShown -= Refresh;
+    }
+
+    public SortMode CycleSortMode()
+    {
+        CurrentSortMode = (SortMode)(((int)CurrentSortMode + 1) % 3);
+        Refresh();
+        return CurrentSortMode;
     }
 
     private void Refresh()
     {
-        var items = PlayerInventory.Instance.Items.Where(i => !i.isEquipped).ToList();
+        IEnumerable<OwnedItem> items = PlayerInventory.Instance.Items.Where(i => !i.isEquipped);
 
-        while (pool.Count < items.Count)
+        items = CurrentSortMode switch
+        {
+            SortMode.Slot => items.OrderBy(i => i.Data.SlotType == EquipSlotType.Weapon ? 0 : 1),
+            SortMode.Level => items.OrderByDescending(i => i.level),
+            SortMode.Grade => items.OrderByDescending(i => (int)i.Grade),
+            _ => items
+        };
+
+        var list = items.ToList();
+
+        while (pool.Count < list.Count)
             pool.Add(Instantiate(itemSlotPrefab, content));
 
         for (var i = 0; i < pool.Count; i++)
         {
-            var active = i < items.Count;
+            var active = i < list.Count;
             pool[i].gameObject.SetActive(active);
             if (active)
-                pool[i].Setup(items[i]);
+                pool[i].Setup(list[i], synthesisWindowRef);
         }
     }
 }

@@ -1,35 +1,35 @@
 using System;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class SkillSelectWindow : UIView
 {
-    [SerializeField] private Button[] optionButtons;
-    [SerializeField] private TMP_Text[] titleTexts;
-    [SerializeField] private TMP_Text[] detailTexts;
+    [SerializeField] private SkillSelectCard[] cards;
+    [SerializeField] private GameObject[] weaponSlotFilled;
 
     public event Action<int> OnSelected;
 
     private void Awake()
     {
-        for (var i = 0; i < optionButtons.Length; i++)
+        for (var i = 0; i < cards.Length; i++)
         {
             var index = i;
-            optionButtons[i].onClick.AddListener(() => OnSelected?.Invoke(index));
+            cards[i].OnClicked += () => OnSelected?.Invoke(index);
         }
     }
 
-    public void SetOption(int index, string title, string detail)
+    public void SetOption(int index, string title, string description, int grade, bool isNew)
+        => cards[index].Set(title, description, grade, isNew);
+
+    public void SetWeaponSlots(int filledCount)
     {
-        titleTexts[index].text = title;
-        detailTexts[index].text = detail;
+        for (var i = 0; i < weaponSlotFilled.Length; i++)
+            weaponSlotFilled[i].SetActive(i < filledCount);
     }
 
     public void Show(int count)
     {
-        for (var i = 0; i < optionButtons.Length; i++)
-            optionButtons[i].gameObject.SetActive(i < count);
+        for (var i = 0; i < cards.Length; i++)
+            cards[i].gameObject.SetActive(i < count);
         Open();
     }
 }

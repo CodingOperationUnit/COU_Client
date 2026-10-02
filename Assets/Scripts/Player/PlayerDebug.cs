@@ -58,6 +58,15 @@ public class PlayerDebug : MonoBehaviour
 
         if (Keyboard.current.digit6Key.wasPressedThisFrame)
             LogPlayerManager();
+
+        if (Keyboard.current.digit7Key.wasPressedThisFrame)
+            EquipSkill(1);
+
+        if (Keyboard.current.digit8Key.wasPressedThisFrame)
+            EquipSkill(2);
+
+        if (Keyboard.current.digit9Key.wasPressedThisFrame)
+            EquipSkill(3);
     }
 
     private void SpawnAllDropItems()
@@ -66,6 +75,34 @@ public class PlayerDebug : MonoBehaviour
 
         for (int i = 0; i <= (int)DropItemType.Bomb; i++)
             GameManager.DropItem.Spawn((DropItemType)i, center + Random.insideUnitCircle * dropSpawnRange);
+    }
+
+    private void EquipSkill(int skillId)
+    {
+        var player = PlayerManager.Instance;
+        if (player == null || player.Skills == null)
+        {
+            Debug.LogWarning("[PlayerDebug] SkillController를 찾을 수 없습니다.");
+            return;
+        }
+
+        bool owned = false;
+        foreach (var skill in player.Skills.ActiveSkills)
+        {
+            if (skill.SkillId == skillId)
+            {
+                owned = true;
+                break;
+            }
+        }
+
+        // 보유 스킬은 레벨업, 미보유 스킬은 장착
+        // (스킬 담당자 규칙: EquipSkill은 첫 장착 때만, 이후 레벨업은 LevelUpSkill)
+        bool result = owned
+            ? player.Skills.LevelUpSkill(skillId)
+            : player.Skills.EquipSkill(skillId);
+
+        Debug.Log("[PlayerDebug] 스킬 " + skillId + (owned ? " 레벨업: " : " 장착: ") + (result ? "성공" : "실패"));
     }
 
     private void LogLooted(DropItemType type)
@@ -83,15 +120,24 @@ public class PlayerDebug : MonoBehaviour
             return;
         }
 
+        string skills = "";
+        if (player.Skills != null)
+        {
+            foreach (var skill in player.Skills.ActiveSkills)
+                skills += skill.SkillId + "(Lv" + skill.Level + ") ";
+        }
+
         Debug.Log("[PlayerDebug] PlayerManager 확인" +
-                  " / 장비 출처: " + (player.Stats.UsesInventory ? "인벤토리" : "더미") +
+                  " / 장비 출처: " + player.Stats.EquipmentSource +
                   " / 방향: " + player.Movement.FacingDirection +
                   " / 공격력: " + player.Stats.FinalAtk +
-                  " / 치명타 확률: " + player.Stats.CriticalChance + "%" +
                   " / 체력: " + player.Health.CurrentHealth + "/" + player.Health.MaxHealth +
                   " / 사망: " + player.Health.IsDead +
-                  " / 루팅 범위: " + player.Loot.LootRadius +
-                  " / 무기: " + (player.Stats.HasWeapon ? player.Stats.EquippedWeaponName : "없음"));
+                  " / 무기: " + (player.Stats.HasWeapon ? player.Stats.EquippedWeaponName : "없음") +
+                  " / 시작 스킬: " + player.Stats.StartingSkillId +
+                  " / 스킬: " + (skills == "" ? "없음" : skills) +
+                  " / 스킬 동작: " + (player.Skills != null && player.Skills.enabled)
+                  );
     }
 
     private void OnGUI()
@@ -99,8 +145,8 @@ public class PlayerDebug : MonoBehaviour
         if (!Debug.isDebugBuild) return;
 
         GUI.skin.label.fontSize = 24;
-        GUI.Label(new Rect(10, 10, 500, 360),
-            "[1] Damage\n[2] Heal\n[3] Restore Life\n[4] Attack Motion\n[5] Spawn Drop Items\n[6] PlayerManager Log\n\n" +
+        GUI.Label(new Rect(10, 10, 500, 420),
+            "[1] Damage\n[2] Heal\n[3] Restore Life\n[4] Attack Motion\n[5] Spawn Drop Items\n[6] PlayerManager Log\n[7][8][9] Equip Skill 1/2/3\n\n" +
             "HP : " + playerHealth.CurrentHealth + " / " + playerHealth.MaxHealth + "\n\n" +
             "Life : " + playerHealth.CurrentLives + " / " + playerHealth.MaxLives);
     }

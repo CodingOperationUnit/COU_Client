@@ -59,6 +59,16 @@
       "monsterMoveSpeed": 3.0,
       "monsterAttackPoint": 10,
       "monsterAsset": "Enemy/skull_warrior"
+    },
+    {
+      "monsterID": 4001,
+      "monsterName": "상자",
+      "type": "Box",
+      "monsterMaxHealthPoint": 1,
+      "monsterExp": 0,
+      "monsterMoveSpeed": 0.0,
+      "monsterAttackPoint": 0,
+      "monsterAsset": ""
     }
   ]
 }

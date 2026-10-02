@@ -17,6 +17,12 @@ public class BattleResultWindow : UIView
     [SerializeField] private TMP_Text boxCountText;
     [SerializeField] private TMP_Text goldText;
     [SerializeField] private TMP_Text expText;
+    [SerializeField] private Button confirmButton;
+
+    private void Awake()
+    {
+        confirmButton.onClick.AddListener(() => GameManager.Scene.ChangeScene(GameConstants.SceneNames.MAIN_SCENE));
+    }
 
     public void Show(bool victory)
     {

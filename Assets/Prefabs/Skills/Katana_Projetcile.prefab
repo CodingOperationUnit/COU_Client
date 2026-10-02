@@ -10,8 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8550011257249591864}
   - component: {fileID: 5294392969929632986}
-  - component: {fileID: 6721003487283755431}
-  m_Layer: 0
+  - component: {fileID: 3618473855360933245}
+  - component: {fileID: 7578933503343459729}
+  m_Layer: 10
   m_Name: Katana_Projetcile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -64,7 +65,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -80,7 +81,34 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &6721003487283755431
+--- !u!50 &3618473855360933245
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 671241773216192966}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!114 &7578933503343459729
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -89,11 +117,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 671241773216192966}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 403e3a1a69bdce54baa199f9143e10f1, type: 3}
+  m_Script: {fileID: 11500000, guid: 17207021b92e83f4c8a916e4e0b95d1d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MeleeProjectile
-  _range: 1.5
-  _effectDuration: 0.3
+  m_EditorClassIdentifier: Assembly-CSharp::PiercingProjectile
+  lifeTime: 0.5
 --- !u!1 &4213195692300046445
 GameObject:
   m_ObjectHideFlags: 0

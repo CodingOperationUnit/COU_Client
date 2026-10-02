@@ -29,7 +29,76 @@ public class PlayerSaveData
 {
     public string playerID;
     
-    // 보유 장비, 골드, 스테이지 정보 등을 작성 예정
     public int gold;
-    public int exp;
+    public int gem;
+
+    public int currentStamina;
+    public int maxStamina;
+    
+    public int accountLevel = 1;
+    public int accountExp;
+
+    public List<EquipmentSaveData> equipmentList = new List<EquipmentSaveData>();
+    public List<StageRecordSaveData> stageRecordList = new List<StageRecordSaveData>();
+
+    public static PlayerSaveData CreateDefault(string playerID)
+    {
+        if (string.IsNullOrWhiteSpace(playerID))
+            throw new ArgumentException("플레이어 ID가 필요합니다.");
+
+        return new PlayerSaveData
+        {
+            playerID = playerID,
+            gold = 0,
+            gem = 0,
+            maxStamina = 60,
+            currentStamina = 60,
+            accountLevel = 1,
+            accountExp = 0,
+            equipmentList = new List<EquipmentSaveData>(),
+            stageRecordList = CreateDefaultStageRecords()
+        };
+    }
+
+    private static List<StageRecordSaveData> CreateDefaultStageRecords()
+    {
+        var stageDataDic = GameManager.JsonData.StageDataDic;
+        var records = new List<StageRecordSaveData>();
+
+        if (stageDataDic == null)
+        {
+            Debug.LogWarning("[PlayerSaveData] 스테이지 데이터가 로드되지 않아 기록을 초기화하지 못했습니다.");
+            return records;
+        }
+
+        foreach (var stageID in stageDataDic.Keys)
+        {
+            records.Add(new StageRecordSaveData
+            {
+                stageID = stageID,
+                isCleared = false,
+                bestSurvivalSeconds = 0f
+            });
+        }
+
+        return records;
+    }
+}
+
+[Serializable]
+public class EquipmentSaveData
+{
+    public string instanceId;
+    public long itemId;
+    public int level = 1;
+    public bool isEquipped;
+    public ItemGrade grade;
+}
+
+[Serializable]
+public class StageRecordSaveData
+{
+    public int stageID;
+    public bool isCleared;
+    public float bestSurvivalSeconds;
 }

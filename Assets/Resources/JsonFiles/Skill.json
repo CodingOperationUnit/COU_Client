@@ -1,0 +1,54 @@
+{
+  "datas": [
+    {
+      "ID": 1,
+      "Name": "Shuriken",
+      "Type": "nearest",
+      "Cooldown": 1.0,
+      "Speed": 4.0,
+      "Damage": 1.0,
+      "Range": 5.0,
+      "Description": "수리검"
+    },
+    {
+      "ID": 2,
+      "Name": "Revolver",
+      "Type": "forward",
+      "Cooldown": 2.0,
+      "Speed": 10.0,
+      "Damage": 2.0,
+      "Range": 10.0,
+      "Description": "리볼버"
+    },
+    {
+      "ID": 3,
+      "Name": "Katana",
+      "Type": "forward",
+      "Cooldown": 0.75,
+      "Speed": 6.0,
+      "Damage": 1.25,
+      "Range": 2.0,
+      "Description": "카타나"
+    },
+    {
+      "ID": 4,
+      "Name": "Planet",
+      "Type": "none",
+      "Cooldown": 0.0,
+      "Speed": 120.0,
+      "Damage": 1.0,
+      "Range": 2.0,
+      "Description": "행성"
+    },
+    {
+      "ID": 5,
+      "Name": "Missile",
+      "Type": "nearest",
+      "Cooldown": 1.5,
+      "Speed": 2.0,
+      "Damage": 0.8,
+      "Range": 7.0,
+      "Description": "미사일"
+    }
+  ]
+}

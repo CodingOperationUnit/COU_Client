@@ -2561,6 +2561,7 @@ GameObject:
   - component: {fileID: 5476969942405029273}
   - component: {fileID: 8079549967684594694}
   - component: {fileID: 3772891698524698053}
+  - component: {fileID: 133104956243454005}
   m_Layer: 5
   m_Name: AddButton
   m_TagString: Untagged
@@ -3321,6 +3322,7 @@ GameObject:
   - component: {fileID: 1825627327590347384}
   - component: {fileID: 4132071452999126229}
   - component: {fileID: 3502477264302960538}
+  - component: {fileID: 8444806236736531328}
   m_Layer: 5
   m_Name: SlotButton
   m_TagString: Untagged
@@ -3627,3 +3629,30 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8444806236736531328
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8058562207144259125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f74f1acb7d0355a56f0c4c4cf0ba5aa, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::InventorySortButton
+  button: {fileID: 3502477264302960538}
+  label: {fileID: 7717496526997424058}
+  listView: {fileID: 9064629737341279553}
+--- !u!114 &133104956243454005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7061656117668164609}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19c7151120a54c2fb071b3a7b4b4aaa8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SynthesisEntryButton

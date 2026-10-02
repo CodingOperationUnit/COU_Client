@@ -57,9 +57,9 @@ public class PlayerMovement : MonoBehaviour
     }
 
     // For Debug (바라보는 방향 표시)
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawRay(transform.position, FacingDirection * 3);
-    }
+    //private void OnDrawGizmos()
+    //{
+    //    Gizmos.color = Color.red;
+    //    Gizmos.DrawRay(transform.position, FacingDirection * 3);
+    //}
 }
