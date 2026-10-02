@@ -19,6 +19,7 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private int accountExpClearBonus = 500;  // 임시 값: 기획 확정 후 조정
     [SerializeField] private int baseRequiredExp = 20;
     [SerializeField] private int requiredExpIncrement = 6;
+    [SerializeField] private float requiredExpAcceleration = 0.3f;
     [SerializeField] private float healRewardRatio = 0.3f;
     [SerializeField] private float bossVictoryDelay = 2f;
 
@@ -44,7 +45,8 @@ public class BattleManager : MonoBehaviour
     private bool ended;
     private float victoryTimer;
 
-    private int RequiredExp => baseRequiredExp + requiredExpIncrement * (level - 1);
+    private int RequiredExp => baseRequiredExp + requiredExpIncrement * (level - 1)
+                               + Mathf.RoundToInt(requiredExpAcceleration * (level - 1) * (level - 1));
 
     private void Awake()
     {
