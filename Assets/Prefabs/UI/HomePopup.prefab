@@ -475,6 +475,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50129054d56548947b609e32095de77d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HomePopup
+  exitButton: {fileID: 1180399380913198510}
   continueButton: {fileID: 2003793269345901672}
 --- !u!1 &3598367003898448825
 GameObject:

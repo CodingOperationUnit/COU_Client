@@ -88,6 +88,11 @@ public class BattleManager : MonoBehaviour
             Time.timeScale = 1f;
     }
 
+    public void Surrender()
+    {
+        EndBattle(false);
+    }
+
     public void AddExp(int amount)
     {
         if (ended) return;
