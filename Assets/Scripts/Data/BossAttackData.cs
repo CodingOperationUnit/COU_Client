@@ -2,9 +2,9 @@
 using UnityEngine;
 
 // 보스 공격 종류. BossAttack.json의 "attackType" 문자열을 enum으로 바꿔서 쓴다.
-// - Melee  : 근접 공격
-// - Ranged : 원거리 공격 (투사체는 TODO)
-// - Area   : 범위 공격 (경고 표시는 TODO)
+// - Melee  : 근접 공격(돌진)
+// - Ranged : 원거리 공격(산탄)
+// - Area   : 범위 공격(경고 장판 폭발)
 public enum BossAttackType { Melee, Ranged, Area }
 
 // 보스 공격 패턴(한 보스가 여러 패턴을 가짐)

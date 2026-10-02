@@ -116,6 +116,24 @@ MonoBehaviour:
   currentHp: 0
   isDead: 0
   player: {fileID: 2129776847289895548, guid: ddf2cdd10591fe24994fba07b40bb824, type: 3}
+  chaseDurationRange: {x: 2, y: 3.5}
+  idleDurationRange: {x: 0.6, y: 1.2}
+  windupTime: 0.8
+  recoveryTime: 0.6
+  warningColor: {r: 1, g: 0.3, b: 0.3, a: 1}
+  blinkSpeed: 10
+  dashSpeed: 12
+  dashDistance: 6
+  dashHitRadius: 0.8
+  projectilePrefab: {fileID: 6102526803870317478, guid: fcb17a9c66770c74ca68170cf7fc4f06, type: 3}
+  projectileCount: 5
+  spreadAngle: 60
+  projectileSpeed: 6
+  projectileLifeTime: 4
+  areaWarningPrefab: {fileID: 3910789049569104216, guid: 17f98e68633be764d8f459ad954747df, type: 3}
+  areaCount: 3
+  areaRadius: 1.5
+  areaSpread: 3
 --- !u!1 &5214109458787997363
 GameObject:
   m_ObjectHideFlags: 0
