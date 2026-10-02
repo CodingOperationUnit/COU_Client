@@ -43,7 +43,17 @@ public class BossArena : MonoBehaviour
     // 켜질 때 구독
     private void OnEnable()
     {
-        if (spawner == null) { return; }
+        if (spawner == null)
+        {
+            spawner = FindFirstObjectByType<MonsterSpawner>();
+        }
+            
+        if (spawner == null)
+        {
+            Debug.LogWarning("[BossArena] 씬에서 MonsterSpawner를 찾지 못했습니다.");
+            return;
+        }
+
         spawner.OnBossSpawned += HandleBossSpawned;
         spawner.OnBossKilled += HandleBossKilled;
     }
@@ -69,7 +79,12 @@ public class BossArena : MonoBehaviour
     {
         if (playerBody == null)
         {
-            Debug.LogWarning("[BossArena] playerBody가 연결되지 않았습니다.");
+            playerBody = FindPlayerBody();
+        }
+
+        if (playerBody == null)
+        {
+            Debug.LogWarning("[BossArena] Player의 Rigidbody2D를 찾지 못했습니다.");
             return;
         }
 
@@ -79,6 +94,14 @@ public class BossArena : MonoBehaviour
         Vector2 dir = ((Vector2)boss.transform.position - center).normalized;
         if (dir == Vector2.zero) dir = Vector2.right;
         boss.transform.position = center + dir * (radius * bossSpawnRatio);
+    }
+
+    // 플레이어를 찾음
+    private Rigidbody2D FindPlayerBody()
+    {
+        if (PlayerManager.Instance == null) { return null; }
+
+        return PlayerManager.Instance.GetComponent<Rigidbody2D>();
     }
 
     // 보스 처치 → 결계 해제
