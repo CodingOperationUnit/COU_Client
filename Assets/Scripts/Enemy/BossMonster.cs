@@ -249,7 +249,16 @@ public class BossMonster : Enemy
         float step = dashSpeed * Time.deltaTime;
         if (step > dashRemaining) step = dashRemaining;   // 마지막 프레임에 거리를 넘지 않게
 
-        transform.position += dashDirection * step;
+
+        // 이번 프레임에 이동할 위치가 결계 밖이면 벽에 부딪힌 것으로 보고 돌진 종료
+        Vector3 nextPosition = transform.position + dashDirection * step;
+        if (BossArena.Current != null && !BossArena.Current.CanBossMoveTo(nextPosition))
+        {
+            EnterState(BossState.Recovery);
+            return;
+        }
+
+        transform.position = nextPosition;
         dashRemaining -= step;
 
         if (!dashHit &&
