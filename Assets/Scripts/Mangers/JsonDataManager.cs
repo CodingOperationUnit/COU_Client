@@ -26,7 +26,6 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
 
     private Dictionary<DropItemType, DropItemData> dropItemDataDic;
     public IReadOnlyDictionary<DropItemType, DropItemData> DropItemDataDic => dropItemDataDic;
-
     #endregion
 
     protected override void Awake()
@@ -137,7 +136,6 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
         Debug.LogWarning($"등록되지 않은 DropItem 종류: {type}");
         return null;
     }
-
     #endregion
     
     #region LoadData
@@ -410,6 +408,5 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
             Debug.LogError($"DropItem 데이터 로드 실패: {exception.Message}");
         }
     }
-
     #endregion
 }

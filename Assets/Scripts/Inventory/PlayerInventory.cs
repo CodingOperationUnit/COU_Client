@@ -61,12 +61,14 @@ public class PlayerInventory : MonoBehaviour
         record.isCleared |= result.Victory;
         record.bestSurvivalSeconds = Mathf.Max(record.bestSurvivalSeconds, result.Seconds);
 
-        // 보상상자: 최저 등급 장비를 상자 개수만큼 무작위 지급
+        // 보상상자: 상자마다 스테이지의 등급 가중치로 등급을 뽑고, 그 등급이 기본 등급인 장비를 무작위 지급
         var rewards = new List<OwnedItem>();
-        var pool = ItemDatabase.GetAll().Where(item => item.Grade == ItemGrade.General).ToList();
-        if (pool.Count > 0)
+        var stage = GameManager.JsonData.GetStageDataFromJson(result.StageID);
+        for (var i = 0; i < result.RewardBoxes; i++)
         {
-            for (var i = 0; i < result.RewardBoxes; i++)
+            var grade = stage.RollRewardBoxGrade();
+            var pool = ItemDatabase.GetAll().Where(item => item.Grade == grade).ToList();
+            if (pool.Count > 0)
                 rewards.Add(new OwnedItem(pool[UnityEngine.Random.Range(0, pool.Count)].itemId));
         }
         items.AddRange(rewards);

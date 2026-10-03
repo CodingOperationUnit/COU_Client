@@ -6,7 +6,12 @@
       "illustrationColor": "#4C7A3D",
       "duration": 150.0,
       "stageDescription": "몬스터가 가득한 숲입니다.",
-      "clearAccountExp": 500
+      "clearAccountExp": 500,
+      "rewardBoxGradeWeights": [
+        100,
+        0,
+        0
+      ]
     },
     {
       "stageID": 2,
@@ -14,7 +19,12 @@
       "illustrationColor": "#C9A66B",
       "duration": 150.0,
       "stageDescription": "햇빛이 뜨거운 사막입니다.",
-      "clearAccountExp": 500
+      "clearAccountExp": 500,
+      "rewardBoxGradeWeights": [
+        100,
+        0,
+        0
+      ]
     }
   ]
 }

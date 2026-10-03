@@ -1,0 +1,13 @@
+{
+  "datas": [
+    {
+      "initialGold": 0,
+      "initialGem": 0,
+      "initialStamina": 60,
+      "maxStamina": 60,
+      "accountBaseRequiredExp": 100,
+      "accountRequiredExpIncrement": 100,
+      "maxAccountLevel": 20
+    }
+  ]
+}
