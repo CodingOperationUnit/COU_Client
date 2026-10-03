@@ -52,6 +52,15 @@ public class PlayerInventory : MonoBehaviour
         data.gold += result.Gold;
         data.accountExp += result.AccountExp;
 
+        // 계정 레벨업: 필요 경험치를 채울 때마다 차감하고 레벨을 올린다. 최대 레벨에서 멈춘다
+        var accountConst = GameManager.JsonData.AccountConstData;
+        while (data.accountLevel < accountConst.maxAccountLevel
+               && data.accountExp >= accountConst.GetRequiredExp(data.accountLevel))
+        {
+            data.accountExp -= accountConst.GetRequiredExp(data.accountLevel);
+            data.accountLevel++;
+        }
+
         var record = data.stageRecordList.FirstOrDefault(r => r.stageID == result.StageID);
         if (record == null)
         {
@@ -104,7 +113,18 @@ public class PlayerInventory : MonoBehaviour
         if (Gem < amount)
             return false;
 
+        // 의문: 보석을 쓰는 메서드인데 gold를 차감한다. gem을 차감해야 하지 않나?
         GameManager.PlayerData.currentData.gold -= amount;
+        PersistAndNotify();
+        return true;
+    }
+
+    public bool TrySpendStamina(int amount)
+    {
+        if (GameManager.PlayerData.currentData.currentStamina < amount)
+            return false;
+
+        GameManager.PlayerData.currentData.currentStamina -= amount;
         PersistAndNotify();
         return true;
     }

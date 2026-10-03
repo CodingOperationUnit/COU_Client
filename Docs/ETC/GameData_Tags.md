@@ -77,9 +77,9 @@
 | 값 | 위치 | 현행 | 이상 | 비고 |
 |---|---|---|---|---|
 | gold, gem | `PlayerSaveData` | `USER` | `USER` · `SERVER_AUTH` | |
-| currentStamina | `PlayerSaveData` | `USER` | `USER` · `SERVER_AUTH` | 차감하거나 회복하는 코드가 없다 |
+| currentStamina | `PlayerSaveData` | `USER` | `USER` · `SERVER_AUTH` | 전투에 입장할 때 `PlayerInventory.TrySpendStamina`로 차감한다. 회복하는 코드가 없다 |
 | maxStamina | `PlayerSaveData` | `USER` | **`DESIGN_CONST`** | 모든 유저에게 같은 값인데 계정별로 저장된다(6.5) |
-| 초기 재화(gold 0, gem 0, stamina 60/60) | `PlayerSaveData.CreateDefault` | `DESIGN_CONST` | `DESIGN_CONST` | |
+| 초기 재화(gold 0, gem 0, stamina 60/60) | `PlayerSaveData.CreateDefault` | `DESIGN_CONST` | `DESIGN_CONST` | `AccountConst.json`의 initialGold, initialGem, initialStamina, maxStamina가 같은 값을 한 번 더 정의하지만 읽지 않는다(6.2, 6.3) |
 | 스태미나 회복 주기 | 없음 | `—` | **`DESIGN_CONST`** | |
 | 스태미나 회복 기준 시각 | 없음 | `—` | **`USER`** · `SERVER_AUTH` | 회복을 계산하려면 필요하다 |
 | DNA | 없음 | `—` | **`USER`** · `SERVER_AUTH` | `EvolutionInfo.dna` 필드만 있고 값을 넣는 코드가 없다 |
@@ -87,8 +87,8 @@
 ### 5.4 계정 성장
 | 값 | 위치 | 현행 | 이상 | 비고 |
 |---|---|---|---|---|
-| accountLevel, accountExp | `PlayerSaveData` | `USER` | `USER` · `SERVER_AUTH` | 전투 결과로 accountExp가 쌓이지만 accountLevel을 올리는 코드가 없다 |
-| 계정 레벨 필요 경험치(accountBaseRequiredExp 100, accountRequiredExpIncrement 100), 최대 계정 레벨(maxAccountLevel 20) | `Resources/JsonFiles/AccountConst.json` | `DESIGN_CONST` | `DESIGN_CONST` | 필요 경험치 = `100 + 100 × (레벨 - 1)`. 읽는 코드가 없다. `TopBar`는 accountExp를 그대로 경험치 바 비율로 넘긴다 |
+| accountLevel, accountExp | `PlayerSaveData` | `USER` | `USER` · `SERVER_AUTH` | accountExp는 현재 레벨에서 쌓은 경험치다. `PlayerInventory.ClaimBattleResult`가 전투 결과의 계정 경험치를 더하고, 필요 경험치를 채울 때마다 차감하며 레벨을 올린다. 최대 레벨에서는 레벨업을 멈추고 경험치는 계속 쌓인다 |
+| 계정 레벨 필요 경험치(accountBaseRequiredExp 100, accountRequiredExpIncrement 100), 최대 계정 레벨(maxAccountLevel 20) | `Resources/JsonFiles/AccountConst.json` | `DESIGN_CONST` | `DESIGN_CONST` | 필요 경험치 = `100 + 100 × (레벨 - 1)`(`AccountConstData.GetRequiredExp`). `TopBar` 경험치 바 비율 = accountExp / 필요 경험치이고, 최대 레벨이면 1이다 |
 | 진화 노드(level, name, value, description, cost) | 없음 | `—` | **`DESIGN_TABLE`** | `EvolutionNodeInfo` 구조체만 있다. 값을 넣던 `MainTestDriver`는 전부 주석 처리됐다. 골드 노드와 DNA 노드 두 종류. value가 문자열이라 효과를 계산할 수 없다 |
 | 레벨당 골드 노드 수 3 | `EvolutionTab.NodesPerLevel` const | `DESIGN_CONST` | `삭제` | 진화 노드 테이블의 level 열에서 결정된다 |
 | 해금한 진화 노드 수 | 없음 | `—` | **`USER`** · `SERVER_AUTH` | `EvolutionInfo`에 필드만 있다 |
@@ -98,8 +98,7 @@
 | 값 | 위치 | 현행 | 이상 | 비고 |
 |---|---|---|---|---|
 | itemId, itemName, description, iconPath, slotType, grade, hpBonus, attackBonus, moveSpeedBonus, gradeSkills | `Resources/JsonFiles/Item.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | grade는 획득할 때의 기본 등급이다. gradeSkills가 문자열이라 효과를 계산할 수 없다(장비 상세 팝업에 표시만 한다) |
-| 부위(`EquipSlotType`), 장비 등급(`ItemGrade`) | `EquipDefine.cs` enum | `DESIGN_CONST` | `DESIGN_CONST` | |
-| UI 등급(`Grade`) | `UI/Grade.cs` enum | `DESIGN_CONST` | `DESIGN_CONST` | `ItemGrade`와 하나로 통합해야 한다. 어느 쪽을 남길지는 미정이다(6.2). 현재 도전 보상 표시에서만 쓴다 |
+| 부위(`EquipSlotType`), 장비 등급(`ItemGrade`) | `EquipDefine.cs` enum | `DESIGN_CONST` | `DESIGN_CONST` | 도전 보상 등급도 `ItemGrade`를 쓴다 |
 | 무기 종류(`WeaponType`) | `WeaponType.cs` enum | `DESIGN_CONST` | `DESIGN_CONST` | 임시 정의. `ItemData`에 필드가 없어 `WeaponSkillTable`로 구한다 |
 | 무기별 시작 스킬(6001→3, 6002→2, 6003→1), 무기 종류↔스킬 매핑 | `WeaponSkillTable` const | `DEBUG` | **`DESIGN_TABLE`** | 장비 테이블의 열. 코드 주석에 임시 코드로 표시돼 있다 |
 | 강화: MaxLevel 10, BaseCost 1000, StatGrowthPerLevel 0.1 | `ItemLevelConfig` const | `DESIGN_CONST` | `DESIGN_CONST` | 비용 = `1000 × 현재 레벨`, 배율 = `1 + 0.1 × (레벨 - 1)` |
@@ -122,7 +121,7 @@
 | stageID, stageName, illustrationColor, duration, stageDescription, clearAccountExp, rewardBoxGradeWeights | `Resources/JsonFiles/Stage.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | illustrationColor는 연출용 열이다. duration은 읽는 코드가 없다(6.3). clearAccountExp는 승리했을 때 더하는 계정 경험치다. rewardBoxGradeWeights는 `ItemGrade` 순서의 보상상자 장비 등급 가중치이고 모든 스테이지가 `100,0,0`이다(5.12) |
 | 선택한 stageID | `GameSceneManager.pendingStageID` | `SESSION` | `SESSION` · `CLIENT_AUTH` | 메인 씬에서 전투 씬으로 넘길 때만 쓴다 |
 | 기본 stageId 1 | `MonsterSpawner` 인스펙터 | `DEBUG` | `삭제` | 메인 씬을 거치지 않고 전투 씬을 실행할 때만 쓴다 |
-| 전투 입장 스태미나 비용 | 없음 | `—` | **`DESIGN_TABLE`** | 스테이지 테이블의 열. `BattleTab.SetStaminaCost`를 부르는 코드가 없고, 입장할 때 스태미나를 차감하지 않는다 |
+| 전투 입장 스태미나 비용(battleStaminaCost 5) | `Resources/JsonFiles/AccountConst.json` | `DESIGN_CONST` | `DESIGN_CONST` | 모든 스테이지가 같은 값을 쓴다. `BattleTab`에 표시하고, 입장할 때 차감한다. 스태미나가 부족하면 입장하지 않는다 |
 | 스폰 이벤트(spawnEventID, stageID, eventType, startTime, endTime, monsterID, spawnInterval, spawnCount, repeat) | `Resources/JsonFiles/Spawn.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | |
 | spawnRadius 10 | `MonsterSpawner` 인스펙터 | `DESIGN_CONST` | `DESIGN_CONST` | |
 | 스테이지 기록(stageID, isCleared, bestSurvivalSeconds) | `PlayerSaveData.stageRecordList` | `USER` | `USER` · `CLIENT_AUTH` | 가입할 때 `Stage.json`의 스테이지마다 만들고 전투 결과로 갱신한다 |
@@ -133,7 +132,7 @@
 | 값 | 위치 | 현행 | 이상 | 비고 |
 |---|---|---|---|---|
 | 챕터별 도전 조건(name, description) | 없음 | `—` | **`DESIGN_TABLE`** | `ChallengeCondition` 구조체만 있다. 설명만 있어 효과를 계산할 수 없다 |
-| 도전 보상(grade, amount, techPart) | 없음 | `—` | **`DESIGN_TABLE`** | `ChallengeReward` 구조체만 있다 |
+| 도전 보상(grade, amount, techPart) | 없음 | `—` | **`DESIGN_TABLE`** | `ChallengeReward` 구조체만 있다. grade는 `ItemGrade`다 |
 | 보상 수령 여부(rewarded) | 없음 | `—` | **`USER`** · `SERVER_AUTH` | `ChallengeInfo`에 필드만 있고 `PlayerSaveData`에 없다 |
 
 ### 5.9 몬스터
@@ -184,7 +183,7 @@
 
 ### 6.1 기획 값의 저장 방식이 네 가지다
 - JSON이 두 폴더에 나뉘어 있다: `Resources/JsonFiles`(Monster, BossAttack, Spawn, Stage, Skill, Item, DropItem, AccountConst), `Resources/Data`(player)
-- JSON 로더도 나뉘어 있다: `JsonDataManager`(Monster, BossAttack, Spawn, Stage, Skill, DropItem), `ItemDatabase`(Item), `SkillDataBase`(Skill), `PlayerDatabase`(player). Skill.json은 두 곳에서 불러온다. 레벨업 후보 목록은 `JsonDataManager`에서, 스킬 생성과 표시는 `SkillDataBase`에서 읽는다
+- JSON 로더도 나뉘어 있다: `JsonDataManager`(Monster, BossAttack, Spawn, Stage, Skill, DropItem, AccountConst), `ItemDatabase`(Item), `SkillDataBase`(Skill), `PlayerDatabase`(player). Skill.json은 두 곳에서 불러온다. 레벨업 후보 목록은 `JsonDataManager`에서, 스킬 생성과 표시는 `SkillDataBase`에서 읽는다
 - 코드 상수: `ItemLevelConfig`, `SkillBase`, `MaxSkillSlots`, `OptionCount`, `PlayerLuckTrain`, `Box`, `WeaponSkillTable`, `NodesPerLevel`
 - 인스펙터: `BattleManager`, `PlayerHealth`, `PlayerLuckTrain`, `MonsterSpawner`, `Enemy`, 상점 카드, 투사체 프리팹
 - 하드코딩: 스킬 레벨별 효과(`Skill_*`), 몬스터 드롭(`Enemy.GiveReward`)
@@ -192,15 +191,15 @@
 ### 6.2 같은 의미의 중복 정의
 | 의미 | 정의 1 | 정의 2 |
 |---|---|---|
-| 등급 | `ItemGrade`(General, Super, Rare) | `Grade`(Common, Good, Rare, Elite, Epic) |
 | 플레이어 기본 스탯 | `player.json` | `PlayerBaseStatData` 필드 초기값 |
-| 스테이지 정의 | `StageData` | `StageInfo`(사용하는 코드가 없다) |
+| 초기 재화·최대 스태미나 | `AccountConst.json` | `PlayerSaveData.CreateDefault` |
 
 ### 6.3 불러오지만 쓰지 않는 값
 - `Stage.json`의 duration. 승리는 보스 처치로 판정한다
 - `Monster.json`의 monsterExp. 경험치 드롭은 ExpGem1로 고정돼 있다
 - `player.json`의 attack, criticalDamage, criticalChance, skillDamage, maxMoveSpeed. 스킬 피해는 `Skill.json`의 Damage만 쓴다. attack은 최종 공격력까지 계산하지만 디버그 로그에서만 읽는다
 - `DropItem.json`의 ExpGem2~4. 몬스터는 ExpGem1만 떨어뜨린다
+- `AccountConst.json`의 initialGold, initialGem, initialStamina, maxStamina. 계정을 만들 때 `PlayerSaveData.CreateDefault`에 직접 쓴 값을 쓴다
 
 ### 6.4 저장 구조에 없는 `USER` 값
 DNA, 해금한 진화 노드 수, 도전 보상 수령 여부, 스태미나 회복 기준 시각
@@ -209,7 +208,7 @@ DNA, 해금한 진화 노드 수, 도전 보상 수령 여부, 스태미나 회�
 `PlayerSaveData.maxStamina`는 모든 유저에게 같은 값인데 계정별로 저장된다.
 
 ### 6.6 정의되지 않은 기획 데이터
-스태미나 회복 주기, 전투 입장 스태미나 비용, 지원품 상자 확률, 진화 노드, 도전 조건·보상
+스태미나 회복 주기, 지원품 상자 확률, 진화 노드, 도전 조건·보상
 
 ### 6.7 계정 정보 평문 저장
 `accounts.json`에 password가 평문으로 저장된다.

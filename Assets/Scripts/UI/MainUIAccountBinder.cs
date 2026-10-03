@@ -28,10 +28,13 @@ public class MainUIAccountBinder : MonoBehaviour
     private void RefreshTopBar(PlayerSaveData data)
     {
         var topBar = GameManager.UI.Get<TopBar>();
-        
+        var accountConst = GameManager.JsonData.AccountConstData;
+
         topBar.SetNickname(data.playerID);
         topBar.SetLevel(data.accountLevel);
-        topBar.SetExp(data.accountExp);
+        topBar.SetExp(data.accountLevel >= accountConst.maxAccountLevel
+            ? 1f
+            : data.accountExp / (float)accountConst.GetRequiredExp(data.accountLevel));
         topBar.SetStamina(data.currentStamina, data.maxStamina);
         topBar.SetGold(data.gold);
         topBar.SetGem(data.gem);
@@ -51,6 +54,8 @@ public class MainUIAccountBinder : MonoBehaviour
 
         records.TryGetValue(stages[0].stageID, out var firstRecord);
         var firstBestTime = firstRecord != null ? Mathf.RoundToInt(firstRecord.bestSurvivalSeconds) : 0;
-        GameManager.UI.Get<BattleTab>().SetStage(stages[0], firstBestTime);
+        var battleTab = GameManager.UI.Get<BattleTab>();
+        battleTab.SetStage(stages[0], firstBestTime);
+        battleTab.SetStaminaCost(GameManager.JsonData.AccountConstData.battleStaminaCost);
     }
 }

@@ -12,6 +12,7 @@ public class BattleTab : UIView
     [SerializeField] private Button gameStartButton;
 
     private int currentStageID;
+    private int staminaCost;
 
     private void Awake()
     {
@@ -30,10 +31,19 @@ public class BattleTab : UIView
     }
 
     public void SetStaminaCost(int cost)
-        => staminaCostText.text = $"x {cost}";
+    {
+        staminaCost = cost;
+        staminaCostText.text = $"x {cost}";
+    }
 
     public void StartBattle()
     {
+        if (!PlayerInventory.Instance.TrySpendStamina(staminaCost))
+        {
+            UIManager.Instance.Get<LogPopup>().Show("알림", "스태미나가 부족합니다.");
+            return;
+        }
+
         GameManager.Scene.ChangeScene(GameConstants.SceneNames.BATTLE_SCENE, currentStageID);
     }
 }

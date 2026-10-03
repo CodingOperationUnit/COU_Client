@@ -26,6 +26,9 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
 
     private Dictionary<DropItemType, DropItemData> dropItemDataDic;
     public IReadOnlyDictionary<DropItemType, DropItemData> DropItemDataDic => dropItemDataDic;
+
+    private AccountConstData accountConstData;
+    public AccountConstData AccountConstData => accountConstData;
     #endregion
 
     protected override void Awake()
@@ -40,6 +43,7 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
         LoadStageData();
         LoadSkillData();
         LoadDropItemData();
+        LoadAccountConstData();
     }
 
     #region GetMethod
@@ -406,6 +410,32 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
         catch (Exception exception)
         {
             Debug.LogError($"DropItem 데이터 로드 실패: {exception.Message}");
+        }
+    }
+
+    private void LoadAccountConstData()
+    {
+        if (accountConstData != null) return;
+
+        try
+        {
+            TextAsset jsonFile = Resources.Load<TextAsset>(GameConstants.Paths.AccountConstData_Json_Path);
+            if (jsonFile == null)
+                throw new InvalidOperationException("JSON 파일이 없습니다: " + GameConstants.Paths.AccountConstData_Json_Path);
+
+            JObject root = JObject.Parse(jsonFile.text);
+            JArray rows = root["datas"] as JArray;
+            if (rows == null || rows.Count != 1)
+                throw new InvalidOperationException("AccountConst 데이터는 행이 하나여야 합니다.");
+
+            if (!(rows[0] is JObject))
+                throw new InvalidOperationException("AccountConst 데이터 항목이 객체 형식이 아닙니다.");
+
+            accountConstData = rows[0].ToObject<AccountConstData>();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"AccountConst 데이터 로드 실패: {exception.Message}");
         }
     }
     #endregion

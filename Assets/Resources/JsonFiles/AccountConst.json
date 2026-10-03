@@ -7,7 +7,8 @@
       "maxStamina": 60,
       "accountBaseRequiredExp": 100,
       "accountRequiredExpIncrement": 100,
-      "maxAccountLevel": 20
+      "maxAccountLevel": 20,
+      "battleStaminaCost": 5
     }
   ]
 }

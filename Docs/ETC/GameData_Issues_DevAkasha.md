@@ -10,19 +10,13 @@
   - 경험치 드롭이 ExpGem1로 고정돼 있어 `Monster.json`의 monsterExp와 `DropItem.json`의 ExpGem2~4를 쓰지 않는다(TODO) (5.12, 6.3)
   - 엘리트·보스의 상자 드롭 수가 하드코딩돼 있다. 몬스터별 드롭 테이블로 옮겨야 한다 (5.12)
 - `Box.dropWeights` 상자 드롭 가중치가 const다. 몬스터별 드롭 테이블로 옮겨야 한다 (5.12)
-- `PlayerInventory.ClaimBattleResult`
-  - 보상상자 내용물이 하드코딩돼 있다. 상자 하나당 기본 등급 General 장비를 균등 랜덤으로 지급한다 (5.12)
-  - 보상 반영을 클라이언트가 한다. 보상 지급이라 `SERVER_AUTH` 대상이다 (5.11)
-  - accountExp만 더하고 accountLevel을 올리지 않는다. 계정 레벨별 필요 경험치가 정의돼 있지 않다 (5.4, 6.6)
+- `PlayerInventory.ClaimBattleResult`가 보상 반영과 계정 레벨업을 클라이언트에서 한다. 보상 지급이라 `SERVER_AUTH` 대상이다 (5.4, 5.11)
 
 ## 3. 스킬
 - `SkillBase`의 MaxLevel 5와 레벨당 배율(쿨타임 0.758, 피해 1.2)이 const이고 모든 스킬이 같은 배율을 쓴다. 스킬 레벨 테이블로 옮겨야 한다 (5.10)
 
 ## 4. 메인 UI
-- `Grade`가 `ItemGrade`와 같은 의미로 중복 정의돼 있다. 어느 쪽을 남길지는 미정이다 (5.5, 6.2)
-- `StageInfo`는 사용하는 코드가 없고 `StageData`와 중복이다. 주석 처리된 `MainTestDriver`에서만 참조한다 (6.2)
-- `BattleTab.SetStaminaCost`를 부르는 코드가 없다. 전투 입장 스태미나 비용이 정의돼 있지 않고 입장할 때 차감하지 않는다 (5.7, 6.6)
-- `TopBar.SetExp`는 비율(0~1)을 받는데 `MainUIAccountBinder`가 accountExp 원값을 넘긴다. accountExp가 1 이상이면 경험치 바가 가득 찬다 (5.4). `MainUIAccountBinder`는 DevAkasha 작성 코드가 아니다
+- `BattleTab.StartBattle`이 전투 입장 스태미나를 클라이언트에서 차감한다. 재화 증감이라 `SERVER_AUTH` 대상이다 (5.3, 5.7)
 - 진화(`EvolutionTab`, `EvolutionInfo`)
   - 진화 노드 데이터가 없다. `EvolutionNodeInfo` 구조체만 있고 value가 문자열이라 효과를 계산할 수 없다 (5.4, 6.6)
   - `EvolutionTab.NodesPerLevel` const는 진화 노드 테이블의 level 열에서 결정돼야 한다 (5.4)
