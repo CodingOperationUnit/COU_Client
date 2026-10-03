@@ -7,9 +7,6 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerLuckTrain))]
 public class PlayerLootReceiver : MonoBehaviour, ILootReceiver
 {
-    [SerializeField][Min(0)] private int potionHealAmount = 300;   // 임시 값: 기획 후 조정
-    [SerializeField][Min(0)] private int bombDamageToStrong = 300; // 임시 값: 엘리트/보스에게 주는 폭탄 피해
-
     private PlayerHealth playerHealth;
     private PlayerStats playerStats;
     private PlayerLuckTrain luckTrain;
@@ -43,7 +40,7 @@ public class PlayerLootReceiver : MonoBehaviour, ILootReceiver
         switch (type)
         {
             case DropItemType.Potion:
-                playerHealth.Heal(potionHealAmount);
+                playerHealth.Heal(GameManager.JsonData.GetDropItemDataFromJson(DropItemType.Potion).value);
                 break;
 
             case DropItemType.Magnet:
@@ -75,6 +72,7 @@ public class PlayerLootReceiver : MonoBehaviour, ILootReceiver
         }
 
         var targets = new List<Enemy>(spawner.SpawnedEnemies);
+        int bombDamage = GameManager.JsonData.GetDropItemDataFromJson(DropItemType.Bomb).value;
 
         int killed = 0;
         int damaged = 0;
@@ -90,12 +88,12 @@ public class PlayerLootReceiver : MonoBehaviour, ILootReceiver
             }
             else
             {
-                enemy.Damaged(bombDamageToStrong);
+                enemy.Damaged(bombDamage);
                 damaged++;
             }
         }
 
-        Debug.Log("[PlayerLootReceiver] 폭탄: 일반 몬스터 " + killed + "마리 처치, 엘리트·보스 " + damaged + "마리에게 " + bombDamageToStrong + " 피해");
+        Debug.Log("[PlayerLootReceiver] 폭탄: 일반 몬스터 " + killed + "마리 처치, 엘리트·보스 " + damaged + "마리에게 " + bombDamage + " 피해");
     }
 
     private void HandleDied()

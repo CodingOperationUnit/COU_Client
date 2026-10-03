@@ -919,18 +919,13 @@ MonoBehaviour:
   lootReceiver: {fileID: 1437819743}
   skillController: {fileID: 1437819744}
   spawner: {fileID: 1842085652}
-  skillPoolIds: 010000000200000003000000
-  expGem1Value: 10
-  goldValues: 0a0000001e000000640000002c010000
   accountExpPerKill: 1
   accountExpPerSecond: 1
-  accountExpClearBonus: 500
-  baseRequiredExp: 20
+  baseRequiredExp: 6
   requiredExpIncrement: 6
   requiredExpAcceleration: 0.3
   healRewardRatio: 0.3
   bossVictoryDelay: 2
-  testExp: 0
 --- !u!4 &1946383006
 Transform:
   m_ObjectHideFlags: 0

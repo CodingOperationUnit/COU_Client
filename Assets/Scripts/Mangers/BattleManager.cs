@@ -11,20 +11,13 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private PlayerLootReceiver lootReceiver;
     [SerializeField] private SkillController skillController;
     [SerializeField] private MonsterSpawner spawner;
-    [SerializeField] private int[] skillPoolIds = { 1, 2, 3 };
-    [SerializeField] private int expGem1Value = 10;
-    [SerializeField] private int[] goldValues = { 10, 30, 100, 300 }; // 임시 값: Gold1~4, 기획 확정 후 조정
     [SerializeField] private int accountExpPerKill = 1;       // 임시 값: 기획 확정 후 조정
     [SerializeField] private int accountExpPerSecond = 1;     // 임시 값: 기획 확정 후 조정
-    [SerializeField] private int accountExpClearBonus = 500;  // 임시 값: 기획 확정 후 조정
-    [SerializeField] private int baseRequiredExp = 20;
+    [SerializeField] private int baseRequiredExp = 6;
     [SerializeField] private int requiredExpIncrement = 6;
     [SerializeField] private float requiredExpAcceleration = 0.3f;
     [SerializeField] private float healRewardRatio = 0.3f;
     [SerializeField] private float bossVictoryDelay = 2f;
-
-    [Header("Test")]
-    [SerializeField] private int testExp;
 
     private readonly HashSet<object> pauseRequests = new();
     private readonly List<int> candidates = new();
@@ -180,10 +173,10 @@ public class BattleManager : MonoBehaviour
 
     private void HandleLooted(DropItemType type)
     {
-        if (type == DropItemType.ExpGem1)
-            AddExp(expGem1Value);
+        if (type >= DropItemType.ExpGem1 && type <= DropItemType.ExpGem4)
+            AddExp(GameManager.JsonData.GetDropItemDataFromJson(type).value);
         else if (type >= DropItemType.Gold1 && type <= DropItemType.Gold4)
-            AddGold(goldValues[type - DropItemType.Gold1]);
+            AddGold(GameManager.JsonData.GetDropItemDataFromJson(type).value);
         else if (type == DropItemType.RewardBox && !ended)
             rewardBoxes++;
     }
@@ -196,8 +189,11 @@ public class BattleManager : MonoBehaviour
     private void ShowSelection()
     {
         candidates.Clear();
-        foreach (var skillId in skillPoolIds)
+        foreach (var skillId in GameManager.JsonData.SkillDataDic.Keys)
         {
+            // 테이블에는 있지만 아직 구현되지 않은 스킬은 후보에서 뺀다
+            if (!SkillFactory.IsRegistered(skillId)) continue;
+
             var skill = FindActiveSkill(skillId);
             var available = skill != null
                 ? skill.Level < SkillBase.MaxLevel
@@ -271,7 +267,7 @@ public class BattleManager : MonoBehaviour
         pendingLevelUps = 0;
 
         var accountExp = kills * accountExpPerKill + seconds * accountExpPerSecond
-                         + (victory ? accountExpClearBonus : 0);
+                         + (victory ? spawner.CurrentStage.clearAccountExp : 0);
 
         BattleResult.Last = new BattleResult
         {
@@ -291,11 +287,5 @@ public class BattleManager : MonoBehaviour
         resultWindow.SetBoxCount(rewardBoxes);
         resultWindow.SetExp(accountExp);
         resultWindow.Show(victory);
-    }
-
-    [ContextMenu("TestAddExp")]
-    public void TestAddExp()
-    {
-        AddExp(testExp);
     }
 }

@@ -5,14 +5,16 @@
       "stageName": "Forest",
       "illustrationColor": "#4C7A3D",
       "duration": 150.0,
-      "stageDescription": "몬스터가 가득한 숲입니다."
+      "stageDescription": "몬스터가 가득한 숲입니다.",
+      "clearAccountExp": 500
     },
     {
       "stageID": 2,
       "stageName": "Desert",
       "illustrationColor": "#C9A66B",
       "duration": 150.0,
-      "stageDescription": "햇빛이 뜨거운 사막입니다."
+      "stageDescription": "햇빛이 뜨거운 사막입니다.",
+      "clearAccountExp": 500
     }
   ]
 }

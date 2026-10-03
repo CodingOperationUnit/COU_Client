@@ -119,11 +119,10 @@
 ### 5.7 스테이지·스폰
 | 값 | 위치 | 현행 | 이상 | 비고 |
 |---|---|---|---|---|
-| stageID, stageName, illustrationColor, duration, stageDescription | `Resources/JsonFiles/Stage.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | illustrationColor는 연출용 열이다. duration은 읽는 코드가 없다(6.3) |
+| stageID, stageName, illustrationColor, duration, stageDescription, clearAccountExp | `Resources/JsonFiles/Stage.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | illustrationColor는 연출용 열이다. duration은 읽는 코드가 없다(6.3). clearAccountExp는 승리했을 때 더하는 계정 경험치다 |
 | 선택한 stageID | `GameSceneManager.pendingStageID` | `SESSION` | `SESSION` · `CLIENT_AUTH` | 메인 씬에서 전투 씬으로 넘길 때만 쓴다 |
 | 기본 stageId 1 | `MonsterSpawner` 인스펙터 | `DEBUG` | `삭제` | 메인 씬을 거치지 않고 전투 씬을 실행할 때만 쓴다 |
 | 전투 입장 스태미나 비용 | 없음 | `—` | **`DESIGN_TABLE`** | 스테이지 테이블의 열. `BattleTab.SetStaminaCost`를 부르는 코드가 없고, 입장할 때 스태미나를 차감하지 않는다 |
-| 스테이지 클리어 보상(계정 경험치 500) | `BattleManager.accountExpClearBonus` 인스펙터 | `DESIGN_CONST` | **`DESIGN_TABLE`** | 스테이지 테이블의 열. 코드 주석에 임시값으로 표시돼 있다 |
 | 스폰 이벤트(spawnEventID, stageID, eventType, startTime, endTime, monsterID, spawnInterval, spawnCount, repeat) | `Resources/JsonFiles/Spawn.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | |
 | spawnRadius 10 | `MonsterSpawner` 인스펙터 | `DESIGN_CONST` | `DESIGN_CONST` | |
 | 스테이지 기록(stageID, isCleared, bestSurvivalSeconds) | `PlayerSaveData.stageRecordList` | `USER` | `USER` · `CLIENT_AUTH` | 가입할 때 `Stage.json`의 스테이지마다 만들고 전투 결과로 갱신한다 |
@@ -148,7 +147,7 @@
 ### 5.10 스킬
 | 값 | 위치 | 현행 | 이상 | 비고 |
 |---|---|---|---|---|
-| ID, Name, Type, Cooldown, Speed, Damage, Range, Description | `Resources/JsonFiles/Skill.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | 모든 열을 읽는다. Speed와 Range는 스킬마다 뜻이 다르다(Planet은 초당 회전 각도와 회전 반지름). Damage는 플레이어 공격력과 관계없는 고정 피해다. ID 5(Missile)는 `SkillFactory`에 등록되지 않았다 |
+| ID, Name, Type, Cooldown, Speed, Damage, Range, Description | `Resources/JsonFiles/Skill.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | 모든 열을 읽는다. Speed와 Range는 스킬마다 뜻이 다르다(Planet은 초당 회전 각도와 회전 반지름). Damage는 플레이어 공격력과 관계없는 고정 피해다. 레벨업 선택지 후보는 테이블 전체다. ID 5(Missile)는 구현 예정이라 `SkillFactory`에 등록되지 않았고, 등록되지 않은 스킬은 후보에서 빠진다 |
 | 투사체 수명(lifeTime 3) | `LinearProjectile` 인스펙터 | `DESIGN_CONST` | **`DESIGN_TABLE`** | 스킬 테이블의 열 |
 | 최대 스킬 슬롯 3 | `SkillController.MaxSkillSlots` const | `DESIGN_CONST` | `DESIGN_CONST` | |
 | 스킬 최대 레벨 5, 레벨당 배율(쿨타임 0.758, 피해 1.2) | `SkillBase` const | `DESIGN_CONST` | **`DESIGN_TABLE`** | 스킬 레벨 테이블. 쿨타임 = `Cooldown × 0.758^(레벨 - 1)`, 피해 = `Damage × 1.2^(레벨 - 1)`. 모든 스킬이 같은 배율을 쓴다. 코드 주석에 수정 예정으로 표시돼 있다 |
@@ -159,9 +158,8 @@
 | 값 | 위치 | 현행 | 이상 | 비고 |
 |---|---|---|---|---|
 | 경과 시간, 킬 수, 전투 레벨, 경험치, 대기 레벨업 수, 골드, 보상상자 수 | `BattleManager` 필드 | `SESSION` | `SESSION` · `CLIENT_AUTH` | |
-| 레벨업 필요 경험치(base 20, 레벨당 +6) | `BattleManager` 인스펙터 | `DESIGN_CONST` | `DESIGN_CONST` | 필요 경험치 = `20 + 6 × (레벨 - 1)` |
+| 레벨업 필요 경험치(base 6, 레벨당 +6, 가속 0.3) | `BattleManager` 인스펙터 | `DESIGN_CONST` | `DESIGN_CONST` | 필요 경험치 = `6 + 6 × (레벨 - 1) + 반올림(0.3 × (레벨 - 1)²)` |
 | 레벨업 선택지 수 3 | `BattleManager.OptionCount` const | `DESIGN_CONST` | `DESIGN_CONST` | |
-| 레벨업 선택지 스킬 풀(1, 2, 3) | `BattleManager.skillPoolIds` 인스펙터 | `DESIGN_CONST` | **`DESIGN_TABLE`** | 스킬 테이블의 열 |
 | 선택지가 없을 때 회복량 30% | `BattleManager.healRewardRatio` 인스펙터 | `DESIGN_CONST` | `DESIGN_CONST` | |
 | 승리 판정 지연 2초 | `BattleManager.bossVictoryDelay` 인스펙터 | `DESIGN_CONST` | `DESIGN_CONST` | 보스를 처치하고 2초 뒤 승리한다 |
 | 계정 경험치 계수(킬당 1, 초당 1) | `BattleManager` 인스펙터 | `DESIGN_CONST` | `DESIGN_CONST` | 계정 경험치 = `킬 수 × 1 + 생존 초 × 1 + 클리어 보상`. 코드 주석에 임시값으로 표시돼 있다 |
@@ -176,22 +174,20 @@
 | 값 | 위치 | 현행 | 이상 | 비고 |
 |---|---|---|---|---|
 | 드롭 종류(`DropItemType`) | `DropItemType.cs` enum | `DESIGN_CONST` | `DESIGN_CONST` | ExpGem1~4, Gold1~4, LuckyBox, RewardBox, Potion, Magnet, Bomb |
-| 경험치 잼·골드 단계별 획득량(ExpGem1 10, Gold1~4 10·30·100·300) | `BattleManager` 인스펙터 | `DESIGN_CONST` | **`DESIGN_TABLE`** | ExpGem2~4는 획득량이 없다. 골드는 코드 주석에 임시값으로 표시돼 있다 |
+| dropItemID, dropItemType, value | `Resources/JsonFiles/DropItem.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | 종류별 수치. ExpGem1~4 3·5·10·100, Gold1~4 10·30·100·300, Bomb 50, Potion 50. ExpGem2~4는 떨어뜨리는 코드가 없다(6.3). Bomb은 엘리트·보스에게 주는 피해량이다. 일반 몬스터는 즉사하고, 범위 제한 없이 살아 있는 몬스터 전체가 대상이다. Potion은 기본 회복량이고 계산식이 추가될 예정이다 |
 | 몬스터별 드롭(전체 ExpGem1, 엘리트 LuckyBox 1·RewardBox 2, 보스 RewardBox 5) | `Enemy.GiveReward` 하드코딩 | `DESIGN_CONST` | **`DESIGN_TABLE`** | monsterExp와 관계없이 ExpGem1로 고정돼 있다(TODO) |
 | 상자 드롭 가중치(Gold1~4 31·5·3·1, Bomb·Potion·Magnet 각 20) | `Box` const | `DESIGN_CONST` | **`DESIGN_TABLE`** | 몬스터별 드롭 테이블 |
 | 보상상자 내용물 | `PlayerInventory.ClaimBattleResult` 하드코딩 | `DESIGN_CONST` | **`DESIGN_TABLE`** | 상자 하나당 기본 등급 General 장비를 균등 랜덤으로 지급한다 |
-| 폭탄 피해량 300 | `PlayerLootReceiver` 인스펙터 | `DESIGN_CONST` | `DESIGN_CONST` | 엘리트·보스에게만 준다. 일반 몬스터는 즉사하고, 범위 제한 없이 살아 있는 몬스터 전체가 대상이다. 코드 주석에 임시값으로 표시돼 있다 |
-| 포션 회복량 300 | `PlayerLootReceiver` 인스펙터 | `DESIGN_CONST` | `DESIGN_CONST` | 코드 주석에 임시값으로 표시돼 있다 |
 | 흡수 연출(recoilDistance, recoilDuration, chaseStartSpeed, chaseAcceleration, arriveRadius) | `DropItemManager` 인스펙터 | `PRESENTATION` | `PRESENTATION` | |
 
 ## 6. 발견된 문제
 분류하면서 확인한 사실만 적는다.
 
 ### 6.1 기획 값의 저장 방식이 네 가지다
-- JSON이 두 폴더에 나뉘어 있다: `Resources/JsonFiles`(Monster, BossAttack, Spawn, Stage, Skill, Item), `Resources/Data`(player)
-- JSON 로더도 나뉘어 있다: `JsonDataManager`(Monster, BossAttack, Spawn, Stage, Skill), `ItemDatabase`(Item), `SkillDataBase`(Skill), `PlayerDatabase`(player). Skill.json은 두 곳에서 불러온다
+- JSON이 두 폴더에 나뉘어 있다: `Resources/JsonFiles`(Monster, BossAttack, Spawn, Stage, Skill, Item, DropItem), `Resources/Data`(player)
+- JSON 로더도 나뉘어 있다: `JsonDataManager`(Monster, BossAttack, Spawn, Stage, Skill, DropItem), `ItemDatabase`(Item), `SkillDataBase`(Skill), `PlayerDatabase`(player). Skill.json은 두 곳에서 불러온다. 레벨업 후보 목록은 `JsonDataManager`에서, 스킬 생성과 표시는 `SkillDataBase`에서 읽는다
 - 코드 상수: `ItemLevelConfig`, `SkillBase`, `MaxSkillSlots`, `OptionCount`, `PlayerLuckTrain`, `Box`, `WeaponSkillTable`, `NodesPerLevel`
-- 인스펙터: `BattleManager`, `PlayerHealth`, `PlayerLootReceiver`, `PlayerLuckTrain`, `MonsterSpawner`, `Enemy`, 상점 카드, 투사체 프리팹
+- 인스펙터: `BattleManager`, `PlayerHealth`, `PlayerLuckTrain`, `MonsterSpawner`, `Enemy`, 상점 카드, 투사체 프리팹
 - 하드코딩: 스킬 레벨별 효과(`Skill_*`), 몬스터 드롭(`Enemy.GiveReward`), 보상상자 내용물(`PlayerInventory.ClaimBattleResult`)
 
 ### 6.2 같은 의미의 중복 정의
@@ -205,7 +201,7 @@
 - `Stage.json`의 duration. 승리는 보스 처치로 판정한다
 - `Monster.json`의 monsterExp. 경험치 드롭은 ExpGem1로 고정돼 있다
 - `player.json`의 attack, criticalDamage, criticalChance, skillDamage, maxMoveSpeed. 스킬 피해는 `Skill.json`의 Damage만 쓴다. attack은 최종 공격력까지 계산하지만 디버그 로그에서만 읽는다
-- `JsonDataManager.SkillDataDic`. 게임 코드는 `SkillDataBase`를 쓰고, 이 딕셔너리는 에디터 인스펙터에서만 읽는다
+- `DropItem.json`의 ExpGem2~4. 몬스터는 ExpGem1만 떨어뜨린다
 
 ### 6.4 저장 구조에 없는 `USER` 값
 DNA, 해금한 진화 노드 수, 도전 보상 수령 여부, 스태미나 회복 기준 시각
@@ -214,7 +210,7 @@ DNA, 해금한 진화 노드 수, 도전 보상 수령 여부, 스태미나 회�
 `PlayerSaveData.maxStamina`는 모든 유저에게 같은 값인데 계정별로 저장된다.
 
 ### 6.6 정의되지 않은 기획 데이터
-계정 레벨별 필요 경험치, 스태미나 회복 주기, 전투 입장 스태미나 비용, ExpGem2~4 획득량, 지원품 상자 확률, 진화 노드, 도전 조건·보상
+계정 레벨별 필요 경험치, 스태미나 회복 주기, 전투 입장 스태미나 비용, 지원품 상자 확률, 진화 노드, 도전 조건·보상
 
 ### 6.7 계정 정보 평문 저장
 `accounts.json`에 password가 평문으로 저장된다.

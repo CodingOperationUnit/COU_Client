@@ -10,6 +10,7 @@ public class StageData
     public string illustrationColor;
     public float duration;        // 스테이지 길이(초). 보스 등장 시각과 맞춰 둔 값
     public string stageDescription;
+    public int clearAccountExp;
 
     [NonSerialized] private Color parsedColor;
     public Color IllustrationColor => parsedColor;

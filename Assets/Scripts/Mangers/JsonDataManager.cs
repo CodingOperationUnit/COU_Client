@@ -24,6 +24,9 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
     private Dictionary<int, SkillData> skillDataDic;
     public IReadOnlyDictionary<int, SkillData> SkillDataDic => skillDataDic;
 
+    private Dictionary<DropItemType, DropItemData> dropItemDataDic;
+    public IReadOnlyDictionary<DropItemType, DropItemData> DropItemDataDic => dropItemDataDic;
+
     #endregion
 
     protected override void Awake()
@@ -37,6 +40,7 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
         LoadSpawnData();
         LoadStageData();
         LoadSkillData();
+        LoadDropItemData();
     }
 
     #region GetMethod
@@ -116,6 +120,21 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
             return data;
 
         Debug.LogWarning($"등록되지 않은 Skill ID: {skillID}");
+        return null;
+    }
+
+    public DropItemData GetDropItemDataFromJson(DropItemType type)
+    {
+        if (dropItemDataDic == null)
+        {
+            Debug.LogError("DropItem 데이터가 초기화되지 않았습니다.");
+            return null;
+        }
+
+        if (dropItemDataDic.TryGetValue(type, out DropItemData data))
+            return data;
+
+        Debug.LogWarning($"등록되지 않은 DropItem 종류: {type}");
         return null;
     }
 
@@ -343,6 +362,52 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
         catch (Exception exception)
         {
             Debug.LogError($"Skill 데이터 로드 실패: {exception.Message}");
+        }
+    }
+
+    private void LoadDropItemData()
+    {
+        if (dropItemDataDic != null) return;
+
+        try
+        {
+            TextAsset jsonFile = Resources.Load<TextAsset>(GameConstants.Paths.DropItemData_Json_Path);
+            if (jsonFile == null)
+                throw new InvalidOperationException("JSON 파일이 없습니다: " + GameConstants.Paths.DropItemData_Json_Path);
+
+            JObject root = JObject.Parse(jsonFile.text);
+            JArray rows = root["datas"] as JArray;
+            if (rows == null || rows.Count == 0)
+                throw new InvalidOperationException("DropItem 데이터 목록이 비어 있습니다.");
+
+            var loadedDatas = new Dictionary<DropItemType, DropItemData>();
+            var loadedIDs = new HashSet<int>();
+            foreach (JToken row in rows)
+            {
+                if (!(row is JObject))
+                    throw new InvalidOperationException("DropItem 데이터 항목이 객체 형식이 아닙니다.");
+
+                DropItemData data = row.ToObject<DropItemData>();
+                if (data == null || data.dropItemID <= 0)
+                    throw new InvalidOperationException("DropItem 데이터 또는 ID가 올바르지 않습니다.");
+
+                if (!loadedIDs.Add(data.dropItemID))
+                    throw new InvalidOperationException($"중복된 DropItem ID: {data.dropItemID}");
+
+                if (!data.OnLoaded())
+                    throw new InvalidOperationException($"DropItem {data.dropItemID}의 dropItemType \"{data.dropItemType}\"을(를) 알 수 없습니다.");
+
+                if (loadedDatas.ContainsKey(data.Type))
+                    throw new InvalidOperationException($"중복된 DropItem 종류: {data.Type}");
+
+                loadedDatas.Add(data.Type, data);
+            }
+
+            dropItemDataDic = loadedDatas;
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"DropItem 데이터 로드 실패: {exception.Message}");
         }
     }
 
