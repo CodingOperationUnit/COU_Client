@@ -34,9 +34,10 @@ public class SkillController : MonoBehaviour
 
     public bool EquipSkill(int skillId)
     {
-        if(_activeSkills.Count >= MaxSkillSlots)
+        if(_activeSkills.Count > MaxSkillSlots)
         {
             Debug.LogWarning($"[SkillController] 슬롯이 가득 차 스킬을 장착할 수 없습니다: {skillId}");
+            Debug.LogWarning($"[SkillController] 스킬 개수: {_activeSkills.Count}");
             return false;
         }
 
@@ -145,7 +146,7 @@ public class SkillController : MonoBehaviour
             }
         }
 
-        if (keyboard.digit3Key.wasPressedThisFrame)
+        if (keyboard.digit4Key.wasPressedThisFrame)
         {
             if (EquipSkill(4))
             {

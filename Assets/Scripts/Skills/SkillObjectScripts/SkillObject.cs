@@ -1,48 +1,6 @@
 using System;
 using UnityEngine;
 
-public readonly struct ProjectileData
-{
-    public readonly SkillData Data;
-    public readonly Vector2 Direction;
-    public readonly Transform Target; // Á÷¼± ÅºÈ¯Àº null
-    public readonly float DamageMultiplier;
-    public readonly int PierceCount;
-
-    public ProjectileData(SkillData data, Vector2 direction, Transform target = null, float damageMultiplier = 1.0f, int pierceCount = 1)
-    {
-        Data = data;
-        Direction = direction.normalized;
-        Target = target;
-        DamageMultiplier = damageMultiplier;
-        PierceCount = pierceCount;
-    }
-}
-
-public readonly struct AoEData
-{
-    public readonly SkillData Data;
-    public readonly Vector2 Loacl;
-    public readonly float DamageMultiplier;
-
-    public AoEData(SkillData data, Vector2 loacl, float damageMultiplier = 1.0f)
-    {
-        Data = data;
-        Loacl = loacl;
-        DamageMultiplier = damageMultiplier;
-    }
-}
-
-public readonly struct AutoData
-{
-    public readonly SkillData Data;
-
-    public AutoData(SkillData data)
-    {
-        Data = data;
-    }
-}
-
 public abstract class SkillObject<TInitData> : SkillObjectBase, ISkillPoolable
 {
     public event Action<GameObject> OnBeforeReturn;

@@ -1,9 +1,20 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 // 플레이어 주위를 도는 행성. 풀에 스스로 반환되지 않고 스킬 해제 때까지 유지됨
 // SkillData: Speed = 초당 회전 각도, Range = 회전 반지름, Damage = 접촉 대미지
 public sealed class PlanetObject : SkillObject<OrbitData>
 {
+    // 기록이 이 개수 이상 쌓이면 시간이 지난 기록을 정리
+    private const int PurgeThreshold = 64;
+
+    // 한 번 때린 적을 다시 때리기까지 최소 시간 (스친 직후 콜라이더에 다시 들어와도 중복 대미지 방지)
+    [SerializeField] private float _hitInterval = 0.5f;
+
+    // 적별 마지막 타격 시각 (Enemy 대신 InstanceID를 키로 써서 죽은 적의 참조를 붙들지 않음)
+    private readonly Dictionary<int, float> _lastHitTimes = new();
+    private readonly List<int> _expiredIds = new();
+
     private Transform _owner;
     private float _angle;
     private float _damageMultiplier;
@@ -14,6 +25,7 @@ public sealed class PlanetObject : SkillObject<OrbitData>
         _owner = data.Owner;
         _angle = data.StartAngle;
         _damageMultiplier = data.DamageMultiplier;
+        _lastHitTimes.Clear();
         OnLaunch();
     }
 
@@ -54,6 +66,45 @@ public sealed class PlanetObject : SkillObject<OrbitData>
             return;
         }
 
-        enemy.Damaged(Mathf.RoundToInt(skillData.Damage * _damageMultiplier));
+        int enemyId = enemy.GetInstanceID();
+        float now = Time.time;
+
+        if(_lastHitTimes.TryGetValue(enemyId, out float lastHitTime) && now - lastHitTime < _hitInterval)
+        {
+            return;
+        }
+
+        if(_lastHitTimes.Count >= PurgeThreshold)
+        {
+            PurgeExpiredRecords(now);
+        }
+
+        _lastHitTimes[enemyId] = now;
+
+        int damage = Mathf.RoundToInt(skillData.Damage * _damageMultiplier);
+
+        // 대미지 확인용 임시 로그 (확인이 끝나면 삭제)
+        Debug.Log($"[Planet#{GetInstanceID()}] -> Enemy#{enemyId} dmg={damage} frame={Time.frameCount} time={now:F2}");
+
+        enemy.Damaged(damage);
+    }
+
+    // 쿨타임이 지난 기록을 제거해서 죽은 적의 기록이 계속 쌓이지 않게 함
+    private void PurgeExpiredRecords(float now)
+    {
+        _expiredIds.Clear();
+
+        foreach(KeyValuePair<int, float> pair in _lastHitTimes)
+        {
+            if(now - pair.Value >= _hitInterval)
+            {
+                _expiredIds.Add(pair.Key);
+            }
+        }
+
+        foreach(int id in _expiredIds)
+        {
+            _lastHitTimes.Remove(id);
+        }
     }
 }
