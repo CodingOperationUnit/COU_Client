@@ -10,6 +10,7 @@ public class StageData
     public string stageName;
     public string illustrationColor;
     public float duration;        // 스테이지 길이(초). 보스 등장 시각과 맞춰 둔 값
+    public int waveID;            // Wave.json의 웨이브. 스테이지와 1:1
     public string stageDescription;
     public int clearAccountExp;
     public int[] rewardBoxGradeWeights;   // 보상상자 장비 등급 가중치. ItemGrade 순서(General, Super, Rare)

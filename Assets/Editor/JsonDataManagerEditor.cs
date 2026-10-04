@@ -9,7 +9,7 @@ public class JsonDataManagerEditor : Editor
     // 데이터 종류마다 펼침 상태를 분리합니다. 같은 ID가 있어도 서로 영향을 주지 않습니다.
     private readonly HashSet<int> expandedMonsters = new();
     private readonly HashSet<int> expandedBossAttacks = new();
-    private readonly HashSet<int> expandedSpawnEvents = new();
+    private readonly HashSet<int> expandedWaveEntries = new();
     private readonly HashSet<int> expandedStages = new();
     private readonly HashSet<int> expandedSkills = new();
 
@@ -22,8 +22,8 @@ public class JsonDataManagerEditor : Editor
             data => data.monsterName, DrawMonster);
         DrawDictionary("보스 공격 데이터", manager.BossAttackDataDic, expandedBossAttacks,
             data => $"몬스터 {data.monsterID} / {data.attackType}", DrawBossAttack);
-        DrawDictionary("스폰 이벤트 데이터", manager.SpawnEventDataDic, expandedSpawnEvents,
-            data => $"스테이지 {data.stageID} / {data.eventType}", DrawSpawnEvent);
+        DrawDictionary("웨이브 데이터", manager.WaveEntryDataDic, expandedWaveEntries,
+            data => $"웨이브 {data.waveID} / 패턴 {data.patternID}", DrawWaveEntry);
         DrawDictionary("스테이지 데이터", manager.StageDataDic, expandedStages,
             data => data.stageName, DrawStage);
         DrawDictionary("스킬 데이터", manager.SkillDataDic, expandedSkills,
@@ -102,18 +102,13 @@ public class JsonDataManagerEditor : Editor
         EditorGUILayout.IntField("피해량", data.damage);
     }
 
-    private static void DrawSpawnEvent(SpawnEventData data)
+    private static void DrawWaveEntry(WaveEntryData data)
     {
-        EditorGUILayout.IntField("스폰 이벤트 ID", data.spawnEventID);
-        EditorGUILayout.IntField("스테이지 ID", data.stageID);
-        EditorGUILayout.TextField("이벤트 종류 문자열", data.eventType ?? string.Empty);
-        EditorGUILayout.EnumPopup("이벤트 종류", data.EventType);
+        EditorGUILayout.IntField("웨이브 항목 ID", data.waveEntryID);
+        EditorGUILayout.IntField("웨이브 ID", data.waveID);
         EditorGUILayout.FloatField("시작 시간 (초)", data.startTime);
-        EditorGUILayout.FloatField("종료 시간 (초)", data.endTime);
+        EditorGUILayout.IntField("패턴 ID", data.patternID);
         EditorGUILayout.IntField("몬스터 ID", data.monsterID);
-        EditorGUILayout.FloatField("스폰 간격 (초)", data.spawnInterval);
-        EditorGUILayout.IntField("스폰 수", data.spawnCount);
-        EditorGUILayout.Toggle("반복", data.repeat);
     }
 
     private static void DrawStage(StageData data)
@@ -121,6 +116,7 @@ public class JsonDataManagerEditor : Editor
         EditorGUILayout.IntField("스테이지 ID", data.stageID);
         EditorGUILayout.TextField("이름", data.stageName ?? string.Empty);
         EditorGUILayout.FloatField("진행 시간 (초)", data.duration);
+        EditorGUILayout.IntField("웨이브 ID", data.waveID);
         EditorGUILayout.TextField("설명", data.stageDescription ?? string.Empty);
         EditorGUILayout.TextField("UI 색깔 문자열", data.illustrationColor ?? string.Empty);
         EditorGUILayout.ColorField("UI 색깔 (파싱됨)", data.IllustrationColor);

@@ -11,6 +11,7 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private PlayerLootReceiver lootReceiver;
     [SerializeField] private SkillController skillController;
     [SerializeField] private MonsterSpawner spawner;
+    [SerializeField] private WaveManager wave;
     [SerializeField] private int accountExpPerKill = 1;       // 임시 값: 기획 확정 후 조정
     [SerializeField] private int accountExpPerSecond = 1;     // 임시 값: 기획 확정 후 조정
     [SerializeField] private int baseRequiredExp = 6;
@@ -267,11 +268,11 @@ public class BattleManager : MonoBehaviour
         pendingLevelUps = 0;
 
         var accountExp = kills * accountExpPerKill + seconds * accountExpPerSecond
-                         + (victory ? spawner.CurrentStage.clearAccountExp : 0);
+                         + (victory ? wave.CurrentStage.clearAccountExp : 0);
 
         BattleResult.Last = new BattleResult
         {
-            StageID = spawner.CurrentStage.stageID,
+            StageID = wave.CurrentStage.stageID,
             Victory = victory,
             Seconds = seconds,
             Kills = kills,

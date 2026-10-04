@@ -118,12 +118,14 @@
 ### 5.7 스테이지·스폰
 | 값 | 위치 | 현행 | 이상 | 비고 |
 |---|---|---|---|---|
-| stageID, stageName, illustrationColor, duration, stageDescription, clearAccountExp, rewardBoxGradeWeights | `Resources/JsonFiles/Stage.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | illustrationColor는 연출용 열이다. duration은 읽는 코드가 없다(6.3). clearAccountExp는 승리했을 때 더하는 계정 경험치다. rewardBoxGradeWeights는 `ItemGrade` 순서의 보상상자 장비 등급 가중치이고 모든 스테이지가 `100,0,0`이다(5.12) |
+| stageID, stageName, illustrationColor, duration, waveID, stageDescription, clearAccountExp, rewardBoxGradeWeights | `Resources/JsonFiles/Stage.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | illustrationColor는 연출용 열이다. duration은 읽는 코드가 없다(6.3). waveID는 `Wave.json`의 웨이브이고 스테이지와 1:1이다. clearAccountExp는 승리했을 때 더하는 계정 경험치다. rewardBoxGradeWeights는 `ItemGrade` 순서의 보상상자 장비 등급 가중치이고 모든 스테이지가 `100,0,0`이다(5.12) |
 | 선택한 stageID | `GameSceneManager.pendingStageID` | `SESSION` | `SESSION` · `CLIENT_AUTH` | 메인 씬에서 전투 씬으로 넘길 때만 쓴다 |
-| 기본 stageId 1 | `MonsterSpawner` 인스펙터 | `DEBUG` | `삭제` | 메인 씬을 거치지 않고 전투 씬을 실행할 때만 쓴다 |
+| 기본 stageId 1 | `WaveManager` 인스펙터 | `DEBUG` | `삭제` | 메인 씬을 거치지 않고 전투 씬을 실행할 때만 쓴다 |
 | 전투 입장 스태미나 비용(battleStaminaCost 5) | `Resources/JsonFiles/AccountConst.json` | `DESIGN_CONST` | `DESIGN_CONST` | 모든 스테이지가 같은 값을 쓴다. `BattleTab`에 표시하고, 입장할 때 차감한다. 스태미나가 부족하면 입장하지 않는다 |
-| 스폰 이벤트(spawnEventID, stageID, eventType, startTime, endTime, monsterID, spawnInterval, spawnCount, repeat) | `Resources/JsonFiles/Spawn.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | |
-| spawnRadius 10 | `MonsterSpawner` 인스펙터 | `DESIGN_CONST` | `DESIGN_CONST` | |
+| 웨이브(waveEntryID, waveID, startTime, patternID, monsterID) | `Resources/JsonFiles/Wave.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | 한 행이 시각, 패턴, 몬스터 1종이다. 여러 종은 같은 시각에 행을 여러 개 둔다. `WaveManager`가 스테이지의 waveID 행을 경과 시간으로 진행한다. 웨이브 1만 있고, 스테이지 2의 waveID 2는 행이 없다. 계층은 Stage(3차) → Wave(2차) → SpawnPattern·Monster(1차)다 |
+| 스폰 패턴(patternID, eventType, formation, spawnCount, spawnInterval, duration, dropTableID) | `Resources/JsonFiles/SpawnPattern.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | formation은 Random, Ring, Line, Cluster, Screen이다. 패턴 1~6만 웨이브가 쓰고 7~9(Ring, Line, Cluster)는 `WaveManager`의 `TestSpawnPattern` ContextMenu로 검증하는 샘플이다. 상자는 Screen 패턴으로만 스폰해야 한다. 드롭 테이블은 패턴별로 두므로 모양이 같아도 드롭이 다르면 패턴을 나눈다 |
+| spawnRadius 10, minRepeatInterval 0.1 | `WaveManager` 인스펙터 | `DESIGN_CONST` | `DESIGN_CONST` | |
+| lineLength 6, clusterRadius 1.5 | `WaveManager` 인스펙터 | `DESIGN_CONST` | `DESIGN_CONST` | 임시값이다. 모든 패턴이 공통으로 쓴다 |
 | 스테이지 기록(stageID, isCleared, bestSurvivalSeconds) | `PlayerSaveData.stageRecordList` | `USER` | `USER` · `CLIENT_AUTH` | 가입할 때 `Stage.json`의 스테이지마다 만들고 전투 결과로 갱신한다 |
 
 ### 5.8 도전
@@ -173,8 +175,7 @@
 |---|---|---|---|---|
 | 드롭 종류(`DropItemType`) | `DropItemType.cs` enum | `DESIGN_CONST` | `DESIGN_CONST` | ExpGem1~4, Gold1~4, LuckyBox, RewardBox, Potion, Magnet, Bomb |
 | dropItemID, dropItemType, value | `Resources/JsonFiles/DropItem.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | 종류별 수치. ExpGem1~4 3·5·10·100, Gold1~4 10·30·100·300, Bomb 50, Potion 50. ExpGem2~4는 떨어뜨리는 코드가 없다(6.3). Bomb은 엘리트·보스에게 주는 피해량이다. 일반 몬스터는 즉사하고, 범위 제한 없이 살아 있는 몬스터 전체가 대상이다. Potion은 기본 회복량이고 계산식이 추가될 예정이다 |
-| 몬스터별 드롭(전체 ExpGem1, 엘리트 LuckyBox 1·RewardBox 2, 보스 RewardBox 5) | `Enemy.GiveReward` 하드코딩 | `DESIGN_CONST` | **`DESIGN_TABLE`** | monsterExp와 관계없이 ExpGem1로 고정돼 있다(TODO) |
-| 상자 드롭 가중치(Gold1~4 31·5·3·1, Bomb·Potion·Magnet 각 20) | `Box` const | `DESIGN_CONST` | **`DESIGN_TABLE`** | 몬스터별 드롭 테이블 |
+| 드롭 테이블(dropTableID, group, dropItemType, weight, count) | `Resources/JsonFiles/DropTable.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | 스폰 패턴의 dropTableID가 참조하고, 몬스터는 스폰될 때 받은 테이블로 처치 보상을 정한다. 같은 테이블 안에서 group마다 한 번씩 weight로 1행을 뽑아 count개 떨어뜨린다. dropItemType이 None이면 건너뛴다. 테이블 1 일반(ExpGem1), 2 엘리트(ExpGem1, LuckyBox 1, RewardBox 2), 3 보스(ExpGem1, RewardBox 5), 4 상자(Gold1~4 31·5·3·1, Bomb·Potion·Magnet 각 20 중 1개). 테이블 5는 검증용 샘플이다. 경험치잼은 monsterExp와 관계없이 ExpGem1로 고정돼 있다(6.3) |
 | 보상상자 내용물 | `Resources/JsonFiles/Stage.json` rewardBoxGradeWeights 열 | `DESIGN_TABLE` | `DESIGN_TABLE` | 상자마다 스테이지의 등급 가중치로 등급을 뽑고, 그 등급이 기본 등급인 장비 중에서 균등 랜덤으로 지급한다(`StageData.RollRewardBoxGrade`) |
 | 흡수 연출(recoilDistance, recoilDuration, chaseStartSpeed, chaseAcceleration, arriveRadius) | `DropItemManager` 인스펙터 | `PRESENTATION` | `PRESENTATION` | |
 
@@ -182,11 +183,12 @@
 분류하면서 확인한 사실만 적는다.
 
 ### 6.1 기획 값의 저장 방식이 네 가지다
-- JSON이 두 폴더에 나뉘어 있다: `Resources/JsonFiles`(Monster, BossAttack, Spawn, Stage, Skill, Item, DropItem, AccountConst), `Resources/Data`(player)
-- JSON 로더도 나뉘어 있다: `JsonDataManager`(Monster, BossAttack, Spawn, Stage, Skill, DropItem, AccountConst), `ItemDatabase`(Item), `SkillDataBase`(Skill), `PlayerDatabase`(player). Skill.json은 두 곳에서 불러온다. 레벨업 후보 목록은 `JsonDataManager`에서, 스킬 생성과 표시는 `SkillDataBase`에서 읽는다
-- 코드 상수: `ItemLevelConfig`, `SkillBase`, `MaxSkillSlots`, `OptionCount`, `PlayerLuckTrain`, `Box`, `WeaponSkillTable`, `NodesPerLevel`
-- 인스펙터: `BattleManager`, `PlayerHealth`, `PlayerLuckTrain`, `MonsterSpawner`, `Enemy`, 상점 카드, 투사체 프리팹
-- 하드코딩: 스킬 레벨별 효과(`Skill_*`), 몬스터 드롭(`Enemy.GiveReward`)
+- JSON이 두 폴더에 나뉘어 있다: `Resources/JsonFiles`(Monster, BossAttack, Wave, SpawnPattern, Stage, Skill, Item, DropItem, DropTable, AccountConst), `Resources/Data`(player)
+- `Resources/JsonFiles`의 JSON은 구글 시트의 같은 이름 탭을 `Tools > Google Sheets > JSON Exporter`로 내보낸 것이다. 원본은 시트이고, JSON만 고치면 다음 내보내기에서 덮어써진다. 시트에는 JSON이 없는 탭(PlayerConst, ItemConst, BattleConst, MonsterConst)도 있다
+- JSON 로더도 나뉘어 있다: `JsonDataManager`(Monster, BossAttack, Wave, SpawnPattern, Stage, Skill, DropItem, DropTable, AccountConst), `ItemDatabase`(Item), `SkillDataBase`(Skill), `PlayerDatabase`(player). Skill.json은 두 곳에서 불러온다. 레벨업 후보 목록은 `JsonDataManager`에서, 스킬 생성과 표시는 `SkillDataBase`에서 읽는다
+- 코드 상수: `ItemLevelConfig`, `SkillBase`, `MaxSkillSlots`, `OptionCount`, `PlayerLuckTrain`, `WeaponSkillTable`, `NodesPerLevel`
+- 인스펙터: `BattleManager`, `PlayerHealth`, `PlayerLuckTrain`, `WaveManager`, `Enemy`, 상점 카드, 투사체 프리팹
+- 하드코딩: 스킬 레벨별 효과(`Skill_*`)
 
 ### 6.2 같은 의미의 중복 정의
 | 의미 | 정의 1 | 정의 2 |
@@ -195,10 +197,10 @@
 | 초기 재화·최대 스태미나 | `AccountConst.json` | `PlayerSaveData.CreateDefault` |
 
 ### 6.3 불러오지만 쓰지 않는 값
-- `Stage.json`의 duration. 승리는 보스 처치로 판정한다
-- `Monster.json`의 monsterExp. 경험치 드롭은 ExpGem1로 고정돼 있다
+- `Stage.json`의 duration. 승리는 보스 처치로 판정한다. 값도 150초로 웨이브 1의 보스 등장(45초)과 다르다
+- `Monster.json`의 monsterExp. 경험치 드롭은 `DropTable.json`에서 ExpGem1로 고정돼 있다
 - `player.json`의 attack, criticalDamage, criticalChance, skillDamage, maxMoveSpeed. 스킬 피해는 `Skill.json`의 Damage만 쓴다. attack은 최종 공격력까지 계산하지만 디버그 로그에서만 읽는다
-- `DropItem.json`의 ExpGem2~4. 몬스터는 ExpGem1만 떨어뜨린다
+- `DropItem.json`의 ExpGem2~4. `DropTable.json`이 ExpGem1만 쓴다
 - `AccountConst.json`의 initialGold, initialGem, initialStamina, maxStamina. 계정을 만들 때 `PlayerSaveData.CreateDefault`에 직접 쓴 값을 쓴다
 
 ### 6.4 저장 구조에 없는 `USER` 값

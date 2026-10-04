@@ -800,6 +800,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d66932ad6d9a94b4c89325b19998c5cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SkillController
+--- !u!4 &1437819745 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1336512524560405698, guid: ddf2cdd10591fe24994fba07b40bb824, type: 3}
+  m_PrefabInstance: {fileID: 1437819740}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1831472863
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -830,6 +835,10 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 1437819742}
+    - target: {fileID: 6379221623449135504, guid: 83a0eec21c203fe49863cf2b0fb8592a, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 1437819745}
     - target: {fileID: 7769472064241161036, guid: 83a0eec21c203fe49863cf2b0fb8592a, type: 3}
       propertyPath: m_LocalPosition.x
       value: -2.09211
@@ -886,6 +895,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d5a3f51e3ed1c340b49c9ea5271ca8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MonsterSpawner
+--- !u!114 &1842085653 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6379221623449135504, guid: 83a0eec21c203fe49863cf2b0fb8592a, type: 3}
+  m_PrefabInstance: {fileID: 1842085651}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5eb937cbab1bb0c4ca0005ae5970ddf5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaveManager
 --- !u!1 &1946383004
 GameObject:
   m_ObjectHideFlags: 0
@@ -919,6 +939,7 @@ MonoBehaviour:
   lootReceiver: {fileID: 1437819743}
   skillController: {fileID: 1437819744}
   spawner: {fileID: 1842085652}
+  wave: {fileID: 1842085653}
   accountExpPerKill: 1
   accountExpPerSecond: 1
   baseRequiredExp: 6

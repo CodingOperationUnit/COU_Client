@@ -4,12 +4,14 @@
 
 ## 1. 전투 진행
 - `BattleManager`의 accountExpPerKill, accountExpPerSecond가 코드 주석에 임시값으로 표시돼 있다 (5.11)
+- `WaveManager`
+  - 기본 stageId 1은 메인 씬을 거치지 않고 전투 씬을 실행할 때만 쓰는 `DEBUG` 값이다 (5.7)
+  - lineLength 6, clusterRadius 1.5가 임시값이다. Ring, Line, Cluster 패턴(7~9)은 `TestSpawnPattern` ContextMenu 검증용 샘플이라 웨이브에 들어 있지 않다 (5.7)
+- `Wave.json` 웨이브 1의 보스 등장(45초)이 `Stage.json` duration(150초)과 다르다. duration은 읽는 코드가 없지만 `StageData` 주석에는 보스 등장 시각과 맞춘 값이라고 적혀 있다 (5.7, 6.3)
+- 스테이지 2의 waveID 2에 웨이브 행이 없다 (5.7)
 
 ## 2. 드롭·보상
-- `Enemy.GiveReward`
-  - 경험치 드롭이 ExpGem1로 고정돼 있어 `Monster.json`의 monsterExp와 `DropItem.json`의 ExpGem2~4를 쓰지 않는다(TODO) (5.12, 6.3)
-  - 엘리트·보스의 상자 드롭 수가 하드코딩돼 있다. 몬스터별 드롭 테이블로 옮겨야 한다 (5.12)
-- `Box.dropWeights` 상자 드롭 가중치가 const다. 몬스터별 드롭 테이블로 옮겨야 한다 (5.12)
+- `DropTable.json`이 경험치 드롭을 ExpGem1로 고정해 `Monster.json`의 monsterExp와 `DropItem.json`의 ExpGem2~4를 쓰지 않는다 (5.12, 6.3)
 - `PlayerInventory.ClaimBattleResult`가 보상 반영과 계정 레벨업을 클라이언트에서 한다. 보상 지급이라 `SERVER_AUTH` 대상이다 (5.4, 5.11)
 
 ## 3. 스킬
@@ -26,5 +28,5 @@
   - 보상 수령 여부(rewarded)가 `PlayerSaveData`에 없다 (5.8, 6.4)
 
 ## 5. 범위에서 뺀 부분
-- 다른 작성자의 코드: `PlayerLuckTrain`, `PlayerHealth`, `PlayerLootReceiver`, `MonsterSpawner`의 기본 stageId, `LinearProjectile`의 lifeTime, `Skill_*`의 레벨별 효과
+- 다른 작성자의 코드: `PlayerLuckTrain`, `PlayerHealth`, `PlayerLootReceiver`, `LinearProjectile`의 lifeTime, `Skill_*`의 레벨별 효과
 - DevAkasha 작성 코드 중 연출 값(`PRESENTATION`)만 있는 `DropItemManager`, `LuckTrainWindow`는 이슈가 없다
