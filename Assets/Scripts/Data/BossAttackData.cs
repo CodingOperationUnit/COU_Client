@@ -11,8 +11,8 @@ public enum BossAttackType { Melee, Ranged, Area }
 [Serializable]
 public class BossAttackData
 {
-    public int bossAttackID;
-    public int monsterID;         // 이 패턴을 쓰는 보스
+    public int bossAttackId;
+    public int monsterId;         // 이 패턴을 쓰는 보스
     public string attackType;     // "Melee" / "Ranged" / "Area"
     public float cooldown;        // 재사용 대기시간(초)
     public float range;           // 이 거리 안에 플레이어가 있어야 사용
@@ -25,6 +25,6 @@ public class BossAttackData
     public void OnLoaded()
     {
         if (!Enum.TryParse(attackType, out parsedAttackType))
-            Debug.LogWarning($"[BossAttackData] {bossAttackID}의 attackType \"{attackType}\"을(를) 알 수 없습니다.");
+            Debug.LogWarning($"[BossAttackData] {bossAttackId}의 attackType \"{attackType}\"을(를) 알 수 없습니다.");
     }
 }

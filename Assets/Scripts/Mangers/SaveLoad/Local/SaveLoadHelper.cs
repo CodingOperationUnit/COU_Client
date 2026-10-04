@@ -29,17 +29,17 @@ public static class SaveLoadHelper
         if (data == null)
             throw new ArgumentNullException(nameof(data));
 
-        SaveJson(GetPlayerPath(data.playerID), data);
+        SaveJson(GetPlayerPath(data.playerId), data);
     }
 
-    public static PlayerSaveData LoadPlayer(string playerID)
+    public static PlayerSaveData LoadPlayer(string playerId)
     {
-        PlayerSaveData data = LoadJson<PlayerSaveData>(GetPlayerPath(playerID));
+        PlayerSaveData data = LoadJson<PlayerSaveData>(GetPlayerPath(playerId));
 
         // 다른 계정의 데이터를 잘못 적용하지 않도록 확인
-        if (data != null && data.playerID != playerID)
+        if (data != null && data.playerId != playerId)
         {
-            throw new InvalidDataException("요청한 계정과 저장 데이터의 playerID가 다릅니다.");
+            throw new InvalidDataException("요청한 계정과 저장 데이터의 playerId가 다릅니다.");
         }
 
         return data;
@@ -74,18 +74,18 @@ public static class SaveLoadHelper
         return data;
     }
 
-    private static string GetPlayerPath(string playerID)
+    private static string GetPlayerPath(string playerId)
     {
-        if (string.IsNullOrWhiteSpace(playerID)
-            || playerID.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0
-            || playerID.Contains("/")
-            || playerID.Contains("\\")
-            || playerID == "."
-            || playerID == "..")
+        if (string.IsNullOrWhiteSpace(playerId)
+            || playerId.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0
+            || playerId.Contains("/")
+            || playerId.Contains("\\")
+            || playerId == "."
+            || playerId == "..")
         {
-            throw new ArgumentException("파일명으로 사용할 수 없는 playerID입니다.", nameof(playerID));
+            throw new ArgumentException("파일명으로 사용할 수 없는 playerId입니다.", nameof(playerId));
         }
 
-        return Path.Combine(PlayerDirectory, playerID + ".json");
+        return Path.Combine(PlayerDirectory, playerId + ".json");
     }
 }

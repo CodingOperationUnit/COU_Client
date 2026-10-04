@@ -26,7 +26,7 @@ public class MonsterSpawner : MonoSingleton<MonsterSpawner>
     // 현재 관리 중인 살아있는 몬스터
     private readonly List<Enemy> spawnedEnemies = new();
 
-    // monsterID로 데이터 조회 -> 타입에 맞는 풀에서 꺼내 Init/SetTarget
+    // monsterId로 데이터 조회 -> 타입에 맞는 풀에서 꺼내 Init/SetTarget
     public Enemy SpawnMonster(int monsterId, Vector3 position, int dropTableId)
     {
         MonsterData data = GameManager.JsonData.GetMonsterDataFromJson(monsterId);

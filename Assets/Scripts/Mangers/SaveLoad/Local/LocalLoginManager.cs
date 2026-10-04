@@ -5,9 +5,9 @@ using UnityEngine;
 public class LocalLoginManager : MonoSingleton<LocalLoginManager>
 {
     public bool isLoggedIn => GameManager.PlayerData.isPlayerDataLoaded;
-    public string currentPlayerID => GameManager.PlayerData.currentPlayerID;
+    public string currentPlayerId => GameManager.PlayerData.currentPlayerId;
 
-    public bool SignUp(string playerID, string password, out string message)
+    public bool SignUp(string playerId, string password, out string message)
     {
         if (isLoggedIn)
         {
@@ -15,9 +15,9 @@ public class LocalLoginManager : MonoSingleton<LocalLoginManager>
             return false;
         }
 
-        playerID = NormalizePlayerID(playerID);
+        playerId = NormalizePlayerId(playerId);
 
-        if (!Regex.IsMatch(playerID, @"^[a-z0-9_]{3,20}$"))
+        if (!Regex.IsMatch(playerId, @"^[a-z0-9_]{3,20}$"))
         {
             message = "아이디는 영문, 숫자, 밑줄로 3 ~ 20자 입력해주세요.";
             return false;
@@ -40,7 +40,7 @@ public class LocalLoginManager : MonoSingleton<LocalLoginManager>
             }
 
             bool alreadyExists = accountData.accounts.Exists(account =>
-                account != null && string.Equals(account.playerID, playerID, StringComparison.OrdinalIgnoreCase)
+                account != null && string.Equals(account.playerId, playerId, StringComparison.OrdinalIgnoreCase)
             );
 
             if (alreadyExists)
@@ -52,18 +52,18 @@ public class LocalLoginManager : MonoSingleton<LocalLoginManager>
             // 초기 플레이어 파일을 먼저 저장합니다.
             // 기존 파일이 있으면 덮어쓰지 않고 가입을 중단합니다.
             // 계정 목록 저장이 실패했을 때 남을 수 있는 파일도 보호합니다.
-            if (SaveLoadHelper.LoadPlayer(playerID) != null)
+            if (SaveLoadHelper.LoadPlayer(playerId) != null)
             {
                 message = "해당 아이디의 게임 데이터가 이미 있습니다. " + "저장 상태를 확인해 주세요.";
                 return false;
             }
 
-            var playerData = PlayerSaveData.CreateDefault(playerID);
+            var playerData = PlayerSaveData.CreateDefault(playerId);
 
             SaveLoadHelper.SavePlayer(playerData);
             accountData.accounts.Add(new LocalAccountData
             {
-                playerID = playerID,
+                playerId = playerId,
                 password = password
             });
 
@@ -80,7 +80,7 @@ public class LocalLoginManager : MonoSingleton<LocalLoginManager>
         }
     }
 
-    public bool Login(string playerID, string password, out string message)
+    public bool Login(string playerId, string password, out string message)
     {
         if (isLoggedIn)
         {
@@ -88,9 +88,9 @@ public class LocalLoginManager : MonoSingleton<LocalLoginManager>
             return false;
         }
         
-        playerID = NormalizePlayerID(playerID);
+        playerId = NormalizePlayerId(playerId);
         
-        if (string.IsNullOrEmpty(playerID) || string.IsNullOrEmpty(password))
+        if (string.IsNullOrEmpty(playerId) || string.IsNullOrEmpty(password))
         {
             message = "아이디와 비밀번호를 입력해 주세요.";
             return false;
@@ -107,7 +107,7 @@ public class LocalLoginManager : MonoSingleton<LocalLoginManager>
             }
 
             LocalAccountData account = accountData.accounts.Find(item =>
-                item != null && string.Equals(item.playerID, playerID, StringComparison.OrdinalIgnoreCase)
+                item != null && string.Equals(item.playerId, playerId, StringComparison.OrdinalIgnoreCase)
             );
 
             if (account == null || account.password != password)
@@ -139,8 +139,8 @@ public class LocalLoginManager : MonoSingleton<LocalLoginManager>
         return true;
     }
 
-    private static string NormalizePlayerID(string playerID)
+    private static string NormalizePlayerId(string playerId)
     {
-        return (playerID ?? string.Empty).Trim().ToLowerInvariant();
+        return (playerId ?? string.Empty).Trim().ToLowerInvariant();
     }
 }

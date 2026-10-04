@@ -1,11 +1,11 @@
 {
   "datas": [
     {
-      "stageID": 1,
+      "stageId": 1,
       "stageName": "Forest",
       "illustrationColor": "#4C7A3D",
       "duration": 150.0,
-      "waveID": 1,
+      "waveId": 1,
       "stageDescription": "몬스터가 가득한 숲입니다.",
       "clearAccountExp": 500,
       "rewardBoxGradeWeights": [
@@ -15,11 +15,11 @@
       ]
     },
     {
-      "stageID": 2,
+      "stageId": 2,
       "stageName": "Desert",
       "illustrationColor": "#C9A66B",
       "duration": 150.0,
-      "waveID": 2,
+      "waveId": 2,
       "stageDescription": "햇빛이 뜨거운 사막입니다.",
       "clearAccountExp": 500,
       "rewardBoxGradeWeights": [

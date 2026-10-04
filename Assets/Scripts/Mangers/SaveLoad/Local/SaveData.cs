@@ -17,7 +17,7 @@ public class AccountSaveData
 [Serializable]
 public class LocalAccountData
 {
-    public string playerID;
+    public string playerId;
     public string password;
 }
 
@@ -27,7 +27,7 @@ public class LocalAccountData
 [Serializable]
 public class PlayerSaveData
 {
-    public string playerID;
+    public string playerId;
     
     public int gold;
     public int gem;
@@ -41,14 +41,14 @@ public class PlayerSaveData
     public List<EquipmentSaveData> equipmentList = new List<EquipmentSaveData>();
     public List<StageRecordSaveData> stageRecordList = new List<StageRecordSaveData>();
 
-    public static PlayerSaveData CreateDefault(string playerID)
+    public static PlayerSaveData CreateDefault(string playerId)
     {
-        if (string.IsNullOrWhiteSpace(playerID))
+        if (string.IsNullOrWhiteSpace(playerId))
             throw new ArgumentException("플레이어 ID가 필요합니다.");
 
         return new PlayerSaveData
         {
-            playerID = playerID,
+            playerId = playerId,
             gold = 0,
             gem = 0,
             maxStamina = 60,
@@ -71,11 +71,11 @@ public class PlayerSaveData
             return records;
         }
 
-        foreach (var stageID in stageDataDic.Keys)
+        foreach (var stageId in stageDataDic.Keys)
         {
             records.Add(new StageRecordSaveData
             {
-                stageID = stageID,
+                stageId = stageId,
                 isCleared = false,
                 bestSurvivalSeconds = 0f
             });
@@ -98,7 +98,7 @@ public class EquipmentSaveData
 [Serializable]
 public class StageRecordSaveData
 {
-    public int stageID;
+    public int stageId;
     public bool isCleared;
     public float bestSurvivalSeconds;
 }

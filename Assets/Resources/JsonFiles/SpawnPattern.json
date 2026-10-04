@@ -1,85 +1,85 @@
 {
   "datas": [
     {
-      "patternID": 1,
+      "patternId": 1,
       "eventType": "Normal",
       "formation": "Random",
       "spawnCount": 1,
       "spawnInterval": 1.0,
       "duration": 10.0,
-      "dropTableID": 1
+      "dropTableId": 1
     },
     {
-      "patternID": 2,
+      "patternId": 2,
       "eventType": "Normal",
       "formation": "Random",
       "spawnCount": 2,
       "spawnInterval": 2.0,
       "duration": 10.0,
-      "dropTableID": 1
+      "dropTableId": 1
     },
     {
-      "patternID": 3,
+      "patternId": 3,
       "eventType": "Elite",
       "formation": "Random",
       "spawnCount": 1,
       "spawnInterval": 0.0,
       "duration": 0.0,
-      "dropTableID": 2
+      "dropTableId": 2
     },
     {
-      "patternID": 4,
+      "patternId": 4,
       "eventType": "Horde",
       "formation": "Random",
       "spawnCount": 3,
       "spawnInterval": 0.5,
       "duration": 10.0,
-      "dropTableID": 1
+      "dropTableId": 1
     },
     {
-      "patternID": 5,
+      "patternId": 5,
       "eventType": "Boss",
       "formation": "Random",
       "spawnCount": 1,
       "spawnInterval": 0.0,
       "duration": 0.0,
-      "dropTableID": 3
+      "dropTableId": 3
     },
     {
-      "patternID": 6,
+      "patternId": 6,
       "eventType": "Normal",
       "formation": "Screen",
       "spawnCount": 1,
       "spawnInterval": 20.0,
       "duration": 140.0,
-      "dropTableID": 4
+      "dropTableId": 4
     },
     {
-      "patternID": 7,
+      "patternId": 7,
       "eventType": "Horde",
       "formation": "Ring",
       "spawnCount": 12,
       "spawnInterval": 0.0,
       "duration": 0.0,
-      "dropTableID": 5
+      "dropTableId": 5
     },
     {
-      "patternID": 8,
+      "patternId": 8,
       "eventType": "Horde",
       "formation": "Line",
       "spawnCount": 8,
       "spawnInterval": 0.0,
       "duration": 0.0,
-      "dropTableID": 5
+      "dropTableId": 5
     },
     {
-      "patternID": 9,
+      "patternId": 9,
       "eventType": "Horde",
       "formation": "Cluster",
       "spawnCount": 6,
       "spawnInterval": 0.0,
       "duration": 0.0,
-      "dropTableID": 5
+      "dropTableId": 5
     }
   ]
 }

@@ -30,7 +30,7 @@ public class MainUIAccountBinder : MonoBehaviour
         var topBar = GameManager.UI.Get<TopBar>();
         var accountConst = GameManager.JsonData.AccountConstData;
 
-        topBar.SetNickname(data.playerID);
+        topBar.SetNickname(data.playerId);
         topBar.SetLevel(data.accountLevel);
         topBar.SetExp(data.accountLevel >= accountConst.maxAccountLevel
             ? 1f
@@ -45,14 +45,14 @@ public class MainUIAccountBinder : MonoBehaviour
         var stageDataDic = GameManager.JsonData.StageDataDic; // 시트에서 온 공용 데이터
         if (stageDataDic == null || stageDataDic.Count == 0) return;
 
-        var records = data.stageRecordList?.ToDictionary(r => r.stageID)  // 계정별 기록
+        var records = data.stageRecordList?.ToDictionary(r => r.stageId)  // 계정별 기록
                       ?? new Dictionary<int, StageRecordSaveData>();
 
-        var stages = stageDataDic.Values.OrderBy(s => s.stageID).ToArray();
+        var stages = stageDataDic.Values.OrderBy(s => s.stageId).ToArray();
 
         GameManager.UI.Get<StageSelectScreen>().SetStages(stages, records, 0);
 
-        records.TryGetValue(stages[0].stageID, out var firstRecord);
+        records.TryGetValue(stages[0].stageId, out var firstRecord);
         var firstBestTime = firstRecord != null ? Mathf.RoundToInt(firstRecord.bestSurvivalSeconds) : 0;
         var battleTab = GameManager.UI.Get<BattleTab>();
         battleTab.SetStage(stages[0], firstBestTime);

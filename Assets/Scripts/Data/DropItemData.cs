@@ -4,7 +4,7 @@ using System;
 [Serializable]
 public class DropItemData
 {
-    public int dropItemID;
+    public int dropItemId;
     public string dropItemType;   // DropItemType 이름 (예: "ExpGem1")
     public int value;
 

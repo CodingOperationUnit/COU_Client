@@ -1,53 +1,53 @@
 {
   "datas": [
     {
-      "waveEntryID": 1,
-      "waveID": 1,
+      "waveEntryId": 1,
+      "waveId": 1,
       "startTime": 0.0,
-      "patternID": 1,
-      "monsterID": 1001
+      "patternId": 1,
+      "monsterId": 1001
     },
     {
-      "waveEntryID": 2,
-      "waveID": 1,
+      "waveEntryId": 2,
+      "waveId": 1,
       "startTime": 10.0,
-      "patternID": 2,
-      "monsterID": 1002
+      "patternId": 2,
+      "monsterId": 1002
     },
     {
-      "waveEntryID": 3,
-      "waveID": 1,
+      "waveEntryId": 3,
+      "waveId": 1,
       "startTime": 15.0,
-      "patternID": 3,
-      "monsterID": 2001
+      "patternId": 3,
+      "monsterId": 2001
     },
     {
-      "waveEntryID": 4,
-      "waveID": 1,
+      "waveEntryId": 4,
+      "waveId": 1,
       "startTime": 20.0,
-      "patternID": 4,
-      "monsterID": 1001
+      "patternId": 4,
+      "monsterId": 1001
     },
     {
-      "waveEntryID": 5,
-      "waveID": 1,
+      "waveEntryId": 5,
+      "waveId": 1,
       "startTime": 25.0,
-      "patternID": 3,
-      "monsterID": 2002
+      "patternId": 3,
+      "monsterId": 2002
     },
     {
-      "waveEntryID": 6,
-      "waveID": 1,
+      "waveEntryId": 6,
+      "waveId": 1,
       "startTime": 45.0,
-      "patternID": 5,
-      "monsterID": 3001
+      "patternId": 5,
+      "monsterId": 3001
     },
     {
-      "waveEntryID": 7,
-      "waveID": 1,
+      "waveEntryId": 7,
+      "waveId": 1,
       "startTime": 10.0,
-      "patternID": 6,
-      "monsterID": 4001
+      "patternId": 6,
+      "monsterId": 4001
     }
   ]
 }

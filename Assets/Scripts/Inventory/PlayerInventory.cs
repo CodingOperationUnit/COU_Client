@@ -61,10 +61,10 @@ public class PlayerInventory : MonoBehaviour
             data.accountLevel++;
         }
 
-        var record = data.stageRecordList.FirstOrDefault(r => r.stageID == result.StageID);
+        var record = data.stageRecordList.FirstOrDefault(r => r.stageId == result.StageId);
         if (record == null)
         {
-            record = new StageRecordSaveData { stageID = result.StageID };
+            record = new StageRecordSaveData { stageId = result.StageId };
             data.stageRecordList.Add(record);
         }
         record.isCleared |= result.Victory;
@@ -72,7 +72,7 @@ public class PlayerInventory : MonoBehaviour
 
         // 보상상자: 상자마다 스테이지의 등급 가중치로 등급을 뽑고, 그 등급이 기본 등급인 장비를 무작위 지급
         var rewards = new List<OwnedItem>();
-        var stage = GameManager.JsonData.GetStageDataFromJson(result.StageID);
+        var stage = GameManager.JsonData.GetStageDataFromJson(result.StageId);
         for (var i = 0; i < result.RewardBoxes; i++)
         {
             var grade = stage.RollRewardBoxGrade();

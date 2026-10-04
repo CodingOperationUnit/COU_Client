@@ -16,7 +16,7 @@ public class StageSelectScreen : UIView, IDragHandler, IEndDragHandler
     [SerializeField] private float swipeThreshold = 100f;
 
     private StageData[] stages;
-    private Dictionary<int, StageRecordSaveData> records; // PlayerSaveData.stageRecordList를 stageID로 조회하기 쉽게 변환한 것
+    private Dictionary<int, StageRecordSaveData> records; // PlayerSaveData.stageRecordList를 stageId로 조회하기 쉽게 변환한 것
     private int selected;
     private int index;
 
@@ -73,7 +73,7 @@ public class StageSelectScreen : UIView, IDragHandler, IEndDragHandler
     {
         selected = index;
         var stage = stages[selected];
-        records.TryGetValue(stage.stageID, out var record);
+        records.TryGetValue(stage.stageId, out var record);
         var bestTime = record != null ? Mathf.RoundToInt(record.bestSurvivalSeconds) : 0;
         UIManager.Instance.Get<BattleTab>().SetStage(stage, bestTime);
         Close();

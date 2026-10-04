@@ -272,7 +272,7 @@ public class BattleManager : MonoBehaviour
 
         BattleResult.Last = new BattleResult
         {
-            StageID = wave.CurrentStage.stageID,
+            StageId = wave.CurrentStage.stageId,
             Victory = victory,
             Seconds = seconds,
             Kills = kills,

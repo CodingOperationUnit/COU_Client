@@ -76,14 +76,14 @@ public class BossMonster : Enemy
         RestoreColor();
         EnterState(BossState.Chase);
 
-        // 보스 공격패턴 전체를 훑어 해당 보스(monsterID)의 패턴만 추출
+        // 보스 공격패턴 전체를 훑어 해당 보스(monsterId)의 패턴만 추출
         var allBossAttacks = GameManager.JsonData.BossAttackDataDic;
         if (allBossAttacks == null) { return; }   // 로드 실패 → 접촉 공격만 함
 
         foreach (BossAttackData attack in allBossAttacks.Values)
         {
             // 다른 보스의 패턴은 건너뜀
-            if (attack.monsterID != Data.monsterID) { continue; }
+            if (attack.monsterId != Data.monsterId) { continue; }
 
             bossAttacks.Add(attack);
             bossAttackReadyTimes.Add(Time.time + attack.cooldown);

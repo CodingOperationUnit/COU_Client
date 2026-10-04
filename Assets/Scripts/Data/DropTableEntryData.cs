@@ -4,7 +4,7 @@ using System;
 [Serializable]
 public class DropTableEntryData
 {
-    public int dropTableID;
+    public int dropTableId;
     public int group;             // 같은 테이블 안에서 그룹마다 한 번씩 추첨
     public string dropItemType;   // DropItemType 이름 또는 "None"
     public int weight;            // 그룹 안의 가중치

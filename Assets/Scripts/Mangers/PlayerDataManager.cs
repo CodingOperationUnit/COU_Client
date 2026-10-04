@@ -8,7 +8,7 @@ public class PlayerDataManager : MonoSingleton<PlayerDataManager>
     public bool isPlayerDataLoaded => currentData != null;
     
     // 로그인 시 확정된 계정 ID
-    public string currentPlayerID { get; private set; }
+    public string currentPlayerId { get; private set; }
 
     public event Action<PlayerSaveData> OnPlayerDataChanged;
 
@@ -18,13 +18,13 @@ public class PlayerDataManager : MonoSingleton<PlayerDataManager>
         if (data == null)
             throw new ArgumentException(nameof(data));
 
-        if (string.IsNullOrWhiteSpace(data.playerID))
+        if (string.IsNullOrWhiteSpace(data.playerId))
             throw new ArgumentException("플레이어 ID가 없습니다.");
 
         if (isPlayerDataLoaded)
             throw new InvalidOperationException("기존 계정 데이터를 해제한 뒤 적용하세요.");
 
-        currentPlayerID = data.playerID;
+        currentPlayerId = data.playerId;
         currentData = data;
     }
     
@@ -38,6 +38,6 @@ public class PlayerDataManager : MonoSingleton<PlayerDataManager>
     public void ClearPlayerData()
     {
         currentData = null;
-        currentPlayerID = null;
+        currentPlayerId = null;
     }
 }

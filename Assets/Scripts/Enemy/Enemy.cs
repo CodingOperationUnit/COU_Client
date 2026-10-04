@@ -9,7 +9,7 @@ public abstract class Enemy : MonoBehaviour, IPoolable
     [SerializeField] protected float attackInterval = 1f;   // 접촉 피해 간격(초)
 
     public MonsterData Data { get; private set; }
-    public int DropTableID { get; private set; }
+    public int DropTableId { get; private set; }
 
     // 몬스터의 개별 상태
     public int currentHp;
@@ -39,10 +39,10 @@ public abstract class Enemy : MonoBehaviour, IPoolable
     }
 
     // 몬스터 초기화
-    public void Init(MonsterData data, int dropTableID)
+    public void Init(MonsterData data, int dropTableId)
     {
         Data = data;
-        DropTableID = dropTableID;
+        DropTableId = dropTableId;
         currentHp = data.monsterMaxHealthPoint;
         isDead = false;
         nextAttackTime = 0f;
@@ -157,7 +157,7 @@ public abstract class Enemy : MonoBehaviour, IPoolable
     // 처치 보상(자식용): 드롭 + 킬 수 집계
     protected virtual void GiveReward()
     {
-        GameManager.DropItem.SpawnTable(DropTableID, transform.position);
+        GameManager.DropItem.SpawnTable(DropTableId, transform.position);
 
         OnDied?.Invoke(this);
     }

@@ -18,8 +18,8 @@ public class WaveManager : MonoBehaviour
     [SerializeField] private float clusterRadius = 1.5f;     // Cluster 퍼짐 반경
 
     [Header("Test")]
-    [SerializeField] private int testPatternID = 7;
-    [SerializeField] private int testMonsterID = 1001;
+    [SerializeField] private int testPatternId = 7;
+    [SerializeField] private int testMonsterId = 1001;
 
     public StageData CurrentStage { get; private set; }
     public float Elapsed => elapsed;
@@ -39,13 +39,13 @@ public class WaveManager : MonoBehaviour
 
     private void Start()
     {
-        int targetStageID = stageId;
-        if (GameManager.Scene != null && GameManager.Scene.TryConsumePendingStageId(out int selectedStageID))
+        int targetStageId = stageId;
+        if (GameManager.Scene != null && GameManager.Scene.TryConsumePendingStageId(out int selectedStageId))
         {
-            targetStageID = selectedStageID;
+            targetStageId = selectedStageId;
         }
 
-        SetupStage(targetStageID);
+        SetupStage(targetStageId);
     }
 
     // 스테이지 시작
@@ -59,10 +59,10 @@ public class WaveManager : MonoBehaviour
 
         if (CurrentStage == null)   // 조회 실패 시 null (JsonDataManager가 경고 로그를 이미 찍음)
         {
-            Debug.LogError($"[WaveManager] stageID {stageId}가 없어 웨이브를 시작할 수 없습니다.");
+            Debug.LogError($"[WaveManager] stageId {stageId}가 없어 웨이브를 시작할 수 없습니다.");
             return;
         }
-        int waveId = CurrentStage.waveID;
+        int waveId = CurrentStage.waveId;
 
         // 전체를 훑으면서 이 스테이지 웨이브의 항목만 골라 담는다
         var allWaveEntries = GameManager.JsonData.WaveEntryDataDic;
@@ -74,19 +74,19 @@ public class WaveManager : MonoBehaviour
         foreach (WaveEntryData data in allWaveEntries.Values)
         {
             // 다른 웨이브 항목은 건너뜀
-            if (data.waveID != waveId) { continue; }
+            if (data.waveId != waveId) { continue; }
 
-            SpawnPatternData pattern = GameManager.JsonData.GetSpawnPatternDataFromJson(data.patternID);
+            SpawnPatternData pattern = GameManager.JsonData.GetSpawnPatternDataFromJson(data.patternId);
             if (pattern == null)
             {
-                Debug.LogWarning($"[WaveManager] waveEntryID {data.waveEntryID}의 patternID {data.patternID}를 찾을 수 없어 건너뜁니다.");
+                Debug.LogWarning($"[WaveManager] waveEntryId {data.waveEntryId}의 patternId {data.patternId}를 찾을 수 없어 건너뜁니다.");
                 continue;
             }
 
             // 없는 드롭 테이블은 처치할 때마다 경고가 쌓이므로 시작할 때 한 번만 거른다
-            if (pattern.dropTableID > 0 && GameManager.JsonData.GetDropTableFromJson(pattern.dropTableID) == null)
+            if (pattern.dropTableId > 0 && GameManager.JsonData.GetDropTableFromJson(pattern.dropTableId) == null)
             {
-                Debug.LogWarning($"[WaveManager] waveEntryID {data.waveEntryID}의 dropTableID {pattern.dropTableID}를 찾을 수 없어 건너뜁니다.");
+                Debug.LogWarning($"[WaveManager] waveEntryId {data.waveEntryId}의 dropTableId {pattern.dropTableId}를 찾을 수 없어 건너뜁니다.");
                 continue;
             }
 
@@ -100,7 +100,7 @@ public class WaveManager : MonoBehaviour
         }
 
         if (eventStates.Count == 0)
-            Debug.LogWarning($"[WaveManager] stageID {stageId}의 waveID {waveId}에 항목이 없습니다.");
+            Debug.LogWarning($"[WaveManager] stageId {stageId}의 waveId {waveId}에 항목이 없습니다.");
     }
 
     private void Update()
@@ -140,7 +140,7 @@ public class WaveManager : MonoBehaviour
         // 한 번만 나오는 이벤트(엘리트/보스)
         if (!repeat)
         {
-            SpawnPattern(state.data.monsterID, pattern);
+            SpawnPattern(state.data.monsterId, pattern);
             state.finished = true;
             return;
         }
@@ -152,12 +152,12 @@ public class WaveManager : MonoBehaviour
             return;
         }
 
-        SpawnPattern(state.data.monsterID, pattern);
+        SpawnPattern(state.data.monsterId, pattern);
         state.nextSpawnTime += interval;
     }
 
     // 배치 형태에 따라 위치를 정해 spawnCount마리 스폰
-    private void SpawnPattern(int monsterID, SpawnPatternData pattern)
+    private void SpawnPattern(int monsterId, SpawnPatternData pattern)
     {
         Vector3 center = player.position;
         int count = pattern.spawnCount;
@@ -176,7 +176,7 @@ public class WaveManager : MonoBehaviour
                 _ => center + (Vector3)(RandomDirection() * spawnRadius)
             };
 
-            spawner.SpawnMonster(monsterID, position, pattern.dropTableID);
+            spawner.SpawnMonster(monsterId, position, pattern.dropTableId);
         }
     }
 
@@ -211,13 +211,13 @@ public class WaveManager : MonoBehaviour
             0f);
     }
 
-    // 타임라인과 무관하게 testPatternID 패턴을 testMonsterID로 즉시 한 번 스폰
+    // 타임라인과 무관하게 testPatternId 패턴을 testMonsterId로 즉시 한 번 스폰
     [ContextMenu("TestSpawnPattern")]
     private void TestSpawnPattern()
     {
-        SpawnPatternData pattern = GameManager.JsonData.GetSpawnPatternDataFromJson(testPatternID);
+        SpawnPatternData pattern = GameManager.JsonData.GetSpawnPatternDataFromJson(testPatternId);
         if (pattern == null) { return; }
 
-        SpawnPattern(testMonsterID, pattern);
+        SpawnPattern(testMonsterId, pattern);
     }
 }

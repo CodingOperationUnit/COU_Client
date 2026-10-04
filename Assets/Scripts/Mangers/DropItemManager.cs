@@ -85,11 +85,11 @@ public class DropItemManager : MonoSingleton<DropItemManager>
     }
 
     // 드롭 테이블 판정: 그룹마다 가중치로 1행을 뽑아 count개 생성한다. None이면 건너뜀
-    public void SpawnTable(int dropTableID, Vector2 position)
+    public void SpawnTable(int dropTableId, Vector2 position)
     {
-        if (dropTableID <= 0) return;
+        if (dropTableId <= 0) return;
 
-        IReadOnlyList<DropTableEntryData> entries = GameManager.JsonData.GetDropTableFromJson(dropTableID);
+        IReadOnlyList<DropTableEntryData> entries = GameManager.JsonData.GetDropTableFromJson(dropTableId);
         if (entries == null) return;
 
         int start = 0;

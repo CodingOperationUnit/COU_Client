@@ -8,7 +8,7 @@ public enum MonsterType { Normal, Elite, Boss, Box }
 [Serializable]
 public class MonsterData
 {
-    public int monsterID;               // 1001~ 일반, 2001~ 엘리트, 3001~ 보스
+    public int monsterId;               // 1001~ 일반, 2001~ 엘리트, 3001~ 보스
     public string monsterName;
     public string type;                 // "Normal" / "Elite" / "Boss" / "Box"
     public int monsterMaxHealthPoint;
@@ -24,6 +24,6 @@ public class MonsterData
     public void OnLoaded()
     {
         if (!Enum.TryParse(type, out parsedType))
-            Debug.LogWarning($"[MonsterData] {monsterID}의 type \"{type}\"을(를) 알 수 없어 Normal로 처리합니다.");
+            Debug.LogWarning($"[MonsterData] {monsterId}의 type \"{type}\"을(를) 알 수 없어 Normal로 처리합니다.");
     }
 }

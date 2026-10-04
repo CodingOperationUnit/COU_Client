@@ -26,7 +26,7 @@ public class PlayerDataManagerEditor : Editor
         // 조회만 수행합니다. 원본 데이터와 리스트를 생성하거나 수정하지 않습니다.
         using (new EditorGUI.DisabledScope(true))
         {
-            EditorGUILayout.TextField("플레이어 ID", data.playerID ?? string.Empty);
+            EditorGUILayout.TextField("플레이어 ID", data.playerId ?? string.Empty);
             EditorGUILayout.IntField("골드", data.gold);
             EditorGUILayout.IntField("보석", data.gem);
             EditorGUILayout.IntField("현재 스태미나", data.currentStamina);
@@ -123,7 +123,7 @@ public class PlayerDataManagerEditor : Editor
 
                     using (new EditorGUI.DisabledScope(true))
                     {
-                        EditorGUILayout.IntField("스테이지 ID", record.stageID);
+                        EditorGUILayout.IntField("스테이지 ID", record.stageId);
                         EditorGUILayout.Toggle("클리어 여부", record.isCleared);
                         EditorGUILayout.FloatField("최장 생존시간 (초)", record.bestSurvivalSeconds);
                     }

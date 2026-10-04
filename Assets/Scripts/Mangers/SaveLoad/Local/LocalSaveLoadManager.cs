@@ -4,7 +4,7 @@ using UnityEngine;
 public class LocalSaveLoadManager : MonoSingleton<LocalSaveLoadManager>
 {
     // 로그인 검증 성공 후 호출 후 JSON에서 읽은 데이터를 DataManager에 전달
-    public bool LoadPlayerAfterLogin(string playerID)
+    public bool LoadPlayerAfterLogin(string playerId)
     {
         if (GameManager.PlayerData.isPlayerDataLoaded)
         {
@@ -14,7 +14,7 @@ public class LocalSaveLoadManager : MonoSingleton<LocalSaveLoadManager>
 
         try
         {
-            PlayerSaveData data = SaveLoadHelper.LoadPlayer(playerID);
+            PlayerSaveData data = SaveLoadHelper.LoadPlayer(playerId);
 
             if (data == null)
             {
@@ -51,7 +51,7 @@ public class LocalSaveLoadManager : MonoSingleton<LocalSaveLoadManager>
         PlayerSaveData data = dataManager.currentData;
 
         // 다른 계정 파일에 저장하는 실수를 방지
-        if (data.playerID != dataManager.currentPlayerID)
+        if (data.playerId != dataManager.currentPlayerId)
         {
             Debug.LogError("현재 계정과 저장 대상 계정이 다릅니다.");
             return false;

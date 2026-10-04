@@ -10,6 +10,6 @@ public class Box : Enemy
     // 킬 수 집계(OnDied)는 하지 않는다
     protected override void GiveReward()
     {
-        GameManager.DropItem.SpawnTable(DropTableID, transform.position);
+        GameManager.DropItem.SpawnTable(DropTableId, transform.position);
     }
 }
