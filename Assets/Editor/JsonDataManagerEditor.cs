@@ -21,7 +21,7 @@ public class JsonDataManagerEditor : Editor
         DrawDictionary("몬스터 데이터", manager.MonsterDataDic, expandedMonsters,
             data => data.monsterName, DrawMonster);
         DrawDictionary("보스 공격 데이터", manager.BossAttackDataDic, expandedBossAttacks,
-            data => $"몬스터 {data.monsterId} / {data.attackType}", DrawBossAttack);
+            data => $"몬스터 {data.monsterId} / {data.bossAttackType}", DrawBossAttack);
         DrawDictionary("웨이브 데이터", manager.WaveEntryDataDic, expandedWaveEntries,
             data => $"웨이브 {data.waveId} / 패턴 {data.patternId}", DrawWaveEntry);
         DrawDictionary("스테이지 데이터", manager.StageDataDic, expandedStages,
@@ -95,11 +95,11 @@ public class JsonDataManagerEditor : Editor
     {
         EditorGUILayout.IntField("공격 ID", data.bossAttackId);
         EditorGUILayout.IntField("몬스터 ID", data.monsterId);
-        EditorGUILayout.TextField("공격 종류 문자열", data.attackType ?? string.Empty);
+        EditorGUILayout.TextField("공격 종류 문자열", data.bossAttackType ?? string.Empty);
         EditorGUILayout.EnumPopup("공격 종류", data.AttackType);
-        EditorGUILayout.FloatField("쿨다운 (초)", data.cooldown);
-        EditorGUILayout.FloatField("사거리", data.range);
-        EditorGUILayout.IntField("피해량", data.damage);
+        EditorGUILayout.FloatField("쿨다운 (초)", data.bossAttackCooldown);
+        EditorGUILayout.FloatField("사거리", data.bossAttackRange);
+        EditorGUILayout.IntField("피해량", data.bossAttackDamage);
     }
 
     private static void DrawWaveEntry(WaveEntryData data)

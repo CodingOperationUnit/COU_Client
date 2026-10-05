@@ -86,7 +86,7 @@ public class BossMonster : Enemy
             if (attack.monsterId != Data.monsterId) { continue; }
 
             bossAttacks.Add(attack);
-            bossAttackReadyTimes.Add(Time.time + attack.cooldown);
+            bossAttackReadyTimes.Add(Time.time + attack.bossAttackCooldown);
         }
     }
 
@@ -173,7 +173,7 @@ public class BossMonster : Enemy
         for (int i = 0; i < bossAttacks.Count; i++)
         {
             if (Time.time < bossAttackReadyTimes[i]) { continue; }   // 쿨타임 중
-            if (distance > bossAttacks[i].range) { continue; }       // 사거리 밖 (range = 사용 조건 거리)
+            if (distance > bossAttacks[i].bossAttackRange) { continue; }   // 사거리 밖 (bossAttackRange = 사용 조건 거리)
             readyIndexBuffer.Add(i);
         }
 
@@ -181,7 +181,7 @@ public class BossMonster : Enemy
 
         int index = readyIndexBuffer[Random.Range(0, readyIndexBuffer.Count)];
         currentAttack = bossAttacks[index];
-        bossAttackReadyTimes[index] = Time.time + currentAttack.cooldown;   // 쿨타임은 "예고 시작" 기준
+        bossAttackReadyTimes[index] = Time.time + currentAttack.bossAttackCooldown;   // 쿨타임은 "예고 시작" 기준
 
         StartWindUp();
         return true;
@@ -265,7 +265,7 @@ public class BossMonster : Enemy
             Vector2.Distance(transform.position, player.transform.position) <= dashHitRadius)
         {
             dashHit = true;
-            playerHealth?.GetDamage(currentAttack.damage);
+            playerHealth?.GetDamage(currentAttack.bossAttackDamage);
         }
 
         if (dashRemaining <= 0f) EnterState(BossState.Recovery);
@@ -299,7 +299,7 @@ public class BossMonster : Enemy
 
             GameObject obj = GameManager.ObjectPool.GetObject(projectilePrefab, transform.position, Quaternion.identity);
             obj.GetComponent<BossProjectile>()?.Launch(
-                dir, projectileSpeed, currentAttack.damage, projectileLifeTime,
+                dir, projectileSpeed, currentAttack.bossAttackDamage, projectileLifeTime,
                 player.transform, playerHealth);
         }
     }
@@ -323,7 +323,7 @@ public class BossMonster : Enemy
 
             GameObject obj = GameManager.ObjectPool.GetObject(areaWarningPrefab, position, Quaternion.identity);
             obj.GetComponent<BossAreaWarning>()?.Begin(
-                areaRadius, windupTime, currentAttack.damage,
+                areaRadius, windupTime, currentAttack.bossAttackDamage,
                 player.transform, playerHealth);
         }
     }
