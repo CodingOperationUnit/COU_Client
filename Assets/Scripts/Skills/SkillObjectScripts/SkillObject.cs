@@ -4,7 +4,7 @@ using UnityEngine;
 public abstract class SkillObject<TInitData> : SkillObjectBase, ISkillPoolable
 {
     public event Action<GameObject> OnBeforeReturn;
-    protected SkillData skillData;
+    protected SkillStats stats;
 
     public void Init(TInitData data)
     {

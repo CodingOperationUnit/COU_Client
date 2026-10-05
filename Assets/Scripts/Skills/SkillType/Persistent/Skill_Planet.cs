@@ -10,7 +10,7 @@ public sealed class Skill_Planet : PersistentSkillBase
             // 행성 사이 간격이 균등하도록 시작 각도를 나눔
             float startAngle = 360.0f / count * i;
 
-            SpawnPersistent(transform.position, new OrbitData(skillData, transform, startAngle, DamageMultiplier));
+            SpawnPersistent(transform.position, new OrbitData(BuildStats(), transform, startAngle, skillData.skillRange));
         }
     }
 }

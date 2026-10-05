@@ -5,6 +5,6 @@ public abstract class AoeSkillBase : CooldownSkillBase
 {
     protected void SpawnAoe(Vector2 position)
     {
-        Spawn(position, new AoEData(skillData, position, DamageMultiplier));
+        Spawn(position, new AoEData(BuildStats(), position));
     }
 }

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // 플레이어 주위를 도는 행성. 풀에 스스로 반환되지 않고 스킬 해제 때까지 유지됨
-// SkillData: Speed = 초당 회전 각도, Range = 회전 반지름, Damage = 접촉 대미지
+// SkillStats: Speed = 초당 회전 각도, Damage = 접촉 대미지 / OrbitData: Radius = 회전 반지름
 public sealed class PlanetObject : SkillObject<OrbitData>
 {
     // 기록이 이 개수 이상 쌓이면 시간이 지난 기록을 정리
@@ -17,14 +17,14 @@ public sealed class PlanetObject : SkillObject<OrbitData>
 
     private Transform _owner;
     private float _angle;
-    private float _damageMultiplier;
+    private float _radius;
 
     protected override void OnInit(OrbitData data)
     {
-        skillData = data.Data;
+        stats = data.Stats;
         _owner = data.Owner;
         _angle = data.StartAngle;
-        _damageMultiplier = data.DamageMultiplier;
+        _radius = data.Radius;
         _lastHitTimes.Clear();
         OnLaunch();
     }
@@ -41,7 +41,7 @@ public sealed class PlanetObject : SkillObject<OrbitData>
             return;
         }
 
-        _angle += skillData.skillSpeed * Time.deltaTime;
+        _angle += stats.Speed * Time.deltaTime;
         UpdatePosition();
     }
 
@@ -53,7 +53,7 @@ public sealed class PlanetObject : SkillObject<OrbitData>
         }
 
         float radian = _angle * Mathf.Deg2Rad;
-        Vector3 offset = new Vector3(Mathf.Cos(radian), Mathf.Sin(radian), 0.0f) * skillData.skillRange;
+        Vector3 offset = new Vector3(Mathf.Cos(radian), Mathf.Sin(radian), 0.0f) * _radius;
 
         transform.position = _owner.position + offset;
     }
@@ -81,7 +81,7 @@ public sealed class PlanetObject : SkillObject<OrbitData>
 
         _lastHitTimes[enemyId] = now;
 
-        int damage = Mathf.RoundToInt(skillData.skillDamage * _damageMultiplier);
+        int damage = stats.Damage;
 
         // 대미지 확인용 임시 로그 (확인이 끝나면 삭제)
         Debug.Log($"[Planet#{GetInstanceID()}] -> Enemy#{enemyId} dmg={damage} frame={Time.frameCount} time={now:F2}");

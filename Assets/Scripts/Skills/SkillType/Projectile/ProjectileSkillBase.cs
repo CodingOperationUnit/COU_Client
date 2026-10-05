@@ -8,7 +8,7 @@ public abstract class ProjectileSkillBase : CooldownSkillBase
     // pierceCount: 이 탄환이 맞출 수 있는 최대 적 수 (기본 1 = 첫 적을 맞추면 사라짐)
     protected void SpawnProjectile(Vector2 direction, int pierceCount = 1)
     {
-        Spawn(transform.position, new ProjectileData(skillData, direction, fireTarget, DamageMultiplier, pierceCount));
+        Spawn(transform.position, new ProjectileData(BuildStats(), direction, fireTarget, pierceCount));
     }
 
     // 발사 방향을 중심으로 totalAngle(도) 범위의 부채꼴로 count발 발사

@@ -96,6 +96,12 @@ public abstract class SkillBase
     {
     }
 
+    // 스킬 오브젝트에 넘길 최종 수치 계산 (레벨 배율 반영)
+    protected SkillStats BuildStats()
+    {
+        return new SkillStats(Mathf.RoundToInt(skillData.skillDamage * DamageMultiplier), skillData.skillSpeed, 1.0f);
+    }
+
     // 풀에서 스킬 오브젝트를 꺼내 초기화. 초기화 인자 구조체 타입(TInitData)은 호출부에서 추론됨
     protected GameObject Spawn<TInitData>(Vector3 position, TInitData initData)
     {
