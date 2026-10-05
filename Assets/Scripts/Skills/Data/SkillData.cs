@@ -11,27 +11,27 @@ public enum SkillTargetType
 [Serializable]
 public class SkillData : ISerializationCallbackReceiver
 {
-    public int ID;
-    public string Name;
-    public string Type;
-    public float Cooldown;
-    public float Speed;
-    public float Damage;
-    public float Range;
-    public string Description;
+    public int skillId;
+    public string skillName;
+    public string skillType;
+    public float skillCooldown;
+    public float skillSpeed;
+    public float skillDamage;
+    public float skillRange;
+    public string skillDescription;
 
     [NonSerialized] public SkillTargetType TargetType;
 
     public void OnAfterDeserialize()
     {
-        if(string.IsNullOrEmpty(Type))
+        if(string.IsNullOrEmpty(skillType))
         {
             return;
         }
 
-        if(!Enum.TryParse(Type, true, out TargetType))
+        if(!Enum.TryParse(skillType, true, out TargetType))
         {
-            Debug.LogWarning($"[SkillData] 알 수 없는 Type입니다: {Type} (ID: {ID})");
+            Debug.LogWarning($"[SkillData] 알 수 없는 Type입니다: {skillType} (ID: {skillId})");
         }
     }
 
