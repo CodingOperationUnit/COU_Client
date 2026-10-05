@@ -6,7 +6,7 @@
       "formation": "Random",
       "spawnCount": 1,
       "spawnInterval": 1.0,
-      "duration": 10.0,
+      "patternDuration": 10.0,
       "dropTableId": 1
     },
     {
@@ -15,7 +15,7 @@
       "formation": "Random",
       "spawnCount": 2,
       "spawnInterval": 2.0,
-      "duration": 10.0,
+      "patternDuration": 10.0,
       "dropTableId": 1
     },
     {
@@ -24,7 +24,7 @@
       "formation": "Random",
       "spawnCount": 1,
       "spawnInterval": 0.0,
-      "duration": 0.0,
+      "patternDuration": 0.0,
       "dropTableId": 2
     },
     {
@@ -33,7 +33,7 @@
       "formation": "Random",
       "spawnCount": 3,
       "spawnInterval": 0.5,
-      "duration": 10.0,
+      "patternDuration": 10.0,
       "dropTableId": 1
     },
     {
@@ -42,7 +42,7 @@
       "formation": "Random",
       "spawnCount": 1,
       "spawnInterval": 0.0,
-      "duration": 0.0,
+      "patternDuration": 0.0,
       "dropTableId": 3
     },
     {
@@ -51,7 +51,7 @@
       "formation": "Screen",
       "spawnCount": 1,
       "spawnInterval": 20.0,
-      "duration": 140.0,
+      "patternDuration": 140.0,
       "dropTableId": 4
     },
     {
@@ -60,7 +60,7 @@
       "formation": "Ring",
       "spawnCount": 12,
       "spawnInterval": 0.0,
-      "duration": 0.0,
+      "patternDuration": 0.0,
       "dropTableId": 5
     },
     {
@@ -69,7 +69,7 @@
       "formation": "Line",
       "spawnCount": 8,
       "spawnInterval": 0.0,
-      "duration": 0.0,
+      "patternDuration": 0.0,
       "dropTableId": 5
     },
     {
@@ -78,7 +78,7 @@
       "formation": "Cluster",
       "spawnCount": 6,
       "spawnInterval": 0.0,
-      "duration": 0.0,
+      "patternDuration": 0.0,
       "dropTableId": 5
     }
   ]

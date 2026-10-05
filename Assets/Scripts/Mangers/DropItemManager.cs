@@ -97,7 +97,7 @@ public class DropItemManager : MonoSingleton<DropItemManager>
         {
             int end = start;
             int totalWeight = 0;
-            while (end < entries.Count && entries[end].group == entries[start].group)
+            while (end < entries.Count && entries[end].dropGroup == entries[start].dropGroup)
             {
                 totalWeight += entries[end].weight;
                 end++;

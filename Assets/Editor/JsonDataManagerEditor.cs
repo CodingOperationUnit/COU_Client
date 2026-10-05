@@ -82,7 +82,7 @@ public class JsonDataManagerEditor : Editor
     {
         EditorGUILayout.IntField("ID", data.monsterId);
         EditorGUILayout.TextField("이름", data.monsterName ?? string.Empty);
-        EditorGUILayout.TextField("종류 문자열", data.type ?? string.Empty);
+        EditorGUILayout.TextField("종류 문자열", data.monsterType ?? string.Empty);
         EditorGUILayout.EnumPopup("종류", data.Type);
         EditorGUILayout.IntField("최대 체력", data.monsterMaxHealthPoint);
         EditorGUILayout.IntField("경험치", data.monsterExp);
@@ -106,7 +106,7 @@ public class JsonDataManagerEditor : Editor
     {
         EditorGUILayout.IntField("웨이브 항목 ID", data.waveEntryId);
         EditorGUILayout.IntField("웨이브 ID", data.waveId);
-        EditorGUILayout.FloatField("시작 시간 (초)", data.startTime);
+        EditorGUILayout.FloatField("시작 시간 (초)", data.patternStartTime);
         EditorGUILayout.IntField("패턴 ID", data.patternId);
         EditorGUILayout.IntField("몬스터 ID", data.monsterId);
     }
@@ -115,10 +115,10 @@ public class JsonDataManagerEditor : Editor
     {
         EditorGUILayout.IntField("스테이지 ID", data.stageId);
         EditorGUILayout.TextField("이름", data.stageName ?? string.Empty);
-        EditorGUILayout.FloatField("진행 시간 (초)", data.duration);
+        EditorGUILayout.FloatField("진행 시간 (초)", data.stageDuration);
         EditorGUILayout.IntField("웨이브 ID", data.waveId);
         EditorGUILayout.TextField("설명", data.stageDescription ?? string.Empty);
-        EditorGUILayout.TextField("UI 색깔 문자열", data.illustrationColor ?? string.Empty);
+        EditorGUILayout.TextField("UI 색깔 문자열", data.stageIllustrationColor ?? string.Empty);
         EditorGUILayout.ColorField("UI 색깔 (파싱됨)", data.IllustrationColor);
     }
 

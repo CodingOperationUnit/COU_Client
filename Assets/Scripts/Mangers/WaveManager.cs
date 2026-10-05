@@ -19,7 +19,7 @@ public class WaveManager : MonoBehaviour
 
     [Header("Test")]
     [SerializeField] private int testPatternId = 7;
-    [SerializeField] private int testMonsterId = 1001;
+    [SerializeField] private int testMonsterId = 11001;
 
     public StageData CurrentStage { get; private set; }
     public float Elapsed => elapsed;
@@ -94,7 +94,7 @@ public class WaveManager : MonoBehaviour
             {
                 data = data,
                 pattern = pattern,
-                nextSpawnTime = data.startTime,
+                nextSpawnTime = data.patternStartTime,
                 finished = false
             });
         }
@@ -120,7 +120,7 @@ public class WaveManager : MonoBehaviour
     private void ProcessEvent(SpawnEventState state)
     {
         SpawnPatternData pattern = state.pattern;
-        bool repeat = pattern.duration > 0f;
+        bool repeat = pattern.patternDuration > 0f;
         float interval = Mathf.Max(pattern.spawnInterval, minRepeatInterval);
 
         // 보스전 중에는 보스 이벤트가 아닌 스폰을 멈춤
@@ -145,8 +145,8 @@ public class WaveManager : MonoBehaviour
             return;
         }
 
-        // 반복 이벤트 : [startTime, startTime + duration) 구간 동안 interval마다
-        if (elapsed >= state.data.startTime + pattern.duration)
+        // 반복 이벤트 : [patternStartTime, patternStartTime + patternDuration) 구간 동안 interval마다
+        if (elapsed >= state.data.patternStartTime + pattern.patternDuration)
         {
             state.finished = true;
             return;

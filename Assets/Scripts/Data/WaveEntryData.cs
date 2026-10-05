@@ -7,7 +7,7 @@ public class WaveEntryData
 {
     public int waveEntryId;
     public int waveId;
-    public float startTime;       // 시작 시각(초)
+    public float patternStartTime;  // 시작 시각(초)
     public int patternId;         // SpawnPattern.json 참조
     public int monsterId;         // 뽑을 몬스터의 ID
 }

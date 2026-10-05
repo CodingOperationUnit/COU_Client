@@ -8,8 +8,8 @@ public class StageData
 {
     public int stageId;
     public string stageName;
-    public string illustrationColor;
-    public float duration;        // 스테이지 길이(초). 보스 등장 시각과 맞춰 둔 값
+    public string stageIllustrationColor;
+    public float stageDuration;   // 스테이지 길이(초). 보스 등장 시각과 맞춰 둔 값
     public int waveId;            // Wave.json의 웨이브. 스테이지와 1:1
     public string stageDescription;
     public int clearAccountExp;
@@ -20,9 +20,9 @@ public class StageData
 
     public void OnLoaded()
     {
-        if (!ColorUtility.TryParseHtmlString(illustrationColor, out parsedColor))
+        if (!ColorUtility.TryParseHtmlString(stageIllustrationColor, out parsedColor))
         {
-            Debug.LogWarning($"[StageData] {stageId}의 illustrationColor \"{illustrationColor}\"을(를) 파싱할 수 없어 회색으로 처리합니다.");
+            Debug.LogWarning($"[StageData] {stageId}의 stageIllustrationColor \"{stageIllustrationColor}\"을(를) 파싱할 수 없어 회색으로 처리합니다.");
             parsedColor = Color.gray;
         }
     }

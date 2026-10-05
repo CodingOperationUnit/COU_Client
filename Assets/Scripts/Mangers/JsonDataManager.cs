@@ -117,7 +117,7 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
         return null;
     }
 
-    // 테이블 ID로 조회합니다. 행은 group 오름차순입니다. 실패 시 null을 반환합니다.
+    // 테이블 ID로 조회합니다. 행은 dropGroup 오름차순입니다. 실패 시 null을 반환합니다.
     public IReadOnlyList<DropTableEntryData> GetDropTableFromJson(int dropTableId)
     {
         if (dropTableDic == null)
@@ -520,8 +520,8 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
                 if (data == null || data.dropTableId <= 0)
                     throw new InvalidOperationException("DropTable 데이터 또는 ID가 올바르지 않습니다.");
 
-                if (data.group < 0)
-                    throw new InvalidOperationException($"DropTable {data.dropTableId}의 group은 0 이상이어야 합니다.");
+                if (data.dropGroup < 0)
+                    throw new InvalidOperationException($"DropTable {data.dropTableId}의 dropGroup은 0 이상이어야 합니다.");
 
                 if (data.weight < 1)
                     throw new InvalidOperationException($"DropTable {data.dropTableId}의 weight는 1 이상이어야 합니다.");
@@ -541,7 +541,7 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
             }
 
             foreach (List<DropTableEntryData> entries in loadedDatas.Values)
-                entries.Sort((a, b) => a.group.CompareTo(b.group));
+                entries.Sort((a, b) => a.dropGroup.CompareTo(b.dropGroup));
 
             dropTableDic = loadedDatas;
         }

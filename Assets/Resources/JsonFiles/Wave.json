@@ -3,51 +3,51 @@
     {
       "waveEntryId": 1,
       "waveId": 1,
-      "startTime": 0.0,
+      "patternStartTime": 0.0,
       "patternId": 1,
-      "monsterId": 1001
+      "monsterId": 11001
     },
     {
       "waveEntryId": 2,
       "waveId": 1,
-      "startTime": 10.0,
+      "patternStartTime": 10.0,
       "patternId": 2,
-      "monsterId": 1002
+      "monsterId": 11002
     },
     {
       "waveEntryId": 3,
       "waveId": 1,
-      "startTime": 15.0,
+      "patternStartTime": 15.0,
       "patternId": 3,
-      "monsterId": 2001
+      "monsterId": 12001
     },
     {
       "waveEntryId": 4,
       "waveId": 1,
-      "startTime": 20.0,
+      "patternStartTime": 20.0,
       "patternId": 4,
-      "monsterId": 1001
+      "monsterId": 11001
     },
     {
       "waveEntryId": 5,
       "waveId": 1,
-      "startTime": 25.0,
+      "patternStartTime": 25.0,
       "patternId": 3,
-      "monsterId": 2002
+      "monsterId": 12002
     },
     {
       "waveEntryId": 6,
       "waveId": 1,
-      "startTime": 45.0,
+      "patternStartTime": 45.0,
       "patternId": 5,
-      "monsterId": 3001
+      "monsterId": 13001
     },
     {
       "waveEntryId": 7,
       "waveId": 1,
-      "startTime": 10.0,
+      "patternStartTime": 10.0,
       "patternId": 6,
-      "monsterId": 4001
+      "monsterId": 14001
     }
   ]
 }

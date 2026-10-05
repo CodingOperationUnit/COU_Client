@@ -23,8 +23,8 @@ public class SpawnPatternData
     public string eventType;      // "Normal" / "Elite" / "Horde" / "Boss"
     public string formation;      // "Random" / "Ring" / "Line" / "Cluster" / "Screen"
     public int spawnCount;        // 한 번 스폰할 때의 마릿수
-    public float spawnInterval;   // 반복 간격(초). duration이 0이면 쓰지 않음
-    public float duration;        // 반복 지속 시간(초). 0이면 startTime에 한 번
+    public float spawnInterval;   // 반복 간격(초). patternDuration이 0이면 쓰지 않음
+    public float patternDuration; // 반복 지속 시간(초). 0이면 patternStartTime에 한 번
     public int dropTableId;       // DropTable.json의 테이블. 0이면 드롭 없음
 
     [NonSerialized] private SpawnEventType parsedEventType;
