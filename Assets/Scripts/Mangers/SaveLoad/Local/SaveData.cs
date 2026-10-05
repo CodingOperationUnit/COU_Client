@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 // =====================================================================
 //  [로컬 전용] 계정 데이터 - 서버 전환 시 삭제
@@ -160,6 +162,9 @@ public class InventoryData
     public int itemId;                     // 논리 FK → Item (long → int)
     public int inventoryItemLevel = 1;     // 최대값은 Item.itemMaxLevel
     public DateTime inventoryAcquiredAt;   // 획득 시각 (정렬용)
+
+    [JsonConverter(typeof(StringEnumConverter))]
+    public ItemGrade? inventoryItemGrade;
 }
 
 /// <summary>StageProgress: 스테이지 진행 정보. 1:1이므로 playerId가 PK</summary>

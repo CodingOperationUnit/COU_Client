@@ -4,7 +4,7 @@ using UnityEngine;
 public class LocalSaveLoadManager : MonoSingleton<LocalSaveLoadManager>
 {
     // 로그인 검증 성공 후 호출 후 JSON에서 읽은 데이터를 DataManager에 전달
-    public bool LoadPlayerAfterLogin(string playerId)
+    public bool LoadPlayerAfterLogin(string accountLoginId)
     {
         if (GameManager.PlayerData.isPlayerDataLoaded)
         {
@@ -14,7 +14,7 @@ public class LocalSaveLoadManager : MonoSingleton<LocalSaveLoadManager>
 
         try
         {
-            PlayerSaveData data = SaveLoadHelper.LoadPlayer(playerId);
+            PlayerSaveData data = SaveLoadHelper.LoadPlayer(accountLoginId);
 
             if (data == null)
             {
@@ -22,7 +22,7 @@ public class LocalSaveLoadManager : MonoSingleton<LocalSaveLoadManager>
                 return false;
             }
 
-            GameManager.PlayerData.SetPlayerDataFromLocal(data);
+            GameManager.PlayerData.SetPlayerDataFromLocal(accountLoginId, data);
         }
         catch (Exception exception)
         {
@@ -33,7 +33,7 @@ public class LocalSaveLoadManager : MonoSingleton<LocalSaveLoadManager>
         GameManager.PlayerData.NotifyPlayerDataChanged();
         return true;
     }
-    
+
     // DataManager의 현재 플레이어 데이터를 JSON으로 저장
     public bool SaveCurrentPlayerData()
     {
@@ -50,16 +50,15 @@ public class LocalSaveLoadManager : MonoSingleton<LocalSaveLoadManager>
 
         PlayerSaveData data = dataManager.currentData;
 
-        // 다른 계정 파일에 저장하는 실수를 방지
-        if (data.playerId != dataManager.currentPlayerId)
+        if (string.IsNullOrWhiteSpace(dataManager.currentAccountLoginId) || data.profile == null)
         {
-            Debug.LogError("현재 계정과 저장 대상 계정이 다릅니다.");
+            Debug.LogError("저장 대상 계정 정보가 올바르지 않습니다.");
             return false;
         }
 
         try
         {
-            SaveLoadHelper.SavePlayer(data);
+            SaveLoadHelper.SavePlayer(dataManager.currentAccountLoginId, data);
             return true;
         }
         catch (Exception exception)
@@ -68,7 +67,7 @@ public class LocalSaveLoadManager : MonoSingleton<LocalSaveLoadManager>
             return false;
         }
     }
-    
+
     // 저장 성공 후 DataManager의 플레이어 데이터를 해제
     public bool Logout()
     {
