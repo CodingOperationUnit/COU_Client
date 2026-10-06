@@ -18,6 +18,8 @@ public static class SkillFactory
         { 21070, () => new Skill_ProjectileUp() },
     };
 
+    public static bool IsRegistered(int skillId) => _creators.ContainsKey(skillId);
+
     public static SkillBase Create(int skillId)
     {
         if(!_creators.TryGetValue(skillId, out Func<SkillBase> creator))

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7769472064241161036}
   - component: {fileID: 5406568463125634239}
+  - component: {fileID: 6379221623449135504}
   m_Layer: 0
   m_Name: MonsterSpawner
   m_TagString: Untagged
@@ -49,6 +50,24 @@ MonoBehaviour:
   eliteBossPrefab: {fileID: 2456992414015291868, guid: 653139eb652e8934dbcb38877a6be6ce, type: 3}
   boxPrefab: {fileID: 2456992414015291868, guid: 93532239cde294c48b98b01bb516e6e2, type: 3}
   player: {fileID: 0}
+--- !u!114 &6379221623449135504
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3435863016386441392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5eb937cbab1bb0c4ca0005ae5970ddf5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaveManager
+  spawner: {fileID: 5406568463125634239}
+  player: {fileID: 0}
   stageId: 1
   spawnRadius: 10
   minRepeatInterval: 0.1
+  lineLength: 6
+  clusterRadius: 1.5
+  testPatternID: 7
+  testMonsterID: 1001

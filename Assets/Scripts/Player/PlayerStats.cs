@@ -91,30 +91,38 @@ public class PlayerStats : MonoBehaviour
         return result;
     }
 
-    // 전투 씬: 계정 데이터의 장비 목록에서 장착된 것만 OwnedItem으로 복원 (PlayerInventory.Load와 같은 방식)
+    // 전투 씬: profile의 장착 칸이 가리키는 장비만 OwnedItem으로 복원 (PlayerInventory.Load와 같은 방식)
     private static List<OwnedItem> GetEquippedFromSaveData(PlayerSaveData data)
     {
         ItemDatabase.Load();
 
-        var bySlot = new Dictionary<EquipSlotType, OwnedItem>();
-        if (data.equipmentList == null) return bySlot.Values.ToList();
+        var result = new List<OwnedItem>();
+        if (data.profile == null || data.inventoryList == null) return result;
 
-        foreach (var saved in data.equipmentList)
+        var byInventoryId = data.inventoryList.ToDictionary(saved => saved.inventoryId);
+
+        foreach (EquipSlotType slot in Enum.GetValues(typeof(EquipSlotType)))
         {
-            if (!saved.isEquipped) continue;
+            var inventoryId = PlayerInventory.GetEquippedInventoryId(data.profile, slot);
+            if (!inventoryId.HasValue || !byInventoryId.TryGetValue(inventoryId.Value, out var saved))
+                continue;
 
             var item = new OwnedItem(saved.itemId)
             {
-                instanceId = saved.instanceId,
-                level = saved.level,
-                isEquipped = true,
-                grade = saved.grade
+                level = saved.inventoryItemLevel,
+                isEquipped = true
             };
 
-            bySlot[item.Data.SlotType] = item;
+            if (saved.inventoryItemGrade.HasValue)
+                item.grade = saved.inventoryItemGrade.Value;
+
+            if (item.Data.SlotType != slot)
+                continue;
+
+            result.Add(item);
         }
 
-        return bySlot.Values.ToList();
+        return result;
     }
 
     private void CalculateFromEquipped(List<OwnedItem> equipped)

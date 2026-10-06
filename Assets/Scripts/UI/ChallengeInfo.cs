@@ -27,7 +27,7 @@ public struct ChallengeCondition
 [Serializable]
 public struct ChallengeReward
 {
-    public Grade grade;
+    public ItemGrade grade;
     public Color iconColor;
     public int amount;
     public bool techPart;

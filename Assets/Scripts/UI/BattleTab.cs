@@ -11,7 +11,8 @@ public class BattleTab : UIView
     [SerializeField] private TMP_Text staminaCostText;
     [SerializeField] private Button gameStartButton;
 
-    private int currentStageID;
+    private int currentStageId;
+    private int staminaCost;
 
     private void Awake()
     {
@@ -21,7 +22,7 @@ public class BattleTab : UIView
 
     public void SetStage(StageData stage, int bestTime)
     {
-        currentStageID = stage.stageID;
+        currentStageId = stage.stageId;
         stageNameText.text = stage.stageName;
         bestTimeText.text = bestTime > 0
             ? $"최장 생존시간: {bestTime / 60:00}:{bestTime % 60:00}"
@@ -30,10 +31,19 @@ public class BattleTab : UIView
     }
 
     public void SetStaminaCost(int cost)
-        => staminaCostText.text = $"x {cost}";
+    {
+        staminaCost = cost;
+        staminaCostText.text = $"x {cost}";
+    }
 
     public void StartBattle()
     {
-        GameManager.Scene.ChangeScene(GameConstants.SceneNames.BATTLE_SCENE, currentStageID);
+        if (!PlayerInventory.Instance.TrySpendStamina(staminaCost))
+        {
+            UIManager.Instance.Get<LogPopup>().Show("알림", "스태미나가 부족합니다.");
+            return;
+        }
+
+        GameManager.Scene.ChangeScene(GameConstants.SceneNames.BATTLE_SCENE, currentStageId);
     }
 }

@@ -23,26 +23,43 @@ public static class SaveLoadHelper
         return LoadJson<AccountSaveData>(AccountPath) ?? new AccountSaveData();
     }
 
-    // 플레이어 데이터
-    public static void SavePlayer(PlayerSaveData data)
+    // 플레이어 데이터 (파일 이름 = 로그인 아이디)
+    public static void SavePlayer(string accountLoginId, PlayerSaveData data)
     {
         if (data == null)
             throw new ArgumentNullException(nameof(data));
 
-        SaveJson(GetPlayerPath(data.playerID), data);
+        SaveJson(GetPlayerPath(accountLoginId), data);
     }
 
-    public static PlayerSaveData LoadPlayer(string playerID)
+    public static bool PlayerFileExists(string accountLoginId)
     {
-        PlayerSaveData data = LoadJson<PlayerSaveData>(GetPlayerPath(playerID));
+        return File.Exists(GetPlayerPath(accountLoginId));
+    }
 
-        // 다른 계정의 데이터를 잘못 적용하지 않도록 확인
-        if (data != null && data.playerID != playerID)
-        {
-            throw new InvalidDataException("요청한 계정과 저장 데이터의 playerID가 다릅니다.");
-        }
+    public static PlayerSaveData LoadPlayer(string accountLoginId)
+    {
+        string path = GetPlayerPath(accountLoginId);
+        PlayerSaveData data = LoadJson<PlayerSaveData>(path);
+
+        if (data != null)
+            Validate(data, path);
 
         return data;
+    }
+
+    // 이전 형식(gold, equipmentList 등)의 세이브 파일은 profile이 비어 있어 여기서 걸러진다
+    private static void Validate(PlayerSaveData data, string path)
+    {
+        if (data.profile == null || data.profile.playerId <= 0 || data.profile.accountId <= 0
+            || data.currency == null || data.stageProgress == null)
+        {
+            throw new InvalidDataException(
+                $"이전 형식이거나 손상된 세이브 파일입니다. 파일을 삭제하고 다시 가입하세요: {path}");
+        }
+
+        data.inventoryList ??= new System.Collections.Generic.List<InventoryData>();
+        data.playerStat ??= new PlayerStatData { playerId = data.profile.playerId };
     }
 
     // 공통 파일 처리
@@ -74,18 +91,18 @@ public static class SaveLoadHelper
         return data;
     }
 
-    private static string GetPlayerPath(string playerID)
+    private static string GetPlayerPath(string accountLoginId)
     {
-        if (string.IsNullOrWhiteSpace(playerID)
-            || playerID.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0
-            || playerID.Contains("/")
-            || playerID.Contains("\\")
-            || playerID == "."
-            || playerID == "..")
+        if (string.IsNullOrWhiteSpace(accountLoginId)
+            || accountLoginId.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0
+            || accountLoginId.Contains("/")
+            || accountLoginId.Contains("\\")
+            || accountLoginId == "."
+            || accountLoginId == "..")
         {
-            throw new ArgumentException("파일명으로 사용할 수 없는 playerID입니다.", nameof(playerID));
+            throw new ArgumentException("파일명으로 사용할 수 없는 로그인 아이디입니다.", nameof(accountLoginId));
         }
 
-        return Path.Combine(PlayerDirectory, playerID + ".json");
+        return Path.Combine(PlayerDirectory, accountLoginId + ".json");
     }
 }

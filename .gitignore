@@ -70,3 +70,9 @@ AGENTS.md
 
 # VS Code
 .vscode/
+
+# Externals (외부 에셋은 각자 로컬에 임포트, 깃에 올리지 않음)
+# 폴더 자체와 자리표시 스크립트만 유지해 Externals.meta가 깨지지 않게 한다
+/[Aa]ssets/Externals/*
+!/[Aa]ssets/Externals/ExampleExternals.cs
+!/[Aa]ssets/Externals/ExampleExternals.cs.meta
