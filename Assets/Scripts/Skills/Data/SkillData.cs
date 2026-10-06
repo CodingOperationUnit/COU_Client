@@ -11,7 +11,7 @@ public enum SkillTargetType
 [Serializable]
 public class SkillData : ISerializationCallbackReceiver
 {
-    public int ID;
+    public int Id;
     public string Name;
     public string Type;
     public float Cooldown;
@@ -31,7 +31,7 @@ public class SkillData : ISerializationCallbackReceiver
 
         if(!Enum.TryParse(Type, true, out TargetType))
         {
-            Debug.LogWarning($"[SkillData] 알 수 없는 Type입니다: {Type} (ID: {ID})");
+            Debug.LogWarning($"[SkillData] 알 수 없는 Type입니다: {Type} (ID: {Id})");
         }
     }
 

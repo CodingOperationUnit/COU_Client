@@ -1,6 +1,6 @@
 # 게임 데이터 태그
 
-기획자 없이 역설계하고 있어서 게임 데이터 선언이 JSON, 코드 상수, 인스펙터, 테스트 드라이버에 흩어져 있다. 백엔드를 붙이기 전에 값의 성격을 구분하려고 태그를 정의하고, 현재 값을 개념 단위로 분류한다. 각 값에는 현행 상태의 태그와 구조상 이상적인 상태의 태그를 함께 적는다.
+기획자 없이 역설계하고 있어서 게임 데이터 선언이 JSON, 코드 상수, 인스펙터, 하드코딩, 테스트 더미에 흩어져 있다. 백엔드를 붙이기 전에 값의 성격을 구분하려고 태그를 정의하고, 현재 값을 개념 단위로 분류한다. 각 값에는 현행 상태의 태그와 구조상 이상적인 상태의 태그를 함께 적는다.
 
 태그는 코드에 붙이지 않고 이 문서에서만 관리한다. 씬 이름, 리소스 경로, 성능 튜닝 상수 같은 기술 상수는 게임 데이터가 아니므로 분류하지 않는다.
 
@@ -55,56 +55,55 @@
 - **JSON**: Resources 아래 JSON 파일
 - **const**: 코드 상수
 - **인스펙터**: `[SerializeField]` 값
+- **하드코딩**: 메서드 안에 직접 쓴 값
 - **더미**: 테스트 드라이버가 넣는 값
 - **없음**: 아직 정의되지 않은 값
 
 ### 5.1 계정
 | 값 | 위치 | 현행 | 이상 | 비고 |
 |---|---|---|---|---|
-| playerID, password | `LocalAccountData` → `accounts.json` | `ACCOUNT` | `ACCOUNT` | 현재 password를 평문으로 로컬에 저장한다 |
+| playerId, password | `LocalAccountData` → `accounts.json` | `ACCOUNT` | `ACCOUNT` | 현재 password를 평문으로 로컬에 저장한다 |
 | 아이디 규칙(영문·숫자·밑줄 3~20자) | `LocalLoginManager.SignUp` 정규식 | `DESIGN_CONST` | `DESIGN_CONST` | 서버와 같은 규칙을 써야 한다 |
 
 ### 5.2 플레이어 기본 스탯
 | 값 | 위치 | 현행 | 이상 | 비고 |
 |---|---|---|---|---|
-| attack, hp, criticalDamage, criticalChance, skillDamage, moveSpeed, maxMoveSpeed, lootRadius | `Resources/Data/player/player.json` | `DESIGN_CONST` | `DESIGN_CONST` | |
-| 최종 스탯 공식 `(기본 + 장비) × (100 + 보너스%) / 100` | `PlayerStats.CalculateStat` | `DESIGN_CONST` | `DESIGN_CONST` | 장비 보너스%는 `ItemData`에 필드가 없어 0으로 계산한다 |
+| attack, hp, criticalDamage, criticalChance, skillDamage, moveSpeed, maxMoveSpeed, lootRadius | `Resources/Data/player/player.json` | `DESIGN_CONST` | `DESIGN_CONST` | 전투에 쓰는 값은 hp, moveSpeed, lootRadius뿐이다(6.3). `PlayerBaseStatData` 필드 초기값이 같은 값을 한 번 더 정의한다(6.2) |
+| 최종 스탯 공식 `(기본 + 장비) × (100 + 보너스%) / 100` | `PlayerStats.CalculateStat` | `DESIGN_CONST` | `DESIGN_CONST` | 장비 수치는 강화·등급 배율을 적용한 값이다. 장비 보너스%는 `ItemData`에 필드가 없어 0으로 계산한다 |
 | maxLives 2, invulnerableTime 0.5 | `PlayerHealth` 인스펙터 | `DESIGN_CONST` | `DESIGN_CONST` | |
-| inventoryWeaponType | `PlayerStats` 인스펙터 | `DEBUG` | `삭제` | `ItemData`에 무기 종류 필드가 생기면 대체된다 |
-| dummyEquipments | `PlayerStats` 인스펙터(`DummyEquipment`) | `DEBUG` | `삭제` | 인벤토리가 없는 씬에서만 쓴다 |
+| dummyEquipments | `PlayerStats` 인스펙터(`DummyEquipment`) | `DEBUG` | `삭제` | 로그인 데이터가 없는 씬에서만 쓴다 |
 
 ### 5.3 재화
 | 값 | 위치 | 현행 | 이상 | 비고 |
 |---|---|---|---|---|
-| gold, gem | `PlayerSaveData` | `USER` | `USER` · `SERVER_AUTH` | 현재 이 값을 읽거나 쓰는 코드가 없다(6.1) |
-| gold, gem | `PlayerInventory.SaveData` | `USER` | `삭제` | `PlayerSaveData`로 일원화한다(6.1) |
-| stamina | `PlayerSaveData` | `USER` | `USER` · `SERVER_AUTH` | |
-| 초기 재화(gold 0, gem 0, stamina 60) | `PlayerSaveData.CreateDefault` | `DESIGN_CONST` | `DESIGN_CONST` | |
-| 최대 스태미나, 회복 주기 | 없음 | `—` | **`DESIGN_CONST`** | `TopBar`는 더미 `(67, 60)`을 표시한다 |
+| gold, gem | `PlayerSaveData` | `USER` | `USER` · `SERVER_AUTH` | |
+| currentStamina | `PlayerSaveData` | `USER` | `USER` · `SERVER_AUTH` | 전투에 입장할 때 `PlayerInventory.TrySpendStamina`로 차감한다. 회복하는 코드가 없다 |
+| maxStamina | `PlayerSaveData` | `USER` | **`DESIGN_CONST`** | 모든 유저에게 같은 값인데 계정별로 저장된다(6.5) |
+| 초기 재화(gold 0, gem 0, stamina 60/60) | `PlayerSaveData.CreateDefault` | `DESIGN_CONST` | `DESIGN_CONST` | `AccountConst.json`의 initialGold, initialGem, initialStamina, maxStamina가 같은 값을 한 번 더 정의하지만 읽지 않는다(6.2, 6.3) |
+| 스태미나 회복 주기 | 없음 | `—` | **`DESIGN_CONST`** | |
 | 스태미나 회복 기준 시각 | 없음 | `—` | **`USER`** · `SERVER_AUTH` | 회복을 계산하려면 필요하다 |
-| DNA | `EvolutionInfo.dna` 더미 | `DEBUG` | **`USER`** · `SERVER_AUTH` | `PlayerSaveData`에 없다 |
-| gold 500000 | `PlayerInventory` 인스펙터 | `DEBUG` | `삭제` | |
+| DNA | 없음 | `—` | **`USER`** · `SERVER_AUTH` | `EvolutionInfo.dna` 필드만 있고 값을 넣는 코드가 없다 |
 
 ### 5.4 계정 성장
 | 값 | 위치 | 현행 | 이상 | 비고 |
 |---|---|---|---|---|
-| accountLevel, accountExp | `PlayerSaveData` | `USER` | `USER` · `SERVER_AUTH` | |
-| 계정 레벨별 필요 경험치 | 없음 | `—` | **`DESIGN_TABLE`** | |
-| 진화 노드(level, name, value, description, cost) | `MainTestDriver` 더미(`EvolutionNodeInfo`) | `DEBUG` | **`DESIGN_TABLE`** | 골드 노드와 DNA 노드 두 종류. value가 문자열이라 효과를 계산할 수 없다 |
+| accountLevel, accountExp | `PlayerSaveData` | `USER` | `USER` · `SERVER_AUTH` | accountExp는 현재 레벨에서 쌓은 경험치다. `PlayerInventory.ClaimBattleResult`가 전투 결과의 계정 경험치를 더하고, 필요 경험치를 채울 때마다 차감하며 레벨을 올린다. 최대 레벨에서는 레벨업을 멈추고 경험치는 계속 쌓인다 |
+| 계정 레벨 필요 경험치(accountBaseRequiredExp 100, accountRequiredExpIncrement 100), 최대 계정 레벨(maxAccountLevel 20) | `Resources/JsonFiles/AccountConst.json` | `DESIGN_CONST` | `DESIGN_CONST` | 필요 경험치 = `100 + 100 × (레벨 - 1)`(`AccountConstData.GetRequiredExp`). `TopBar` 경험치 바 비율 = accountExp / 필요 경험치이고, 최대 레벨이면 1이다 |
+| 진화 노드(level, name, value, description, cost) | 없음 | `—` | **`DESIGN_TABLE`** | `EvolutionNodeInfo` 구조체만 있다. 값을 넣던 `MainTestDriver`는 전부 주석 처리됐다. 골드 노드와 DNA 노드 두 종류. value가 문자열이라 효과를 계산할 수 없다 |
 | 레벨당 골드 노드 수 3 | `EvolutionTab.NodesPerLevel` const | `DESIGN_CONST` | `삭제` | 진화 노드 테이블의 level 열에서 결정된다 |
-| 해금한 진화 노드 수 | `EvolutionInfo` 더미 | `DEBUG` | **`USER`** · `SERVER_AUTH` | `PlayerSaveData`에 없다 |
+| 해금한 진화 노드 수 | 없음 | `—` | **`USER`** · `SERVER_AUTH` | `EvolutionInfo`에 필드만 있다 |
 | 진화 트리 간격·여백 | `EvolutionTab` 인스펙터 | `PRESENTATION` | `PRESENTATION` | |
 
 ### 5.5 장비
 | 값 | 위치 | 현행 | 이상 | 비고 |
 |---|---|---|---|---|
-| itemId, itemName, description, iconPath, slotType, grade, hpBonus, attackBonus, moveSpeedBonus, gradeSkills | `Resources/Data/items.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | gradeSkills가 문자열이라 효과를 계산할 수 없다 |
-| 부위(`EquipSlotType`), 장비 등급(`ItemGrade`) | `EquipDefine.cs` enum | `DESIGN_CONST` | `DESIGN_CONST` | |
-| UI 등급(`Grade`) | `UI/Grade.cs` enum | `DESIGN_CONST` | `DESIGN_CONST` | `ItemGrade`와 하나로 통합해야 한다. 어느 쪽을 남길지는 미정이다(6.3) |
-| 무기 종류(`WeaponType`) | `WeaponType.cs` enum | `DESIGN_CONST` | `DESIGN_CONST` | 임시 정의. `ItemData`에 필드가 없다 |
+| itemId, itemName, description, iconPath, slotType, grade, hpBonus, attackBonus, moveSpeedBonus, gradeSkills | `Resources/JsonFiles/Item.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | grade는 획득할 때의 기본 등급이다. gradeSkills가 문자열이라 효과를 계산할 수 없다(장비 상세 팝업에 표시만 한다) |
+| 부위(`EquipSlotType`), 장비 등급(`ItemGrade`) | `EquipDefine.cs` enum | `DESIGN_CONST` | `DESIGN_CONST` | 도전 보상 등급도 `ItemGrade`를 쓴다 |
+| 무기 종류(`WeaponType`) | `WeaponType.cs` enum | `DESIGN_CONST` | `DESIGN_CONST` | 임시 정의. `ItemData`에 필드가 없어 `WeaponSkillTable`로 구한다 |
+| 무기별 시작 스킬(6001→3, 6002→2, 6003→1), 무기 종류↔스킬 매핑 | `WeaponSkillTable` const | `DEBUG` | **`DESIGN_TABLE`** | 장비 테이블의 열. 코드 주석에 임시 코드로 표시돼 있다 |
 | 강화: MaxLevel 10, BaseCost 1000, StatGrowthPerLevel 0.1 | `ItemLevelConfig` const | `DESIGN_CONST` | `DESIGN_CONST` | 비용 = `1000 × 현재 레벨`, 배율 = `1 + 0.1 × (레벨 - 1)` |
-| 보유 장비(instanceId, itemId, level, isEquipped) | `PlayerSaveData.equipmentList` | `USER` | `USER` · `SERVER_AUTH` | 현재 이 값을 읽거나 쓰는 코드가 없다(6.1) |
-| 보유 장비(instanceId, itemId, level, isEquipped) | `PlayerInventory.SaveData.items` | `USER` | `삭제` | `PlayerSaveData`로 일원화한다(6.1) |
+| 합성: 재료 수 2, 등급별 스탯 배율(1, 1.75, 2.75) | `ItemLevelConfig` const | `DESIGN_CONST` | `DESIGN_CONST` | 같은 itemId·같은 등급 장비 2개를 소모해 한 등급 올린다. 장비 수치 = `기본 수치 × 강화 배율 × 등급 배율` |
+| 보유 장비(instanceId, itemId, level, isEquipped, grade) | `PlayerSaveData.equipmentList` | `USER` | `USER` · `SERVER_AUTH` | grade는 합성으로 바뀐 현재 등급이다 |
 
 ### 5.6 상점
 | 값 | 위치 | 현행 | 이상 | 비고 |
@@ -112,102 +111,110 @@
 | 보석 상품 지급량(gemAmount) | `ShopGemCard` 인스펙터 | `DESIGN_CONST` | **`DESIGN_TABLE`** | 상품 ID로 구분되는 상품 테이블. 현재는 결제 없이 바로 지급한다 |
 | 골드 상품 가격·지급량(gemCost, goldAmount) | `ShopGoldCard` 인스펙터 | `DESIGN_CONST` | **`DESIGN_TABLE`** | 상품 테이블 |
 | 지원품 상자 가격·등급 범위(gemCost, minGrade, maxGrade) | `ShopSupplyBoxCard` 인스펙터 | `DESIGN_CONST` | **`DESIGN_TABLE`** | 상품 테이블 |
-| 지원품 상자 확률 | 없음 | `—` | **`DESIGN_TABLE`** | 현재는 등급 범위 안에서 균등 랜덤이다 |
+| 지원품 상자 확률 | 없음 | `—` | **`DESIGN_TABLE`** | 현재는 기본 등급이 범위 안인 장비 중에서 균등 랜덤이다 |
 | 구매·뽑기 결과 | 클라이언트에서 계산 | `USER` | `USER` · `SERVER_AUTH` | |
-| 카드·등급 색상 | 각 카드 인스펙터 | `PRESENTATION` | `PRESENTATION` | |
+| 카드·등급 색상 | 상점 카드·장비 팝업 인스펙터 | `PRESENTATION` | `PRESENTATION` | |
 
 ### 5.7 스테이지·스폰
 | 값 | 위치 | 현행 | 이상 | 비고 |
 |---|---|---|---|---|
-| stageID, stageName, duration | `Resources/JsonFiles/Stage.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | 불러오지만 아무 데서도 조회하지 않는다(6.4) |
-| 스테이지 설명 | `StageInfo` 더미 | `DEBUG` | **`DESIGN_TABLE`** | 스테이지 테이블의 열 |
-| 전투 입장 스태미나 비용 | `MainTestDriver` 더미(5) | `DEBUG` | **`DESIGN_TABLE`** | 스테이지 테이블의 열 |
-| 스테이지 클리어 보상 | 없음 | `—` | **`DESIGN_TABLE`** | |
-| 스폰 이벤트(spawnEventID, stageID, eventType, startTime, endTime, monsterID, spawnInterval, spawnCount, repeat) | `Resources/JsonFiles/Spawn.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | 불러오지만 아무 데서도 조회하지 않는다(6.4) |
-| spawnInterval 1 | `MonsterSpawner` 인스펙터 | `DESIGN_CONST` | `삭제` | `Spawn.json`의 spawnInterval로 대체된다(6.3) |
-| spawnRadius 10 | `MonsterSpawner` 인스펙터 | `DESIGN_CONST` | `DESIGN_CONST` | |
-| 스테이지 기록(stageID, isCleared, bestSurvivalSeconds) | `PlayerSaveData.stageRecordList` | `USER` | `USER` · `CLIENT_AUTH` | 현재 이 값을 읽거나 쓰는 코드가 없다(6.1) |
+| stageId, stageName, stageIllustrationColor, stageDuration, waveId, stageDescription, clearAccountExp, rewardBoxGradeWeights | `Resources/JsonFiles/Stage.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | stageIllustrationColor는 연출용 열이다. stageDuration은 읽는 코드가 없다(6.3). waveId는 `Wave.json`의 웨이브이고 스테이지와 1:1이다. clearAccountExp는 승리했을 때 더하는 계정 경험치다. rewardBoxGradeWeights는 `ItemGrade` 순서의 보상상자 장비 등급 가중치이고 모든 스테이지가 `100,0,0`이다(5.12) |
+| 선택한 stageId | `GameSceneManager.pendingStageId` | `SESSION` | `SESSION` · `CLIENT_AUTH` | 메인 씬에서 전투 씬으로 넘길 때만 쓴다 |
+| 기본 stageId 1 | `WaveManager` 인스펙터 | `DEBUG` | `삭제` | 메인 씬을 거치지 않고 전투 씬을 실행할 때만 쓴다 |
+| 전투 입장 스태미나 비용(battleStaminaCost 5) | `Resources/JsonFiles/AccountConst.json` | `DESIGN_CONST` | `DESIGN_CONST` | 모든 스테이지가 같은 값을 쓴다. `BattleTab`에 표시하고, 입장할 때 차감한다. 스태미나가 부족하면 입장하지 않는다. 시트의 AccountConst 탭에는 이 열이 없다(6.8) |
+| 웨이브(waveEntryId, waveId, patternStartTime, patternId, monsterId) | `Resources/JsonFiles/Wave.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | 한 행이 시각, 패턴, 몬스터 1종이다. 여러 종은 같은 시각에 행을 여러 개 둔다. `WaveManager`가 스테이지의 waveId 행을 경과 시간으로 진행한다. 웨이브 1만 있고, 스테이지 2의 waveId 2는 행이 없다. 계층은 Stage(3차) → Wave(2차) → SpawnPattern·Monster(1차)다 |
+| 스폰 패턴(patternId, eventType, formation, spawnCount, spawnInterval, patternDuration, dropTableId) | `Resources/JsonFiles/SpawnPattern.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | formation은 Random, Ring, Line, Cluster, Screen이다. 패턴 1~6만 웨이브가 쓰고 7~9(Ring, Line, Cluster)는 `WaveManager`의 `TestSpawnPattern` ContextMenu로 검증하는 샘플이다. 상자는 Screen 패턴으로만 스폰해야 한다. 드롭 테이블은 패턴별로 두므로 모양이 같아도 드롭이 다르면 패턴을 나눈다 |
+| spawnRadius 10, minRepeatInterval 0.1 | `WaveManager` 인스펙터 | `DESIGN_CONST` | `DESIGN_CONST` | |
+| lineLength 6, clusterRadius 1.5 | `WaveManager` 인스펙터 | `DESIGN_CONST` | `DESIGN_CONST` | 임시값이다. 모든 패턴이 공통으로 쓴다 |
+| 스테이지 기록(stageId, isCleared, bestSurvivalSeconds) | `PlayerSaveData.stageRecordList` | `USER` | `USER` · `CLIENT_AUTH` | 가입할 때 `Stage.json`의 스테이지마다 만들고 전투 결과로 갱신한다 |
 
 ### 5.8 도전
+값을 넣던 `MainTestDriver`가 전부 주석 처리돼 구조체만 남았다.
+
 | 값 | 위치 | 현행 | 이상 | 비고 |
 |---|---|---|---|---|
-| 챕터별 도전 조건(name, description) | `MainTestDriver` 더미(`ChallengeCondition`) | `DEBUG` | **`DESIGN_TABLE`** | 설명만 있고 효과를 계산할 수 없다 |
-| 도전 보상(grade, amount, techPart) | `MainTestDriver` 더미(`ChallengeReward`) | `DEBUG` | **`DESIGN_TABLE`** | |
-| 보상 수령 여부(rewarded) | `MainTestDriver` 더미 | `DEBUG` | **`USER`** · `SERVER_AUTH` | `PlayerSaveData`에 없다 |
+| 챕터별 도전 조건(name, description) | 없음 | `—` | **`DESIGN_TABLE`** | `ChallengeCondition` 구조체만 있다. 설명만 있어 효과를 계산할 수 없다 |
+| 도전 보상(grade, amount, techPart) | 없음 | `—` | **`DESIGN_TABLE`** | `ChallengeReward` 구조체만 있다. grade는 `ItemGrade`다 |
+| 보상 수령 여부(rewarded) | 없음 | `—` | **`USER`** · `SERVER_AUTH` | `ChallengeInfo`에 필드만 있고 `PlayerSaveData`에 없다 |
 
 ### 5.9 몬스터
 | 값 | 위치 | 현행 | 이상 | 비고 |
 |---|---|---|---|---|
-| monsterID, monsterName, type, monsterMaxHealthPoint, monsterExp, monsterMoveSpeed, monsterAttackPoint, monsterAsset | `Resources/JsonFiles/Monster.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | 불러오지만 아무 데서도 조회하지 않는다(6.4) |
-| 보스 공격(bossAttackID, monsterID, attackType, cooldown, range, damage) | `Resources/JsonFiles/BossAttack.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | 불러오지만 아무 데서도 조회하지 않는다(6.4) |
-| `EnemyData(101, 10, 5, 1.0, 2)` | `Enemy.Init` 하드코딩 | `DEBUG` | `삭제` | `Monster.json`으로 대체된다 |
+| monsterId, monsterName, monsterType, monsterMaxHealthPoint, monsterExp, monsterMoveSpeed, monsterAttackPoint, monsterAsset | `Resources/JsonFiles/Monster.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | monsterType은 Normal, Elite, Boss, Box. monsterId는 11001~ 일반, 12001~ 엘리트, 13001~ 보스, 14001~ 상자 대역이다. monsterExp는 읽는 코드가 없다(6.3) |
+| 보스 공격(bossAttackId, monsterId, bossAttackType, bossAttackCooldown, bossAttackRange, bossAttackDamage) | `Resources/JsonFiles/BossAttack.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | 공격 종류와 관계없이 사거리 안이면 즉시 피해를 준다. 투사체·경고 표시는 TODO 상태다 |
+| 접촉 공격 attackRange 0.6, attackInterval 1 | `Enemy` 인스펙터 | `DESIGN_CONST` | `DESIGN_CONST` | |
 | 몬스터 현재 HP | `Enemy.currentHp` | `SESSION` | `SESSION` · `CLIENT_AUTH` | |
 
 ### 5.10 스킬
 | 값 | 위치 | 현행 | 이상 | 비고 |
 |---|---|---|---|---|
-| ID, Name, Type, Cooldown, Speed, Damage, Range, Description | `Resources/JsonFiles/Skill.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | 현재 실제로 읽는 값은 Cooldown뿐이다 |
-| 투사체 속도(_speed 10), 근접 범위(_range 1.5) | `LinearProjectile`, `MeleeProjectile` 인스펙터 | `DESIGN_CONST` | `삭제` | `Skill.json`의 Speed, Range로 대체된다(6.3) |
-| 투사체 수명(_lifeTime 3), 근접 지속 시간(_effectDuration 0.3) | `LinearProjectile`, `MeleeProjectile` 인스펙터 | `DESIGN_CONST` | **`DESIGN_TABLE`** | 스킬 테이블의 열 |
+| ID, Name, Type, Cooldown, Speed, Damage, Range, Description | `Resources/JsonFiles/Skill.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | 모든 열을 읽는다. Speed와 Range는 스킬마다 뜻이 다르다(Planet은 초당 회전 각도와 회전 반지름). Damage는 플레이어 공격력과 관계없는 고정 피해다. 레벨업 선택지 후보는 테이블 전체다. ID 5(Missile)는 구현 예정이라 `SkillFactory`에 등록되지 않았고, 등록되지 않은 스킬은 후보에서 빠진다 |
+| 투사체 수명(lifeTime 3) | `LinearProjectile` 인스펙터 | `DESIGN_CONST` | **`DESIGN_TABLE`** | 스킬 테이블의 열 |
 | 최대 스킬 슬롯 3 | `SkillController.MaxSkillSlots` const | `DESIGN_CONST` | `DESIGN_CONST` | |
-| 스킬 레벨별 수치, 최대 레벨 | 없음 | `—` | **`DESIGN_TABLE`** | 행운열차 UI는 더미 `Lv.n`을 표시한다 |
+| 스킬 최대 레벨 5, 레벨당 배율(쿨타임 0.758, 피해 1.2) | `SkillBase` const | `DESIGN_CONST` | **`DESIGN_TABLE`** | 스킬 레벨 테이블. 쿨타임 = `Cooldown × 0.758^(레벨 - 1)`, 피해 = `Damage × 1.2^(레벨 - 1)`. 모든 스킬이 같은 배율을 쓴다. 코드 주석에 수정 예정으로 표시돼 있다 |
+| 레벨별 효과(발사 수, 관통 수, 부채꼴 각도, 행성 수) | `Skill_Shuriken`, `Skill_Revolver`, `Skill_Katana`, `Skill_Planet` 하드코딩 | `DESIGN_CONST` | **`DESIGN_TABLE`** | 스킬 레벨 테이블. 모두 3레벨과 5레벨에서 바뀐다 |
 | 전투 중 보유 스킬·레벨 | `SkillController._activeSkills` | `SESSION` | `SESSION` · `CLIENT_AUTH` | |
 
 ### 5.11 전투 진행
 | 값 | 위치 | 현행 | 이상 | 비고 |
 |---|---|---|---|---|
-| 경과 시간, 킬 수, 전투 레벨, 경험치, 대기 레벨업 수 | `BattleManager` 필드 | `SESSION` | `SESSION` · `CLIENT_AUTH` | |
-| 레벨업 필요 경험치(base 20, 레벨당 +6) | `BattleManager` 인스펙터 | `DESIGN_CONST` | `DESIGN_CONST` | 필요 경험치 = `20 + 6 × (레벨 - 1)` |
-| 승리 시간 900 | `BattleManager.victorySeconds` 인스펙터 | `DESIGN_CONST` | `삭제` | `Stage.json`의 duration으로 대체된다(6.3) |
+| 경과 시간, 킬 수, 전투 레벨, 경험치, 대기 레벨업 수, 골드, 보상상자 수 | `BattleManager` 필드 | `SESSION` | `SESSION` · `CLIENT_AUTH` | |
+| 레벨업 필요 경험치(base 6, 레벨당 +6, 가속 0.3) | `BattleManager` 인스펙터 | `DESIGN_CONST` | `DESIGN_CONST` | 필요 경험치 = `6 + 6 × (레벨 - 1) + 반올림(0.3 × (레벨 - 1)²)` |
+| 레벨업 선택지 수 3 | `BattleManager.OptionCount` const | `DESIGN_CONST` | `DESIGN_CONST` | |
+| 선택지가 없을 때 회복량 30% | `BattleManager.healRewardRatio` 인스펙터 | `DESIGN_CONST` | `DESIGN_CONST` | |
+| 승리 판정 지연 2초 | `BattleManager.bossVictoryDelay` 인스펙터 | `DESIGN_CONST` | `DESIGN_CONST` | 보스를 처치하고 2초 뒤 승리한다 |
+| 계정 경험치 계수(킬당 1, 초당 1) | `BattleManager` 인스펙터 | `DESIGN_CONST` | `DESIGN_CONST` | 계정 경험치 = `킬 수 × 1 + 생존 초 × 1 + 클리어 보상`. 코드 주석에 임시값으로 표시돼 있다 |
 | 현재 HP, 남은 목숨 | `PlayerHealth` | `SESSION` | `SESSION` · `CLIENT_AUTH` | |
-| 전투 결과(승패, 생존 시간, 킬 수) | `BattleResultWindow` 표시만 | `SESSION` | `SESSION` · `CLIENT_AUTH` | 서버로 보낼 결과다. 현재 스테이지 기록과 보상에 반영하는 경로가 없다 |
-| 행운열차 결과(선택 슬롯, 골드) | `HUDTestDriver` 더미 | `DEBUG` | **`SESSION`** · `CLIENT_AUTH` | |
-| 행운열차 확률·골드량 | 없음 | `—` | **`DESIGN_TABLE`** | |
+| 전투 결과(stageId, 승패, 생존 시간, 킬 수, 골드, 보상상자 수, 계정 경험치) | `BattleResult.Last` | `SESSION` | `SESSION` · `CLIENT_AUTH` | 메인 씬의 `PlayerInventory.ClaimBattleResult`가 gold, accountExp, 스테이지 기록, 보상상자 장비에 반영한다. 반영은 보상 지급이라 `SERVER_AUTH` 대상이다 |
+| 행운열차 결과(선택 칸, 골드) | `PlayerLuckTrain` 필드 | `SESSION` | `SESSION` · `CLIENT_AUTH` | |
+| 행운열차 확률(5칸 10%, 3칸 20%, 1칸 70%), 골드량(칸당 100~300) | `PlayerLuckTrain` const·인스펙터 | `DESIGN_CONST` | **`DESIGN_TABLE`** | 골드 = `100~300 랜덤 × 선택 칸 수`. 골드량은 코드 주석에 임시값으로 표시돼 있다 |
 | 행운열차 회전 시간·바퀴 수·공개 간격 | `LuckTrainWindow` 인스펙터 | `PRESENTATION` | `PRESENTATION` | |
 
 ### 5.12 드롭 아이템
 | 값 | 위치 | 현행 | 이상 | 비고 |
 |---|---|---|---|---|
 | 드롭 종류(`DropItemType`) | `DropItemType.cs` enum | `DESIGN_CONST` | `DESIGN_CONST` | ExpGem1~4, Gold1~4, LuckyBox, RewardBox, Potion, Magnet, Bomb |
-| 경험치 잼·골드 단계별 획득량 | 없음 | `—` | **`DESIGN_TABLE`** | |
-| 몬스터별 드롭 종류·확률 | 없음 | `—` | **`DESIGN_TABLE`** | `Enemy.Die`의 경험치 지급은 TODO 상태다 |
-| 폭탄 피해량·범위 | 없음 | `—` | **`DESIGN_CONST`** | |
-| 포션 회복량 300 | `PlayerLootReceiver` 인스펙터 | `DESIGN_CONST` | `DESIGN_CONST` | 코드 주석에 임시값으로 표시돼 있다 |
+| dropItemId, dropItemType, value | `Resources/JsonFiles/DropItem.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | 종류별 수치. ExpGem1~4 3·5·10·100, Gold1~4 10·30·100·300, Bomb 50, Potion 50. ExpGem2~4는 떨어뜨리는 코드가 없다(6.3). Bomb은 엘리트·보스에게 주는 피해량이다. 일반 몬스터는 즉사하고, 범위 제한 없이 살아 있는 몬스터 전체가 대상이다. Potion은 기본 회복량이고 계산식이 추가될 예정이다 |
+| 드롭 테이블(dropTableId, dropGroup, dropItemType, weight, count) | `Resources/JsonFiles/DropTable.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | 스폰 패턴의 dropTableId가 참조하고, 몬스터는 스폰될 때 받은 테이블로 처치 보상을 정한다. 같은 테이블 안에서 dropGroup마다 한 번씩 weight로 1행을 뽑아 count개 떨어뜨린다. dropItemType이 None이면 건너뛴다. 테이블 1 일반(ExpGem1), 2 엘리트(ExpGem1, LuckyBox 1, RewardBox 2), 3 보스(ExpGem1, RewardBox 5), 4 상자(Gold1~4 31·5·3·1, Bomb·Potion·Magnet 각 20 중 1개). 테이블 5는 검증용 샘플이다. 경험치잼은 monsterExp와 관계없이 ExpGem1로 고정돼 있다(6.3) |
+| 보상상자 내용물 | `Resources/JsonFiles/Stage.json` rewardBoxGradeWeights 열 | `DESIGN_TABLE` | `DESIGN_TABLE` | 상자마다 스테이지의 등급 가중치로 등급을 뽑고, 그 등급이 기본 등급인 장비 중에서 균등 랜덤으로 지급한다(`StageData.RollRewardBoxGrade`) |
 | 흡수 연출(recoilDistance, recoilDuration, chaseStartSpeed, chaseAcceleration, arriveRadius) | `DropItemManager` 인스펙터 | `PRESENTATION` | `PRESENTATION` | |
 
 ## 6. 발견된 문제
 분류하면서 확인한 사실만 적는다.
 
-### 6.1 `USER` 데이터 이중 저장
-| 저장 구조 | 파일 | 내용 |
-|---|---|---|
-| `PlayerSaveData` | `Players/{playerID}.json` | gold, gem, stamina, 계정 레벨·경험치, equipmentList, stageRecordList |
-| `PlayerInventory.SaveData` | `inventory_save.json` | gold, gem, items |
+### 6.1 기획 값의 저장 방식이 네 가지다
+- JSON이 두 폴더에 나뉘어 있다: `Resources/JsonFiles`(Monster, BossAttack, Wave, SpawnPattern, Stage, Skill, Item, DropItem, DropTable, AccountConst), `Resources/Data`(player)
+- `Resources/JsonFiles`의 JSON은 구글 시트의 같은 이름 탭을 `Tools > Google Sheets > JSON Exporter`로 내보낸 것이다. 원본은 시트이고, JSON만 고치면 다음 내보내기에서 덮어써진다. 시트에는 JSON이 없는 탭(PlayerConst, ItemConst, BattleConst, MonsterConst)도 있다
+- JSON 로더도 나뉘어 있다: `JsonDataManager`(Monster, BossAttack, Wave, SpawnPattern, Stage, Skill, DropItem, DropTable, AccountConst), `ItemDatabase`(Item), `SkillDataBase`(Skill), `PlayerDatabase`(player). Skill.json은 두 곳에서 불러온다. 레벨업 후보 목록은 `JsonDataManager`에서, 스킬 생성과 표시는 `SkillDataBase`에서 읽는다
+- 코드 상수: `ItemLevelConfig`, `SkillBase`, `MaxSkillSlots`, `OptionCount`, `PlayerLuckTrain`, `WeaponSkillTable`, `NodesPerLevel`
+- 인스펙터: `BattleManager`, `PlayerHealth`, `PlayerLuckTrain`, `WaveManager`, `Enemy`, 상점 카드, 투사체 프리팹
+- 하드코딩: 스킬 레벨별 효과(`Skill_*`)
 
-gold, gem, 보유 장비가 계정과 무관한 파일에 따로 저장된다. 상점, 장비 화면, `PlayerStats`는 `PlayerInventory`만 쓴다. `PlayerSaveData`의 gold, gem, equipmentList, stageRecordList를 읽거나 쓰는 코드는 없다.
-
-### 6.2 기획 값의 저장 방식이 네 가지다
-- JSON이 두 폴더에 나뉘어 있다: `Resources/JsonFiles`(Monster, BossAttack, Spawn, Stage, Skill), `Resources/Data`(items, player)
-- 코드 상수: `ItemLevelConfig`, `MaxSkillSlots`, `NodesPerLevel`
-- 인스펙터: `BattleManager`, `PlayerHealth`, `MonsterSpawner`, 상점 카드, 투사체 프리팹
-- 테스트 드라이버 더미: 진화, 도전, 스테이지 설명, 행운열차
-
-### 6.3 같은 의미의 중복 정의
+### 6.2 같은 의미의 중복 정의
 | 의미 | 정의 1 | 정의 2 |
 |---|---|---|
-| 전투 시간 | `Stage.json` duration 150 | `BattleManager.victorySeconds` 900 |
-| 스폰 간격 | `Spawn.json` spawnInterval | `MonsterSpawner.spawnInterval` 1 |
-| 스킬 속도·범위 | `Skill.json` Speed, Range | 투사체 프리팹 _speed, _range |
-| 등급 | `ItemGrade`(General, Super, Rare) | `Grade`(Common, Good, Rare, Elite, Epic) |
+| 플레이어 기본 스탯 | `player.json` | `PlayerBaseStatData` 필드 초기값 |
+| 초기 재화·최대 스태미나 | `AccountConst.json` | `PlayerSaveData.CreateDefault` |
 
-### 6.4 불러오지만 쓰지 않는 테이블
-`JsonDataManager`는 Monster, BossAttack, Spawn, Stage를 불러오지만 다른 클래스에서 조회하지 않는다. 몬스터는 `Enemy.Init`의 하드코딩 값을 쓰고, 스폰은 `MonsterSpawner`의 고정 간격으로 돈다.
+### 6.3 불러오지만 쓰지 않는 값
+- `Stage.json`의 stageDuration. 승리는 보스 처치로 판정한다. 값도 150초로 웨이브 1의 보스 등장(45초)과 다르다
+- `Monster.json`의 monsterExp. 경험치 드롭은 `DropTable.json`에서 ExpGem1로 고정돼 있다
+- `player.json`의 attack, criticalDamage, criticalChance, skillDamage, maxMoveSpeed. 스킬 피해는 `Skill.json`의 Damage만 쓴다. attack은 최종 공격력까지 계산하지만 디버그 로그에서만 읽는다
+- `DropItem.json`의 ExpGem2~4. `DropTable.json`이 ExpGem1만 쓴다
+- `AccountConst.json`의 initialGold, initialGem, initialStamina, maxStamina. 계정을 만들 때 `PlayerSaveData.CreateDefault`에 직접 쓴 값을 쓴다
 
-### 6.5 저장 구조에 없는 `USER` 값
+### 6.4 저장 구조에 없는 `USER` 값
 DNA, 해금한 진화 노드 수, 도전 보상 수령 여부, 스태미나 회복 기준 시각
 
+### 6.5 저장 구조에 들어간 기획 값
+`PlayerSaveData.maxStamina`는 모든 유저에게 같은 값인데 계정별로 저장된다.
+
 ### 6.6 정의되지 않은 기획 데이터
-계정 레벨별 필요 경험치, 최대 스태미나와 회복 주기, 스테이지 클리어 보상, 경험치 잼·골드 획득량, 몬스터 드롭 테이블, 스킬 레벨별 수치, 지원품 상자·행운열차 확률
+스태미나 회복 주기, 지원품 상자 확률, 진화 노드, 도전 조건·보상
 
 ### 6.7 계정 정보 평문 저장
 `accounts.json`에 password가 평문으로 저장된다.
+
+### 6.8 시트와 JSON 불일치
+2026-10-05에 시트의 모든 탭을 `Resources/JsonFiles`와 대조했다. 아래 탭만 다르다.
+- AccountConst: battleStaminaCost가 JSON에만 있다. 시트대로 내보내면 열이 사라져 전투 입장 스태미나 비용이 0이 된다

@@ -20,10 +20,14 @@ public static class GameConstants
         public const string ACCOUNT_SAVE_PATH = "accounts.json";
         public const string PLAYER_DIRECTORY = "Players";
         public const string BossAttackData_Json_Path = "JsonFiles/BossAttack";
-        public const string SpawnData_Json_Path = "JsonFiles/Spawn";
+        public const string WaveData_Json_Path = "JsonFiles/Wave";
+        public const string SpawnPatternData_Json_Path = "JsonFiles/SpawnPattern";
+        public const string DropTableData_Json_Path = "JsonFiles/DropTable";
         public const string StageData_Json_Path = "JsonFiles/Stage";
         public const string MonsterData_Json_Path = "JsonFiles/Monster";
         public const string ItemData_Json_Path = "JsonFiles/Item";
         public const string SkillData_Json_Path = "JsonFiles/Skill";
+        public const string DropItemData_Json_Path = "JsonFiles/DropItem";
+        public const string AccountConstData_Json_Path = "JsonFiles/AccountConst";
     }
 }

@@ -84,6 +84,43 @@ public class DropItemManager : MonoSingleton<DropItemManager>
         entityManager.SetComponentData(entity, new DropView { Slot = slot });
     }
 
+    // 드롭 테이블 판정: 그룹마다 가중치로 1행을 뽑아 count개 생성한다. None이면 건너뜀
+    public void SpawnTable(int dropTableId, Vector2 position)
+    {
+        if (dropTableId <= 0) return;
+
+        IReadOnlyList<DropTableEntryData> entries = GameManager.JsonData.GetDropTableFromJson(dropTableId);
+        if (entries == null) return;
+
+        int start = 0;
+        while (start < entries.Count)
+        {
+            int end = start;
+            int totalWeight = 0;
+            while (end < entries.Count && entries[end].dropGroup == entries[start].dropGroup)
+            {
+                totalWeight += entries[end].weight;
+                end++;
+            }
+
+            int roll = UnityEngine.Random.Range(0, totalWeight);
+            for (int i = start; i < end; i++)
+            {
+                roll -= entries[i].weight;
+                if (roll >= 0) continue;
+
+                if (!entries[i].IsNone)
+                {
+                    for (int n = 0; n < entries[i].count; n++)
+                        Spawn(entries[i].Type, position);
+                }
+                break;
+            }
+
+            start = end;
+        }
+    }
+
     public void AttractAllExpGems()
     {
         entityManager.AddComponent<Attract>(groundedExpGemQuery);

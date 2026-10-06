@@ -3,30 +3,30 @@ using UnityEngine.SceneManagement;
 
 public class GameSceneManager : MonoSingleton<GameSceneManager>
 {
-    private int? pendingStageID;
+    private int? pendingStageId;
     
     public void ChangeScene(string sceneName)
     {
-        pendingStageID = null;
+        pendingStageId = null;
         SceneManager.LoadScene(sceneName);
     }
 
-    public void ChangeScene(string sceneName, int stageID)
+    public void ChangeScene(string sceneName, int stageId)
     {
-        pendingStageID = stageID;
+        pendingStageId = stageId;
         SceneManager.LoadScene(sceneName);
     }
     
-    public bool TryConsumePendingStageId(out int stageID)
+    public bool TryConsumePendingStageId(out int stageId)
     {
-        if (pendingStageID.HasValue)
+        if (pendingStageId.HasValue)
         {
-            stageID = pendingStageID.Value;
-            pendingStageID = null;
+            stageId = pendingStageId.Value;
+            pendingStageId = null;
             return true;
         }
 
-        stageID = default;
+        stageId = default;
         return false;
     }
 }

@@ -15,8 +15,12 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
     private Dictionary<int, BossAttackData> bossAttackDataDic;
     public IReadOnlyDictionary<int, BossAttackData> BossAttackDataDic => bossAttackDataDic;
 
-    private Dictionary<int, SpawnEventData> spawnEventDataDic;
-    public IReadOnlyDictionary<int, SpawnEventData> SpawnEventDataDic => spawnEventDataDic;
+    private Dictionary<int, WaveEntryData> waveEntryDataDic;
+    public IReadOnlyDictionary<int, WaveEntryData> WaveEntryDataDic => waveEntryDataDic;
+
+    private Dictionary<int, SpawnPatternData> spawnPatternDataDic;
+
+    private Dictionary<int, List<DropTableEntryData>> dropTableDic;
 
     private Dictionary<int, StageData> stageDataDic;
     public IReadOnlyDictionary<int, StageData> StageDataDic => stageDataDic;
@@ -24,6 +28,11 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
     private Dictionary<int, SkillData> skillDataDic;
     public IReadOnlyDictionary<int, SkillData> SkillDataDic => skillDataDic;
 
+    private Dictionary<DropItemType, DropItemData> dropItemDataDic;
+    public IReadOnlyDictionary<DropItemType, DropItemData> DropItemDataDic => dropItemDataDic;
+
+    private AccountConstData accountConstData;
+    public AccountConstData AccountConstData => accountConstData;
     #endregion
 
     protected override void Awake()
@@ -34,14 +43,18 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
 
         LoadMonsterData();
         LoadBossAttackData();
-        LoadSpawnData();
+        LoadWaveData();
+        LoadSpawnPatternData();
         LoadStageData();
         LoadSkillData();
+        LoadDropItemData();
+        LoadDropTableData();
+        LoadAccountConstData();
     }
 
     #region GetMethod
 
-    public MonsterData GetMonsterDataFromJson(int monsterID)
+    public MonsterData GetMonsterDataFromJson(int monsterId)
     {
         if (monsterDataDic == null)
         {
@@ -49,15 +62,15 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
             return null;
         }
 
-        if (monsterDataDic.TryGetValue(monsterID, out MonsterData data))
+        if (monsterDataDic.TryGetValue(monsterId, out MonsterData data))
             return data;
         
-        Debug.LogWarning($"등록되지 않은 몬스터 ID: {monsterID}");
+        Debug.LogWarning($"등록되지 않은 몬스터 ID: {monsterId}");
         return null;
     }
 
     // 개별 행의 고유 ID로 조회합니다. 실패 시 null을 반환합니다.
-    public BossAttackData GetBossAttackDataFromJson(int bossAttackID)
+    public BossAttackData GetBossAttackDataFromJson(int bossAttackId)
     {
         if (bossAttackDataDic == null)
         {
@@ -65,31 +78,63 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
             return null;
         }
 
-        if (bossAttackDataDic.TryGetValue(bossAttackID, out BossAttackData data))
+        if (bossAttackDataDic.TryGetValue(bossAttackId, out BossAttackData data))
             return data;
 
-        Debug.LogWarning($"등록되지 않은 BossAttack ID: {bossAttackID}");
+        Debug.LogWarning($"등록되지 않은 BossAttack ID: {bossAttackId}");
         return null;
     }
 
     // 개별 행의 고유 ID로 조회합니다. 실패 시 null을 반환합니다.
-    public SpawnEventData GetSpawnEventDataFromJson(int spawnEventID)
+    public WaveEntryData GetWaveEntryDataFromJson(int waveEntryId)
     {
-        if (spawnEventDataDic == null)
+        if (waveEntryDataDic == null)
         {
-            Debug.LogError("Spawn 데이터가 초기화되지 않았습니다.");
+            Debug.LogError("Wave 데이터가 초기화되지 않았습니다.");
             return null;
         }
 
-        if (spawnEventDataDic.TryGetValue(spawnEventID, out SpawnEventData data))
+        if (waveEntryDataDic.TryGetValue(waveEntryId, out WaveEntryData data))
             return data;
 
-        Debug.LogWarning($"등록되지 않은 Spawn ID: {spawnEventID}");
+        Debug.LogWarning($"등록되지 않은 Wave 항목 ID: {waveEntryId}");
         return null;
     }
 
     // 개별 행의 고유 ID로 조회합니다. 실패 시 null을 반환합니다.
-    public StageData GetStageDataFromJson(int stageID)
+    public SpawnPatternData GetSpawnPatternDataFromJson(int patternId)
+    {
+        if (spawnPatternDataDic == null)
+        {
+            Debug.LogError("SpawnPattern 데이터가 초기화되지 않았습니다.");
+            return null;
+        }
+
+        if (spawnPatternDataDic.TryGetValue(patternId, out SpawnPatternData data))
+            return data;
+
+        Debug.LogWarning($"등록되지 않은 SpawnPattern ID: {patternId}");
+        return null;
+    }
+
+    // 테이블 ID로 조회합니다. 행은 dropGroup 오름차순입니다. 실패 시 null을 반환합니다.
+    public IReadOnlyList<DropTableEntryData> GetDropTableFromJson(int dropTableId)
+    {
+        if (dropTableDic == null)
+        {
+            Debug.LogError("DropTable 데이터가 초기화되지 않았습니다.");
+            return null;
+        }
+
+        if (dropTableDic.TryGetValue(dropTableId, out List<DropTableEntryData> entries))
+            return entries;
+
+        Debug.LogWarning($"등록되지 않은 DropTable ID: {dropTableId}");
+        return null;
+    }
+
+    // 개별 행의 고유 ID로 조회합니다. 실패 시 null을 반환합니다.
+    public StageData GetStageDataFromJson(int stageId)
     {
         if (stageDataDic == null)
         {
@@ -97,14 +142,14 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
             return null;
         }
 
-        if (stageDataDic.TryGetValue(stageID, out StageData data))
+        if (stageDataDic.TryGetValue(stageId, out StageData data))
             return data;
 
-        Debug.LogWarning($"등록되지 않은 Stage ID: {stageID}");
+        Debug.LogWarning($"등록되지 않은 Stage ID: {stageId}");
         return null;
     }
     
-    public SkillData GetSkillDataFromJson(int skillID)
+    public SkillData GetSkillDataFromJson(int skillId)
     {
         if (skillDataDic == null)
         {
@@ -112,13 +157,27 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
             return null;
         }
 
-        if (skillDataDic.TryGetValue(skillID, out SkillData data))
+        if (skillDataDic.TryGetValue(skillId, out SkillData data))
             return data;
 
-        Debug.LogWarning($"등록되지 않은 Skill ID: {skillID}");
+        Debug.LogWarning($"등록되지 않은 Skill ID: {skillId}");
         return null;
     }
 
+    public DropItemData GetDropItemDataFromJson(DropItemType type)
+    {
+        if (dropItemDataDic == null)
+        {
+            Debug.LogError("DropItem 데이터가 초기화되지 않았습니다.");
+            return null;
+        }
+
+        if (dropItemDataDic.TryGetValue(type, out DropItemData data))
+            return data;
+
+        Debug.LogWarning($"등록되지 않은 DropItem 종류: {type}");
+        return null;
+    }
     #endregion
     
     #region LoadData
@@ -157,18 +216,18 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
 
                 MonsterData data = row.ToObject<MonsterData>();
 
-                if (data == null || data.monsterID <= 0)
+                if (data == null || data.monsterId <= 0)
                 {
                     throw new InvalidOperationException("몬스터 데이터 또는 ID가 올바르지 않습니다.");
                 }
 
-                if (loadedDatas.ContainsKey(data.monsterID))
+                if (loadedDatas.ContainsKey(data.monsterId))
                 {
-                    throw new InvalidOperationException($"중복된 몬스터 ID: {data.monsterID}");
+                    throw new InvalidOperationException($"중복된 몬스터 ID: {data.monsterId}");
                 }
 
                 data.OnLoaded();
-                loadedDatas.Add(data.monsterID, data);
+                loadedDatas.Add(data.monsterId, data);
             }
 
             // 전체 로드가 성공했을 때만 반영
@@ -202,14 +261,14 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
                     throw new InvalidOperationException("BossAttack 데이터 항목이 객체 형식이 아닙니다.");
 
                 BossAttackData data = row.ToObject<BossAttackData>();
-                if (data == null || data.bossAttackID <= 0)
+                if (data == null || data.bossAttackId <= 0)
                     throw new InvalidOperationException("BossAttack 데이터 또는 ID가 올바르지 않습니다.");
 
-                if (loadedDatas.ContainsKey(data.bossAttackID))
-                    throw new InvalidOperationException($"중복된 BossAttack ID: {data.bossAttackID}");
+                if (loadedDatas.ContainsKey(data.bossAttackId))
+                    throw new InvalidOperationException($"중복된 BossAttack ID: {data.bossAttackId}");
 
                 data.OnLoaded();
-                loadedDatas.Add(data.bossAttackID, data);
+                loadedDatas.Add(data.bossAttackId, data);
             }
 
             bossAttackDataDic = loadedDatas;
@@ -220,43 +279,87 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
         }
     }
     
-    private void LoadSpawnData()
+    private void LoadWaveData()
     {
-        if (spawnEventDataDic != null) return;
+        if (waveEntryDataDic != null) return;
 
         try
         {
-            TextAsset jsonFile = Resources.Load<TextAsset>(GameConstants.Paths.SpawnData_Json_Path);
+            TextAsset jsonFile = Resources.Load<TextAsset>(GameConstants.Paths.WaveData_Json_Path);
             if (jsonFile == null)
-                throw new InvalidOperationException("JSON 파일이 없습니다: " + GameConstants.Paths.SpawnData_Json_Path);
+                throw new InvalidOperationException("JSON 파일이 없습니다: " + GameConstants.Paths.WaveData_Json_Path);
 
             JObject root = JObject.Parse(jsonFile.text);
             JArray rows = root["datas"] as JArray;
             if (rows == null || rows.Count == 0)
-                throw new InvalidOperationException("Spawn 데이터 목록이 비어 있습니다.");
+                throw new InvalidOperationException("Wave 데이터 목록이 비어 있습니다.");
 
-            var loadedDatas = new Dictionary<int, SpawnEventData>();
+            var loadedDatas = new Dictionary<int, WaveEntryData>();
             foreach (JToken row in rows)
             {
                 if (!(row is JObject))
-                    throw new InvalidOperationException("Spawn 데이터 항목이 객체 형식이 아닙니다.");
+                    throw new InvalidOperationException("Wave 데이터 항목이 객체 형식이 아닙니다.");
 
-                SpawnEventData data = row.ToObject<SpawnEventData>();
-                if (data == null || data.spawnEventID <= 0)
-                    throw new InvalidOperationException("Spawn 데이터 또는 ID가 올바르지 않습니다.");
+                WaveEntryData data = row.ToObject<WaveEntryData>();
+                if (data == null || data.waveEntryId <= 0)
+                    throw new InvalidOperationException("Wave 데이터 또는 ID가 올바르지 않습니다.");
 
-                if (loadedDatas.ContainsKey(data.spawnEventID))
-                    throw new InvalidOperationException($"중복된 Spawn ID: {data.spawnEventID}");
+                if (loadedDatas.ContainsKey(data.waveEntryId))
+                    throw new InvalidOperationException($"중복된 Wave 항목 ID: {data.waveEntryId}");
 
-                data.OnLoaded();
-                loadedDatas.Add(data.spawnEventID, data);
+                loadedDatas.Add(data.waveEntryId, data);
             }
 
-            spawnEventDataDic = loadedDatas;
+            waveEntryDataDic = loadedDatas;
         }
         catch (Exception exception)
         {
-            Debug.LogError($"Spawn 데이터 로드 실패: {exception.Message}");
+            Debug.LogError($"Wave 데이터 로드 실패: {exception.Message}");
+        }
+    }
+
+    private void LoadSpawnPatternData()
+    {
+        if (spawnPatternDataDic != null) return;
+
+        try
+        {
+            TextAsset jsonFile = Resources.Load<TextAsset>(GameConstants.Paths.SpawnPatternData_Json_Path);
+            if (jsonFile == null)
+                throw new InvalidOperationException("JSON 파일이 없습니다: " + GameConstants.Paths.SpawnPatternData_Json_Path);
+
+            JObject root = JObject.Parse(jsonFile.text);
+            JArray rows = root["datas"] as JArray;
+            if (rows == null || rows.Count == 0)
+                throw new InvalidOperationException("SpawnPattern 데이터 목록이 비어 있습니다.");
+
+            var loadedDatas = new Dictionary<int, SpawnPatternData>();
+            foreach (JToken row in rows)
+            {
+                if (!(row is JObject))
+                    throw new InvalidOperationException("SpawnPattern 데이터 항목이 객체 형식이 아닙니다.");
+
+                SpawnPatternData data = row.ToObject<SpawnPatternData>();
+                if (data == null || data.patternId <= 0)
+                    throw new InvalidOperationException("SpawnPattern 데이터 또는 ID가 올바르지 않습니다.");
+
+                if (loadedDatas.ContainsKey(data.patternId))
+                    throw new InvalidOperationException($"중복된 SpawnPattern ID: {data.patternId}");
+
+                if (data.spawnCount < 1)
+                    throw new InvalidOperationException($"SpawnPattern {data.patternId}의 spawnCount는 1 이상이어야 합니다.");
+
+                if (!data.OnLoaded())
+                    throw new InvalidOperationException($"SpawnPattern {data.patternId}의 eventType \"{data.eventType}\" 또는 formation \"{data.formation}\"을(를) 알 수 없습니다.");
+
+                loadedDatas.Add(data.patternId, data);
+            }
+
+            spawnPatternDataDic = loadedDatas;
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"SpawnPattern 데이터 로드 실패: {exception.Message}");
         }
     }
     
@@ -282,14 +385,14 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
                     throw new InvalidOperationException("Stage 데이터 항목이 객체 형식이 아닙니다.");
 
                 StageData data = row.ToObject<StageData>();
-                if (data == null || data.stageID <= 0)
+                if (data == null || data.stageId <= 0)
                     throw new InvalidOperationException("Stage 데이터 또는 ID가 올바르지 않습니다.");
 
-                if (loadedDatas.ContainsKey(data.stageID))
-                    throw new InvalidOperationException($"중복된 Stage ID: {data.stageID}");
+                if (loadedDatas.ContainsKey(data.stageId))
+                    throw new InvalidOperationException($"중복된 Stage ID: {data.stageId}");
                 
                 data.OnLoaded();
-                loadedDatas.Add(data.stageID, data);
+                loadedDatas.Add(data.stageId, data);
             }
 
             stageDataDic = loadedDatas;
@@ -325,17 +428,17 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
     
                 SkillData data = row.ToObject<SkillData>();
     
-                if (data == null || data.ID <= 0)
+                if (data == null || data.Id <= 0)
                     throw new InvalidOperationException("Skill 데이터 또는 ID가 올바르지 않습니다.");
     
-                if (loadedDatas.ContainsKey(data.ID))
-                    throw new InvalidOperationException($"중복된 Skill ID: {data.ID}");
+                if (loadedDatas.ContainsKey(data.Id))
+                    throw new InvalidOperationException($"중복된 Skill ID: {data.Id}");
     
                 // Newtonsoft 역직렬화 후 Unity 콜백을 직접 호출하여
                 // Type 문자열을 TargetType 열거형으로 변환합니다.
                 data.OnAfterDeserialize();
     
-                loadedDatas.Add(data.ID, data);
+                loadedDatas.Add(data.Id, data);
             }
     
             skillDataDic = loadedDatas;
@@ -346,5 +449,132 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
         }
     }
 
+    private void LoadDropItemData()
+    {
+        if (dropItemDataDic != null) return;
+
+        try
+        {
+            TextAsset jsonFile = Resources.Load<TextAsset>(GameConstants.Paths.DropItemData_Json_Path);
+            if (jsonFile == null)
+                throw new InvalidOperationException("JSON 파일이 없습니다: " + GameConstants.Paths.DropItemData_Json_Path);
+
+            JObject root = JObject.Parse(jsonFile.text);
+            JArray rows = root["datas"] as JArray;
+            if (rows == null || rows.Count == 0)
+                throw new InvalidOperationException("DropItem 데이터 목록이 비어 있습니다.");
+
+            var loadedDatas = new Dictionary<DropItemType, DropItemData>();
+            var loadedIds = new HashSet<int>();
+            foreach (JToken row in rows)
+            {
+                if (!(row is JObject))
+                    throw new InvalidOperationException("DropItem 데이터 항목이 객체 형식이 아닙니다.");
+
+                DropItemData data = row.ToObject<DropItemData>();
+                if (data == null || data.dropItemId <= 0)
+                    throw new InvalidOperationException("DropItem 데이터 또는 ID가 올바르지 않습니다.");
+
+                if (!loadedIds.Add(data.dropItemId))
+                    throw new InvalidOperationException($"중복된 DropItem ID: {data.dropItemId}");
+
+                if (!data.OnLoaded())
+                    throw new InvalidOperationException($"DropItem {data.dropItemId}의 dropItemType \"{data.dropItemType}\"을(를) 알 수 없습니다.");
+
+                if (loadedDatas.ContainsKey(data.Type))
+                    throw new InvalidOperationException($"중복된 DropItem 종류: {data.Type}");
+
+                loadedDatas.Add(data.Type, data);
+            }
+
+            dropItemDataDic = loadedDatas;
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"DropItem 데이터 로드 실패: {exception.Message}");
+        }
+    }
+
+    private void LoadDropTableData()
+    {
+        if (dropTableDic != null) return;
+
+        try
+        {
+            TextAsset jsonFile = Resources.Load<TextAsset>(GameConstants.Paths.DropTableData_Json_Path);
+            if (jsonFile == null)
+                throw new InvalidOperationException("JSON 파일이 없습니다: " + GameConstants.Paths.DropTableData_Json_Path);
+
+            JObject root = JObject.Parse(jsonFile.text);
+            JArray rows = root["datas"] as JArray;
+            if (rows == null || rows.Count == 0)
+                throw new InvalidOperationException("DropTable 데이터 목록이 비어 있습니다.");
+
+            var loadedDatas = new Dictionary<int, List<DropTableEntryData>>();
+            foreach (JToken row in rows)
+            {
+                if (!(row is JObject))
+                    throw new InvalidOperationException("DropTable 데이터 항목이 객체 형식이 아닙니다.");
+
+                DropTableEntryData data = row.ToObject<DropTableEntryData>();
+                if (data == null || data.dropTableId <= 0)
+                    throw new InvalidOperationException("DropTable 데이터 또는 ID가 올바르지 않습니다.");
+
+                if (data.dropGroup < 0)
+                    throw new InvalidOperationException($"DropTable {data.dropTableId}의 dropGroup은 0 이상이어야 합니다.");
+
+                if (data.weight < 1)
+                    throw new InvalidOperationException($"DropTable {data.dropTableId}의 weight는 1 이상이어야 합니다.");
+
+                if (data.count < 1)
+                    throw new InvalidOperationException($"DropTable {data.dropTableId}의 count는 1 이상이어야 합니다.");
+
+                if (!data.OnLoaded())
+                    throw new InvalidOperationException($"DropTable {data.dropTableId}의 dropItemType \"{data.dropItemType}\"을(를) 알 수 없습니다.");
+
+                if (!loadedDatas.TryGetValue(data.dropTableId, out List<DropTableEntryData> entries))
+                {
+                    entries = new List<DropTableEntryData>();
+                    loadedDatas.Add(data.dropTableId, entries);
+                }
+                entries.Add(data);
+            }
+
+            foreach (List<DropTableEntryData> entries in loadedDatas.Values)
+                entries.Sort((a, b) => a.dropGroup.CompareTo(b.dropGroup));
+
+            dropTableDic = loadedDatas;
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"DropTable 데이터 로드 실패: {exception.Message}");
+        }
+    }
+
+    private void LoadAccountConstData()
+    {
+        if (accountConstData != null) return;
+
+        try
+        {
+            TextAsset jsonFile = Resources.Load<TextAsset>(GameConstants.Paths.AccountConstData_Json_Path);
+            if (jsonFile == null)
+                throw new InvalidOperationException("JSON 파일이 없습니다: " + GameConstants.Paths.AccountConstData_Json_Path);
+
+            JObject root = JObject.Parse(jsonFile.text);
+            JArray rows = root["datas"] as JArray;
+            if (rows == null || rows.Count != 1)
+                throw new InvalidOperationException("AccountConst 데이터는 행이 하나여야 합니다.");
+
+            if (!(rows[0] is JObject))
+                throw new InvalidOperationException("AccountConst 데이터 항목이 객체 형식이 아닙니다.");
+
+            accountConstData = rows[0].ToObject<AccountConstData>();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"AccountConst 데이터 로드 실패: {exception.Message}");
+        }
+    }
     #endregion
 }
