@@ -805,6 +805,72 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1336512524560405698, guid: ddf2cdd10591fe24994fba07b40bb824, type: 3}
   m_PrefabInstance: {fileID: 1437819740}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1665308524
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1665308526}
+  - component: {fileID: 1665308525}
+  m_Layer: 0
+  m_Name: InfiniteBackground
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1665308525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1665308524}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ba41d813a7783f41b44d0e52d1340fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InfiniteBackground
+  waveManager: {fileID: 1842085653}
+  target: {fileID: 0}
+  resourcePathFormat: Backgrounds/stage_{0}_background
+  fallbackStageNumber: 2
+  insetPixels: 6
+  tileWorldSize: 8
+  activeRadius: 2
+  releaseMargin: 1
+  tileOverlap: 0.02
+  tileWeights:
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  randomSeed: 0
+  sortingLayerName: Default
+  sortingOrder: -100
+--- !u!4 &1665308526
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1665308524}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1831472863
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -989,3 +1055,4 @@ SceneRoots:
   - {fileID: 1326018813}
   - {fileID: 1842085651}
   - {fileID: 1391319653}
+  - {fileID: 1665308526}
