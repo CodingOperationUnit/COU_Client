@@ -11,6 +11,9 @@ public class SkillController : MonoBehaviour
     public PlayerMovement PlayerMovement { get; private set; }
     public PlayerStats PlayerStats { get; private set; }
 
+    // 패시브가 등록한 보너스. 모든 장착 스킬이 같은 인스턴스를 공유함
+    public SkillModifiers Modifiers { get; } = new();
+
     public IReadOnlyList<SkillBase> ActiveSkills => _activeSkills;
 
     private void Awake()
@@ -57,8 +60,13 @@ public class SkillController : MonoBehaviour
             return false;
         }
 
-        skill.SetContext(new SkillContext(transform, PlayerMovement, PlayerStats));
-        skill.SetPrefab(SkillManager.Instance.GetPrefab(skillId));
+        skill.SetContext(new SkillContext(transform, PlayerMovement, PlayerStats, Modifiers));
+
+        // 패시브는 소환할 오브젝트가 없으므로 프리팹을 찾지 않음 (찾으면 미등록 경고가 뜸)
+        if(skill is not PassiveSkillBase)
+        {
+            skill.SetPrefab(SkillManager.Instance.GetPrefab(skillId));
+        }
 
         // 최초 레벨 설정 후 장착해야 OnEquip에서 현재 레벨 기준으로 동작할 수 있음
         skill.Levelup();
@@ -124,7 +132,7 @@ public class SkillController : MonoBehaviour
 
         if(keyboard.digit1Key.wasPressedThisFrame)
         {
-            if(EquipSkill(1))
+            if(EquipSkill(20010))
             {
                 Debug.Log("스킬: Shuriken");
             }
@@ -132,7 +140,7 @@ public class SkillController : MonoBehaviour
 
         if(keyboard.digit2Key.wasPressedThisFrame)
         {
-            if(EquipSkill(2))
+            if(EquipSkill(20020))
             {
                 Debug.Log("스킬: Revolver");
             }
@@ -140,7 +148,7 @@ public class SkillController : MonoBehaviour
 
         if(keyboard.digit3Key.wasPressedThisFrame)
         {
-            if(EquipSkill(3))
+            if(EquipSkill(20030))
             {
                 Debug.Log("스킬: Katana");
             }
@@ -148,9 +156,26 @@ public class SkillController : MonoBehaviour
 
         if (keyboard.digit4Key.wasPressedThisFrame)
         {
-            if (EquipSkill(4))
+            if (EquipSkill(20040))
             {
                 Debug.Log("스킬: Planet");
+            }
+        }
+
+        // 패시브 (5: 투사체 수 증가, 6: 대미지 증가)
+        if(keyboard.digit5Key.wasPressedThisFrame)
+        {
+            if(EquipSkill(21010))
+            {
+                Debug.Log("패시브: ProjectileUp");
+            }
+        }
+
+        if(keyboard.digit6Key.wasPressedThisFrame)
+        {
+            if(EquipSkill(21070))
+            {
+                Debug.Log("패시브: DamageUp");
             }
         }
     }

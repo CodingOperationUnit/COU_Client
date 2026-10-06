@@ -6,10 +6,16 @@ public static class SkillFactory
 {
     private static readonly Dictionary<int, Func<SkillBase>> _creators = new()
     {
-        { 1, () => new Skill_Shuriken() },
-        { 2, () => new Skill_Revolver() },
-        { 3, () => new Skill_Katana() },
-        { 4, () => new Skill_Planet() },
+        // 액티브 (20000대)
+        { 20010, () => new Skill_Shuriken() },
+        { 20020, () => new Skill_Revolver() },
+        { 20030, () => new Skill_Katana() },
+        { 20040, () => new Skill_Planet() },
+
+        // 패시브 (21000대)
+        // 임시: 실제 효과가 확정되기 전에 동작 확인용으로 기존 테스트 패시브를 연결해 둠
+        { 21010, () => new Skill_DamageUp() },
+        { 21070, () => new Skill_ProjectileUp() },
     };
 
     public static SkillBase Create(int skillId)
@@ -29,6 +35,15 @@ public static class SkillFactory
         }
 
         SkillBase skill = creator();
+
+        // 시트의 분류와 클래스가 어긋나면 슬롯/UI 분류가 틀어지므로 바로 알 수 있게 경고
+        bool isPassiveClass = skill is PassiveSkillBase;
+
+        if(isPassiveClass != (data.skillCategory == SkillCategory.Passive))
+        {
+            Debug.LogWarning($"[SkillFactory] 시트의 skillCategory와 스킬 클래스가 맞지 않습니다: {skillId} ({data.skillCategory})");
+        }
+
         skill.Initialize(data);
 
         return skill;
