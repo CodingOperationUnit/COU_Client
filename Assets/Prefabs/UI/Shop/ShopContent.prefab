@@ -237,6 +237,7 @@ GameObject:
   - component: {fileID: 4059537166128330434}
   - component: {fileID: 3936212562520799044}
   - component: {fileID: 9186121771248313121}
+  - component: {fileID: 8845508217728643502}
   m_Layer: 5
   m_Name: Gem_14000
   m_TagString: Untagged
@@ -389,6 +390,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShopGemCard
   buyButton: {fileID: 3936212562520799044}
   gemAmount: 14000
+--- !u!114 &8845508217728643502
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 334337791543000855}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 2
 --- !u!1 &424837633006032136
 GameObject:
   m_ObjectHideFlags: 0
@@ -403,6 +417,7 @@ GameObject:
   - component: {fileID: 8223081542034738056}
   - component: {fileID: 4665270922264430405}
   - component: {fileID: 3600996799977898294}
+  - component: {fileID: 5181902095623095168}
   m_Layer: 5
   m_Name: "SupplyBox_\uC9C0\uAD6C \uBC29\uC704 \uBCF4\uAE09\uD488"
   m_TagString: Untagged
@@ -528,6 +543,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Mask
   m_ShowMaskGraphic: 1
+--- !u!114 &5181902095623095168
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 424837633006032136}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 2
 --- !u!1 &493216821360597099
 GameObject:
   m_ObjectHideFlags: 0
@@ -540,6 +568,7 @@ GameObject:
   - component: {fileID: 8980829105342930779}
   - component: {fileID: 1458474556191476561}
   - component: {fileID: 929100059598618831}
+  - component: {fileID: 1398038207986240267}
   m_Layer: 5
   m_Name: SizeLabel
   m_TagString: Untagged
@@ -686,6 +715,19 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &1398038207986240267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 493216821360597099}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 6
 --- !u!1 &559801933892535150
 GameObject:
   m_ObjectHideFlags: 0
@@ -698,6 +740,7 @@ GameObject:
   - component: {fileID: 3806331397871672396}
   - component: {fileID: 1180861268738890103}
   - component: {fileID: 1504433779312534665}
+  - component: {fileID: 5671086386888020033}
   m_Layer: 5
   m_Name: Amount
   m_TagString: Untagged
@@ -844,6 +887,19 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &5671086386888020033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 559801933892535150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 5
 --- !u!1 &569583736886105965
 GameObject:
   m_ObjectHideFlags: 0
@@ -856,6 +912,7 @@ GameObject:
   - component: {fileID: 9091025327944018676}
   - component: {fileID: 2088144902288797046}
   - component: {fileID: 3752105224157776730}
+  - component: {fileID: 2837153811191844327}
   m_Layer: 5
   m_Name: DurationLabel
   m_TagString: Untagged
@@ -1002,6 +1059,19 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &2837153811191844327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 569583736886105965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 6
 --- !u!1 &757971268638704843
 GameObject:
   m_ObjectHideFlags: 0
@@ -1014,6 +1084,7 @@ GameObject:
   - component: {fileID: 6426216940899311215}
   - component: {fileID: 8638882411365460114}
   - component: {fileID: 578688064247746056}
+  - component: {fileID: 7581902856094273394}
   m_Layer: 5
   m_Name: Amount
   m_TagString: Untagged
@@ -1160,6 +1231,19 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &7581902856094273394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 757971268638704843}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 5
 --- !u!1 &1015951791412175269
 GameObject:
   m_ObjectHideFlags: 0
@@ -1405,6 +1489,7 @@ GameObject:
   - component: {fileID: 6524036268741755583}
   - component: {fileID: 8074921659392757900}
   - component: {fileID: 4247622223691529489}
+  - component: {fileID: 6433987958328356967}
   m_Layer: 5
   m_Name: SizeLabel
   m_TagString: Untagged
@@ -1551,6 +1636,19 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &6433987958328356967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1115703725368106755}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 6
 --- !u!1 &1260213381304775898
 GameObject:
   m_ObjectHideFlags: 0
@@ -1563,6 +1661,7 @@ GameObject:
   - component: {fileID: 5450951087333707774}
   - component: {fileID: 151649628291813132}
   - component: {fileID: 1574861462448205075}
+  - component: {fileID: 1456156414280890660}
   m_Layer: 5
   m_Name: Amount
   m_TagString: Untagged
@@ -1709,6 +1808,19 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &1456156414280890660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1260213381304775898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 5
 --- !u!1 &1351284477245489457
 GameObject:
   m_ObjectHideFlags: 0
@@ -1721,6 +1833,7 @@ GameObject:
   - component: {fileID: 5240784443661159690}
   - component: {fileID: 4139275750295843493}
   - component: {fileID: 1788675233212205770}
+  - component: {fileID: 1734862852430481860}
   m_Layer: 5
   m_Name: Amount
   m_TagString: Untagged
@@ -1867,6 +1980,19 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &1734862852430481860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1351284477245489457}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 5
 --- !u!1 &1497079234102291432
 GameObject:
   m_ObjectHideFlags: 0
@@ -1976,6 +2102,7 @@ GameObject:
   - component: {fileID: 5223737081235031773}
   - component: {fileID: 3487978758509335716}
   - component: {fileID: 2682369899088377472}
+  - component: {fileID: 7032377311747497930}
   m_Layer: 5
   m_Name: Gold_12000
   m_TagString: Untagged
@@ -2087,6 +2214,19 @@ MonoBehaviour:
   goldAmount: 12000
   affordableColor: {r: 0, g: 0.76862746, b: 0.3647059, a: 1}
   normalColor: {r: 0.27058825, g: 0.3647059, b: 0.4509804, a: 1}
+--- !u!114 &7032377311747497930
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1613073868984428386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 2
 --- !u!1 &2409783992071592964
 GameObject:
   m_ObjectHideFlags: 0
@@ -2101,6 +2241,7 @@ GameObject:
   - component: {fileID: 1162028354420918242}
   - component: {fileID: 833085355178694909}
   - component: {fileID: 6263384042832427243}
+  - component: {fileID: 2775925925212068678}
   m_Layer: 5
   m_Name: Gem_500
   m_TagString: Untagged
@@ -2253,6 +2394,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShopGemCard
   buyButton: {fileID: 833085355178694909}
   gemAmount: 500
+--- !u!114 &2775925925212068678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2409783992071592964}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 2
 --- !u!1 &2446670860143804245
 GameObject:
   m_ObjectHideFlags: 0
@@ -2351,6 +2505,7 @@ GameObject:
   - component: {fileID: 584568969811986003}
   - component: {fileID: 8746662503565058600}
   - component: {fileID: 8217117939780411082}
+  - component: {fileID: 6063878963765504939}
   m_Layer: 5
   m_Name: Amount
   m_TagString: Untagged
@@ -2497,6 +2652,19 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &6063878963765504939
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2736662406164554945}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 5
 --- !u!1 &3060586245247690457
 GameObject:
   m_ObjectHideFlags: 0
@@ -2509,6 +2677,7 @@ GameObject:
   - component: {fileID: 699942453462143989}
   - component: {fileID: 8012485817643032712}
   - component: {fileID: 6557446637590387771}
+  - component: {fileID: 7125259094823729121}
   m_Layer: 5
   m_Name: Amount
   m_TagString: Untagged
@@ -2655,6 +2824,19 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &7125259094823729121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3060586245247690457}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 5
 --- !u!1 &3305027724751929184
 GameObject:
   m_ObjectHideFlags: 0
@@ -3298,6 +3480,7 @@ GameObject:
   - component: {fileID: 7496475619700732240}
   - component: {fileID: 1188625958145648042}
   - component: {fileID: 7353870866255776257}
+  - component: {fileID: 8191152596543216809}
   m_Layer: 5
   m_Name: Title
   m_TagString: Untagged
@@ -3424,6 +3607,19 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &8191152596543216809
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3965149534184088105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 5
 --- !u!1 &3970090126237427967
 GameObject:
   m_ObjectHideFlags: 0
@@ -3532,6 +3728,7 @@ GameObject:
   - component: {fileID: 7097860355375925416}
   - component: {fileID: 7600327484304842749}
   - component: {fileID: 8586732126933022390}
+  - component: {fileID: 3709010358289628083}
   m_Layer: 5
   m_Name: TitleBar
   m_TagString: Untagged
@@ -3617,6 +3814,19 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &3709010358289628083
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4102798832366386523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 0
 --- !u!1 &4254482416646739836
 GameObject:
   m_ObjectHideFlags: 0
@@ -3629,6 +3839,7 @@ GameObject:
   - component: {fileID: 6939887305083762905}
   - component: {fileID: 4374977870357563765}
   - component: {fileID: 997102711033091168}
+  - component: {fileID: 8144951202887058793}
   m_Layer: 5
   m_Name: SizeLabel
   m_TagString: Untagged
@@ -3775,6 +3986,19 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &8144951202887058793
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4254482416646739836}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 6
 --- !u!1 &4414493985128107618
 GameObject:
   m_ObjectHideFlags: 0
@@ -3929,6 +4153,7 @@ GameObject:
   - component: {fileID: 3634977513920442548}
   - component: {fileID: 66181767013406024}
   - component: {fileID: 7439351599544231617}
+  - component: {fileID: 3762002923376418681}
   m_Layer: 5
   m_Name: DurationLabel
   m_TagString: Untagged
@@ -4075,6 +4300,19 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &3762002923376418681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4444147563532856839}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 6
 --- !u!1 &4588164066030904752
 GameObject:
   m_ObjectHideFlags: 0
@@ -4087,6 +4325,7 @@ GameObject:
   - component: {fileID: 4364173762850744450}
   - component: {fileID: 6574128703009377680}
   - component: {fileID: 8486399060833121996}
+  - component: {fileID: 8327381619046166689}
   m_Layer: 5
   m_Name: Desc
   m_TagString: Untagged
@@ -4233,6 +4472,19 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &8327381619046166689
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4588164066030904752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 6
 --- !u!1 &4615755397109516408
 GameObject:
   m_ObjectHideFlags: 0
@@ -4343,6 +4595,7 @@ GameObject:
   - component: {fileID: 4599669740831479497}
   - component: {fileID: 3566694867428290630}
   - component: {fileID: 2241833815700447772}
+  - component: {fileID: 4057797531777472379}
   m_Layer: 5
   m_Name: Gem_1200
   m_TagString: Untagged
@@ -4495,6 +4748,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShopGemCard
   buyButton: {fileID: 3566694867428290630}
   gemAmount: 1200
+--- !u!114 &4057797531777472379
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4736529661868641234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 2
 --- !u!1 &4739941112550861376
 GameObject:
   m_ObjectHideFlags: 0
@@ -4574,6 +4840,7 @@ GameObject:
   - component: {fileID: 3917002433751625187}
   - component: {fileID: 8925724271762955965}
   - component: {fileID: 5371294594101939535}
+  - component: {fileID: 215774648274523158}
   m_Layer: 5
   m_Name: DurationLabel
   m_TagString: Untagged
@@ -4720,6 +4987,19 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &215774648274523158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4789832084459742302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 6
 --- !u!1 &4881906643397004169
 GameObject:
   m_ObjectHideFlags: 0
@@ -4871,6 +5151,7 @@ GameObject:
   - component: {fileID: 3691965910268532278}
   - component: {fileID: 6109331460826214091}
   - component: {fileID: 4165262312473966886}
+  - component: {fileID: 3363554536624645713}
   m_Layer: 5
   m_Name: Gem_80
   m_TagString: Untagged
@@ -5023,6 +5304,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShopGemCard
   buyButton: {fileID: 6109331460826214091}
   gemAmount: 80
+--- !u!114 &3363554536624645713
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4884471252618867686}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 2
 --- !u!1 &5226814914031065590
 GameObject:
   m_ObjectHideFlags: 0
@@ -5037,6 +5331,7 @@ GameObject:
   - component: {fileID: 2877855587333317178}
   - component: {fileID: 2554106428222186579}
   - component: {fileID: 418969783861104038}
+  - component: {fileID: 8351908549330007386}
   m_Layer: 5
   m_Name: "SupplyBox_\uAD70 \uC790\uC6D0\uC0C1\uC790"
   m_TagString: Untagged
@@ -5162,6 +5457,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Mask
   m_ShowMaskGraphic: 1
+--- !u!114 &8351908549330007386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5226814914031065590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 2
 --- !u!1 &5246376639293244341
 GameObject:
   m_ObjectHideFlags: 0
@@ -5454,6 +5762,7 @@ GameObject:
   - component: {fileID: 1531339171100665082}
   - component: {fileID: 3867222216502568381}
   - component: {fileID: 7735199485486246241}
+  - component: {fileID: 613873581418698895}
   m_Layer: 5
   m_Name: Gold_144000
   m_TagString: Untagged
@@ -5565,6 +5874,19 @@ MonoBehaviour:
   goldAmount: 144000
   affordableColor: {r: 0, g: 0.76862746, b: 0.3647059, a: 1}
   normalColor: {r: 0.27058825, g: 0.3647059, b: 0.4509804, a: 1}
+--- !u!114 &613873581418698895
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5345754112675440879}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 2
 --- !u!1 &5359093363460552900
 GameObject:
   m_ObjectHideFlags: 0
@@ -5719,6 +6041,7 @@ GameObject:
   - component: {fileID: 5247745514508236098}
   - component: {fileID: 7598870743114868350}
   - component: {fileID: 3883569729155299956}
+  - component: {fileID: 5320740855383050187}
   m_Layer: 5
   m_Name: SizeLabel
   m_TagString: Untagged
@@ -5865,6 +6188,19 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &5320740855383050187
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5366403626549553754}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 6
 --- !u!1 &5384118890223786231
 GameObject:
   m_ObjectHideFlags: 0
@@ -5877,6 +6213,7 @@ GameObject:
   - component: {fileID: 9202015461930016428}
   - component: {fileID: 3581967242001648727}
   - component: {fileID: 8773025432677635863}
+  - component: {fileID: 414768856143525637}
   m_Layer: 5
   m_Name: Amount
   m_TagString: Untagged
@@ -6023,6 +6360,19 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &414768856143525637
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5384118890223786231}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 5
 --- !u!1 &5565946608064809420
 GameObject:
   m_ObjectHideFlags: 0
@@ -6550,6 +6900,7 @@ GameObject:
   - component: {fileID: 2940852429441911251}
   - component: {fileID: 5964710822046425972}
   - component: {fileID: 5518675553916183910}
+  - component: {fileID: 8268409594482808872}
   m_Layer: 5
   m_Name: Gem_6500
   m_TagString: Untagged
@@ -6702,6 +7053,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShopGemCard
   buyButton: {fileID: 5964710822046425972}
   gemAmount: 6500
+--- !u!114 &8268409594482808872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6016942796467496481}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 2
 --- !u!1 &6052325804509189829
 GameObject:
   m_ObjectHideFlags: 0
@@ -7043,6 +7407,7 @@ GameObject:
   - component: {fileID: 5272292689127720364}
   - component: {fileID: 791270104423628151}
   - component: {fileID: 1549505033174791800}
+  - component: {fileID: 1573970271321794065}
   m_Layer: 5
   m_Name: SizeLabel
   m_TagString: Untagged
@@ -7189,6 +7554,19 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &1573970271321794065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6501957954560374574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 6
 --- !u!1 &6518324510778072265
 GameObject:
   m_ObjectHideFlags: 0
@@ -7496,6 +7874,7 @@ GameObject:
   - component: {fileID: 7264120104024648654}
   - component: {fileID: 1905144358352570249}
   - component: {fileID: 1557244040129329057}
+  - component: {fileID: 145670523761532929}
   m_Layer: 5
   m_Name: Desc
   m_TagString: Untagged
@@ -7642,6 +8021,19 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &145670523761532929
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6862841178336080628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 6
 --- !u!1 &6864549563122817252
 GameObject:
   m_ObjectHideFlags: 0
@@ -7972,6 +8364,7 @@ GameObject:
   - component: {fileID: 7020579089125482828}
   - component: {fileID: 6446603193713701997}
   - component: {fileID: 5070044053328582177}
+  - component: {fileID: 1215823229178006893}
   m_Layer: 5
   m_Name: Amount
   m_TagString: Untagged
@@ -8118,6 +8511,19 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &1215823229178006893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6998225897027455583}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 5
 --- !u!1 &7050366692096351642
 GameObject:
   m_ObjectHideFlags: 0
@@ -8130,6 +8536,7 @@ GameObject:
   - component: {fileID: 5963317403156565583}
   - component: {fileID: 912594772485966396}
   - component: {fileID: 5541268197905312144}
+  - component: {fileID: 6035796871291838554}
   m_Layer: 5
   m_Name: Amount
   m_TagString: Untagged
@@ -8276,6 +8683,19 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &6035796871291838554
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7050366692096351642}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 5
 --- !u!1 &7069982624838770217
 GameObject:
   m_ObjectHideFlags: 0
@@ -8625,6 +9045,7 @@ GameObject:
   - component: {fileID: 928376715351427688}
   - component: {fileID: 1036448567852307079}
   - component: {fileID: 6876497956307730010}
+  - component: {fileID: 287183230802444252}
   m_Layer: 5
   m_Name: Title
   m_TagString: Untagged
@@ -8751,6 +9172,19 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &287183230802444252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7337499649295807733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 5
 --- !u!1 &7581900287329915252
 GameObject:
   m_ObjectHideFlags: 0
@@ -9238,6 +9672,7 @@ GameObject:
   - component: {fileID: 128094427984167887}
   - component: {fileID: 7874412849620113862}
   - component: {fileID: 6467127431789072175}
+  - component: {fileID: 3507650002229883162}
   m_Layer: 5
   m_Name: Gem_2500
   m_TagString: Untagged
@@ -9390,6 +9825,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShopGemCard
   buyButton: {fileID: 7874412849620113862}
   gemAmount: 2500
+--- !u!114 &3507650002229883162
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8153205612958966872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 2
 --- !u!1 &8192880320828976666
 GameObject:
   m_ObjectHideFlags: 0
@@ -9540,6 +9988,7 @@ GameObject:
   - component: {fileID: 7360271819293150328}
   - component: {fileID: 4522882163066504201}
   - component: {fileID: 8779763082379542952}
+  - component: {fileID: 1153240885285594196}
   m_Layer: 5
   m_Name: Gold_36000
   m_TagString: Untagged
@@ -9651,6 +10100,19 @@ MonoBehaviour:
   goldAmount: 36000
   affordableColor: {r: 0, g: 0.76862746, b: 0.3647059, a: 1}
   normalColor: {r: 0.27058825, g: 0.3647059, b: 0.4509804, a: 1}
+--- !u!114 &1153240885285594196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8197180786085944529}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 2
 --- !u!1 &8360010082316416534
 GameObject:
   m_ObjectHideFlags: 0
@@ -9800,6 +10262,7 @@ GameObject:
   - component: {fileID: 6894959338817281134}
   - component: {fileID: 3781542359532288946}
   - component: {fileID: 1805508789304589151}
+  - component: {fileID: 4184701068330130872}
   m_Layer: 5
   m_Name: TitleBar
   m_TagString: Untagged
@@ -9885,6 +10348,19 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &4184701068330130872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8488863768503105128}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 0
 --- !u!1 &8507324402695199926
 GameObject:
   m_ObjectHideFlags: 0
@@ -9897,6 +10373,7 @@ GameObject:
   - component: {fileID: 1806706501896505826}
   - component: {fileID: 2996409576899079267}
   - component: {fileID: 2634098156275137082}
+  - component: {fileID: 1719513869207012182}
   m_Layer: 5
   m_Name: SizeLabel
   m_TagString: Untagged
@@ -10043,6 +10520,19 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &1719513869207012182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8507324402695199926}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 6
 --- !u!1 &8524159760820766920
 GameObject:
   m_ObjectHideFlags: 0

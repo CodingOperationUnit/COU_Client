@@ -11,7 +11,7 @@ public class SkillSelectCard : MonoBehaviour
     [SerializeField] private GameObject newTag;
     [SerializeField] private TMP_Text[] stars;
     [SerializeField] private Color filledColor = new(1f, 0.776f, 0.102f);
-    [SerializeField] private Color emptyColor = new(0.18f, 0.188f, 0.251f);
+    [SerializeField] private UIColor emptyColor = UIColor.Raised;
     [SerializeField] private float blinkSpeed = 2f;
 
     private int blinkIndex = -1;
@@ -40,7 +40,7 @@ public class SkillSelectCard : MonoBehaviour
         newTag.SetActive(isNew);
 
         for (var i = 0; i < stars.Length; i++)
-            stars[i].color = i < grade ? filledColor : emptyColor;
+            stars[i].color = i < grade ? filledColor : UIPalette.Get(emptyColor);
         blinkIndex = grade > 0 ? grade - 1 : -1;
     }
 }

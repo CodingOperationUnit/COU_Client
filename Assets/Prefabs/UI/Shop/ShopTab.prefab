@@ -61,6 +61,7 @@ GameObject:
   - component: {fileID: 4338044944911370843}
   - component: {fileID: 1159760213986343640}
   - component: {fileID: 4179087160532762903}
+  - component: {fileID: 271289748655043491}
   m_Layer: 5
   m_Name: Bg
   m_TagString: Untagged
@@ -125,6 +126,19 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &271289748655043491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7757539165819224551}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 1
 --- !u!1001 &3532230568712540943
 PrefabInstance:
   m_ObjectHideFlags: 0

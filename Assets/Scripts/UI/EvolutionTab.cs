@@ -29,11 +29,12 @@ public class EvolutionTab : UIView
     [SerializeField] private Column dnaColumn;
     [SerializeField] private EvolutionTooltip tooltip;
     [SerializeField] private Color unlockedLineColor;
-    [SerializeField] private Color lockedLineColor;
+    [SerializeField] private UIColor lockedLineColor = UIColor.Base;
     [SerializeField] private float bottomPadding = 330f;
     [SerializeField] private float topPadding = 330f;
     [SerializeField] private float rowSpacing = 300f;
 
+    private UIManager manager;
     private int accountLevel;
     private Column selectedColumn;
     private int selectedIndex;
@@ -42,6 +43,15 @@ public class EvolutionTab : UIView
     {
         dismissButton.onClick.AddListener(tooltip.Hide);
         tooltip.UnlockButton.onClick.AddListener(Unlock);
+
+        manager = UIManager.Instance;
+        manager.ThemeChanged += RefreshColumns;
+    }
+
+    private void OnDestroy()
+    {
+        if (manager != null)
+            manager.ThemeChanged -= RefreshColumns;
     }
 
     public override void Open()
@@ -114,8 +124,17 @@ public class EvolutionTab : UIView
         {
             var unlocked = i < column.unlocked;
             column.views[i].Set(column.nodes[i], unlocked);
-            column.lines[i].color = unlocked ? unlockedLineColor : lockedLineColor;
+            column.lines[i].color = unlocked ? unlockedLineColor : UIPalette.Get(lockedLineColor);
         }
+    }
+
+    private void RefreshColumns()
+    {
+        if (goldColumn.views == null)
+            return;
+
+        Refresh(goldColumn);
+        Refresh(dnaColumn);
     }
 
     private void Select(Column column, int index)
