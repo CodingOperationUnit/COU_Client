@@ -62,6 +62,7 @@ public class PlayerSaveData
     public CurrencyData currency = new CurrencyData();
     public List<InventoryData> inventoryList = new List<InventoryData>();
     public StageProgressData stageProgress = new StageProgressData();
+    public List<StageRecordSaveData> stageRecords = new List<StageRecordSaveData>();   // 기록이 있는 스테이지만
     public PlayerStatData playerStat = new PlayerStatData();   // 필드만
 
     /// <summary>
@@ -150,7 +151,7 @@ public class CurrencyData
     public int currencyGold;                  // 음수 불가
     public int currencyGem;                   // 음수 불가
     public int currencyEnergy;                // 필드만 (충전 규칙 미정)
-    public DateTime? currencyEnergyUpdatedAt; // 필드만 (Null 허용)
+    public DateTimeOffset? currencyEnergyUpdatedAt; // UTC, 서버가 회복 기준으로 쓴다 (Null 허용)
 }
 
 /// <summary>Inventory: 보유 장비 (같은 장비 중복 보유 가능, 인스턴스 방식)</summary>
@@ -200,10 +201,10 @@ public class EquipmentSaveData
     public ItemGrade grade;
 }
 
+/// <summary>StageRecord: 스테이지별 최장 생존 시간. 승패와 관계없이 서버가 갱신한다</summary>
 [Serializable]
 public class StageRecordSaveData
 {
     public int stageId;
-    public bool isCleared;
-    public float bestSurvivalSeconds;
+    public int bestSurvivalSeconds;
 }

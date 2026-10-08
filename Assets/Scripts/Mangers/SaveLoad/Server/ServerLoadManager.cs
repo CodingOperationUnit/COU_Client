@@ -42,20 +42,15 @@ public class ServerLoadManager : MonoSingleton<ServerLoadManager>
 
             // 1) 플레이어 데이터 (프로필, 재화, 스테이지, 스탯)
             PlayerSaveData data = null;
-            yield return GetJson<PlayerSaveData>(GameConstants.Server.PLAYER_SAVE_API,
-                result => data = result, message => error = message);
+            yield return RequestSave((loaded, message) =>
+            {
+                data = loaded;
+                error = message;
+            });
 
-            if (error != null)
+            if (data == null)
             {
                 onComplete?.Invoke(false, error);
-                yield break;
-            }
-
-            if (data.profile == null || data.currency == null
-                || data.stageProgress == null || data.playerStat == null)
-            {
-                Debug.LogError("[ServerLoad] 응답에 필요한 데이터가 빠져 있습니다.");
-                onComplete?.Invoke(false, "플레이어 데이터가 올바르지 않습니다.");
                 yield break;
             }
 
@@ -64,7 +59,7 @@ public class ServerLoadManager : MonoSingleton<ServerLoadManager>
             yield return GetJson<InventoryResponse>(GameConstants.Server.INVENTORY_API,
                 result => inventory = result, message => error = message);
 
-            if (error != null)
+            if (inventory == null)
             {
                 onComplete?.Invoke(false, error);
                 yield break;
@@ -94,6 +89,34 @@ public class ServerLoadManager : MonoSingleton<ServerLoadManager>
         Debug.Log($"[ServerLoad] 불러오기 완료: playerId={GameManager.PlayerData.currentPlayerId}, " +
                   $"장비 {GameManager.PlayerData.currentData.inventoryList.Count}개");
         onComplete?.Invoke(true, "플레이어 데이터를 불러왔습니다.");
+    }
+
+    // GET /api/players/me/save 응답을 받아 검사만 한다. PlayerDataManager에는 넣지 않는다
+    // (BattleManager.ReloadSave에서도 사용)
+    // onComplete(받은 데이터, 실패 시 안내 메시지)
+    public IEnumerator RequestSave(Action<PlayerSaveData, string> onComplete)
+    {
+        PlayerSaveData data = null;
+        string error = null;
+
+        yield return GetJson<PlayerSaveData>(GameConstants.Server.PLAYER_SAVE_API,
+            result => data = result, message => error = message);
+
+        if (data == null)
+        {
+            onComplete?.Invoke(null, error);
+            yield break;
+        }
+
+        if (data.profile == null || data.currency == null
+            || data.stageProgress == null || data.playerStat == null)
+        {
+            Debug.LogError("[ServerLoad] 응답에 필요한 데이터가 빠져 있습니다.");
+            onComplete?.Invoke(null, "플레이어 데이터가 올바르지 않습니다.");
+            yield break;
+        }
+
+        onComplete?.Invoke(data, null);
     }
 
     // 토큰을 붙여 GET 요청 → JSON을 T로 변환. 성공하면 onSuccess, 실패하면 onFail(화면용 문구)

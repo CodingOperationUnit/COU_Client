@@ -8,8 +8,7 @@ public class PlayerLuckTrain : MonoBehaviour
     private const int FiveChancePercent = 10;    // 5개 10%
     private const int ThreeChancePercent = 20;   // 3개 20% (나머지 70%는 1개)
 
-    [SerializeField][Min(0)] private int goldMin = 100;   // 임시 값
-    [SerializeField][Min(0)] private int goldMax = 300;   // 임시 값
+    [SerializeField][Min(0)] private int goldMin = 100;   // 임시 값 (최대값은 AccountConst.luckTrainGoldMax, 서버 골드 상한과 같은 값)
 
     [Header("Test")]
     // 0이면 확률대로, 1/3/5면 해당 개수로
@@ -123,6 +122,7 @@ public class PlayerLuckTrain : MonoBehaviour
             window.SetReward(i, data.skillName, level, "Lv." + level);
         }
 
+        int goldMax = GameManager.JsonData.AccountConstData.luckTrainGoldMax;
         rewardGold = Random.Range(goldMin, goldMax + 1) * selected.Length;
 
         BattleManager.Instance?.RequestPause(this);

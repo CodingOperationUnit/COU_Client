@@ -42,57 +42,22 @@ public class PlayerInventory : MonoBehaviour
 
     private void Start()
     {
-        ClaimBattleResult();
+        ShowBattleRewards();
     }
 
-    // 직전 전투 결과(골드, 계정 경험치, 스테이지 진행, 보상상자)를 지급하고 비운다
-    private void ClaimBattleResult()
+    // 직전 전투의 보상상자 장비를 팝업으로 보여주고 비운다. 지급은 전투 씬에서 서버 응답으로 이미 반영됐다
+    private void ShowBattleRewards()
     {
-        var result = BattleResult.Last;
-        if (result == null || !GameManager.PlayerData.isPlayerDataLoaded)
+        var rewards = BattleResult.Rewards;
+        BattleResult.Rewards = null;
+        if (rewards == null || rewards.Count == 0)
             return;
 
-        BattleResult.Last = null;
+        var rewardIds = rewards.Select(reward => reward.inventoryId).ToHashSet();
+        var rewardItems = items.Where(item => rewardIds.Contains(inventoryIds[item.instanceId])).ToList();
 
-        var data = Data;
-        data.currency.currencyGold += result.Gold;
-        data.profile.accountExp += result.AccountExp;
-
-        // 계정 레벨업: 필요 경험치를 채울 때마다 차감하고 레벨을 올린다. 최대 레벨에서 멈춘다
-        var accountConst = GameManager.JsonData.AccountConstData;
-        while (data.profile.accountLevel < accountConst.maxAccountLevel
-               && data.profile.accountExp >= accountConst.GetRequiredExp(data.profile.accountLevel))
-        {
-            data.profile.accountExp -= accountConst.GetRequiredExp(data.profile.accountLevel);
-            data.profile.accountLevel++;
-        }
-
-        // 스테이지 진행: 순서대로 해금되므로 최고 클리어 스테이지 하나만 갱신 (데이터 공통 규칙 9번)
-        var progress = data.stageProgress;
-        progress.currentStageId = result.StageId;
-        if (result.Victory
-            && (!progress.maxClearedStageId.HasValue || result.StageId > progress.maxClearedStageId.Value))
-        {
-            progress.maxClearedStageId = result.StageId;
-        }
-        // bestSurvivalSeconds: 데이터 정의서에 필드가 없어 저장하지 않음 (팀 결정 대기)
-
-        // 보상상자: 상자마다 스테이지의 등급 가중치로 등급을 뽑고, 그 등급이 기본 등급인 장비를 무작위 지급
-        var rewards = new List<OwnedItem>();
-        var stage = GameManager.JsonData.GetStageDataFromJson(result.StageId);
-        for (var i = 0; i < result.RewardBoxes; i++)
-        {
-            var grade = stage.RollRewardBoxGrade();
-            var pool = ItemDatabase.GetAll().Where(item => item.Grade == grade).ToList();
-            if (pool.Count > 0)
-                rewards.Add(CreateNewItem(pool[UnityEngine.Random.Range(0, pool.Count)].itemId));
-        }
-        items.AddRange(rewards);
-
-        PersistAndNotify();
-
-        if (rewards.Count > 0)
-            UIManager.Instance.Get<RewardBoxResultPopup>().Show(rewards);
+        if (rewardItems.Count > 0)
+            UIManager.Instance.Get<RewardBoxResultPopup>().Show(rewardItems);
     }
 
     public OwnedItem AddItem(long itemId)
@@ -122,18 +87,6 @@ public class PlayerInventory : MonoBehaviour
 
         // 기존 코드는 gold를 차감하던 버그가 있어 gem 차감으로 수정
         Data.currency.currencyGem -= amount;
-        PersistAndNotify();
-        return true;
-    }
-
-    // 스태미나 = 데이터 정의서의 currencyEnergy
-    public bool TrySpendStamina(int amount)
-    {
-        if (Data.currency.currencyEnergy < amount)
-            return false;
-
-        Data.currency.currencyEnergy -= amount;
-        Data.currency.currencyEnergyUpdatedAt = DateTime.Now;
         PersistAndNotify();
         return true;
     }
