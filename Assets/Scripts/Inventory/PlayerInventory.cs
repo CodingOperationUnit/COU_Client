@@ -188,9 +188,9 @@ public class PlayerInventory : MonoBehaviour
         return levelsGained;
     }
 
-    // 합성 재료
+    // 합성 재료: 같은 아이템, 같은 등급, 장착하지 않은 장비 (서버 findMaterials와 동일)
     public int CountSynthesisMaterials(OwnedItem item)
-        => items.Count(i => i != item && i.itemId == item.itemId && i.Grade == item.Grade);
+        => items.Count(i => i != item && !i.isEquipped && i.itemId == item.itemId && i.Grade == item.Grade);
 
     public bool CanSynthesize(OwnedItem item)
         => item != null
@@ -262,7 +262,7 @@ public class PlayerInventory : MonoBehaviour
             SetEquippedInventoryId(data.profile, slot, inventoryId);
         }
 
-        GameManager.LocalSaveLoad.SaveCurrentPlayerData();
+        // GameManager.LocalSaveLoad.SaveCurrentPlayerData();
     }
 
     // PlayerSaveData.inventoryList + profile 장착 칸 → OwnedItem 리스트로 복원
@@ -378,5 +378,105 @@ public class PlayerInventory : MonoBehaviour
             case EquipSlotType.Necklace: profile.equippedNecklaceInventoryId = inventoryId; break;
             case EquipSlotType.Shoes: profile.equippedShoesInventoryId = inventoryId; break;
         }
+    }
+    
+    // ===== 서버 응답 반영: 서버가 계산·저장한 결과로 덮어쓴다 (클라에서 계산하지 않음) =====
+
+    public long GetInventoryId(OwnedItem item)
+        => item != null && inventoryIds.TryGetValue(item.instanceId, out var id) ? id : 0;
+    
+    public void ApplyEquip(EquipResponse response)
+    {
+        if (response.unequipped != null)
+            SetEquippedState(response.unequipped.inventoryId, false);
+    
+        if (response.equipped != null)
+            SetEquippedState(response.equipped.inventoryId, response.equipped.isEquipped);
+    
+        SyncAndNotify();
+    }
+    
+    public void ApplyUnequip(EquipmentResponse response)
+    {
+        SetEquippedState(response.inventoryId, response.isEquipped);
+        SyncAndNotify();
+    }
+    
+    public void ApplyLevelUp(long inventoryId, int level, int currencyGold)
+    {
+        var item = FindByInventoryId(inventoryId);
+        if (item != null)
+            item.level = level;
+    
+        Data.currency.currencyGold = currencyGold;   // 빼기가 아니라 서버 값으로 덮어쓰기
+        SyncAndNotify();
+    }
+    
+    public void ApplySynthesis(SynthesizeResponse response)
+    {
+        // 재료는 서버가 고른 것만 제거
+        if (response.consumedInventoryIds != null)
+        {
+            foreach (var consumedId in response.consumedInventoryIds)
+                RemoveByInventoryId(consumedId);
+        }
+    
+        var item = FindByInventoryId(response.inventoryId);
+        if (item != null && response.inventoryItemGrade.HasValue)
+            item.grade = response.inventoryItemGrade.Value;
+    
+        SetEquippedState(response.inventoryId, response.isEquipped);
+        SyncAndNotify();
+    }
+    
+    private OwnedItem FindByInventoryId(long inventoryId)
+        => items.FirstOrDefault(i => inventoryIds.TryGetValue(i.instanceId, out var id) && id == inventoryId);
+    
+    private void SetEquippedState(long inventoryId, bool isEquipped)
+    {
+        var item = FindByInventoryId(inventoryId);
+        if (item == null)
+        {
+            Debug.LogWarning($"[PlayerInventory] inventoryId {inventoryId} 장비를 찾지 못했습니다.");
+            return;
+        }
+    
+        var slot = item.Data.SlotType;
+    
+        if (isEquipped)
+        {
+            if (equipped.TryGetValue(slot, out var current) && current != item)
+                current.isEquipped = false;
+    
+            item.isEquipped = true;
+            equipped[slot] = item;
+        }
+        else
+        {
+            item.isEquipped = false;
+            if (equipped.TryGetValue(slot, out var current) && current == item)
+                equipped.Remove(slot);
+        }
+    }
+    
+    private void RemoveByInventoryId(long inventoryId)
+    {
+        var item = FindByInventoryId(inventoryId);
+        if (item == null) return;
+    
+        if (item.isEquipped)
+            SetEquippedState(inventoryId, false);
+    
+        items.Remove(item);
+        inventoryIds.Remove(item.instanceId);
+        acquiredAts.Remove(item.instanceId);
+    }
+    
+    // 서버가 이미 저장했으므로 PlayerSaveData만 맞추고 화면을 갱신한다
+    private void SyncAndNotify()
+    {
+        Save();   // OwnedItem → PlayerSaveData.inventoryList + 장착 칸 (전투 씬 PlayerStats가 이 값을 읽음)
+        OnInventoryChanged?.Invoke();
+        GameManager.PlayerData.NotifyPlayerDataChanged();
     }
 }
