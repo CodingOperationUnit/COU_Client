@@ -8,7 +8,7 @@ public class JsonDataManagerEditor : Editor
 {
     // 데이터 종류마다 펼침 상태를 분리합니다. 같은 ID가 있어도 서로 영향을 주지 않습니다.
     private readonly HashSet<int> expandedMonsters = new();
-    private readonly HashSet<int> expandedBossAttacks = new();
+    private readonly HashSet<int> expandedMonsterAttacks = new();
     private readonly HashSet<int> expandedWaveEntries = new();
     private readonly HashSet<int> expandedStages = new();
     private readonly HashSet<int> expandedSkills = new();
@@ -20,8 +20,8 @@ public class JsonDataManagerEditor : Editor
         var manager = (JsonDataManager)target;
         DrawDictionary("몬스터 데이터", manager.MonsterDataDic, expandedMonsters,
             data => data.monsterName, DrawMonster);
-        DrawDictionary("보스 공격 데이터", manager.BossAttackDataDic, expandedBossAttacks,
-            data => $"몬스터 {data.monsterId} / {data.bossAttackType}", DrawBossAttack);
+        DrawDictionary("몬스터 공격 데이터", manager.MonsterAttackDataDic, expandedMonsterAttacks,
+            data => $"몬스터 {data.monsterId} / {data.monsterAttackType}", DrawMonsterAttack);
         DrawDictionary("웨이브 데이터", manager.WaveEntryDataDic, expandedWaveEntries,
             data => $"웨이브 {data.waveId} / 패턴 {data.patternId}", DrawWaveEntry);
         DrawDictionary("스테이지 데이터", manager.StageDataDic, expandedStages,
@@ -90,15 +90,18 @@ public class JsonDataManagerEditor : Editor
         EditorGUILayout.TextField("에셋 경로", data.monsterAsset ?? string.Empty);
     }
 
-    private static void DrawBossAttack(BossAttackData data)
+    private static void DrawMonsterAttack(MonsterAttackData data)
     {
-        EditorGUILayout.IntField("공격 ID", data.bossAttackId);
+        EditorGUILayout.IntField("공격 ID", data.monsterAttackId);
         EditorGUILayout.IntField("몬스터 ID", data.monsterId);
-        EditorGUILayout.TextField("공격 종류 문자열", data.bossAttackType ?? string.Empty);
+        EditorGUILayout.TextField("공격 종류 문자열", data.monsterAttackType ?? string.Empty);
         EditorGUILayout.EnumPopup("공격 종류", data.AttackType);
-        EditorGUILayout.FloatField("쿨다운 (초)", data.bossAttackCooldown);
-        EditorGUILayout.FloatField("사거리", data.bossAttackRange);
-        EditorGUILayout.IntField("피해량", data.bossAttackDamage);
+        EditorGUILayout.FloatField("쿨다운 (초)", data.monsterAttackCooldown);
+        EditorGUILayout.FloatField("공격 시작 거리", data.monsterAttackTriggerRange);
+        EditorGUILayout.IntField("피해량", data.monsterAttackDamage);
+        EditorGUILayout.IntField("발 수 / 장판 수", data.monsterAttackCount);
+        EditorGUILayout.FloatField("산탄 각도", data.monsterAttackAngle);
+        EditorGUILayout.FloatField("독 장판 유지 시간 (초)", data.monsterAttackDuration);
     }
 
     private static void DrawWaveEntry(WaveEntryData data)

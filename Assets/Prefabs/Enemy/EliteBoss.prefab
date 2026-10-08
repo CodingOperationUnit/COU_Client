@@ -134,6 +134,10 @@ MonoBehaviour:
   areaCount: 3
   areaRadius: 1.5
   areaSpread: 3
+  trapPrefab: {fileID: 3910789049569104216, guid: 1a0504243a7615348b0b6bc887792030, type: 3}
+  trapRadius: 1.5
+  trapDefaultDuration: 5
+  trapSpread: 2.5
 --- !u!1 &5214109458787997363
 GameObject:
   m_ObjectHideFlags: 0

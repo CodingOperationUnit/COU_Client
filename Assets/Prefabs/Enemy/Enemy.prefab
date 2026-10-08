@@ -116,6 +116,17 @@ MonoBehaviour:
   currentHp: 0
   isDead: 0
   player: {fileID: 2129776847289895548, guid: ddf2cdd10591fe24994fba07b40bb824, type: 3}
+  projectilePrefab: {fileID: 6102526803870317478, guid: fcb17a9c66770c74ca68170cf7fc4f06, type: 3}
+  projectileSpeed: 5
+  projectileLifeTime: 3
+  areaWarningPrefab: {fileID: 3910789049569104216, guid: 17f98e68633be764d8f459ad954747df, type: 3}
+  areaRadius: 1.2
+  areaDelay: 1
+  areaSpread: 2
+  trapPrefab: {fileID: 3910789049569104216, guid: 1a0504243a7615348b0b6bc887792030, type: 3}
+  trapRadius: 0.8
+  trapDefaultDuration: 3
+  trapSpread: 1
 --- !u!1 &5214109458787997363
 GameObject:
   m_ObjectHideFlags: 0

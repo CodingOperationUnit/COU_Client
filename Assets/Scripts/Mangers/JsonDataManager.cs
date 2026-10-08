@@ -15,8 +15,12 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
     private Dictionary<int, MonsterData> monsterDataDic;
     public Dictionary<int, MonsterData> MonsterDataDic => monsterDataDic;
 
-    private Dictionary<int, BossAttackData> bossAttackDataDic;
-    public IReadOnlyDictionary<int, BossAttackData> BossAttackDataDic => bossAttackDataDic;
+    private Dictionary<int, MonsterAttackData> monsterAttackDataDic;
+    public IReadOnlyDictionary<int, MonsterAttackData> MonsterAttackDataDic => monsterAttackDataDic;
+
+    private Dictionary<int, List<MonsterAttackData>> monsterAttacksByMonsterId = new();
+
+    private static readonly List<MonsterAttackData> EmptyAttacks = new();
 
     private Dictionary<int, WaveEntryData> waveEntryDataDic;
     public IReadOnlyDictionary<int, WaveEntryData> WaveEntryDataDic => waveEntryDataDic;
@@ -45,7 +49,7 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
         if (Instance != this) return;
 
         monsterDataDic = LoadTable(GameConstants.Paths.MonsterData_Json_Path, ParseMonsterData);
-        bossAttackDataDic = LoadTable(GameConstants.Paths.BossAttackData_Json_Path, ParseBossAttackData);
+        monsterAttackDataDic = LoadTable(GameConstants.Paths.MonsterAttackData_Json_Path, ParseMonsterAttackData);
         waveEntryDataDic = LoadTable(GameConstants.Paths.WaveData_Json_Path, ParseWaveData);
         spawnPatternDataDic = LoadTable(GameConstants.Paths.SpawnPatternData_Json_Path, ParseSpawnPatternData);
         stageDataDic = LoadTable(GameConstants.Paths.StageData_Json_Path, ParseStageData);
@@ -53,6 +57,8 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
         dropItemDataDic = LoadTable(GameConstants.Paths.DropItemData_Json_Path, ParseDropItemData);
         dropTableDic = LoadTable(GameConstants.Paths.DropTableData_Json_Path, ParseDropTableData);
         accountConstData = LoadTable(GameConstants.Paths.AccountConstData_Json_Path, ParseAccountConstData);
+
+        RebuildMonsterAttackIndex();
     }
 
     // 로그인 전에 서버 정적 데이터를 확인한다. 요청이 실패하면 가진 데이터를 유지한다
@@ -99,7 +105,7 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
 
             // 모두 파싱한 뒤 저장하고 한 번에 교체한다. 응답에 없는 테이블(null)은 가진 데이터를 유지한다
             var monsters = ParseResponseTable(tables, GameConstants.Paths.MonsterData_Json_Path, ParseMonsterData);
-            var bossAttacks = ParseResponseTable(tables, GameConstants.Paths.BossAttackData_Json_Path, ParseBossAttackData);
+            var monsterAttacks = ParseResponseTable(tables, GameConstants.Paths.MonsterAttackData_Json_Path, ParseMonsterAttackData);
             var waveEntries = ParseResponseTable(tables, GameConstants.Paths.WaveData_Json_Path, ParseWaveData);
             var spawnPatterns = ParseResponseTable(tables, GameConstants.Paths.SpawnPatternData_Json_Path, ParseSpawnPatternData);
             var stages = ParseResponseTable(tables, GameConstants.Paths.StageData_Json_Path, ParseStageData);
@@ -112,7 +118,7 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
             SaveLoadHelper.SaveStaticData(version, tables);
 
             monsterDataDic = monsters ?? monsterDataDic;
-            bossAttackDataDic = bossAttacks ?? bossAttackDataDic;
+            monsterAttackDataDic = monsterAttacks ?? monsterAttackDataDic;
             waveEntryDataDic = waveEntries ?? waveEntryDataDic;
             spawnPatternDataDic = spawnPatterns ?? spawnPatternDataDic;
             stageDataDic = stages ?? stageDataDic;
@@ -126,6 +132,9 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
 
             if (items != null)
                 ItemDatabase.Replace(items);
+
+            if (monsterAttacks != null)
+                RebuildMonsterAttackIndex();
 
             Debug.Log($"정적 데이터를 {version}(으)로 갱신했습니다.");
         }
@@ -188,19 +197,42 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
         return null;
     }
 
-    // 개별 행의 고유 ID로 조회합니다. 실패 시 null을 반환합니다.
-    public BossAttackData GetBossAttackDataFromJson(int bossAttackId)
+    // 공격이 없는 몬스터는 빈 목록(null 체크 불필요)
+    public IReadOnlyList<MonsterAttackData> GetMonsterAttacks(int monsterId)
+        => monsterAttacksByMonsterId.TryGetValue(monsterId, out var list) ? list : EmptyAttacks;
+
+    // monsterAttackDataDic을 monsterId별로 묶는다. 원본이 바뀌는 모든 곳에서 호출해야 한다
+    private void RebuildMonsterAttackIndex()
     {
-        if (bossAttackDataDic == null)
+        var index = new Dictionary<int, List<MonsterAttackData>>();
+        if (monsterAttackDataDic != null)
         {
-            Debug.LogError("BossAttack 데이터가 초기화되지 않았습니다.");
+            foreach (MonsterAttackData data in monsterAttackDataDic.Values)
+            {
+                if (!index.TryGetValue(data.monsterId, out var list))
+                {
+                    list = new List<MonsterAttackData>();
+                    index.Add(data.monsterId, list);
+                }
+                list.Add(data);
+            }
+        }
+        monsterAttacksByMonsterId = index;
+    }
+
+    // 개별 행의 고유 ID로 조회합니다. 실패 시 null을 반환합니다.
+    public MonsterAttackData GetMonsterAttackDataFromJson(int monsterAttackId)
+    {
+        if (monsterAttackDataDic == null)
+        {
+            Debug.LogError("MonsterAttack 데이터가 초기화되지 않았습니다.");
             return null;
         }
 
-        if (bossAttackDataDic.TryGetValue(bossAttackId, out BossAttackData data))
+        if (monsterAttackDataDic.TryGetValue(monsterAttackId, out MonsterAttackData data))
             return data;
 
-        Debug.LogWarning($"등록되지 않은 BossAttack ID: {bossAttackId}");
+        Debug.LogWarning($"등록되지 않은 MonsterAttack ID: {monsterAttackId}");
         return null;
     }
 
@@ -366,27 +398,29 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
         return loadedDatas;
     }
 
-    private static Dictionary<int, BossAttackData> ParseBossAttackData(JObject root)
+    private static Dictionary<int, MonsterAttackData> ParseMonsterAttackData(JObject root)
     {
         JArray rows = root["datas"] as JArray;
         if (rows == null || rows.Count == 0)
-            throw new InvalidOperationException("BossAttack 데이터 목록이 비어 있습니다.");
+            throw new InvalidOperationException("MonsterAttack 데이터 목록이 비어 있습니다.");
 
-        var loadedDatas = new Dictionary<int, BossAttackData>();
+        var loadedDatas = new Dictionary<int, MonsterAttackData>();
         foreach (JToken row in rows)
         {
             if (!(row is JObject))
-                throw new InvalidOperationException("BossAttack 데이터 항목이 객체 형식이 아닙니다.");
+                throw new InvalidOperationException("MonsterAttack 데이터 항목이 객체 형식이 아닙니다.");
 
-            BossAttackData data = row.ToObject<BossAttackData>();
-            if (data == null || data.bossAttackId <= 0)
-                throw new InvalidOperationException("BossAttack 데이터 또는 ID가 올바르지 않습니다.");
+            MonsterAttackData data = row.ToObject<MonsterAttackData>();
+            if (data == null || data.monsterAttackId <= 0)
+                throw new InvalidOperationException("MonsterAttack 데이터 또는 ID가 올바르지 않습니다.");
 
-            if (loadedDatas.ContainsKey(data.bossAttackId))
-                throw new InvalidOperationException($"중복된 BossAttack ID: {data.bossAttackId}");
+            if (loadedDatas.ContainsKey(data.monsterAttackId))
+                throw new InvalidOperationException($"중복된 MonsterAttack ID: {data.monsterAttackId}");
 
-            data.OnLoaded();
-            loadedDatas.Add(data.bossAttackId, data);
+            if (!data.OnLoaded())
+                throw new InvalidOperationException($"MonsterAttack {data.monsterAttackId}의 monsterAttackType \"{data.monsterAttackType}\"을(를) 알 수 없습니다.");
+
+            loadedDatas.Add(data.monsterAttackId, data);
         }
 
         return loadedDatas;
