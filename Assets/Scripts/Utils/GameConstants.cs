@@ -40,5 +40,14 @@ public static class GameConstants
         public const string STATIC_DATA_API = "/api/static-data";
         // 이 빌드가 읽을 수 있는 정적 데이터 버전의 첫째 자리
         public const int STATIC_DATA_MAJOR_VERSION = 1;
+        public const string SIGNUP_API = "/api/accounts/signup";
+        public const string LOGIN_API = "/api/accounts/login";
+    }
+
+    public static class Value
+    {
+        public const int REQUEST_TIMEOUT_SECONDS = 10;
+        public const long CONNECTION_FAILED = 0;
+        public const long ALREADY_REQUESTING = -1; 
     }
 }

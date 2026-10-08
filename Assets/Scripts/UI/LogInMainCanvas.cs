@@ -60,46 +60,80 @@ public class LogInMainCanvas : MonoBehaviour
     {
         if (!CanProceed()) return;
 
-        bool success = GameManager.LocalLogin.SignUp(
-            playerIdInputField.text, passwordInputField.text, out string message
-        );
+        StartCoroutine(GameManager.ServerLogin.SignUp(
+            playerIdInputField.text, passwordInputField.text,
+            (success, message) =>
+            {
+                if (success)
+                {
+                    // 회원가입 완료 안내 -> 확인 버튼을 누르면 자동으로 로그인
+                    popUp_Alarm.Show(message, () => TryLogin(playerIdInputField.text, passwordInputField.text));
+                    Debug.Log("[Login] 회원가입 성공");
+                }
+                else
+                {
+                    popUp_Alarm.Show(message);
+                }
+            }
+        ));
 
-        if (success)
-        {
-            // 회원가입 완료 안내 -> 확인 버튼을 누르면 자동으로 로그인
-            popUp_Alarm.Show(message, () => TryLogin(playerIdInputField.text, passwordInputField.text));
-            Debug.Log("회원가입 성공");
-        }
-        else
-        {
-            popUp_Alarm.Show(message);
-        }
+        // bool success = GameManager.LocalLogin.SignUp(
+        //     playerIdInputField.text, passwordInputField.text, out string message
+        // );
+        //
+        // if (success)
+        // {
+        //     // 회원가입 완료 안내 -> 확인 버튼을 누르면 자동으로 로그인
+        //     popUp_Alarm.Show(message, () => TryLogin(playerIdInputField.text, passwordInputField.text));
+        //     Debug.Log("회원가입 성공");
+        // }
+        // else
+        // {
+        //     popUp_Alarm.Show(message);
+        // }
     }
 
     private void TryLogin(string playerId, string password)
     {
-        string normalizedPlayerId = (playerId ?? string.Empty).Trim().ToLowerInvariant();
+        StartCoroutine(GameManager.ServerLogin.Login(playerId, password, (success, message) =>
+            {
+                if (!success)
+                {
+                    popUp_Alarm.Show(message);
+                    return;
+                }
 
-        // 아이디/비밀번호 검증
-        bool loginSuccess = GameManager.LocalLogin.Login(normalizedPlayerId, password, out string message);
+                var account = GameManager.ServerLogin.CurrentAccount;
+                Debug.Log($"[Login] 서버 로그인 성공: accountId={account.accountId}, loginId={account.accountLoginId}");
 
-        if (!loginSuccess)
-        {
-            popUp_Alarm.Show(message);
-            return;
-        }
+                // TODO(PlayerLoadManager): /api/players/me/save + /api/inventory 불러오기 → PlayerDataManager에 넣기
+                //                          → 성공하면 GameManager.Scene.ChangeScene(GameConstants.SceneNames.MAIN_SCENE);
+                popUp_Alarm.Show($"로그인 성공 (accountId: {account.accountId})");
+            }
+        ));
 
-        // 검증된 계정의 플레이어 JSON 로드 → DataManager에 보관
-        bool loadSuccess = GameManager.LocalSaveLoad.LoadPlayerAfterLogin(normalizedPlayerId);
-
-        if (!loadSuccess)
-        {
-            popUp_Alarm.Show("플레이어 데이터를 불러오지 못했습니다.");
-            return;
-        }
-
-        // 인증과 데이터 로드가 모두 성공하면 입장
-        Debug.Log("로그인 및 플레이어 데이터 로드 완료");
-        GameManager.Scene.ChangeScene(GameConstants.SceneNames.MAIN_SCENE);
+        // string normalizedPlayerId = (playerId ?? string.Empty).Trim().ToLowerInvariant();
+        //
+        // // 아이디/비밀번호 검증
+        // bool loginSuccess = GameManager.LocalLogin.Login(normalizedPlayerId, password, out string message);
+        //
+        // if (!loginSuccess)
+        // {
+        //     popUp_Alarm.Show(message);
+        //     return;
+        // }
+        //
+        // // 검증된 계정의 플레이어 JSON 로드 → DataManager에 보관
+        // bool loadSuccess = GameManager.LocalSaveLoad.LoadPlayerAfterLogin(normalizedPlayerId);
+        //
+        // if (!loadSuccess)
+        // {
+        //     popUp_Alarm.Show("플레이어 데이터를 불러오지 못했습니다.");
+        //     return;
+        // }
+        //
+        // // 인증과 데이터 로드가 모두 성공하면 입장
+        // Debug.Log("로그인 및 플레이어 데이터 로드 완료");
+        // GameManager.Scene.ChangeScene(GameConstants.SceneNames.MAIN_SCENE);
     }
 }
