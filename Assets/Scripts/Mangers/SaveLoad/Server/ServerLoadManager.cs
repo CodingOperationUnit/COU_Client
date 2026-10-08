@@ -43,6 +43,8 @@ public class ServerLoadManager : MonoSingleton<ServerLoadManager>
             request.timeout = GameConstants.Value.REQUEST_TIMEOUT_SECONDS;
 
             yield return request.SendWebRequest();
+            
+            isRequesting = false;   // 응답을 받았으면 성공/실패와 관계없이 다음 요청을 허용한다
 
             if (request.result == UnityWebRequest.Result.ConnectionError)
             {

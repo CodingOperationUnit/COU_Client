@@ -49,11 +49,11 @@ public class SettingsPopup : UIPopup
 
     private void Logout()
     {
-        if (!GameManager.LocalLogin.Logout(out string message))
-        {
-            UIManager.Instance.Get<MessagePopup>().ShowAlert(message);
-            return;
-        }
+        // 서버 데이터는 서버에 이미 저장되어 있으므로 로그아웃 때 따로 저장하지 않는다.
+        GameManager.ServerLogin.Logout(); // 토큰, 계정 정보, PlayerDataManager 데이터 삭제
+        
+        // UIManager는 씬을 넘어 유지되므로, 열려 있는 팝업(설정, 프로필)을 닫고 이동한다.
+        UIManager.Instance.CloseAll();
 
         GameManager.Scene.ChangeScene(GameConstants.SceneNames.LOGIN_SCENE);
     }
