@@ -184,7 +184,7 @@
 
 ### 6.1 기획 값의 저장 방식이 네 가지다
 - JSON이 두 폴더에 나뉘어 있다: `Resources/JsonFiles`(Monster, BossAttack, Wave, SpawnPattern, Stage, Skill, Item, DropItem, DropTable, AccountConst), `Resources/Data`(player)
-- `Resources/JsonFiles`의 JSON은 구글 시트의 같은 이름 탭을 `Tools > Google Sheets > JSON Exporter`로 내보낸 것이다. 원본은 시트이고, JSON만 고치면 다음 내보내기에서 덮어써진다. 시트에는 JSON이 없는 탭(PlayerConst, ItemConst, BattleConst, MonsterConst)도 있다
+- `Resources/JsonFiles`의 JSON은 구글 시트의 같은 이름 탭을 내보낸 것이다(서버 레포 `Tools/SheetExporter`, `StaticDataClient.md` 3장). 원본은 시트이고, JSON만 고치면 다음 내보내기에서 덮어써진다. 시트에는 JSON이 없는 탭(PlayerConst, ItemConst, BattleConst, MonsterConst)도 있다
 - JSON 로더도 나뉘어 있다: `JsonDataManager`(Monster, BossAttack, Wave, SpawnPattern, Stage, Skill, DropItem, DropTable, AccountConst), `ItemDatabase`(Item), `SkillDataBase`(Skill), `PlayerDatabase`(player). Skill.json은 두 곳에서 불러온다. 레벨업 후보 목록은 `JsonDataManager`에서, 스킬 생성과 표시는 `SkillDataBase`에서 읽는다
 - 코드 상수: `ItemLevelConfig`, `SkillBase`, `MaxSkillSlots`, `OptionCount`, `PlayerLuckTrain`, `WeaponSkillTable`, `NodesPerLevel`
 - 인스펙터: `BattleManager`, `PlayerHealth`, `PlayerLuckTrain`, `WaveManager`, `Enemy`, 상점 카드, 투사체 프리팹

@@ -10,6 +10,9 @@ public static class GameManager
     public static JsonDataManager JsonData { get { return JsonDataManager.Instance; } }
     public static DropItemManager DropItem { get { return DropItemManager.Instance; } }
     public static UIManager UI { get { return UIManager.Instance; } }
+    public static ServerLoginManager ServerLogin { get { return ServerLoginManager.Instance; } }
+    public static ServerLoadManager ServerLoad { get { return ServerLoadManager.Instance; } }
+    public static ServerInventoryManager ServerInventory { get { return ServerInventoryManager.Instance; } }
 }
 
 public class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour

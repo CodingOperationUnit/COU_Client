@@ -11,12 +11,30 @@ public class PlayerDataManager : MonoSingleton<PlayerDataManager>
     public string currentAccountLoginId { get; private set; }
 
     // 데이터 정의서 기준 플레이어 ID (PlayerProfile.playerId)
-    public int currentPlayerId => currentData?.profile?.playerId ?? 0;
+    public long currentPlayerId => currentData?.profile?.playerId ?? 0;
 
     public event Action<PlayerSaveData> OnPlayerDataChanged;
 
     // 로컬 JSON에서 읽은 플레이어 데이터를 보관
     public void SetPlayerDataFromLocal(string accountLoginId, PlayerSaveData data)
+    {
+        if (string.IsNullOrWhiteSpace(accountLoginId))
+            throw new ArgumentException("로그인 아이디가 없습니다.", nameof(accountLoginId));
+
+        if (data == null)
+            throw new ArgumentNullException(nameof(data));
+
+        if (data.profile == null || data.profile.playerId <= 0)
+            throw new ArgumentException("플레이어 ID가 없습니다.");
+
+        if (isPlayerDataLoaded)
+            throw new InvalidOperationException("기존 계정 데이터를 해제한 뒤 적용하세요.");
+
+        currentAccountLoginId = accountLoginId;
+        currentData = data;
+    }
+
+    public void SetPlayerDataFromServer(string accountLoginId, PlayerSaveData data)
     {
         if (string.IsNullOrWhiteSpace(accountLoginId))
             throw new ArgumentException("로그인 아이디가 없습니다.", nameof(accountLoginId));

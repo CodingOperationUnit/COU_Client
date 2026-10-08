@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,9 +12,6 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private PlayerLootReceiver lootReceiver;
     [SerializeField] private SkillController skillController;
     [SerializeField] private MonsterSpawner spawner;
-    [SerializeField] private WaveManager wave;
-    [SerializeField] private int accountExpPerKill = 1;       // 임시 값: 기획 확정 후 조정
-    [SerializeField] private int accountExpPerSecond = 1;     // 임시 값: 기획 확정 후 조정
     [SerializeField] private int baseRequiredExp = 6;
     [SerializeField] private int requiredExpIncrement = 6;
     [SerializeField] private float requiredExpAcceleration = 0.3f;
@@ -38,6 +36,10 @@ public class BattleManager : MonoBehaviour
     private int pendingLevelUps;
     private bool ended;
     private float victoryTimer;
+
+    private long battleId;
+    private bool hasBattleId;   // 메인 씬을 거치지 않고 실행하면 battleId가 없어 결과를 보내지 않는다
+    private BattleResultRequest resultRequest;
 
     private int RequiredExp => baseRequiredExp + requiredExpIncrement * (level - 1)
                                + Mathf.RoundToInt(requiredExpAcceleration * (level - 1) * (level - 1));
@@ -71,6 +73,8 @@ public class BattleManager : MonoBehaviour
         selectWindow = UIManager.Instance.Get<SkillSelectWindow>();
 
         selectWindow.OnSelected += HandleSkillSelected;
+
+        hasBattleId = GameManager.Scene.TryConsumePendingBattleId(out battleId);
 
         hud.SetTime(0);
         hud.SetKillCount(0);
@@ -267,26 +271,133 @@ public class BattleManager : MonoBehaviour
         }
         pendingLevelUps = 0;
 
-        var accountExp = kills * accountExpPerKill + seconds * accountExpPerSecond
-                         + (victory ? wave.CurrentStage.clearAccountExp : 0);
-
-        BattleResult.Last = new BattleResult
-        {
-            StageId = wave.CurrentStage.stageId,
-            Victory = victory,
-            Seconds = seconds,
-            Kills = kills,
-            Gold = gold,
-            RewardBoxes = rewardBoxes,
-            AccountExp = accountExp
-        };
-
+        // 킬 수와 생존 시간은 바로 표시하고, 지급값은 서버 응답을 받은 뒤 표시한다
         RequestPause(resultWindow);
         resultWindow.SetTime(seconds);
         resultWindow.SetKillCount(kills);
-        resultWindow.SetGold(gold);
-        resultWindow.SetBoxCount(rewardBoxes);
-        resultWindow.SetExp(accountExp);
         resultWindow.Show(victory);
+
+        if (!hasBattleId)
+        {
+            Debug.LogWarning("[BattleManager] battleId가 없어 결과를 서버로 보내지 않습니다. (메인 씬을 거치지 않은 경우 정상)");
+            resultWindow.SetGold(gold);
+            resultWindow.SetBoxCount(rewardBoxes);
+            resultWindow.SetExp(0);
+            return;
+        }
+
+        resultRequest = new BattleResultRequest
+        {
+            victory = victory,
+            seconds = seconds,
+            kills = kills,
+            gold = gold,
+            rewardBoxes = rewardBoxes
+        };
+
+        resultWindow.SetWaiting(true);
+        StartCoroutine(SendResult());
+    }
+
+    private IEnumerator SendResult()
+    {
+        yield return BattleApi.SendResult(battleId, resultRequest, result =>
+        {
+            if (!result.IsSuccess)
+            {
+                HandleResultError(result);
+                return;
+            }
+
+            // 지급 결과를 덮어쓰고 보상 장비를 inventoryList에 넣는다
+            var response = result.Data;
+            var data = GameManager.PlayerData.currentData;
+            ApplyBattleChanges(data, response.profile, response.currency, response.stageProgress);
+            SetStageRecord(data, response.stageRecord);
+            data.inventoryList.AddRange(response.rewards);
+            GameManager.PlayerData.NotifyPlayerDataChanged();
+
+            resultWindow.SetGold(response.grantedGold);
+            resultWindow.SetExp(response.grantedExp);
+            resultWindow.SetBoxCount(response.rewards.Count);
+            resultWindow.SetWaiting(false);
+
+            // 보상상자 팝업은 메인 씬으로 돌아가 PlayerInventory가 띄운다
+            BattleResult.Rewards = response.rewards;
+        });
+    }
+
+    private void HandleResultError(ApiResult<BattleResultResponse> result)
+    {
+        var popup = UIManager.Instance.Get<MessagePopup>();
+
+        // 통신 실패와 5xx는 같은 battleId로 다시 보낸다
+        if (result.FailType == ApiFailType.NetworkError || result.StatusCode >= 500)
+        {
+            popup.ShowAlert("결과를 보내지 못했습니다. 확인을 누르면 다시 보냅니다.", () => StartCoroutine(SendResult()));
+            return;
+        }
+
+        switch (result.Error?.code)
+        {
+            // 첫 요청이 반영됐는데 응답을 받지 못한 경우: 지급값은 표시할 수 없고 세이브를 다시 받는다
+            case BattleApi.ErrorBattleAlreadyCompleted:
+                StartCoroutine(ReloadSave());
+                break;
+
+            // 결과를 보내기 전에 새 전투에 입장한 경우: 보상 없이 닫는다
+            case BattleApi.ErrorBattleExpired:
+                resultWindow.SetGold(0);
+                resultWindow.SetExp(0);
+                resultWindow.SetBoxCount(0);
+                resultWindow.SetWaiting(false);
+                popup.ShowAlert("만료된 전투라 보상을 받을 수 없습니다.");
+                break;
+
+            default:
+                resultWindow.SetWaiting(false);
+                popup.ShowAlert(string.IsNullOrEmpty(result.Error?.message) ? "결과를 반영하지 못했습니다." : result.Error.message);
+                break;
+        }
+    }
+
+    // 세이브를 다시 받아 전투가 바꾸는 값을 덮어쓴다
+    // TODO(인벤토리 연동): 보상 장비까지 받으려면 GET /api/inventory도 다시 받아야 한다. 지금은 inventoryList를 유지한다
+    private IEnumerator ReloadSave()
+    {
+        yield return GameManager.ServerLoad.RequestSave((loaded, message) =>
+        {
+            resultWindow.SetWaiting(false);
+
+            if (loaded == null)
+            {
+                UIManager.Instance.Get<MessagePopup>().ShowAlert(message);
+                return;
+            }
+
+            var data = GameManager.PlayerData.currentData;
+            ApplyBattleChanges(data, loaded.profile, loaded.currency, loaded.stageProgress);
+            data.stageRecords = loaded.stageRecords;
+            GameManager.PlayerData.NotifyPlayerDataChanged();
+        });
+    }
+
+    // 전투가 바꾸는 값: 계정 레벨·경험치, 재화, 스테이지 진행
+    // profile은 장착 칸을 유지하려고 레벨과 경험치만 옮긴다
+    private static void ApplyBattleChanges(PlayerSaveData data, PlayerProfileData profile, CurrencyData currency, StageProgressData stageProgress)
+    {
+        data.profile.accountLevel = profile.accountLevel;
+        data.profile.accountExp = profile.accountExp;
+        data.currency = currency;
+        data.stageProgress = stageProgress;
+    }
+
+    private static void SetStageRecord(PlayerSaveData data, StageRecordSaveData record)
+    {
+        int index = data.stageRecords.FindIndex(saved => saved.stageId == record.stageId);
+        if (index >= 0)
+            data.stageRecords[index] = record;
+        else
+            data.stageRecords.Add(record);
     }
 }

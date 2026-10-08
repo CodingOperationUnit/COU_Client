@@ -1,13 +1,7 @@
-public class BattleResult
-{
-    // 씬 전환 후 메인씬에서 읽는 가장 최근 전투 결과
-    public static BattleResult Last { get; set; }
+using System.Collections.Generic;
 
-    public int StageId;
-    public bool Victory;
-    public int Seconds;
-    public int Kills;
-    public int Gold;
-    public int RewardBoxes;
-    public int AccountExp;
+public static class BattleResult
+{
+    // 씬 전환 후 메인 씬에서 보상상자 팝업으로 보여줄 직전 전투의 보상 장비 (inventoryList에는 이미 들어가 있다)
+    public static List<InventoryData> Rewards { get; set; }
 }

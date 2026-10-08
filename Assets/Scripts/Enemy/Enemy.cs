@@ -114,7 +114,7 @@ public abstract class Enemy : MonoBehaviour, IPoolable
         float distance = Vector2.Distance(transform.position, player.transform.position);
         if (distance > attackRange) { return; }
 
-        playerHealth.GetDamage(Data.monsterAttackPoint);
+        playerHealth.GetDamage(Data.monsterContactDamage);
         nextAttackTime = Time.time + attackInterval;
     }
 

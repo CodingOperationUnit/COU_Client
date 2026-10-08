@@ -9,16 +9,16 @@ public class EvolutionNodeView : MonoBehaviour
     [SerializeField] private Image icon;
     [SerializeField] private Color unlockedBorderColor;
     [SerializeField] private Color unlockedInnerColor;
-    [SerializeField] private Color lockedBorderColor;
-    [SerializeField] private Color lockedInnerColor;
-    [SerializeField] private Color lockedIconColor;
+    [SerializeField] private UIColor lockedBorderColor = UIColor.Raised;
+    [SerializeField] private UIColor lockedInnerColor = UIColor.Surface;
+    [SerializeField] private UIColor lockedIconColor = UIColor.Raised;
 
     public Button Button => button;
 
     public void Set(EvolutionNodeInfo node, bool unlocked)
     {
-        border.color = unlocked ? unlockedBorderColor : lockedBorderColor;
-        inner.color = unlocked ? unlockedInnerColor : lockedInnerColor;
-        icon.color = unlocked ? node.iconColor : lockedIconColor;
+        border.color = unlocked ? unlockedBorderColor : UIPalette.Get(lockedBorderColor);
+        inner.color = unlocked ? unlockedInnerColor : UIPalette.Get(lockedInnerColor);
+        icon.color = unlocked ? node.iconColor : UIPalette.Get(lockedIconColor);
     }
 }

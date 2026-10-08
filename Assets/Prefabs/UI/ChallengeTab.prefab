@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6011839990464797555}
   - component: {fileID: 1487807007833215752}
   - component: {fileID: 7293396773751257519}
+  - component: {fileID: 5210962558141152951}
   m_Layer: 5
   m_Name: Title
   m_TagString: Untagged
@@ -137,6 +138,19 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &5210962558141152951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 311549062204608707}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 5
 --- !u!1 &454003965503779620
 GameObject:
   m_ObjectHideFlags: 0
@@ -663,6 +677,7 @@ GameObject:
   - component: {fileID: 6001681929169700076}
   - component: {fileID: 716121171459410223}
   - component: {fileID: 5313637106098574580}
+  - component: {fileID: 8182505387103124121}
   m_Layer: 5
   m_Name: Bg
   m_TagString: Untagged
@@ -727,6 +742,19 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8182505387103124121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1382933006945897620}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 0
 --- !u!1 &1450197363662157878
 GameObject:
   m_ObjectHideFlags: 0
@@ -867,6 +895,7 @@ GameObject:
   - component: {fileID: 5094464728655389927}
   - component: {fileID: 4447942223936064079}
   - component: {fileID: 3468340452636801660}
+  - component: {fileID: 966968223253204085}
   m_Layer: 5
   m_Name: Card3
   m_TagString: Untagged
@@ -977,6 +1006,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &966968223253204085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1692031615789053747}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 0
 --- !u!1 &2076348723369527266
 GameObject:
   m_ObjectHideFlags: 0
@@ -1974,6 +2016,7 @@ GameObject:
   - component: {fileID: 269302523947568297}
   - component: {fileID: 6301715897466141537}
   - component: {fileID: 7112986819716352168}
+  - component: {fileID: 7126515913320596193}
   m_Layer: 5
   m_Name: Bg
   m_TagString: Untagged
@@ -2038,6 +2081,19 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &7126515913320596193
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5254651897000847989}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 1
 --- !u!1 &5518346116876690748
 GameObject:
   m_ObjectHideFlags: 0
@@ -2432,6 +2488,7 @@ GameObject:
   - component: {fileID: 946936008739918512}
   - component: {fileID: 8001918253133066594}
   - component: {fileID: 8914634314234447097}
+  - component: {fileID: 6702812115308505157}
   m_Layer: 5
   m_Name: Outline
   m_TagString: Untagged
@@ -2496,6 +2553,19 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 2
+--- !u!114 &6702812115308505157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6371400663021921193}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 0
 --- !u!1 &6858962395164516625
 GameObject:
   m_ObjectHideFlags: 0
@@ -2508,6 +2578,7 @@ GameObject:
   - component: {fileID: 4803639410571658874}
   - component: {fileID: 2439184753070871108}
   - component: {fileID: 132524230440638275}
+  - component: {fileID: 8465247243619543322}
   m_Layer: 5
   m_Name: Card2
   m_TagString: Untagged
@@ -2618,6 +2689,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &8465247243619543322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6858962395164516625}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 0
 --- !u!1 &6887921143690980748
 GameObject:
   m_ObjectHideFlags: 0
@@ -3272,6 +3356,7 @@ GameObject:
   - component: {fileID: 7359216925603367377}
   - component: {fileID: 1365962515419897103}
   - component: {fileID: 4887240233950773683}
+  - component: {fileID: 273771399713982047}
   m_Layer: 5
   m_Name: Card1
   m_TagString: Untagged
@@ -3382,3 +3467,16 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &273771399713982047
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8896764776566554648}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 0

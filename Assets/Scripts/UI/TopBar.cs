@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class TopBar : UIView
 {
+    [SerializeField] private Button profileButton;
     [SerializeField] private TMP_Text nicknameText;
     [SerializeField] private TMP_Text levelText;
     [SerializeField] private Image expFill;
@@ -13,6 +14,11 @@ public class TopBar : UIView
     [SerializeField] private TMP_Text coinText;
     [SerializeField] private TMP_Text gemText;
     [SerializeField] private TMP_Text goldText;
+
+    private void Awake()
+    {
+        profileButton.onClick.AddListener(() => UIManager.Instance.Open<ProfilePopup>());
+    }
 
     public void SetNickname(string nickname)
         => nicknameText.text = nickname;

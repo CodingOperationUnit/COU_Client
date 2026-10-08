@@ -8,7 +8,7 @@ public class JsonDataManagerEditor : Editor
 {
     // 데이터 종류마다 펼침 상태를 분리합니다. 같은 ID가 있어도 서로 영향을 주지 않습니다.
     private readonly HashSet<int> expandedMonsters = new();
-    private readonly HashSet<int> expandedBossAttacks = new();
+    private readonly HashSet<int> expandedMonsterAttacks = new();
     private readonly HashSet<int> expandedWaveEntries = new();
     private readonly HashSet<int> expandedStages = new();
     private readonly HashSet<int> expandedSkills = new();
@@ -20,8 +20,8 @@ public class JsonDataManagerEditor : Editor
         var manager = (JsonDataManager)target;
         DrawDictionary("몬스터 데이터", manager.MonsterDataDic, expandedMonsters,
             data => data.monsterName, DrawMonster);
-        DrawDictionary("보스 공격 데이터", manager.BossAttackDataDic, expandedBossAttacks,
-            data => $"몬스터 {data.monsterId} / {data.bossAttackType}", DrawBossAttack);
+        DrawDictionary("몬스터 공격 데이터", manager.MonsterAttackDataDic, expandedMonsterAttacks,
+            data => $"몬스터 {data.monsterId} / {data.monsterAttackType}", DrawMonsterAttack);
         DrawDictionary("웨이브 데이터", manager.WaveEntryDataDic, expandedWaveEntries,
             data => $"웨이브 {data.waveId} / 패턴 {data.patternId}", DrawWaveEntry);
         DrawDictionary("스테이지 데이터", manager.StageDataDic, expandedStages,
@@ -85,21 +85,23 @@ public class JsonDataManagerEditor : Editor
         EditorGUILayout.TextField("종류 문자열", data.monsterType ?? string.Empty);
         EditorGUILayout.EnumPopup("종류", data.Type);
         EditorGUILayout.IntField("최대 체력", data.monsterMaxHealthPoint);
-        EditorGUILayout.IntField("경험치", data.monsterExp);
         EditorGUILayout.FloatField("이동 속도", data.monsterMoveSpeed);
-        EditorGUILayout.IntField("공격력", data.monsterAttackPoint);
+        EditorGUILayout.IntField("접촉 피해량", data.monsterContactDamage);
         EditorGUILayout.TextField("에셋 경로", data.monsterAsset ?? string.Empty);
     }
 
-    private static void DrawBossAttack(BossAttackData data)
+    private static void DrawMonsterAttack(MonsterAttackData data)
     {
-        EditorGUILayout.IntField("공격 ID", data.bossAttackId);
+        EditorGUILayout.IntField("공격 ID", data.monsterAttackId);
         EditorGUILayout.IntField("몬스터 ID", data.monsterId);
-        EditorGUILayout.TextField("공격 종류 문자열", data.bossAttackType ?? string.Empty);
+        EditorGUILayout.TextField("공격 종류 문자열", data.monsterAttackType ?? string.Empty);
         EditorGUILayout.EnumPopup("공격 종류", data.AttackType);
-        EditorGUILayout.FloatField("쿨다운 (초)", data.bossAttackCooldown);
-        EditorGUILayout.FloatField("사거리", data.bossAttackRange);
-        EditorGUILayout.IntField("피해량", data.bossAttackDamage);
+        EditorGUILayout.FloatField("쿨다운 (초)", data.monsterAttackCooldown);
+        EditorGUILayout.FloatField("공격 시작 거리", data.monsterAttackTriggerRange);
+        EditorGUILayout.IntField("피해량", data.monsterAttackDamage);
+        EditorGUILayout.IntField("발 수 / 장판 수", data.monsterAttackCount);
+        EditorGUILayout.FloatField("산탄 각도", data.monsterAttackAngle);
+        EditorGUILayout.FloatField("독 장판 유지 시간 (초)", data.monsterAttackDuration);
     }
 
     private static void DrawWaveEntry(WaveEntryData data)
@@ -126,6 +128,7 @@ public class JsonDataManagerEditor : Editor
     {
         EditorGUILayout.IntField("스킬 ID", data.skillId);
         EditorGUILayout.TextField("이름", data.skillName ?? string.Empty);
+        EditorGUILayout.EnumPopup("카테고리", data.skillCategory);
         EditorGUILayout.TextField("설명", data.skillDescription ?? string.Empty);
         EditorGUILayout.TextField("타겟 종류 문자열", data.skillType ?? string.Empty);
         EditorGUILayout.EnumPopup("타겟 종류", data.TargetType);
@@ -133,6 +136,11 @@ public class JsonDataManagerEditor : Editor
         EditorGUILayout.FloatField("속도", data.skillSpeed);
         EditorGUILayout.FloatField("피해량", data.skillDamage);
         EditorGUILayout.FloatField("사거리", data.skillRange);
+        EditorGUILayout.TextField("레벨1 설명", data.level1SkillDescription ?? string.Empty);
+        EditorGUILayout.TextField("레벨2 설명", data.level2SkillDescription ?? string.Empty);
+        EditorGUILayout.TextField("레벨3 설명", data.level3SkillDescription ?? string.Empty);
+        EditorGUILayout.TextField("레벨4 설명", data.level4SkillDescription ?? string.Empty);
+        EditorGUILayout.TextField("레벨5 설명", data.level5SkillDescription ?? string.Empty);
     }
 
     public override bool RequiresConstantRepaint()

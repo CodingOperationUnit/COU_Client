@@ -5,12 +5,18 @@ using UnityEngine.InputSystem;
 
 public class UIManager : MonoSingleton<UIManager>
 {
+    private const string ThemeKey = "UITheme";
+
     [SerializeField] private Canvas overlayCanvas;
 
     private readonly Dictionary<Type, UIView> views = new();
     private readonly List<UIPopup> popups = new();
 
     private InputAction cancelAction;
+
+    public UITheme Theme { get; private set; }
+
+    public event Action ThemeChanged;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Bootstrap()
@@ -20,6 +26,7 @@ public class UIManager : MonoSingleton<UIManager>
     {
         base.Awake();
 
+        Theme = (UITheme)PlayerPrefs.GetInt(ThemeKey, (int)UITheme.Dark);
         Register(overlayCanvas, UILayer.Overlay);
 
         cancelAction = InputSystem.actions.FindAction("UI/Cancel");
@@ -84,4 +91,11 @@ public class UIManager : MonoSingleton<UIManager>
 
     internal void RemovePopup(UIPopup popup)
         => popups.Remove(popup);
+
+    public void SetTheme(UITheme theme)
+    {
+        Theme = theme;
+        PlayerPrefs.SetInt(ThemeKey, (int)theme);
+        ThemeChanged?.Invoke();
+    }
 }

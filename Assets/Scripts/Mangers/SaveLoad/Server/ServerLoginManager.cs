@@ -1,0 +1,132 @@
+using System;
+using System.Collections;
+using System.Text.RegularExpressions;
+
+public class ServerLoginManager : MonoSingleton<ServerLoginManager>
+{
+    // 토큰은 ApiClient가 보관한다
+    // 로그인 여부는 계정 정보로 판단한다 (에디터에서는 ApiClient에 개발용 토큰이 미리 있을 수 있음)
+    public ServerAccountData CurrentAccount { get; private set; }
+    public bool IsLoggedIn => CurrentAccount != null;
+    
+    // 버튼을 연타해도 요청이 한 번만 나가도록 막는다
+    private bool isRequesting;
+    
+    // 회원가입: onComplete(성공 여부, 안내 메시지)
+    public IEnumerator SignUp(string accountLoginId, string password, Action<bool, string> onComplete)
+    {
+        if (IsLoggedIn)
+        {
+            onComplete?.Invoke(false, "로그아웃 후 회원가입하세요.");
+            yield break;
+        }
+
+        accountLoginId = NormalizeLoginId(accountLoginId);
+        
+        // 서버와 같은 규칙으로 먼저 검사해서 불필요한 요청을 줄인다
+        if (!Regex.IsMatch(accountLoginId, @"^[a-z0-9_]{3,20}$"))
+        {
+            onComplete?.Invoke(false, "아이디는 영문, 숫자, 밑줄로 3 ~ 20자 입력해주세요.");
+            yield break;
+        }
+
+        if (string.IsNullOrWhiteSpace(password))
+        {
+            onComplete?.Invoke(false, "비밀번호를 입력해주세요.");
+            yield break;
+        }
+
+        if (isRequesting)
+        {
+            onComplete?.Invoke(false, "요청을 처리하고 있습니다. 잠시만 기다려 주세요.");
+            yield break;
+        }
+
+        isRequesting = true;
+
+        var body = new SignupRequest
+        {
+            accountLoginId = accountLoginId,
+            password = password
+        };
+
+        yield return AccountApi.Signup(body, result =>
+        {
+            isRequesting = false;
+
+            if (result.IsSuccess)
+                onComplete?.Invoke(true, "회원가입이 완료되었습니다.");
+            else
+                onComplete?.Invoke(false, result.ToUserMessage("회원가입에 실패했습니다."));
+        });
+    }
+    
+    // 로그인: 성공하면 토큰을 ApiClient에 넣고 계정 정보를 보관한다.
+    public IEnumerator Login(string accountLoginId, string password, Action<bool, string> onComplete)
+    {
+        if (IsLoggedIn)
+        {
+            onComplete?.Invoke(false, "이미 로그인되어 있습니다.");
+            yield break;
+        }
+
+        accountLoginId = NormalizeLoginId(accountLoginId);
+
+        if (string.IsNullOrEmpty(accountLoginId) || string.IsNullOrEmpty(password))
+        {
+            onComplete?.Invoke(false, "아이디와 비밀번호를 입력해주세요.");
+            yield break;
+        }
+
+        if (isRequesting)
+        {
+            onComplete?.Invoke(false, "요청을 처리하고 있습니다. 잠시만 기다려 주세요.");
+            yield break;
+        }
+
+        isRequesting = true;
+
+        var body = new LoginRequest
+        {
+            accountLoginId = accountLoginId,
+            password = password
+        };
+
+        yield return AccountApi.Login(body, result =>
+        {
+            isRequesting = false;
+
+            if (!result.IsSuccess)
+            {
+                // 로그인의 401은 만료가 아니라 아이디/비밀번호 불일치 (아이디 존재 여부는 구분하지 않음)
+                string message = result.FailType == ApiFailType.Unauthorized
+                    ? "아이디 또는 비밀번호가 일치하지 않습니다."
+                    : result.ToUserMessage("로그인에 실패했습니다.");
+
+                onComplete?.Invoke(false, message);
+                return;
+            }
+
+            if (string.IsNullOrEmpty(result.Data?.accessToken))
+            {
+                onComplete?.Invoke(false, "로그인 응답에 토큰이 없습니다.");
+                return;
+            }
+
+            ApiClient.SetAccessToken(result.Data.accessToken);
+            CurrentAccount = result.Data.account;
+            onComplete?.Invoke(true, "로그인되었습니다.");
+        });
+    }
+    
+    // 로그아웃: 서버에 따로 알릴 필요 없이 토큰과 플레이어 데이터를 지운다
+    public void Logout()
+    {
+        CurrentAccount = null;
+        ApiClient.ClearAccessToken();
+        GameManager.PlayerData.ClearPlayerData();
+    }
+
+    private static string NormalizeLoginId(string accountLoginId)
+        => (accountLoginId ?? string.Empty).Trim().ToLowerInvariant();
+}
