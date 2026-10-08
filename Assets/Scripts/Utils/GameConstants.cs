@@ -42,7 +42,9 @@ public static class GameConstants
         public const int STATIC_DATA_MAJOR_VERSION = 2;
         public const string SIGNUP_API = "/api/accounts/signup";
         public const string LOGIN_API = "/api/accounts/login";
-        public const string PLAYER_SAVE_API = "/api/players/me/save"; 
+        public const string PLAYER_SAVE_API = "/api/players/me/save";
+        public const string BATTLE_API = "/api/battles";
+        public const string BATTLE_RESULT_API = "/api/battles/{0}/result";   // {0}: battleId
     }
 
     public static class Value
