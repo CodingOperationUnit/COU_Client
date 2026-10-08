@@ -19,7 +19,7 @@ public static class GameConstants
     {
         public const string ACCOUNT_SAVE_PATH = "accounts.json";
         public const string PLAYER_DIRECTORY = "Players";
-        public const string BossAttackData_Json_Path = "Data/BossAttack";
+        public const string MonsterAttackData_Json_Path = "Data/MonsterAttack";
         public const string WaveData_Json_Path = "Data/Wave";
         public const string SpawnPatternData_Json_Path = "Data/SpawnPattern";
         public const string DropTableData_Json_Path = "Data/DropTable";
@@ -42,7 +42,8 @@ public static class GameConstants
         public const int STATIC_DATA_MAJOR_VERSION = 2;
         public const string SIGNUP_API = "/api/accounts/signup";
         public const string LOGIN_API = "/api/accounts/login";
-        public const string PLAYER_SAVE_API = "/api/players/me/save"; 
+        public const string PLAYER_SAVE_API = "/api/players/me/save";
+        public const string INVENTORY_API = "/api/inventory";   // Server 클래스에 추가
     }
 
     public static class Value

@@ -41,16 +41,22 @@ public class BossMonster : Enemy
     [SerializeField] private float areaRadius = 1.5f;      // 폭발 반지름
     [SerializeField] private float areaSpread = 3f;        // 플레이어 주변으로 흩어지는 범위
 
+    [Header("Trap : Poison Zone")]
+    [SerializeField] private GameObject trapPrefab;           // TrapZone.prefab
+    [SerializeField] private float trapRadius = 1.5f;         // 독 장판 반지름 (엘리트·보스 공용)
+    [SerializeField] private float trapDefaultDuration = 5f;  // 시트 monsterAttackDuration이 0일 때
+    [SerializeField] private float trapSpread = 2.5f;         // 첫 장판(발밑) 외 나머지가 흩어지는 범위
+
     // 보스 공격패턴 목록과, 패턴별 "다음 사용 가능 시각" (같은 인덱스끼리 짝)
-    private readonly List<BossAttackData> bossAttacks = new();
-    private readonly List<float> bossAttackReadyTimes = new();
+    private readonly List<MonsterAttackData> attacks = new();
+    private readonly List<float> attackReadyTimes = new();
 
     // 쓸 수 있는 패턴의 인덱스를 잠깐 담는 목록
     private readonly List<int> readyIndexBuffer = new();
 
     private BossState state;
     private float stateTimer;               // 현재 상태의 남은 시간
-    private BossAttackData currentAttack;   // 지금 쓰고 있는 패턴
+    private MonsterAttackData currentAttack;   // 지금 쓰고 있는 패턴
 
     private Vector3 dashDirection;          // 돌진 방향 (예고 시작 때 고정됨)
     private float dashRemaining;            // 남은 돌진 거리
@@ -68,25 +74,18 @@ public class BossMonster : Enemy
     protected override void OnInit()
     {
         // 보스면 공격패턴 장착. 첫 사용은 쿨타임만큼 지난 뒤(등장하자마자 몰아치지 않게)
-        bossAttacks.Clear();
-        bossAttackReadyTimes.Clear();
+        attacks.Clear();
+        attackReadyTimes.Clear();
 
         // 풀에서 재사용될 때 이전 전투의 상태가 남지 않게 초기화
         currentAttack = null;
         RestoreColor();
         EnterState(BossState.Chase);
 
-        // 보스 공격패턴 전체를 훑어 해당 보스(monsterId)의 패턴만 추출
-        var allBossAttacks = GameManager.JsonData.BossAttackDataDic;
-        if (allBossAttacks == null) { return; }   // 로드 실패 → 접촉 공격만 함
-
-        foreach (BossAttackData attack in allBossAttacks.Values)
+        foreach (MonsterAttackData attack in GameManager.JsonData.GetMonsterAttacks(Data.monsterId))
         {
-            // 다른 보스의 패턴은 건너뜀
-            if (attack.monsterId != Data.monsterId) { continue; }
-
-            bossAttacks.Add(attack);
-            bossAttackReadyTimes.Add(Time.time + attack.bossAttackCooldown);
+            attacks.Add(attack);
+            attackReadyTimes.Add(Time.time + attack.monsterAttackCooldown);
         }
     }
 
@@ -99,8 +98,8 @@ public class BossMonster : Enemy
     // IPoolable: 풀로 돌아갈 때 정리
     protected override void OnDespawned()
     {
-        bossAttacks.Clear();
-        bossAttackReadyTimes.Clear();
+        attacks.Clear();
+        attackReadyTimes.Clear();
         currentAttack = null;
         RestoreColor();
     }
@@ -165,23 +164,23 @@ public class BossMonster : Enemy
     // 쿨타임이 끝났고 사거리 안인 패턴 중 하나를 랜덤으로 골라 예고 시작
     private bool TryStartAttack()
     {
-        if (playerHealth == null || bossAttacks.Count == 0) { return false; }
+        if (playerHealth == null || attacks.Count == 0) { return false; }
 
         float distance = Vector2.Distance(transform.position, player.transform.position);
 
         readyIndexBuffer.Clear();
-        for (int i = 0; i < bossAttacks.Count; i++)
+        for (int i = 0; i < attacks.Count; i++)
         {
-            if (Time.time < bossAttackReadyTimes[i]) { continue; }   // 쿨타임 중
-            if (distance > bossAttacks[i].bossAttackRange) { continue; }   // 사거리 밖 (bossAttackRange = 사용 조건 거리)
+            if (Time.time < attackReadyTimes[i]) { continue; }   // 쿨타임 중
+            if (distance > attacks[i].monsterAttackTriggerRange) { continue; }   // 공격 시작 거리 밖
             readyIndexBuffer.Add(i);
         }
 
         if (readyIndexBuffer.Count == 0) { return false; }
 
         int index = readyIndexBuffer[Random.Range(0, readyIndexBuffer.Count)];
-        currentAttack = bossAttacks[index];
-        bossAttackReadyTimes[index] = Time.time + currentAttack.bossAttackCooldown;   // 쿨타임은 "예고 시작" 기준
+        currentAttack = attacks[index];
+        attackReadyTimes[index] = Time.time + currentAttack.monsterAttackCooldown;   // 쿨타임은 "예고 시작" 기준
 
         StartWindUp();
         return true;
@@ -194,13 +193,13 @@ public class BossMonster : Enemy
 
         switch (currentAttack.AttackType)
         {
-            case BossAttackType.Melee:
+            case MonsterAttackType.Melee:
                 // 돌진 방향을 "지금" 고정시킴
                 dashDirection = (player.transform.position - transform.position).normalized;
                 if (dashDirection.sqrMagnitude < 0.0001f) dashDirection = Vector3.right;   // 완전히 겹쳐 있을 때 대비
                 break;
 
-            case BossAttackType.Area:
+            case MonsterAttackType.Area:
                 // 경고 원은 예고 시작과 동시에 깔고, windupTime 뒤에 스스로 터짐
                 SpawnAreaWarnings();
                 break;
@@ -224,20 +223,26 @@ public class BossMonster : Enemy
         switch (currentAttack.AttackType)
         {
             // 돌진
-            case BossAttackType.Melee:
+            case MonsterAttackType.Melee:
                 dashRemaining = dashDistance;
                 dashHit = false;
                 EnterState(BossState.Attacking);   // 돌진은 여러 프레임에 걸쳐 이동
                 break;
 
             // 산탄
-            case BossAttackType.Ranged:
+            case MonsterAttackType.Ranged:
                 FireSpread();
                 EnterState(BossState.Recovery);
                 break;
 
             // 경고 장판 폭발
-            case BossAttackType.Area:
+            case MonsterAttackType.Area:
+                EnterState(BossState.Recovery);
+                break;
+
+            // 독 장판: 예고(깜빡임)가 끝나면 장판을 깔고 바로 후딜레이로
+            case MonsterAttackType.Trap:
+                SpawnTraps();
                 EnterState(BossState.Recovery);
                 break;
         }
@@ -265,7 +270,7 @@ public class BossMonster : Enemy
             Vector2.Distance(transform.position, player.transform.position) <= dashHitRadius)
         {
             dashHit = true;
-            playerHealth?.GetDamage(currentAttack.bossAttackDamage);
+            playerHealth?.GetDamage(currentAttack.monsterAttackDamage);
         }
 
         if (dashRemaining <= 0f) EnterState(BossState.Recovery);
@@ -283,10 +288,9 @@ public class BossMonster : Enemy
         Vector2 baseDir = ((Vector2)(player.transform.position - transform.position)).normalized;
         if (baseDir == Vector2.zero) baseDir = Vector2.right;
 
-        // TODO(내일 시트 수정 후) : int count = currentAttack.count > 0 ? currentAttack.count : projectileCount;
-        int count = Mathf.Max(1, projectileCount);
-        // TODO(내일 시트 수정 후) : float angle = currentAttack.angle > 0f ? currentAttack.angle : spreadAngle;
-        float angle = spreadAngle;
+        // 시트 값이 있으면 쓰고, 0이면 인스펙터 기본값
+        int count = Mathf.Max(1, currentAttack.monsterAttackCount > 0 ? currentAttack.monsterAttackCount : projectileCount);
+        float angle = currentAttack.monsterAttackAngle > 0f ? currentAttack.monsterAttackAngle : spreadAngle;
 
         // 360도(원형)일 때는 첫 발과 마지막 발이 겹치지 않도록 count로 나눔
         bool fullCircle = angle >= 360f;
@@ -299,7 +303,7 @@ public class BossMonster : Enemy
 
             GameObject obj = GameManager.ObjectPool.GetObject(projectilePrefab, transform.position, Quaternion.identity);
             obj.GetComponent<BossProjectile>()?.Launch(
-                dir, projectileSpeed, currentAttack.bossAttackDamage, projectileLifeTime,
+                dir, projectileSpeed, currentAttack.monsterAttackDamage, projectileLifeTime,
                 player.transform, playerHealth);
         }
     }
@@ -313,8 +317,8 @@ public class BossMonster : Enemy
             return;
         }
 
-        // TODO(내일 시트 수정 후) : int count = currentAttack.count > 0 ? currentAttack.count : areaCount;
-        int count = Mathf.Max(1, areaCount);
+        // 시트 값이 있으면 쓰고, 0이면 인스펙터 기본값
+        int count = Mathf.Max(1, currentAttack.monsterAttackCount > 0 ? currentAttack.monsterAttackCount : areaCount);
 
         for (int i = 0; i < count; i++)
         {
@@ -323,7 +327,31 @@ public class BossMonster : Enemy
 
             GameObject obj = GameManager.ObjectPool.GetObject(areaWarningPrefab, position, Quaternion.identity);
             obj.GetComponent<BossAreaWarning>()?.Begin(
-                areaRadius, windupTime, currentAttack.bossAttackDamage,
+                areaRadius, windupTime, currentAttack.monsterAttackDamage,
+                player.transform, playerHealth);
+        }
+    }
+
+    // [Trap] 독 장판: 첫 번째는 자기 발밑, 나머지는 주변에 흩뿌림
+    private void SpawnTraps()
+    {
+        if (trapPrefab == null)
+        {
+            Debug.LogWarning("[Boss] trapPrefab이 연결되지 않았습니다.");
+            return;
+        }
+
+        int count = Mathf.Max(1, currentAttack.monsterAttackCount);
+        float duration = currentAttack.monsterAttackDuration > 0f ? currentAttack.monsterAttackDuration : trapDefaultDuration;
+
+        for (int i = 0; i < count; i++)
+        {
+            Vector2 offset = i == 0 ? Vector2.zero : Random.insideUnitCircle * trapSpread;
+            Vector3 position = transform.position + (Vector3)offset;
+
+            GameObject obj = GameManager.ObjectPool.GetObject(trapPrefab, position, Quaternion.identity);
+            obj.GetComponent<TrapZone>()?.Begin(
+                trapRadius, duration, currentAttack.monsterAttackDamage,
                 player.transform, playerHealth);
         }
     }

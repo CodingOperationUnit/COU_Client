@@ -77,7 +77,7 @@ public class PlayerDataManagerEditor : Editor
             EditorGUILayout.IntField("골드", currency.currencyGold);
             EditorGUILayout.IntField("보석", currency.currencyGem);
             EditorGUILayout.TextField("스태미나 (Energy)", $"{currency.currencyEnergy} / {maxStamina}");
-            EditorGUILayout.TextField("스태미나 갱신 시각", FormatDate(currency.currencyEnergyUpdatedAt));
+            EditorGUILayout.TextField("스태미나 갱신 시각", FormatDate(currency.currencyEnergyUpdatedAt?.LocalDateTime));
         }
     }
 
