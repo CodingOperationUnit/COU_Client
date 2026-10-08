@@ -25,15 +25,6 @@ public class LoginResponse
     public ServerAccountData account;      // SaveData.cs의 기존 클래스 재사용
 }
 
-// 실패 응답 형식: { status, code, message }
-[Serializable]
-public class ErrorResponse
-{
-    public int status;
-    public string code;
-    public string message;
-}
-
 [Serializable]
 public class BattleEnterRequest
 {

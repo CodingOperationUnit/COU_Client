@@ -301,13 +301,21 @@ public class BattleManager : MonoBehaviour
 
     private IEnumerator SendResult()
     {
-        yield return GameManager.ServerBattle.SendResult(battleId, resultRequest, (response, error) =>
+        yield return BattleApi.SendResult(battleId, resultRequest, result =>
         {
-            if (error != null)
+            if (!result.IsSuccess)
             {
-                HandleResultError(error);
+                HandleResultError(result);
                 return;
             }
+
+            // 지급 결과를 덮어쓰고 보상 장비를 inventoryList에 넣는다
+            var response = result.Data;
+            var data = GameManager.PlayerData.currentData;
+            ApplyBattleChanges(data, response.profile, response.currency, response.stageProgress);
+            SetStageRecord(data, response.stageRecord);
+            data.inventoryList.AddRange(response.rewards);
+            GameManager.PlayerData.NotifyPlayerDataChanged();
 
             resultWindow.SetGold(response.grantedGold);
             resultWindow.SetExp(response.grantedExp);
@@ -319,31 +327,26 @@ public class BattleManager : MonoBehaviour
         });
     }
 
-    private void HandleResultError(ErrorResponse error)
+    private void HandleResultError(ApiResult<BattleResultResponse> result)
     {
         var popup = UIManager.Instance.Get<MessagePopup>();
 
         // 통신 실패와 5xx는 같은 battleId로 다시 보낸다
-        if (error.status == GameConstants.Value.CONNECTION_FAILED || error.status >= 500)
+        if (result.FailType == ApiFailType.NetworkError || result.StatusCode >= 500)
         {
             popup.ShowAlert("결과를 보내지 못했습니다. 확인을 누르면 다시 보냅니다.", () => StartCoroutine(SendResult()));
             return;
         }
 
-        switch (error.code)
+        switch (result.Error?.code)
         {
             // 첫 요청이 반영됐는데 응답을 받지 못한 경우: 지급값은 표시할 수 없고 세이브를 다시 받는다
-            case "BATTLE_ALREADY_COMPLETED":
-                StartCoroutine(GameManager.ServerBattle.ReloadSave((success, message) =>
-                {
-                    resultWindow.SetWaiting(false);
-                    if (!success)
-                        popup.ShowAlert(message);
-                }));
+            case BattleApi.ErrorBattleAlreadyCompleted:
+                StartCoroutine(ReloadSave());
                 break;
 
             // 결과를 보내기 전에 새 전투에 입장한 경우: 보상 없이 닫는다
-            case "BATTLE_EXPIRED":
+            case BattleApi.ErrorBattleExpired:
                 resultWindow.SetGold(0);
                 resultWindow.SetExp(0);
                 resultWindow.SetBoxCount(0);
@@ -353,8 +356,48 @@ public class BattleManager : MonoBehaviour
 
             default:
                 resultWindow.SetWaiting(false);
-                popup.ShowAlert(string.IsNullOrEmpty(error.message) ? "결과를 반영하지 못했습니다." : error.message);
+                popup.ShowAlert(string.IsNullOrEmpty(result.Error?.message) ? "결과를 반영하지 못했습니다." : result.Error.message);
                 break;
         }
+    }
+
+    // 세이브를 다시 받아 전투가 바꾸는 값을 덮어쓴다
+    // TODO(인벤토리 연동): 보상 장비까지 받으려면 GET /api/inventory도 다시 받아야 한다. 지금은 inventoryList를 유지한다
+    private IEnumerator ReloadSave()
+    {
+        yield return GameManager.ServerLoad.RequestSave((loaded, message) =>
+        {
+            resultWindow.SetWaiting(false);
+
+            if (loaded == null)
+            {
+                UIManager.Instance.Get<MessagePopup>().ShowAlert(message);
+                return;
+            }
+
+            var data = GameManager.PlayerData.currentData;
+            ApplyBattleChanges(data, loaded.profile, loaded.currency, loaded.stageProgress);
+            data.stageRecords = loaded.stageRecords;
+            GameManager.PlayerData.NotifyPlayerDataChanged();
+        });
+    }
+
+    // 전투가 바꾸는 값: 계정 레벨·경험치, 재화, 스테이지 진행
+    // profile은 장착 칸을 유지하려고 레벨과 경험치만 옮긴다
+    private static void ApplyBattleChanges(PlayerSaveData data, PlayerProfileData profile, CurrencyData currency, StageProgressData stageProgress)
+    {
+        data.profile.accountLevel = profile.accountLevel;
+        data.profile.accountExp = profile.accountExp;
+        data.currency = currency;
+        data.stageProgress = stageProgress;
+    }
+
+    private static void SetStageRecord(PlayerSaveData data, StageRecordSaveData record)
+    {
+        int index = data.stageRecords.FindIndex(saved => saved.stageId == record.stageId);
+        if (index >= 0)
+            data.stageRecords[index] = record;
+        else
+            data.stageRecords.Add(record);
     }
 }
