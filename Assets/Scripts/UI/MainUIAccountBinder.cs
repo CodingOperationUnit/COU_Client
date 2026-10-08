@@ -49,24 +49,21 @@ public class MainUIAccountBinder : MonoBehaviour
         var stages = stageDataDic.Values.OrderBy(s => s.stageId).ToArray();
         var progress = data.stageProgress;
 
-        // StageSelectScreen은 기존 StageRecordSaveData 형식을 받으므로 StageProgress에서 변환
-        // 최고 생존 기록은 데이터 정의서에 없어 0으로 둔다 (팀 결정 대기)
-        var records = stages.ToDictionary(
-            stage => stage.stageId,
-            stage => new StageRecordSaveData
-            {
-                stageId = stage.stageId,
-                isCleared = progress.IsCleared(stage.stageId),
-                bestSurvivalSeconds = 0f
-            });
+        var records = data.stageRecords.ToDictionary(record => record.stageId);
+
+        // 순서대로 해금되므로 클리어한 스테이지 수가 곧 입장할 수 있는 마지막 인덱스 (최고 클리어의 다음 스테이지)
+        int lastUnlockedIndex = stages.Count(stage => progress.IsCleared(stage.stageId));
 
         // 마지막으로 진행한 스테이지(currentStageId)를 기본 선택으로
         int selectedIndex = Math.Max(0, Array.FindIndex(stages, s => s.stageId == progress.currentStageId));
 
-        GameManager.UI.Get<StageSelectScreen>().SetStages(stages, records, selectedIndex);
+        GameManager.UI.Get<StageSelectScreen>().SetStages(stages, records, lastUnlockedIndex, selectedIndex);
+
+        var selectedStage = stages[selectedIndex];
+        int bestTime = records.TryGetValue(selectedStage.stageId, out var record) ? record.bestSurvivalSeconds : 0;
 
         var battleTab = GameManager.UI.Get<BattleTab>();
-        battleTab.SetStage(stages[selectedIndex], 0);
+        battleTab.SetStage(selectedStage, bestTime);
         battleTab.SetStaminaCost(GameManager.JsonData.AccountConstData.battleStaminaCost);
     }
 }

@@ -55,6 +55,16 @@ public class BattleResultWindow : UIView
     public void SetExp(int exp)
         => expText.text = $"x{FormatAmount(exp)}";
 
+    // 서버 응답을 기다리는 동안 지급값을 비우고 확인 버튼을 막는다
+    public void SetWaiting(bool waiting)
+    {
+        confirmButton.interactable = !waiting;
+        if (!waiting) return;
+
+        box.SetActive(false);
+        goldText.text = expText.text = "x-";
+    }
+
     private static string FormatTime(int seconds)
         => $"{seconds / 60:00}:{seconds % 60:00}";
 
