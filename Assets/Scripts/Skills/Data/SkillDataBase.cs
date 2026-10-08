@@ -14,7 +14,7 @@ public static class SkillDataBase
 
         _dataById = new Dictionary<int, SkillData>();
 
-        TextAsset json = Resources.Load<TextAsset>("JsonFiles/Skill");
+        string json = JsonDataManager.ReadTableText(GameConstants.Paths.SkillData_Json_Path);
 
         if(json == null)
         {
@@ -22,12 +22,18 @@ public static class SkillDataBase
             return;
         }
 
-        SkillDataListWrapper wrapper = JsonUtility.FromJson<SkillDataListWrapper>(json.text);
+        SkillDataListWrapper wrapper = JsonUtility.FromJson<SkillDataListWrapper>(json);
 
         foreach(SkillData data in wrapper.datas)
         {
             _dataById[data.Id] = data;
         }
+    }
+
+    // 서버 정적 데이터 갱신 때 JsonDataManager가 교체한다
+    public static void Replace(Dictionary<int, SkillData> dataById)
+    {
+        _dataById = dataById;
     }
 
     public static SkillData Get(int skillId)

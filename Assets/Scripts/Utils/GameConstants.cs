@@ -29,5 +29,16 @@ public static class GameConstants
         public const string SkillData_Json_Path = "JsonFiles/Skill";
         public const string DropItemData_Json_Path = "JsonFiles/DropItem";
         public const string AccountConstData_Json_Path = "JsonFiles/AccountConst";
+        public const string STATIC_DATA_DIRECTORY = "StaticData";
+        public const string STATIC_DATA_VERSION_FILE = "version.txt";
+    }
+
+    // 서버 통신 상수
+    public static class Server
+    {
+        public const string BASE_URL = "http://localhost:8080";
+        public const string STATIC_DATA_API = "/api/static-data";
+        // 이 빌드가 읽을 수 있는 정적 데이터 버전의 첫째 자리
+        public const int STATIC_DATA_MAJOR_VERSION = 1;
     }
 }

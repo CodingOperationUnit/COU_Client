@@ -9,18 +9,57 @@ public class LogInMainCanvas : MonoBehaviour
     [SerializeField] private TMP_InputField passwordInputField;
     [SerializeField] private Popup_Alarm popUp_Alarm;
 
+    private const string AppUpdateRequiredMessage = "앱 업데이트가 필요합니다.";
+
+    // 서버 정적 데이터 확인이 끝나기 전에는 로그인/가입을 막는다
+    private bool isStaticDataChecked;
+    private bool isAppUpdateRequired;
+
     private void Awake()
     {
         popUp_Alarm.Close();
     }
 
+    private void Start()
+    {
+        StartCoroutine(GameManager.JsonData.FetchStaticData(appUpdateRequired =>
+        {
+            isStaticDataChecked = true;
+            isAppUpdateRequired = appUpdateRequired;
+
+            if (appUpdateRequired)
+                popUp_Alarm.Show(AppUpdateRequiredMessage);
+        }));
+    }
+
+    private bool CanProceed()
+    {
+        if (!isStaticDataChecked)
+        {
+            popUp_Alarm.Show("게임 데이터를 확인하고 있습니다. 잠시 후 다시 시도해 주세요.");
+            return false;
+        }
+
+        if (isAppUpdateRequired)
+        {
+            popUp_Alarm.Show(AppUpdateRequiredMessage);
+            return false;
+        }
+
+        return true;
+    }
+
     public void OnClickLogin()
     {
+        if (!CanProceed()) return;
+
         TryLogin(playerIdInputField.text, passwordInputField.text);
     }
 
     public void OnClickSignUp()
     {
+        if (!CanProceed()) return;
+
         bool success = GameManager.LocalLogin.SignUp(
             playerIdInputField.text, passwordInputField.text, out string message
         );
