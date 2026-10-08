@@ -19,7 +19,7 @@ public static class GameConstants
     {
         public const string ACCOUNT_SAVE_PATH = "accounts.json";
         public const string PLAYER_DIRECTORY = "Players";
-        public const string BossAttackData_Json_Path = "Data/BossAttack";
+        public const string MonsterAttackData_Json_Path = "Data/MonsterAttack";
         public const string WaveData_Json_Path = "Data/Wave";
         public const string SpawnPatternData_Json_Path = "Data/SpawnPattern";
         public const string DropTableData_Json_Path = "Data/DropTable";
