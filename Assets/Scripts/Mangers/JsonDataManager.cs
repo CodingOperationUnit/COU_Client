@@ -490,17 +490,17 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
 
             SkillData data = row.ToObject<SkillData>();
 
-            if (data == null || data.Id <= 0)
+            if (data == null || data.skillId <= 0)
                 throw new InvalidOperationException("Skill 데이터 또는 ID가 올바르지 않습니다.");
 
-            if (loadedDatas.ContainsKey(data.Id))
-                throw new InvalidOperationException($"중복된 Skill ID: {data.Id}");
+            if (loadedDatas.ContainsKey(data.skillId))
+                throw new InvalidOperationException($"중복된 Skill ID: {data.skillId}");
 
             // Newtonsoft 역직렬화 후 Unity 콜백을 직접 호출하여
-            // Type 문자열을 TargetType 열거형으로 변환합니다.
+            // skillType 문자열을 TargetType 열거형으로 변환합니다.
             data.OnAfterDeserialize();
 
-            loadedDatas.Add(data.Id, data);
+            loadedDatas.Add(data.skillId, data);
         }
 
         return loadedDatas;

@@ -26,7 +26,7 @@ public static class SkillDataBase
 
         foreach(SkillData data in wrapper.datas)
         {
-            _dataById[data.Id] = data;
+            _dataById[data.skillId] = data;
         }
     }
 

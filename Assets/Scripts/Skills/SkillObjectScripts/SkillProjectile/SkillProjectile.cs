@@ -20,6 +20,6 @@ public abstract class SkillProjectile : SkillObject<ProjectileData>, ISkillPoola
 
     protected virtual void ApplyDamage(Enemy enemy)
     {
-        enemy.Damaged(Mathf.RoundToInt(skillData.Damage * damageMultiplier));
+        enemy.Damaged(Mathf.RoundToInt(skillData.skillDamage * damageMultiplier));
     }
 }

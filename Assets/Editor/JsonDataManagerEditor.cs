@@ -27,7 +27,7 @@ public class JsonDataManagerEditor : Editor
         DrawDictionary("스테이지 데이터", manager.StageDataDic, expandedStages,
             data => data.stageName, DrawStage);
         DrawDictionary("스킬 데이터", manager.SkillDataDic, expandedSkills,
-            data => data.Name, DrawSkill);
+            data => data.skillName, DrawSkill);
     }
 
     private static void DrawDictionary<TKey, T>(string title, IReadOnlyDictionary<TKey, T> datas,
@@ -124,15 +124,21 @@ public class JsonDataManagerEditor : Editor
 
     private static void DrawSkill(SkillData data)
     {
-        EditorGUILayout.IntField("스킬 ID", data.Id);
-        EditorGUILayout.TextField("이름", data.Name ?? string.Empty);
-        EditorGUILayout.TextField("설명", data.Description ?? string.Empty);
-        EditorGUILayout.TextField("타겟 종류 문자열", data.Type ?? string.Empty);
+        EditorGUILayout.IntField("스킬 ID", data.skillId);
+        EditorGUILayout.TextField("이름", data.skillName ?? string.Empty);
+        EditorGUILayout.IntField("카테고리", data.skillCategory);
+        EditorGUILayout.TextField("설명", data.skillDescription ?? string.Empty);
+        EditorGUILayout.TextField("타겟 종류 문자열", data.skillType ?? string.Empty);
         EditorGUILayout.EnumPopup("타겟 종류", data.TargetType);
-        EditorGUILayout.FloatField("쿨다운 (초)", data.Cooldown);
-        EditorGUILayout.FloatField("속도", data.Speed);
-        EditorGUILayout.FloatField("피해량", data.Damage);
-        EditorGUILayout.FloatField("사거리", data.Range);
+        EditorGUILayout.FloatField("쿨다운 (초)", data.skillCooldown);
+        EditorGUILayout.FloatField("속도", data.skillSpeed);
+        EditorGUILayout.FloatField("피해량", data.skillDamage);
+        EditorGUILayout.FloatField("사거리", data.skillRange);
+        EditorGUILayout.TextField("레벨1 설명", data.skillLevel1Description ?? string.Empty);
+        EditorGUILayout.TextField("레벨2 설명", data.skillLevel2Description ?? string.Empty);
+        EditorGUILayout.TextField("레벨3 설명", data.skillLevel3Description ?? string.Empty);
+        EditorGUILayout.TextField("레벨4 설명", data.skillLevel4Description ?? string.Empty);
+        EditorGUILayout.TextField("레벨5 설명", data.skillLevel5Description ?? string.Empty);
     }
 
     public override bool RequiresConstantRepaint()

@@ -100,7 +100,7 @@ public class PlayerLuckTrain : MonoBehaviour
         {
             int skillId = candidates[Random.Range(0, candidates.Count)].SkillId;
             slotSkillIds[i] = skillId;
-            window.SetSlot(i, SkillDataBase.Get(skillId).Name);
+            window.SetSlot(i, SkillDataBase.Get(skillId).skillName);
         }
 
         int[] selected = DrawSelection(candidates);
@@ -120,7 +120,7 @@ public class PlayerLuckTrain : MonoBehaviour
             previewLevels[skillId] = level;
 
             var data = SkillDataBase.Get(skillId);
-            window.SetReward(i, data.Name, level, "Lv." + level);
+            window.SetReward(i, data.skillName, level, "Lv." + level);
         }
 
         rewardGold = Random.Range(goldMin, goldMax + 1) * selected.Length;

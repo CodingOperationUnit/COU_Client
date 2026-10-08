@@ -212,7 +212,7 @@ public class BattleManager : MonoBehaviour
 
             var skill = FindActiveSkill(candidates[i]);
             var data = SkillDataBase.Get(candidates[i]);
-            selectWindow.SetOption(i, data.Name, data.Description, skill == null ? 1 : skill.Level + 1, skill == null);
+            selectWindow.SetOption(i, data.skillName, data.skillDescription,skill == null ? 1 : skill.Level + 1, skill == null);
         }
 
         if (count == 0)

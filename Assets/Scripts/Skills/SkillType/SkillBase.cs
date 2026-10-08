@@ -26,8 +26,8 @@ public abstract class SkillBase
     public float CooldownMultiplier => Mathf.Pow(CooldownMultiplierPerLevel, Mathf.Max(level - 1, 0));
     public float DamageMultiplier => Mathf.Pow(DamageMultiplierPerLevel, Mathf.Max(level - 1, 0));
 
-    public int SkillId => skillData != null ? skillData.Id : -1;
-    public float Range => skillData != null ? skillData.Range : 0.0f;
+    public int SkillId => skillData != null ? skillData.skillId : -1;
+    public float Range => skillData != null ? skillData.skillRange : 0.0f;
 
     public virtual void Initialize(SkillData data)
     {

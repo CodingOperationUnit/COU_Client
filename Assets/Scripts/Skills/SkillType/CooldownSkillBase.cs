@@ -10,7 +10,7 @@ public abstract class CooldownSkillBase : SkillBase
     public override void Initialize(SkillData data)
     {
         base.Initialize(data);
-        cooldownTimer = data.Cooldown;
+        cooldownTimer = data.skillCooldown;
     }
 
     public override void Tick(float deltaTime)
@@ -41,7 +41,7 @@ public abstract class CooldownSkillBase : SkillBase
     // 사거리 안의 적을 찾아서 발사 방향(fireDirection)을 정함. 적이 없으면 false
     private bool FindFireDirection()
     {
-        Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, skillData.Range, LayerMask.GetMask("Enemy"));
+        Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, skillData.skillRange, LayerMask.GetMask("Enemy"));
 
         if(enemies.Length == 0)
         {
@@ -86,6 +86,6 @@ public abstract class CooldownSkillBase : SkillBase
 
     protected void ResetCooldown()
     {
-        cooldownTimer = skillData != null ? skillData.Cooldown * CooldownMultiplier : 0.01f;
+        cooldownTimer = skillData != null ? skillData.skillCooldown * CooldownMultiplier : 0.01f;
     }
 }

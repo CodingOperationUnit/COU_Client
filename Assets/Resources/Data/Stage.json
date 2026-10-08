@@ -1,0 +1,18 @@
+{
+  "datas": [
+    {
+      "stageId": 1,
+      "stageName": "Forest",
+      "stageIllustrationColor": "#4C7A3D",
+      "stageDuration": 150.0,
+      "waveId": 1,
+      "stageDescription": "몬스터가 가득한 숲입니다.",
+      "clearAccountExp": 500,
+      "rewardBoxGradeWeights": [
+        100,
+        0,
+        0
+      ]
+    }
+  ]
+}

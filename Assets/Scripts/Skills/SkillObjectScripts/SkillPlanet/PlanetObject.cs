@@ -29,7 +29,7 @@ public sealed class PlanetObject : SkillObject<OrbitData>
             return;
         }
 
-        _angle += skillData.Speed * Time.deltaTime;
+        _angle += skillData.skillSpeed * Time.deltaTime;
         UpdatePosition();
     }
 
@@ -41,7 +41,7 @@ public sealed class PlanetObject : SkillObject<OrbitData>
         }
 
         float radian = _angle * Mathf.Deg2Rad;
-        Vector3 offset = new Vector3(Mathf.Cos(radian), Mathf.Sin(radian), 0.0f) * skillData.Range;
+        Vector3 offset = new Vector3(Mathf.Cos(radian), Mathf.Sin(radian), 0.0f) * skillData.skillRange;
 
         transform.position = _owner.position + offset;
     }
@@ -54,6 +54,6 @@ public sealed class PlanetObject : SkillObject<OrbitData>
             return;
         }
 
-        enemy.Damaged(Mathf.RoundToInt(skillData.Damage * _damageMultiplier));
+        enemy.Damaged(Mathf.RoundToInt(skillData.skillDamage * _damageMultiplier));
     }
 }
