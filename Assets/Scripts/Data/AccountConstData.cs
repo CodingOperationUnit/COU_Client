@@ -12,6 +12,10 @@ public class AccountConstData
     public int accountRequiredExpIncrement;
     public int maxAccountLevel;
     public int battleStaminaCost;   // 전투 입장 스태미나 비용
+    public int staminaRecoverySeconds;
+    public int accountExpPerKill;
+    public int accountExpPerSecond;
+    public int luckTrainGoldMax;
 
     // level에서 다음 레벨까지 필요한 계정 경험치
     public int GetRequiredExp(int level) => accountBaseRequiredExp + accountRequiredExpIncrement * (level - 1);

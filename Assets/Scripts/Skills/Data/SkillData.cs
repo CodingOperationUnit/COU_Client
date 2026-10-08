@@ -20,11 +20,11 @@ public class SkillData : ISerializationCallbackReceiver
     public float skillDamage;
     public float skillRange;
     public string skillDescription;
-    public string skillLevel1Description;
-    public string skillLevel2Description;
-    public string skillLevel3Description;
-    public string skillLevel4Description;
-    public string skillLevel5Description;
+    public string level1SkillDescription;
+    public string level2SkillDescription;
+    public string level3SkillDescription;
+    public string level4SkillDescription;
+    public string level5SkillDescription;
 
     [NonSerialized] public SkillTargetType TargetType;
 

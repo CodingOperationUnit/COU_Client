@@ -12,9 +12,8 @@ public class MonsterData
     public string monsterName;
     public string monsterType;          // "Normal" / "Elite" / "Boss" / "Box"
     public int monsterMaxHealthPoint;
-    public int monsterExp;
     public float monsterMoveSpeed;
-    public int monsterAttackPoint;
+    public int monsterContactDamage;
     public string monsterAsset;         // Resources 기준 스프라이트 경로 (예: "Enemy/goblin")
 
     [NonSerialized] private MonsterType parsedType;

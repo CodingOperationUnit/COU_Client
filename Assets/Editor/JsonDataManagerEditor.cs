@@ -85,9 +85,8 @@ public class JsonDataManagerEditor : Editor
         EditorGUILayout.TextField("종류 문자열", data.monsterType ?? string.Empty);
         EditorGUILayout.EnumPopup("종류", data.Type);
         EditorGUILayout.IntField("최대 체력", data.monsterMaxHealthPoint);
-        EditorGUILayout.IntField("경험치", data.monsterExp);
         EditorGUILayout.FloatField("이동 속도", data.monsterMoveSpeed);
-        EditorGUILayout.IntField("공격력", data.monsterAttackPoint);
+        EditorGUILayout.IntField("접촉 피해량", data.monsterContactDamage);
         EditorGUILayout.TextField("에셋 경로", data.monsterAsset ?? string.Empty);
     }
 
@@ -134,11 +133,11 @@ public class JsonDataManagerEditor : Editor
         EditorGUILayout.FloatField("속도", data.skillSpeed);
         EditorGUILayout.FloatField("피해량", data.skillDamage);
         EditorGUILayout.FloatField("사거리", data.skillRange);
-        EditorGUILayout.TextField("레벨1 설명", data.skillLevel1Description ?? string.Empty);
-        EditorGUILayout.TextField("레벨2 설명", data.skillLevel2Description ?? string.Empty);
-        EditorGUILayout.TextField("레벨3 설명", data.skillLevel3Description ?? string.Empty);
-        EditorGUILayout.TextField("레벨4 설명", data.skillLevel4Description ?? string.Empty);
-        EditorGUILayout.TextField("레벨5 설명", data.skillLevel5Description ?? string.Empty);
+        EditorGUILayout.TextField("레벨1 설명", data.level1SkillDescription ?? string.Empty);
+        EditorGUILayout.TextField("레벨2 설명", data.level2SkillDescription ?? string.Empty);
+        EditorGUILayout.TextField("레벨3 설명", data.level3SkillDescription ?? string.Empty);
+        EditorGUILayout.TextField("레벨4 설명", data.level4SkillDescription ?? string.Empty);
+        EditorGUILayout.TextField("레벨5 설명", data.level5SkillDescription ?? string.Empty);
     }
 
     public override bool RequiresConstantRepaint()
