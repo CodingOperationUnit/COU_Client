@@ -19,16 +19,16 @@ public static class GameConstants
     {
         public const string ACCOUNT_SAVE_PATH = "accounts.json";
         public const string PLAYER_DIRECTORY = "Players";
-        public const string BossAttackData_Json_Path = "JsonFiles/BossAttack";
-        public const string WaveData_Json_Path = "JsonFiles/Wave";
-        public const string SpawnPatternData_Json_Path = "JsonFiles/SpawnPattern";
-        public const string DropTableData_Json_Path = "JsonFiles/DropTable";
-        public const string StageData_Json_Path = "JsonFiles/Stage";
-        public const string MonsterData_Json_Path = "JsonFiles/Monster";
-        public const string ItemData_Json_Path = "JsonFiles/Item";
-        public const string SkillData_Json_Path = "JsonFiles/Skill";
-        public const string DropItemData_Json_Path = "JsonFiles/DropItem";
-        public const string AccountConstData_Json_Path = "JsonFiles/AccountConst";
+        public const string BossAttackData_Json_Path = "Data/BossAttack";
+        public const string WaveData_Json_Path = "Data/Wave";
+        public const string SpawnPatternData_Json_Path = "Data/SpawnPattern";
+        public const string DropTableData_Json_Path = "Data/DropTable";
+        public const string StageData_Json_Path = "Data/Stage";
+        public const string MonsterData_Json_Path = "Data/Monster";
+        public const string ItemData_Json_Path = "Data/Item";
+        public const string SkillData_Json_Path = "Data/Skill";
+        public const string DropItemData_Json_Path = "Data/DropItem";
+        public const string AccountConstData_Json_Path = "Data/AccountConst";
         public const string STATIC_DATA_DIRECTORY = "StaticData";
         public const string STATIC_DATA_VERSION_FILE = "version.txt";
     }
@@ -39,6 +39,6 @@ public static class GameConstants
         public const string BASE_URL = "http://localhost:8080";
         public const string STATIC_DATA_API = "/api/static-data";
         // 이 빌드가 읽을 수 있는 정적 데이터 버전의 첫째 자리
-        public const int STATIC_DATA_MAJOR_VERSION = 1;
+        public const int STATIC_DATA_MAJOR_VERSION = 2;
     }
 }

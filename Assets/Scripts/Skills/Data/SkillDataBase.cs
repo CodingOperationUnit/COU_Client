@@ -18,7 +18,7 @@ public static class SkillDataBase
 
         if(json == null)
         {
-            Debug.LogError("[SkillDataBase] Resources/JsonFiles/Skill.json을 찾을 수 없습니다.");
+            Debug.LogError("[SkillDataBase] Resources/Data/Skill.json을 찾을 수 없습니다.");
             return;
         }
 
