@@ -54,7 +54,7 @@ public class PlayerDataManagerEditor : Editor
         using (new EditorGUI.IndentLevelScope())
         using (new EditorGUI.DisabledScope(true))
         {
-            EditorGUILayout.IntField("플레이어 ID", profile.playerId);
+            EditorGUILayout.LongField("플레이어 ID", profile.playerId);
             EditorGUILayout.IntField("계정 ID", profile.accountId);
             EditorGUILayout.TextField("닉네임", profile.playerNickname ?? string.Empty);
             EditorGUILayout.IntField("계정 레벨", profile.accountLevel);

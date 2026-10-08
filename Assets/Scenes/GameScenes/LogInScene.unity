@@ -485,6 +485,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1518979641}
   - component: {fileID: 1518979642}
+  - component: {fileID: 1518979643}
   m_Layer: 0
   m_Name: ServerLoginManager
   m_TagString: Untagged
@@ -519,6 +520,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 283d104d8c1ba1a4e88e2d453056e9ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ServerLoginManager
+  isDontDestroy: 1
+--- !u!114 &1518979643
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1518979640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a562e9489fee8ed428e032280c42ea9a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ServerLoadManager
   isDontDestroy: 1
 --- !u!1 &1941435341
 GameObject:

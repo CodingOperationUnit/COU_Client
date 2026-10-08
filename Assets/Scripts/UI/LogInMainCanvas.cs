@@ -76,21 +76,6 @@ public class LogInMainCanvas : MonoBehaviour
                 }
             }
         ));
-
-        // bool success = GameManager.LocalLogin.SignUp(
-        //     playerIdInputField.text, passwordInputField.text, out string message
-        // );
-        //
-        // if (success)
-        // {
-        //     // 회원가입 완료 안내 -> 확인 버튼을 누르면 자동으로 로그인
-        //     popUp_Alarm.Show(message, () => TryLogin(playerIdInputField.text, passwordInputField.text));
-        //     Debug.Log("회원가입 성공");
-        // }
-        // else
-        // {
-        //     popUp_Alarm.Show(message);
-        // }
     }
 
     private void TryLogin(string playerId, string password)
@@ -103,37 +88,26 @@ public class LogInMainCanvas : MonoBehaviour
                     return;
                 }
 
-                var account = GameManager.ServerLogin.CurrentAccount;
-                Debug.Log($"[Login] 서버 로그인 성공: accountId={account.accountId}, loginId={account.accountLoginId}");
+                Debug.Log($"[Login] 서버 로그인 성공: accountId={GameManager.ServerLogin.CurrentAccount.accountId}");
 
-                // TODO(PlayerLoadManager): /api/players/me/save + /api/inventory 불러오기 → PlayerDataManager에 넣기
-                //                          → 성공하면 GameManager.Scene.ChangeScene(GameConstants.SceneNames.MAIN_SCENE);
-                popUp_Alarm.Show($"로그인 성공 (accountId: {account.accountId})");
+                // 로그인 성공 → 플레이어 데이터 불러오기
+                StartCoroutine(GameManager.ServerLoad.LoadPlayerData(OnPlayerDataLoaded));
             }
         ));
+    }
+    
+    private void OnPlayerDataLoaded(bool success, string message)
+    {
+        if (!success)
+        {
+            // 로그인은 됐지만 데이터를 못 받은 경우: 토큰을 지워서 다시 로그인할 수 있게 한다
+            GameManager.ServerLogin.Logout();
+            popUp_Alarm.Show(message);
+            return;
+        }
 
-        // string normalizedPlayerId = (playerId ?? string.Empty).Trim().ToLowerInvariant();
-        //
-        // // 아이디/비밀번호 검증
-        // bool loginSuccess = GameManager.LocalLogin.Login(normalizedPlayerId, password, out string message);
-        //
-        // if (!loginSuccess)
-        // {
-        //     popUp_Alarm.Show(message);
-        //     return;
-        // }
-        //
-        // // 검증된 계정의 플레이어 JSON 로드 → DataManager에 보관
-        // bool loadSuccess = GameManager.LocalSaveLoad.LoadPlayerAfterLogin(normalizedPlayerId);
-        //
-        // if (!loadSuccess)
-        // {
-        //     popUp_Alarm.Show("플레이어 데이터를 불러오지 못했습니다.");
-        //     return;
-        // }
-        //
-        // // 인증과 데이터 로드가 모두 성공하면 입장
-        // Debug.Log("로그인 및 플레이어 데이터 로드 완료");
-        // GameManager.Scene.ChangeScene(GameConstants.SceneNames.MAIN_SCENE);
+        // 인증과 데이터 로드가 모두 성공하면 입장
+        Debug.Log("[Login] 로그인 및 플레이어 데이터 로드 완료");
+        GameManager.Scene.ChangeScene(GameConstants.SceneNames.MAIN_SCENE);
     }
 }
