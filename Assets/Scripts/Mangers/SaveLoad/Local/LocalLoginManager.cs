@@ -98,7 +98,7 @@ public class LocalLoginManager : MonoSingleton<LocalLoginManager>
         data.currency.currencyGold = accountConst.initialGold;
         data.currency.currencyGem = accountConst.initialGem;
         data.currency.currencyEnergy = accountConst.initialStamina;   // 스태미나 = currencyEnergy
-        data.currency.currencyEnergyUpdatedAt = DateTime.Now;
+        data.currency.currencyEnergyUpdatedAt = DateTimeOffset.UtcNow;
     }
 
     public bool Login(string accountLoginId, string password, out string message)
