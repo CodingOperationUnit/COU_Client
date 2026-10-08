@@ -4,9 +4,14 @@ using UnityEngine.InputSystem;
 
 public class SkillController : MonoBehaviour
 {
-    public const int MaxSkillSlots = 3;
+    // 액티브 슬롯 수 (외부에서 참조하므로 이름 유지)
+    public const int MaxSkillSlots = 6;
+
+    // 패시브 슬롯 수
+    public const int MaxPassiveSlots = 6;
 
     private readonly List<SkillBase> _activeSkills = new();
+    private readonly List<SkillBase> _passiveSkills = new();
 
     public PlayerMovement PlayerMovement { get; private set; }
     public PlayerStats PlayerStats { get; private set; }
@@ -14,7 +19,9 @@ public class SkillController : MonoBehaviour
     // 패시브가 등록한 보너스. 모든 장착 스킬이 같은 인스턴스를 공유함
     public SkillModifiers Modifiers { get; } = new();
 
+    // 장착된 액티브 스킬만 (패시브는 PassiveSkills)
     public IReadOnlyList<SkillBase> ActiveSkills => _activeSkills;
+    public IReadOnlyList<SkillBase> PassiveSkills => _passiveSkills;
 
     private void Awake()
     {
@@ -29,6 +36,11 @@ public class SkillController : MonoBehaviour
             skill.Tick(Time.deltaTime);
         }
 
+        foreach(SkillBase skill in _passiveSkills)
+        {
+            skill.Tick(Time.deltaTime);
+        }
+
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         // Press 1: Shuriken, 2: Revolver, 3: Katana
         UpdateDebugInput();
@@ -37,19 +49,12 @@ public class SkillController : MonoBehaviour
 
     public bool EquipSkill(int skillId)
     {
-        if(_activeSkills.Count > MaxSkillSlots)
-        {
-            Debug.LogWarning($"[SkillController] 슬롯이 가득 차 스킬을 장착할 수 없습니다: {skillId}");
-            Debug.LogWarning($"[SkillController] 스킬 개수: {_activeSkills.Count}");
-            return false;
-        }
-
-        SkillBase existing = _activeSkills.Find(s => s.SkillId == skillId);
+        // 이미 장착한 스킬은 슬롯이 가득 차 있어도 레벨업할 수 있어야 하므로 슬롯 검사보다 먼저 확인
+        SkillBase existing = FindSkill(skillId);
 
         if(existing != null)
         {
             existing.Levelup();
-            Debug.Log("레벨업: Shuriken");
             return true;
         }
 
@@ -60,10 +65,20 @@ public class SkillController : MonoBehaviour
             return false;
         }
 
+        bool isPassive = skill is PassiveSkillBase;
+        List<SkillBase> slots = isPassive ? _passiveSkills : _activeSkills;
+        int maxSlots = isPassive ? MaxPassiveSlots : MaxSkillSlots;
+
+        if(slots.Count >= maxSlots)
+        {
+            Debug.LogWarning($"[SkillController] {(isPassive ? "패시브" : "액티브")} 슬롯이 가득 차 스킬을 장착할 수 없습니다: {skillId} ({slots.Count}/{maxSlots})");
+            return false;
+        }
+
         skill.SetContext(new SkillContext(transform, PlayerMovement, PlayerStats, Modifiers));
 
         // 패시브는 소환할 오브젝트가 없으므로 프리팹을 찾지 않음 (찾으면 미등록 경고가 뜸)
-        if(skill is not PassiveSkillBase)
+        if(!isPassive)
         {
             skill.SetPrefab(SkillManager.Instance.GetPrefab(skillId));
         }
@@ -71,13 +86,13 @@ public class SkillController : MonoBehaviour
         // 최초 레벨 설정 후 장착해야 OnEquip에서 현재 레벨 기준으로 동작할 수 있음
         skill.Levelup();
         skill.Equip();
-        _activeSkills.Add(skill);
+        slots.Add(skill);
         return true;
     }
 
     public bool LevelUpSkill(int skillId)
     {
-        SkillBase skill = _activeSkills.Find(s => s.SkillId == skillId);
+        SkillBase skill = FindSkill(skillId);
 
         if(skill == null || skill.Level >= SkillBase.MaxLevel)
         {
@@ -90,7 +105,7 @@ public class SkillController : MonoBehaviour
 
     public bool UnequipSkill(int skillId)
     {
-        SkillBase skill = _activeSkills.Find(s => s.SkillId == skillId);
+        SkillBase skill = FindSkill(skillId);
 
         if(skill == null)
         {
@@ -98,7 +113,16 @@ public class SkillController : MonoBehaviour
         }
 
         skill.Unequip();
-        return _activeSkills.Remove(skill);
+
+        return _activeSkills.Remove(skill) || _passiveSkills.Remove(skill);
+    }
+
+    // 액티브/패시브 구분 없이 장착된 스킬을 찾음
+    private SkillBase FindSkill(int skillId)
+    {
+        SkillBase skill = _activeSkills.Find(s => s.SkillId == skillId);
+
+        return skill ?? _passiveSkills.Find(s => s.SkillId == skillId);
     }
 
     // For Debug (장착된 스킬별 탐지 사거리 표시)
