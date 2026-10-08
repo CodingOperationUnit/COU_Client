@@ -12,7 +12,7 @@ public class LinearProjectile : SkillProjectile
     {
         elapsed = 0f;
         hasHit = false;
-        currentSpeed = skillData.skillSpeed > 0f ? skillData.skillSpeed : 1.0f;
+        currentSpeed = stats.Speed > 0f ? stats.Speed : 1.0f;
 
         // 탄두(up)가 발사 방향을 향하도록 회전
         transform.up = direction;

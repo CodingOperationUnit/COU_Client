@@ -128,7 +128,7 @@ public class JsonDataManagerEditor : Editor
     {
         EditorGUILayout.IntField("스킬 ID", data.skillId);
         EditorGUILayout.TextField("이름", data.skillName ?? string.Empty);
-        EditorGUILayout.IntField("카테고리", data.skillCategory);
+        EditorGUILayout.EnumPopup("카테고리", data.skillCategory);
         EditorGUILayout.TextField("설명", data.skillDescription ?? string.Empty);
         EditorGUILayout.TextField("타겟 종류 문자열", data.skillType ?? string.Empty);
         EditorGUILayout.EnumPopup("타겟 종류", data.TargetType);

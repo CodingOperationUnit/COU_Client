@@ -19,6 +19,7 @@ public abstract class SkillBase
     protected Transform transform;
     protected PlayerMovement movement;
     protected PlayerStats stats;
+    protected SkillModifiers modifiers;
 
     public int Level => level;
     public bool IsEquipped { get; private set; }
@@ -40,6 +41,7 @@ public abstract class SkillBase
         transform = context.Owner;
         movement = context.Movement;
         stats = context.Stats;
+        modifiers = context.Modifiers;
     }
 
     // 프리팹이 필요 없는 스킬(패시브 등)은 null이 들어올 수 있음
@@ -94,6 +96,30 @@ public abstract class SkillBase
 
     protected virtual void OnLevelChanged()
     {
+    }
+
+    // 레벨로 정해진 기본값에 패시브 보너스를 적용한 최종값. 보너스가 없으면 기본값 그대로
+    protected float GetPercentStat(SkillPercentStat stat, float baseValue)
+    {
+        return modifiers != null ? modifiers.ApplyPercent(stat, baseValue) : baseValue;
+    }
+
+    // 개수처럼 고정값으로 늘어나는 스탯용. 0 미만은 0으로 맞춤
+    protected int GetFlatStat(SkillFlatStat stat, int baseValue)
+    {
+        int value = modifiers != null ? modifiers.ApplyFlat(stat, baseValue) : baseValue;
+
+        return Mathf.Max(value, 0);
+    }
+
+    // 스킬 오브젝트에 넘길 최종 수치 계산 (레벨 배율, 패시브 보너스 반영)
+    protected SkillStats BuildStats()
+    {
+        int damage = Mathf.RoundToInt(GetPercentStat(SkillPercentStat.Damage, skillData.skillDamage * DamageMultiplier));
+        float speed = GetPercentStat(SkillPercentStat.Speed, skillData.skillSpeed);
+        float scale = GetPercentStat(SkillPercentStat.Area, 1.0f);
+
+        return new SkillStats(damage, speed, scale);
     }
 
     // 풀에서 스킬 오브젝트를 꺼내 초기화. 초기화 인자 구조체 타입(TInitData)은 호출부에서 추론됨

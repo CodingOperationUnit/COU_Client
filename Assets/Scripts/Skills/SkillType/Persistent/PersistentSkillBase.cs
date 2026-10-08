@@ -14,16 +14,24 @@ public abstract class PersistentSkillBase : SkillBase
 
     protected override void OnEquip()
     {
+        modifiers.OnChanged += Respawn;
         SpawnObjects();
     }
 
     protected override void OnUnequip()
     {
+        modifiers.OnChanged -= Respawn;
         DespawnAll();
     }
 
     // 레벨이 바뀌면 개수/크기 등이 달라질 수 있으므로 전부 정리하고 다시 생성
     protected override void OnLevelChanged()
+    {
+        Respawn();
+    }
+
+    // 오브젝트는 생성 시점의 수치(개수, 대미지 등)를 그대로 쓰므로, 패시브 보너스가 바뀌면 다시 만들어야 반영됨
+    private void Respawn()
     {
         DespawnAll();
         SpawnObjects();
