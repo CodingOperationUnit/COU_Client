@@ -244,7 +244,7 @@ public class PlayerInventory : MonoBehaviour
     public void Save()
     {
         var data = Data;
-        int playerId = data.profile.playerId;
+        long playerId = data.profile.playerId;
 
         data.inventoryList = items.Select(item => new InventoryData
         {

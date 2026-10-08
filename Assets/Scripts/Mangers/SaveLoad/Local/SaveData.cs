@@ -69,7 +69,7 @@ public class PlayerSaveData
     /// 서버 모드에서는 서버가 초기 데이터를 만들어 내려준다.
     /// accountId, playerId는 로컬에서 순번(accounts.Count + 1)으로 부여해 Auto Increment를 흉내 낸다.
     /// </summary>
-    public static PlayerSaveData CreateDefault(int accountId, int playerId, string playerNickname)
+    public static PlayerSaveData CreateDefault(int accountId, long playerId, string playerNickname)
     {
         if (accountId <= 0 || playerId <= 0)
             throw new ArgumentException("accountId와 playerId가 필요합니다.");
@@ -125,7 +125,7 @@ public class PlayerSaveData
 [Serializable]
 public class PlayerProfileData
 {
-    public int playerId;                   // PK, Auto Increment
+    public long playerId;                   // PK, Auto Increment
     public int accountId;                  // FK → Account, Unique
     public string playerNickname;          // Unique
     // playerIcon: 문서만 → 필드 생성 안 함
@@ -146,7 +146,7 @@ public class PlayerProfileData
 [Serializable]
 public class CurrencyData
 {
-    public int playerId;                      // PK, FK → PlayerProfile
+    public long playerId;                      // PK, FK → PlayerProfile
     public int currencyGold;                  // 음수 불가
     public int currencyGem;                   // 음수 불가
     public int currencyEnergy;                // 필드만 (충전 규칙 미정)
@@ -158,7 +158,7 @@ public class CurrencyData
 public class InventoryData
 {
     public int inventoryId;                // PK, Auto Increment
-    public int playerId;                   // FK → PlayerProfile
+    public long playerId;                   // FK → PlayerProfile
     public int itemId;                     // 논리 FK → Item (long → int)
     public int inventoryItemLevel = 1;     // 최대값은 Item.itemMaxLevel
     public DateTime inventoryAcquiredAt;   // 획득 시각 (정렬용)
@@ -171,7 +171,7 @@ public class InventoryData
 [Serializable]
 public class StageProgressData
 {
-    public int playerId;                   // PK, FK → PlayerProfile
+    public long playerId;                   // PK, FK → PlayerProfile
     public int currentStageId;             // 논리 FK → Stage
     public int? maxClearedStageId;         // 논리 FK → Stage, 클리어 이력 없으면 Null
 
@@ -183,10 +183,11 @@ public class StageProgressData
 [Serializable]
 public class PlayerStatData
 {
-    public int playerId;                   // PK, FK → PlayerProfile
+    public long playerId;                   // PK, FK → PlayerProfile
     public int playerStatAttackLevel;
     public int playerStatHpLevel;
     public int playerStatDefenseLevel;
+    public int playerStatPotionRecoveryLevel;
 }
 
 [Serializable]
