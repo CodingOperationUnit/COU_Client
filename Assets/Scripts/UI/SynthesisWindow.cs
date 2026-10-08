@@ -133,16 +133,36 @@ public class SynthesisWindow : UIView
 
     private void OnSynthesizeButtonClicked()
     {
-        if (PlayerInventory.Instance.TrySynthesize(boundItem))
-            Refresh();
+        SetButtonsInteractable(false);
+        GameManager.ServerInventory.Synthesize(boundItem, OnRequestFinished);
+        
+        // if (PlayerInventory.Instance.TrySynthesize(boundItem))
+        //     Refresh();
     }
 
     private void OnBatchSynthesizeButtonClicked()
     {
-        if (PlayerInventory.Instance.BatchSynthesize(boundItem) > 0)
-            Refresh();
+        SetButtonsInteractable(false);
+        GameManager.ServerInventory.BatchSynthesize(boundItem, OnRequestFinished);
+        
+        // if (PlayerInventory.Instance.BatchSynthesize(boundItem) > 0)
+        //     Refresh();
     }
 
+    private void OnRequestFinished(bool success, string message)
+    {
+        if (!success)
+            UIManager.Instance.Get<MessagePopup>().ShowAlert(message);
+
+        Refresh();   // 합성 가능 여부에 따라 버튼 활성화를 다시 결정
+    }
+
+    private void SetButtonsInteractable(bool interactable)
+    {
+        synthesizeButton.interactable = interactable;
+        batchSynthesizeButton.interactable = interactable;
+    }
+    
     private static string GradeLabel(ItemGrade grade) => grade switch
     {
         ItemGrade.General => "일반",

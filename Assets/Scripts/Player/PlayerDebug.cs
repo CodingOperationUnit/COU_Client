@@ -67,6 +67,12 @@ public class PlayerDebug : MonoBehaviour
 
         if (Keyboard.current.digit9Key.wasPressedThisFrame)
             EquipSkill(3);
+
+        if (Keyboard.current.f1Key.wasPressedThisFrame)
+            CompareFinalStats();
+
+        if (Keyboard.current.f2Key.wasPressedThisFrame)
+            UpgradeEvolution();
     }
 
     private void SpawnAllDropItems()
@@ -103,6 +109,52 @@ public class PlayerDebug : MonoBehaviour
             : player.Skills.EquipSkill(skillId);
 
         Debug.Log("[PlayerDebug] 스킬 " + skillId + (owned ? " 레벨업: " : " 장착: ") + (result ? "성공" : "실패"));
+    }
+
+    // 서버 최종 스탯 조회 후 클라이언트 계산값과 비교
+    private void CompareFinalStats()
+    {
+        StartCoroutine(PlayerApi.GetFinalStats(result =>
+        {
+            if (this == null) return;
+
+            if (!result.IsSuccess)
+            {
+                Debug.LogWarning("[PlayerDebug] 최종 스탯 조회 실패: " + result.Describe());
+                return;
+            }
+
+            var player = PlayerManager.Instance;
+            if (player == null)
+            {
+                Debug.Log("[PlayerDebug] 서버 최종 스탯: 공격력 " + result.Data.finalAttack + ", 체력 " + result.Data.finalHp + " (비교할 PlayerManager 없음)");
+                return;
+            }
+
+            PlayerStatsComparison.Log(result.Data, player.Stats);
+        }));
+    }
+
+    // 진화 1단계 업그레이드
+    private void UpgradeEvolution()
+    {
+        StartCoroutine(PlayerApi.UpgradeEvolution(result =>
+        {
+            if (this == null) return;
+
+            if (!result.IsSuccess)
+            {
+                Debug.LogWarning("[PlayerDebug] 진화 업그레이드 실패: " + result.Describe());
+                return;
+            }
+
+            var data = result.Data;
+            var stat = data.playerStat;
+            Debug.Log("[PlayerDebug] 진화 업그레이드: " + data.upgradedStatType +
+                      " (단계 " + data.evolutionStep + ", 다음 " + data.nextStatType + ", 골드 " + data.goldSpent + ")" +
+                      " / 레벨 공 " + stat.playerStatAttackLevel + " 체 " + stat.playerStatHpLevel +
+                      " 방 " + stat.playerStatDefenseLevel + " 포션 " + stat.playerStatPotionRecoveryLevel);
+        }));
     }
 
     private void LogLooted(DropItemType type)

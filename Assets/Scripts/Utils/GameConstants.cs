@@ -42,7 +42,8 @@ public static class GameConstants
         public const int STATIC_DATA_MAJOR_VERSION = 2;
         public const string SIGNUP_API = "/api/accounts/signup";
         public const string LOGIN_API = "/api/accounts/login";
-        public const string PLAYER_SAVE_API = "/api/players/me/save"; 
+        public const string PLAYER_SAVE_API = "/api/players/me/save";
+        public const string INVENTORY_API = "/api/inventory";   // Server 클래스에 추가
     }
 
     public static class Value

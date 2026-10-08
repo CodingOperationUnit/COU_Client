@@ -111,6 +111,7 @@ public class ServerLoginManager : MonoSingleton<ServerLoginManager>
             }
 
             AccessToken = response.accessToken;
+            ApiClient.SetAccessToken(response.accessToken);   // ApiClient로 보내는 요청에 같은 토큰을 쓴다
             CurrentAccount = response.account;
             onComplete?.Invoke(true, "로그인되었습니다.");
         });
@@ -120,6 +121,7 @@ public class ServerLoginManager : MonoSingleton<ServerLoginManager>
     public void Logout()
     {
         AccessToken = null;
+        ApiClient.ClearAccessToken();
         CurrentAccount = null;
         GameManager.PlayerData.ClearPlayerData();
     }

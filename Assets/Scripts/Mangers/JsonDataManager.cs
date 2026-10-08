@@ -65,33 +65,31 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
     // onComplete: 앱 업데이트가 필요하면 true
     public IEnumerator FetchStaticData(Action<bool> onComplete)
     {
-        string url = GameConstants.Server.BASE_URL + GameConstants.Server.STATIC_DATA_API;
+        string path = GameConstants.Server.STATIC_DATA_API;
         string savedVersion = LoadUsableSavedVersion();
         if (savedVersion != null)
-            url += "?version=" + UnityWebRequest.EscapeURL(savedVersion);
+            path += "?version=" + UnityWebRequest.EscapeURL(savedVersion);
 
         bool appUpdateRequired = false;
 
-        using (var request = UnityWebRequest.Get(url))
+        // 인증이 필요 없는 API라 토큰을 붙이지 않는다
+        yield return ApiClient.Get<JObject>(path, result =>
         {
-            yield return request.SendWebRequest();
-
             // 204면 가진 데이터가 최신이다
-            if (request.result != UnityWebRequest.Result.Success)
-                Debug.LogWarning($"정적 데이터 요청 실패, 가진 데이터를 유지합니다: {request.error}");
-            else if (request.responseCode == 200)
-                appUpdateRequired = ApplyStaticDataResponse(request.downloadHandler.text);
-        }
+            if (!result.IsSuccess)
+                Debug.LogWarning($"정적 데이터 요청 실패, 가진 데이터를 유지합니다: {result.Describe()}");
+            else if (result.StatusCode == 200)
+                appUpdateRequired = ApplyStaticDataResponse(result.Data);
+        }, auth: false);
 
         onComplete?.Invoke(appUpdateRequired);
     }
 
     // 200 응답을 적용한다. 버전 첫째 자리가 빌드 값과 다르면 받은 데이터를 쓰지 않고 true(앱 업데이트 필요)를 반환한다
-    private bool ApplyStaticDataResponse(string responseText)
+    private bool ApplyStaticDataResponse(JObject body)
     {
         try
         {
-            JObject body = JObject.Parse(responseText);
             string version = body.Value<string>("version");
 
             if (!TryGetMajorVersion(version, out int major))

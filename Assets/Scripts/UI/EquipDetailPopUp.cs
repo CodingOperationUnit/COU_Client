@@ -112,28 +112,60 @@ public class EquipDetailPopUp : UIPopup
 
     private void OnLevelUpButtonClicked()
     {
-        if (PlayerInventory.Instance.TryLevelUp(boundItem))
-            Refresh();
+        SetButtonsInteractable(false);
+        GameManager.ServerInventory.LevelUp(boundItem, OnRequestFinished);
+
+        // if (PlayerInventory.Instance.TryLevelUp(boundItem))
+        //     Refresh();
     }
 
     private void OnBatchLevelUpButtonClicked()
     {
-        if (PlayerInventory.Instance.BatchLevelUp(boundItem) > 0)
-            Refresh();
+        SetButtonsInteractable(false);
+        GameManager.ServerInventory.BatchLevelUp(boundItem, OnRequestFinished);
+        
+        // if (PlayerInventory.Instance.BatchLevelUp(boundItem) > 0)
+        //     Refresh();
     }
 
     private void OnEquipButtonClicked()
     {
-        if (boundItem.isEquipped)
-            PlayerInventory.Instance.Unequip(boundItem.Data.SlotType);
-        else
-            PlayerInventory.Instance.Equip(boundItem);
+        SetButtonsInteractable(false);
 
-        RefreshEquipButton();
+        if (boundItem.isEquipped)
+            GameManager.ServerInventory.Unequip(boundItem, OnRequestFinished);
+        else
+            GameManager.ServerInventory.Equip(boundItem, OnRequestFinished);
+        
+        // if (boundItem.isEquipped)
+        //     PlayerInventory.Instance.Unequip(boundItem.Data.SlotType);
+        // else
+        //     PlayerInventory.Instance.Equip(boundItem);
+        //
+        // RefreshEquipButton();
+    }
+
+    // 성공/실패 모두 서버 결과 기준으로 화면을 다시 그린다 (버튼 활성화도 Refresh에서 결정)
+    private void OnRequestFinished(bool success, string message)
+    {
+        if (!success)
+            UIManager.Instance.Get<MessagePopup>().ShowAlert(message);
+
+        Refresh();
+    }
+    
+    private void SetButtonsInteractable(bool interactable)
+    {
+        equipButton.interactable = interactable;
+        levelUpButton.interactable = interactable;
+        batchLevelUpButton.interactable = interactable;
     }
 
     private void RefreshEquipButton()
-        => equipButtonText.text = boundItem.isEquipped ? "장착 해제" : "장착";
+    {
+        equipButton.interactable = true;
+        equipButtonText.text = boundItem.isEquipped ? "장착 해제" : "장착";
+    }
 
     private static string GradeLabel(ItemGrade grade) => grade switch
     {
