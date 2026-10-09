@@ -423,11 +423,40 @@ public class PlayerInventory : MonoBehaviour
         inventoryIds.Remove(item.instanceId);
         acquiredAts.Remove(item.instanceId);
     }
-    
-    // 서버가 이미 저장했으므로 PlayerSaveData만 맞추고 화면을 갱신한다
+
+    public List<OwnedItem> ApplyPurchase(PurchaseResponse response)
+    {
+        Data.currency.currencyGold = response.currencyGold;
+        Data.currency.currencyGem = response.currencyGem;
+
+        var added = new List<OwnedItem>();
+        if (response.rewardedItems != null)
+        {
+            foreach (var reward in response.rewardedItems)
+            {
+                if (!IsKnownItem(reward.itemId))
+                {
+                    Debug.LogWarning($"[PlayerInventory] 아이템 데이터에 없는 itemId {reward.itemId}는 건너뜁니다.");
+                    continue;
+                }
+
+                var item = new OwnedItem(reward.itemId) { level = reward.inventoryItemLevel };
+                if (reward.inventoryItemGrade.HasValue)
+                    item.grade = reward.inventoryItemGrade.Value;
+
+                items.Add(item);
+                inventoryIds[item.instanceId] = (int)reward.inventoryId;   
+                acquiredAts[item.instanceId] = DateTime.Now;               
+                added.Add(item);
+            }
+        }
+
+        SyncAndNotify();  
+        return added;
+    }
     private void SyncAndNotify()
     {
-        Save();   // OwnedItem → PlayerSaveData.inventoryList + 장착 칸 (전투 씬 PlayerStats가 이 값을 읽음)
+        Save();   
         OnInventoryChanged?.Invoke();
         GameManager.PlayerData.NotifyPlayerDataChanged();
     }

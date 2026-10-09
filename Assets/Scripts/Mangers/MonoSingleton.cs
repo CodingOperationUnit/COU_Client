@@ -13,6 +13,7 @@ public static class GameManager
     public static ServerLoginManager ServerLogin { get { return ServerLoginManager.Instance; } }
     public static ServerLoadManager ServerLoad { get { return ServerLoadManager.Instance; } }
     public static ServerInventoryManager ServerInventory { get { return ServerInventoryManager.Instance; } }
+    public static ServerShopManager ServerShop { get { return ServerShopManager.Instance; } }
 }
 
 public class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
