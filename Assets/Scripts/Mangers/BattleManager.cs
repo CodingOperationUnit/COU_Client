@@ -215,7 +215,7 @@ public class BattleManager : MonoBehaviour
             (candidates[i], candidates[pick]) = (candidates[pick], candidates[i]);
 
             var skill = FindActiveSkill(candidates[i]);
-            var data = SkillDataBase.Get(candidates[i]);
+            var data = GameManager.JsonData.GetSkillDataFromJson(candidates[i]);
             selectWindow.SetOption(i, data.skillName, data.skillDescription, skill == null ? 1 : skill.Level + 1, skill == null);
         }
 

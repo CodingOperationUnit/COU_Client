@@ -68,7 +68,7 @@
 ### 5.2 플레이어 기본 스탯
 | 값 | 위치 | 현행 | 이상 | 비고 |
 |---|---|---|---|---|
-| attack, hp, criticalDamage, criticalChance, skillDamage, moveSpeed, maxMoveSpeed, lootRadius | `Resources/Data/player/player.json` | `DESIGN_CONST` | `DESIGN_CONST` | 전투에 쓰는 값은 hp, moveSpeed, lootRadius뿐이다(6.3). `PlayerBaseStatData` 필드 초기값이 같은 값을 한 번 더 정의한다(6.2) |
+| playerBaseAttack, playerBaseHp, playerBaseCriticalDamage, playerBaseCriticalChance, playerBaseSkillDamage, playerBaseMoveSpeed, playerBaseMaxMoveSpeed, playerBaseLootRadius | `Resources/Data/PlayerBaseStat.json` | `DESIGN_CONST` | `DESIGN_CONST` | 전투에 쓰는 값은 playerBaseHp, playerBaseMoveSpeed, playerBaseLootRadius뿐이다(6.3). `PlayerBaseStatData` 필드 초기값이 같은 값을 한 번 더 정의한다(6.2) |
 | 최종 스탯 공식 `(기본 + 장비) × (100 + 보너스%) / 100` | `PlayerStats.CalculateStat` | `DESIGN_CONST` | `DESIGN_CONST` | 장비 수치는 강화·등급 배율을 적용한 값이다. 장비 보너스%는 `ItemData`에 필드가 없어 0으로 계산한다 |
 | maxLives 2, invulnerableTime 0.5 | `PlayerHealth` 인스펙터 | `DESIGN_CONST` | `DESIGN_CONST` | |
 | dummyEquipments | `PlayerStats` 인스펙터(`DummyEquipment`) | `DEBUG` | `삭제` | 로그인 데이터가 없는 씬에서만 쓴다 |
@@ -101,8 +101,8 @@
 | 부위(`EquipSlotType`), 장비 등급(`ItemGrade`) | `EquipDefine.cs` enum | `DESIGN_CONST` | `DESIGN_CONST` | 도전 보상 등급도 `ItemGrade`를 쓴다 |
 | 무기 종류(`WeaponType`) | `WeaponType.cs` enum | `DESIGN_CONST` | `DESIGN_CONST` | 임시 정의. `ItemData`에 필드가 없어 `WeaponSkillTable`로 구한다 |
 | 무기별 시작 스킬(6001→3, 6002→2, 6003→1), 무기 종류↔스킬 매핑 | `WeaponSkillTable` const | `DEBUG` | **`DESIGN_TABLE`** | 장비 테이블의 열. 코드 주석에 임시 코드로 표시돼 있다 |
-| 강화: MaxLevel 10, BaseCost 1000, StatGrowthPerLevel 0.1 | `ItemLevelConfig` const | `DESIGN_CONST` | `DESIGN_CONST` | 비용 = `1000 × 현재 레벨`, 배율 = `1 + 0.1 × (레벨 - 1)` |
-| 합성: 재료 수 2, 등급별 스탯 배율(1, 1.75, 2.75) | `ItemLevelConfig` const | `DESIGN_CONST` | `DESIGN_CONST` | 같은 itemId·같은 등급 장비 2개를 소모해 한 등급 올린다. 장비 수치 = `기본 수치 × 강화 배율 × 등급 배율` |
+| 강화: maxLevel 10, levelUpBaseCost 1000, statGrowthPerLevel 0.1 | `Resources/Data/ItemConst.json` | `DESIGN_CONST` | `DESIGN_CONST` | 비용 = `1000 × 현재 레벨`, 배율 = `1 + 0.1 × (레벨 - 1)`. 계산은 `ItemLevelConfig`가 한다 |
+| 합성: synthesisMaterialCount 2, gradeStatMultiplier(1, 1.75, 2.75) | `Resources/Data/ItemConst.json` | `DESIGN_CONST` | `DESIGN_CONST` | 같은 itemId·같은 등급 장비 2개를 소모해 한 등급 올린다. 장비 수치 = `기본 수치 × 강화 배율 × 등급 배율`. 등급 배율은 `ItemGrade` 순서이고 개수가 다르면 로드에 실패한다 |
 | 보유 장비(instanceId, itemId, level, isEquipped, grade) | `PlayerSaveData.equipmentList` | `USER` | `USER` · `SERVER_AUTH` | grade는 합성으로 바뀐 현재 등급이다 |
 
 ### 5.6 상점
@@ -141,7 +141,7 @@
 | 값 | 위치 | 현행 | 이상 | 비고 |
 |---|---|---|---|---|
 | monsterId, monsterName, monsterType, monsterMaxHealthPoint, monsterExp, monsterMoveSpeed, monsterAttackPoint, monsterAsset | `Resources/JsonFiles/Monster.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | monsterType은 Normal, Elite, Boss, Box. monsterId는 11001~ 일반, 12001~ 엘리트, 13001~ 보스, 14001~ 상자 대역이다. monsterExp는 읽는 코드가 없다(6.3) |
-| 보스 공격(bossAttackId, monsterId, bossAttackType, bossAttackCooldown, bossAttackRange, bossAttackDamage) | `Resources/JsonFiles/BossAttack.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | 공격 종류와 관계없이 사거리 안이면 즉시 피해를 준다. 투사체·경고 표시는 TODO 상태다 |
+| 몬스터 공격(monsterAttackId, monsterId, monsterAttackType, monsterAttackCooldown, monsterAttackTriggerRange, monsterAttackDamage, monsterAttackCount, monsterAttackAngle, monsterAttackDuration) | `Resources/Data/MonsterAttack.json` | `DESIGN_TABLE` | `DESIGN_TABLE` | 한 몬스터가 여러 공격을 가진다. 공격 종류는 Melee, Ranged, Area, Trap이다 |
 | 접촉 공격 attackRange 0.6, attackInterval 1 | `Enemy` 인스펙터 | `DESIGN_CONST` | `DESIGN_CONST` | |
 | 몬스터 현재 HP | `Enemy.currentHp` | `SESSION` | `SESSION` · `CLIENT_AUTH` | |
 
@@ -183,23 +183,23 @@
 분류하면서 확인한 사실만 적는다.
 
 ### 6.1 기획 값의 저장 방식이 네 가지다
-- JSON이 두 폴더에 나뉘어 있다: `Resources/JsonFiles`(Monster, BossAttack, Wave, SpawnPattern, Stage, Skill, Item, DropItem, DropTable, AccountConst), `Resources/Data`(player)
-- `Resources/JsonFiles`의 JSON은 구글 시트의 같은 이름 탭을 내보낸 것이다(서버 레포 `Tools/SheetExporter`, `StaticDataClient.md` 3장). 원본은 시트이고, JSON만 고치면 다음 내보내기에서 덮어써진다. 시트에는 JSON이 없는 탭(PlayerConst, ItemConst, BattleConst, MonsterConst)도 있다
-- JSON 로더도 나뉘어 있다: `JsonDataManager`(Monster, BossAttack, Wave, SpawnPattern, Stage, Skill, DropItem, DropTable, AccountConst), `ItemDatabase`(Item), `SkillDataBase`(Skill), `PlayerDatabase`(player). Skill.json은 두 곳에서 불러온다. 레벨업 후보 목록은 `JsonDataManager`에서, 스킬 생성과 표시는 `SkillDataBase`에서 읽는다
-- 코드 상수: `ItemLevelConfig`, `SkillBase`, `MaxSkillSlots`, `OptionCount`, `PlayerLuckTrain`, `WeaponSkillTable`, `NodesPerLevel`
+- JSON은 `Resources/Data` 한 폴더에 있다(Monster, MonsterAttack, Wave, SpawnPattern, Stage, Skill, Item, DropItem, DropTable, AccountConst, PlayerBaseStat, ItemConst, Shop)
+- `Resources/Data`의 JSON은 구글 시트의 같은 이름 탭을 내보낸 것이다(서버 레포 `Tools/SheetExporter`, `StaticDataClient.md` 3장). 원본은 시트이고, JSON만 고치면 다음 내보내기에서 덮어써진다. 시트에는 JSON이 없는 탭(PlayerConst, BattleConst, MonsterConst)도 있다
+- JSON 로더는 `JsonDataManager` 하나다. Shop.json만 읽지 않는다(상점 카드는 인스펙터 값을 쓴다)
+- 코드 상수: `SkillBase`, `MaxSkillSlots`, `OptionCount`, `PlayerLuckTrain`, `WeaponSkillTable`, `NodesPerLevel`
 - 인스펙터: `BattleManager`, `PlayerHealth`, `PlayerLuckTrain`, `WaveManager`, `Enemy`, 상점 카드, 투사체 프리팹
 - 하드코딩: 스킬 레벨별 효과(`Skill_*`)
 
 ### 6.2 같은 의미의 중복 정의
 | 의미 | 정의 1 | 정의 2 |
 |---|---|---|
-| 플레이어 기본 스탯 | `player.json` | `PlayerBaseStatData` 필드 초기값 |
+| 플레이어 기본 스탯 | `PlayerBaseStat.json` | `PlayerBaseStatData` 필드 초기값 |
 | 초기 재화·최대 스태미나 | `AccountConst.json` | `PlayerSaveData.CreateDefault` |
 
 ### 6.3 불러오지만 쓰지 않는 값
 - `Stage.json`의 stageDuration. 승리는 보스 처치로 판정한다. 값도 150초로 웨이브 1의 보스 등장(45초)과 다르다
 - `Monster.json`의 monsterExp. 경험치 드롭은 `DropTable.json`에서 ExpGem1로 고정돼 있다
-- `player.json`의 attack, criticalDamage, criticalChance, skillDamage, maxMoveSpeed. 스킬 피해는 `Skill.json`의 Damage만 쓴다. attack은 최종 공격력까지 계산하지만 디버그 로그에서만 읽는다
+- `PlayerBaseStat.json`의 playerBaseAttack, playerBaseCriticalDamage, playerBaseCriticalChance, playerBaseSkillDamage, playerBaseMaxMoveSpeed. 스킬 피해는 `Skill.json`의 Damage만 쓴다. playerBaseAttack은 최종 공격력까지 계산하지만 디버그 로그에서만 읽는다
 - `DropItem.json`의 ExpGem2~4. `DropTable.json`이 ExpGem1만 쓴다
 - `AccountConst.json`의 initialGold, initialGem, initialStamina, maxStamina. 계정을 만들 때 `PlayerSaveData.CreateDefault`에 직접 쓴 값을 쓴다
 

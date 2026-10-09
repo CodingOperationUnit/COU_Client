@@ -29,6 +29,8 @@ public static class GameConstants
         public const string SkillData_Json_Path = "Data/Skill";
         public const string DropItemData_Json_Path = "Data/DropItem";
         public const string AccountConstData_Json_Path = "Data/AccountConst";
+        public const string PlayerBaseStatData_Json_Path = "Data/PlayerBaseStat";
+        public const string ItemConstData_Json_Path = "Data/ItemConst";
         public const string STATIC_DATA_DIRECTORY = "StaticData";
         public const string STATIC_DATA_VERSION_FILE = "version.txt";
     }

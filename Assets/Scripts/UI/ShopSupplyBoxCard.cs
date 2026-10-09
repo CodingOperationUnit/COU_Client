@@ -45,7 +45,7 @@ public class ShopSupplyBoxCard : MonoBehaviour
             return;
         }
 
-        var pool = ItemDatabase.GetAll()
+        var pool = GameManager.JsonData.ItemDataDic.Values
             .Where(data => data.Grade >= minGrade && data.Grade <= maxGrade)
             .ToList();
 

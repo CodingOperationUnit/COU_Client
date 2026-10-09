@@ -117,8 +117,6 @@ public class ServerLoadManager : MonoSingleton<ServerLoadManager>
     // TODO(장비 long 전환): InventoryData가 long/inventoryEquipped로 바뀌면 형변환과 장착 칸 쓰기를 제거
     private static void ApplyInventory(PlayerSaveData data, InventoryResponse inventory)
     {
-        ItemDatabase.Load();   // 로그인 씬에서는 아직 로드 전일 수 있다
-
         data.inventoryList = new List<InventoryData>();
         if (inventory?.items == null) return;
 
@@ -145,7 +143,7 @@ public class ServerLoadManager : MonoSingleton<ServerLoadManager>
 
     private static bool TryGetSlot(long itemId, out EquipSlotType slot)
     {
-        var itemData = ItemDatabase.GetAll().FirstOrDefault(d => d.itemId == itemId);
+        GameManager.JsonData.ItemDataDic.TryGetValue(itemId, out var itemData);
         slot = itemData?.SlotType ?? default;
 
         if (itemData == null)

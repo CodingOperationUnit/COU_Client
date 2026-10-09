@@ -99,7 +99,7 @@ public class PlayerLuckTrain : MonoBehaviour
         {
             int skillId = candidates[Random.Range(0, candidates.Count)].SkillId;
             slotSkillIds[i] = skillId;
-            window.SetSlot(i, SkillDataBase.Get(skillId).skillName);
+            window.SetSlot(i, GameManager.JsonData.GetSkillDataFromJson(skillId).skillName);
         }
 
         int[] selected = DrawSelection(candidates);
@@ -118,7 +118,7 @@ public class PlayerLuckTrain : MonoBehaviour
             level++;
             previewLevels[skillId] = level;
 
-            var data = SkillDataBase.Get(skillId);
+            var data = GameManager.JsonData.GetSkillDataFromJson(skillId);
             window.SetReward(i, data.skillName, level, "Lv." + level);
         }
 

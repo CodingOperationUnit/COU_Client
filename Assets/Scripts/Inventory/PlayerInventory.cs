@@ -28,7 +28,6 @@ public class PlayerInventory : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        ItemDatabase.Load();
 
         if (!GameManager.PlayerData.isPlayerDataLoaded)
         {
@@ -306,7 +305,7 @@ public class PlayerInventory : MonoBehaviour
     }
 
     private static bool IsKnownItem(long itemId)
-        => ItemDatabase.GetAll().Any(data => data.itemId == itemId);
+        => GameManager.JsonData.ItemDataDic.ContainsKey(itemId);
 
     // PlayerProfile의 슬롯별 장착 칸 읽기/쓰기 (PlayerStats에서도 사용)
     public static int? GetEquippedInventoryId(PlayerProfileData profile, EquipSlotType slot) => slot switch
