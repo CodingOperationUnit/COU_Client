@@ -10,8 +10,8 @@ public class PlayerInventory : MonoBehaviour
     private readonly List<OwnedItem> items = new();
     private readonly Dictionary<EquipSlotType, OwnedItem> equipped = new();
 
-    // OwnedItem.instanceId(메모리용 GUID) → InventoryData 저장용 값
-    private readonly Dictionary<string, int> inventoryIds = new();
+    // OwnedItem.instanceId(메모리용 GUID) → 서버 inventoryId
+    private readonly Dictionary<string, long> inventoryIds = new();
     private readonly Dictionary<string, DateTime> acquiredAts = new();
 
     private static PlayerSaveData Data => GameManager.PlayerData.currentData;
@@ -28,7 +28,6 @@ public class PlayerInventory : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        ItemDatabase.Load();
 
         if (!GameManager.PlayerData.isPlayerDataLoaded)
         {
@@ -193,32 +192,24 @@ public class PlayerInventory : MonoBehaviour
     public int GetTotalStat(Func<OwnedItem, int> selector)
         => equipped.Values.Sum(selector);
 
-    // OwnedItem 리스트 → PlayerSaveData.inventoryList + profile 장착 칸으로 변환해 JSON에 저장
+    // OwnedItem 리스트 → PlayerSaveData.inventoryList (메모리만. 전투 씬 PlayerStats가 읽음)
     public void Save()
     {
-        var data = Data;
-        long playerId = data.profile.playerId;
+        long playerId = Data.profile.playerId;
 
-        data.inventoryList = items.Select(item => new InventoryData
+        Data.inventoryList = items.Select(item => new InventoryData
         {
             inventoryId = inventoryIds[item.instanceId],
             playerId = playerId,
-            itemId = (int)item.itemId,
+            itemId = item.itemId,
             inventoryItemLevel = item.level,
             inventoryAcquiredAt = acquiredAts[item.instanceId],
-            inventoryItemGrade = item.grade
+            inventoryItemGrade = item.grade,
+            inventoryEquipped = item.isEquipped
         }).ToList();
-
-        foreach (EquipSlotType slot in Enum.GetValues(typeof(EquipSlotType)))
-        {
-            int? inventoryId = equipped.TryGetValue(slot, out var item) ? inventoryIds[item.instanceId] : null;
-            SetEquippedInventoryId(data.profile, slot, inventoryId);
-        }
-
-        // GameManager.LocalSaveLoad.SaveCurrentPlayerData();
     }
 
-    // PlayerSaveData.inventoryList + profile 장착 칸 → OwnedItem 리스트로 복원
+    // PlayerSaveData.inventoryList → OwnedItem 리스트 (규칙은 InventoryRestorer)
     public void Load()
     {
         items.Clear();
@@ -226,47 +217,17 @@ public class PlayerInventory : MonoBehaviour
         inventoryIds.Clear();
         acquiredAts.Clear();
 
-        var data = Data;
-        if (data.inventoryList == null) return;
-
-        var byInventoryId = new Dictionary<int, OwnedItem>();
-
-        foreach (var saved in data.inventoryList)
+        var restored = InventoryRestorer.Restore(Data.inventoryList, out var restoredEquipped);
+        
+        foreach (var (saved, item) in restored)
         {
-            if (!IsKnownItem(saved.itemId))
-            {
-                Debug.LogWarning($"[PlayerInventory] 아이템 데이터에 없는 itemId {saved.itemId}는 건너뜁니다.");
-                continue;
-            }
-
-            var item = new OwnedItem(saved.itemId)
-            {
-                level = saved.inventoryItemLevel
-            };
-
-            // 저장된 등급이 있으면 복원 (없으면 생성자에서 정한 아이템 기본 등급 유지)
-            if (saved.inventoryItemGrade.HasValue)
-                item.grade = saved.inventoryItemGrade.Value;
-
             items.Add(item);
             inventoryIds[item.instanceId] = saved.inventoryId;
             acquiredAts[item.instanceId] = saved.inventoryAcquiredAt;
-            byInventoryId[saved.inventoryId] = item;
         }
-
-        foreach (EquipSlotType slot in Enum.GetValues(typeof(EquipSlotType)))
-        {
-            var inventoryId = GetEquippedInventoryId(data.profile, slot);
-            if (!inventoryId.HasValue || !byInventoryId.TryGetValue(inventoryId.Value, out var item))
-                continue;
-
-            // 장착 칸과 슬롯 타입이 다르면 무시 (테이블 관계 정리 3번 제약)
-            if (item.Data.SlotType != slot)
-                continue;
-
-            item.isEquipped = true;
-            equipped[slot] = item;
-        }
+        
+        foreach (var pair in restoredEquipped)
+            equipped[pair.Key] = pair.Value;
     }
 
     [ContextMenu("인벤토리 초기화")]
@@ -298,7 +259,7 @@ public class PlayerInventory : MonoBehaviour
     private OwnedItem CreateNewItem(long itemId)
     {
         var item = new OwnedItem(itemId);
-        int nextId = inventoryIds.Count == 0 ? 1 : inventoryIds.Values.Max() + 1;
+        long nextId = inventoryIds.Count == 0 ? 1 : inventoryIds.Values.Max() + 1;
 
         inventoryIds[item.instanceId] = nextId;
         acquiredAts[item.instanceId] = DateTime.Now;
@@ -306,32 +267,7 @@ public class PlayerInventory : MonoBehaviour
     }
 
     private static bool IsKnownItem(long itemId)
-        => ItemDatabase.GetAll().Any(data => data.itemId == itemId);
-
-    // PlayerProfile의 슬롯별 장착 칸 읽기/쓰기 (PlayerStats에서도 사용)
-    public static int? GetEquippedInventoryId(PlayerProfileData profile, EquipSlotType slot) => slot switch
-    {
-        EquipSlotType.Weapon => profile.equippedWeaponInventoryId,
-        EquipSlotType.Armor => profile.equippedArmorInventoryId,
-        EquipSlotType.Belt => profile.equippedBeltInventoryId,
-        EquipSlotType.Gloves => profile.equippedGlovesInventoryId,
-        EquipSlotType.Necklace => profile.equippedNecklaceInventoryId,
-        EquipSlotType.Shoes => profile.equippedShoesInventoryId,
-        _ => null
-    };
-
-    private static void SetEquippedInventoryId(PlayerProfileData profile, EquipSlotType slot, int? inventoryId)
-    {
-        switch (slot)
-        {
-            case EquipSlotType.Weapon: profile.equippedWeaponInventoryId = inventoryId; break;
-            case EquipSlotType.Armor: profile.equippedArmorInventoryId = inventoryId; break;
-            case EquipSlotType.Belt: profile.equippedBeltInventoryId = inventoryId; break;
-            case EquipSlotType.Gloves: profile.equippedGlovesInventoryId = inventoryId; break;
-            case EquipSlotType.Necklace: profile.equippedNecklaceInventoryId = inventoryId; break;
-            case EquipSlotType.Shoes: profile.equippedShoesInventoryId = inventoryId; break;
-        }
-    }
+        => GameManager.JsonData.ItemDataDic.ContainsKey(itemId);
     
     // ===== 서버 응답 반영: 서버가 계산·저장한 결과로 덮어쓴다 (클라에서 계산하지 않음) =====
 
@@ -342,16 +278,16 @@ public class PlayerInventory : MonoBehaviour
     {
         if (response.unequipped != null)
             SetEquippedState(response.unequipped.inventoryId, false);
-    
+
         if (response.equipped != null)
-            SetEquippedState(response.equipped.inventoryId, response.equipped.isEquipped);
-    
+            SetEquippedState(response.equipped.inventoryId, response.equipped.inventoryEquipped);
+
         SyncAndNotify();
     }
-    
-    public void ApplyUnequip(EquipmentResponse response)
+
+    public void ApplyUnequip(InventoryData response)
     {
-        SetEquippedState(response.inventoryId, response.isEquipped);
+        SetEquippedState(response.inventoryId, response.inventoryEquipped);
         SyncAndNotify();
     }
     
@@ -424,11 +360,51 @@ public class PlayerInventory : MonoBehaviour
         inventoryIds.Remove(item.instanceId);
         acquiredAts.Remove(item.instanceId);
     }
+
+    public List<OwnedItem> ApplyPurchase(PurchaseResponse response)
+    {
+        Data.currency.currencyGold = response.currencyGold;   // 서버 값으로 덮어쓰기
+        Data.currency.currencyGem = response.currencyGem;
+
+        var added = new List<OwnedItem>();
+        foreach (var reward in response.rewardedItems ?? new List<InventoryData>())
+        {
+            var item = AddServerItem(reward);
+            if (item != null) added.Add(item);
+        }
+
+        SyncAndNotify();
+        return added;
+    }
     
-    // 서버가 이미 저장했으므로 PlayerSaveData만 맞추고 화면을 갱신한다
+    // 서버가 만든 장비를 추가한다 (ID는 서버 값 그대로, 이미 있으면 무시)
+    private OwnedItem AddServerItem(InventoryData saved)
+    {
+        if (FindByInventoryId(saved.inventoryId) != null)
+        {
+            Debug.LogWarning($"[PlayerInventory] inventoryId {saved.inventoryId}는 이미 있어서 건너뜁니다.");
+            return null;
+        }
+
+        if (!IsKnownItem(saved.itemId))
+        {
+            Debug.LogWarning($"[PlayerInventory] 아이템 데이터에 없는 itemId {saved.itemId}는 건너뜁니다.");
+            return null;
+        }
+
+        var item = new OwnedItem(saved.itemId) { level = saved.inventoryItemLevel };
+        if (saved.inventoryItemGrade.HasValue)
+            item.grade = saved.inventoryItemGrade.Value;
+
+        items.Add(item);
+        inventoryIds[item.instanceId] = saved.inventoryId;
+        acquiredAts[item.instanceId] = saved.inventoryAcquiredAt;
+        return item;
+    }
+    
     private void SyncAndNotify()
     {
-        Save();   // OwnedItem → PlayerSaveData.inventoryList + 장착 칸 (전투 씬 PlayerStats가 이 값을 읽음)
+        Save();   
         OnInventoryChanged?.Invoke();
         GameManager.PlayerData.NotifyPlayerDataChanged();
     }

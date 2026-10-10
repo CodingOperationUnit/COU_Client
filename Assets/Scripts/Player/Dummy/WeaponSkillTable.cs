@@ -8,17 +8,17 @@ public static class WeaponSkillTable
     // 인벤토리 무기: 아이템 ID → 시작 스킬 ID
     private static readonly Dictionary<long, int> itemToSkill = new()
     {
-        { 6001, 3 },   // 낡은 검 → Katana
-        { 6002, 2 },   // 연발 권총 → Revolver
-        { 6003, 1 },   // 그림자 쿠나이 → Shuriken
+        { 6001, 20030 },   // 낡은 검 → Katana
+        { 6002, 20020 },   // 연발 권총 → Revolver
+        { 6003, 20010 },   // 그림자 쿠나이 → Shuriken
     };
 
     // 무기 종류 ↔ 시작 스킬 ID (더미 무기, 공격 모션용)
     private static readonly Dictionary<WeaponType, int> typeToSkill = new()
     {
-        { WeaponType.Sword, 3 },   // Katana
-        { WeaponType.Gun, 2 },     // Revolver
-        { WeaponType.Throw, 1 },   // Shuriken
+        { WeaponType.Sword, 20030 },   // Katana
+        { WeaponType.Gun, 20020 },     // Revolver
+        { WeaponType.Throw, 20010 },   // Shuriken
     };
 
     public static int GetSkillByItem(long itemId)

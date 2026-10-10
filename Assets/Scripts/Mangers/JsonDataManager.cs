@@ -13,7 +13,7 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
     #region Fields
 
     private Dictionary<int, MonsterData> monsterDataDic;
-    public Dictionary<int, MonsterData> MonsterDataDic => monsterDataDic;
+    public IReadOnlyDictionary<int, MonsterData> MonsterDataDic => monsterDataDic;
 
     private Dictionary<int, MonsterAttackData> monsterAttackDataDic;
     public IReadOnlyDictionary<int, MonsterAttackData> MonsterAttackDataDic => monsterAttackDataDic;
@@ -26,8 +26,10 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
     public IReadOnlyDictionary<int, WaveEntryData> WaveEntryDataDic => waveEntryDataDic;
 
     private Dictionary<int, SpawnPatternData> spawnPatternDataDic;
+    public IReadOnlyDictionary<int, SpawnPatternData> SpawnPatternDataDic => spawnPatternDataDic;
 
     private Dictionary<int, List<DropTableEntryData>> dropTableDic;
+    public IReadOnlyDictionary<int, List<DropTableEntryData>> DropTableDic => dropTableDic;
 
     private Dictionary<int, StageData> stageDataDic;
     public IReadOnlyDictionary<int, StageData> StageDataDic => stageDataDic;
@@ -40,6 +42,15 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
 
     private AccountConstData accountConstData;
     public AccountConstData AccountConstData => accountConstData;
+
+    private Dictionary<long, ItemData> itemDataDic;
+    public IReadOnlyDictionary<long, ItemData> ItemDataDic => itemDataDic;
+
+    private PlayerBaseStatData playerBaseStatData;
+    public PlayerBaseStatData PlayerBaseStatData => playerBaseStatData;
+
+    private ItemConstData itemConstData;
+    public ItemConstData ItemConstData => itemConstData;
     #endregion
 
     protected override void Awake()
@@ -57,6 +68,9 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
         dropItemDataDic = LoadTable(GameConstants.Paths.DropItemData_Json_Path, ParseDropItemData);
         dropTableDic = LoadTable(GameConstants.Paths.DropTableData_Json_Path, ParseDropTableData);
         accountConstData = LoadTable(GameConstants.Paths.AccountConstData_Json_Path, ParseAccountConstData);
+        itemDataDic = LoadTable(GameConstants.Paths.ItemData_Json_Path, ParseItemData);
+        playerBaseStatData = LoadTable(GameConstants.Paths.PlayerBaseStatData_Json_Path, ParsePlayerBaseStatData);
+        itemConstData = LoadTable(GameConstants.Paths.ItemConstData_Json_Path, ParseItemConstData);
 
         RebuildMonsterAttackIndex();
     }
@@ -111,7 +125,9 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
             var dropItems = ParseResponseTable(tables, GameConstants.Paths.DropItemData_Json_Path, ParseDropItemData);
             var dropTables = ParseResponseTable(tables, GameConstants.Paths.DropTableData_Json_Path, ParseDropTableData);
             var accountConst = ParseResponseTable(tables, GameConstants.Paths.AccountConstData_Json_Path, ParseAccountConstData);
-            var items = ParseResponseTable(tables, GameConstants.Paths.ItemData_Json_Path, ItemDatabase.Parse);
+            var items = ParseResponseTable(tables, GameConstants.Paths.ItemData_Json_Path, ParseItemData);
+            var playerBaseStat = ParseResponseTable(tables, GameConstants.Paths.PlayerBaseStatData_Json_Path, ParsePlayerBaseStatData);
+            var itemConst = ParseResponseTable(tables, GameConstants.Paths.ItemConstData_Json_Path, ParseItemConstData);
 
             SaveLoadHelper.SaveStaticData(version, tables);
 
@@ -124,12 +140,9 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
             dropItemDataDic = dropItems ?? dropItemDataDic;
             dropTableDic = dropTables ?? dropTableDic;
             accountConstData = accountConst ?? accountConstData;
-
-            if (skills != null)
-                SkillDataBase.Replace(skills);
-
-            if (items != null)
-                ItemDatabase.Replace(items);
+            itemDataDic = items ?? itemDataDic;
+            playerBaseStatData = playerBaseStat ?? playerBaseStatData;
+            itemConstData = itemConst ?? itemConstData;
 
             if (monsterAttacks != null)
                 RebuildMonsterAttackIndex();
@@ -219,38 +232,6 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
     }
 
     // 개별 행의 고유 ID로 조회합니다. 실패 시 null을 반환합니다.
-    public MonsterAttackData GetMonsterAttackDataFromJson(int monsterAttackId)
-    {
-        if (monsterAttackDataDic == null)
-        {
-            Debug.LogError("MonsterAttack 데이터가 초기화되지 않았습니다.");
-            return null;
-        }
-
-        if (monsterAttackDataDic.TryGetValue(monsterAttackId, out MonsterAttackData data))
-            return data;
-
-        Debug.LogWarning($"등록되지 않은 MonsterAttack ID: {monsterAttackId}");
-        return null;
-    }
-
-    // 개별 행의 고유 ID로 조회합니다. 실패 시 null을 반환합니다.
-    public WaveEntryData GetWaveEntryDataFromJson(int waveEntryId)
-    {
-        if (waveEntryDataDic == null)
-        {
-            Debug.LogError("Wave 데이터가 초기화되지 않았습니다.");
-            return null;
-        }
-
-        if (waveEntryDataDic.TryGetValue(waveEntryId, out WaveEntryData data))
-            return data;
-
-        Debug.LogWarning($"등록되지 않은 Wave 항목 ID: {waveEntryId}");
-        return null;
-    }
-
-    // 개별 행의 고유 ID로 조회합니다. 실패 시 null을 반환합니다.
     public SpawnPatternData GetSpawnPatternDataFromJson(int patternId)
     {
         if (spawnPatternDataDic == null)
@@ -325,6 +306,21 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
             return data;
 
         Debug.LogWarning($"등록되지 않은 DropItem 종류: {type}");
+        return null;
+    }
+
+    public ItemData GetItemDataFromJson(long itemId)
+    {
+        if (itemDataDic == null)
+        {
+            Debug.LogError("아이템 데이터가 초기화되지 않았습니다.");
+            return null;
+        }
+
+        if (itemDataDic.TryGetValue(itemId, out ItemData data))
+            return data;
+
+        Debug.LogWarning($"등록되지 않은 아이템 ID: {itemId}");
         return null;
     }
     #endregion
@@ -622,6 +618,73 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
             throw new InvalidOperationException("AccountConst 데이터 항목이 객체 형식이 아닙니다.");
 
         return rows[0].ToObject<AccountConstData>();
+    }
+
+    private static Dictionary<long, ItemData> ParseItemData(JObject root)
+    {
+        JArray rows = root["datas"] as JArray;
+
+        if (rows == null || rows.Count == 0)
+            throw new InvalidOperationException("아이템 데이터 목록이 비어 있습니다.");
+
+        var loadedItems = new Dictionary<long, ItemData>();
+        foreach (JToken row in rows)
+        {
+            if (!(row is JObject))
+            {
+                throw new InvalidOperationException("아이템 데이터 항목이 객체 형식이 아닙니다.");
+            }
+
+            ItemData data = row.ToObject<ItemData>();
+
+            if (data == null || data.itemId <= 0)
+            {
+                throw new InvalidOperationException("아이템 데이터 또는 ID가 올바르지 않습니다.");
+            }
+
+            if (loadedItems.ContainsKey(data.itemId))
+            {
+                throw new InvalidOperationException($"중복된 아이템 ID: {data.itemId}");
+            }
+
+            data.OnLoaded();
+            loadedItems.Add(data.itemId, data);
+        }
+
+        return loadedItems;
+    }
+
+    private static PlayerBaseStatData ParsePlayerBaseStatData(JObject root)
+    {
+        JArray rows = root["datas"] as JArray;
+        if (rows == null || rows.Count != 1)
+            throw new InvalidOperationException("PlayerBaseStat 데이터는 행이 하나여야 합니다.");
+
+        if (!(rows[0] is JObject))
+            throw new InvalidOperationException("PlayerBaseStat 데이터 항목이 객체 형식이 아닙니다.");
+
+        PlayerBaseStatData data = rows[0].ToObject<PlayerBaseStatData>();
+        data.Sanitize();
+        return data;
+    }
+
+    private static ItemConstData ParseItemConstData(JObject root)
+    {
+        JArray rows = root["datas"] as JArray;
+        if (rows == null || rows.Count != 1)
+            throw new InvalidOperationException("ItemConst 데이터는 행이 하나여야 합니다.");
+
+        if (!(rows[0] is JObject))
+            throw new InvalidOperationException("ItemConst 데이터 항목이 객체 형식이 아닙니다.");
+
+        ItemConstData data = rows[0].ToObject<ItemConstData>();
+
+        // ItemLevelConfig.GetGradeMultiplier가 (int)grade로 인덱싱한다
+        int gradeCount = Enum.GetValues(typeof(ItemGrade)).Length;
+        if (data.gradeStatMultiplier == null || data.gradeStatMultiplier.Length != gradeCount)
+            throw new InvalidOperationException($"ItemConst의 gradeStatMultiplier는 {gradeCount}개(ItemGrade 순서)여야 합니다.");
+
+        return data;
     }
     #endregion
 }

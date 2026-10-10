@@ -53,9 +53,3 @@ public class SkillData : ISerializationCallbackReceiver
 
     }
 }
-
-[Serializable]
-public class SkillDataListWrapper
-{
-    public SkillData[] datas;
-}

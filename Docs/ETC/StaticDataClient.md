@@ -5,34 +5,36 @@
 ## 1. 작업 목록
 | 작업 | 위치 | 비고 |
 |---|---|---|
-| 데이터 로드 흐름 변경 | `JsonDataManager`, `ItemDatabase`, `SkillDataBase` | 빌드 사본 → 저장본 → 서버 응답 순으로 덮어쓴다 |
+| 데이터 로드 흐름 변경 | `JsonDataManager` | 빌드 사본 → 저장본 → 서버 응답 순으로 덮어쓴다 |
 | 정적 데이터 API 호출 | 로그인 전 단계(위치 미정) | 클라이언트에 아직 서버 통신 코드가 없다 |
 | Unity Exporter 제거 | `Assets/Scripts/Parser/` | 서버 레포 `Tools/SheetExporter`로 대체한다(3장). jyj8943 작성 코드라서 작성자와 협의한다 |
 
 ## 2. 런타임: 데이터 로드
 
 ### 2.1 현재 구조
-- `JsonDataManager.Awake`가 `Load*Data` 9개를 동기로 호출한다. 각 메서드는 `Resources.Load<TextAsset>(GameConstants.Paths.*_Json_Path)`로 빌드 사본을 읽는다.
-- Item은 별도 static 클래스 `ItemDatabase.Load()`가 읽는다. `PlayerInventory`, `PlayerStats`에서 처음 필요할 때 호출한다.
-- Skill은 `SkillDataBase`도 `Resources.Load<TextAsset>("JsonFiles/Skill")`로 따로 읽는다.
-- 모든 `Load*`는 맵이 이미 있으면 바로 돌아간다(`if (dic != null) return;`). 실패하면 예외를 잡아 로그만 남기고 맵을 null로 둔다.
+- 정적 데이터는 모두 `JsonDataManager`가 보관한다. 다른 클래스는 데이터를 들고 있지 않다.
+- `JsonDataManager.Awake`가 `LoadTable`로 12개 테이블을 동기로 읽는다. 읽기 경로는 `ReadTableText` 하나다(쓸 수 있는 저장본 → 빌드 사본).
+- 시작 로드는 테이블별로 실패를 허용한다. 실패한 테이블은 로그를 남기고 null로 둔다.
+- `JsonDataManager`는 LogInScene에만 배치돼 있다(`isDontDestroy`). 다른 씬을 직접 실행하면 처음 `GameManager.JsonData`에 접근할 때 생성되고, 그때 `Awake`가 바로 실행된다.
 
 ### 2.2 서버 테이블과 클라이언트 로드 위치
 서버는 시트의 모든 탭을 내려준다.
 
-| 서버 테이블 | 클라이언트 로드 | 경로 상수 |
+| 서버 테이블 | 클라이언트 파서(`JsonDataManager`) | 경로 상수 |
 |---|---|---|
-| AccountConst | `JsonDataManager.LoadAccountConstData` | `AccountConstData_Json_Path` |
-| Stage | `JsonDataManager.LoadStageData` | `StageData_Json_Path` |
-| Wave | `JsonDataManager.LoadWaveData` | `WaveData_Json_Path` |
-| SpawnPattern | `JsonDataManager.LoadSpawnPatternData` | `SpawnPatternData_Json_Path` |
-| Monster | `JsonDataManager.LoadMonsterData` | `MonsterData_Json_Path` |
-| BossAttack | `JsonDataManager.LoadBossAttackData` | `BossAttackData_Json_Path` |
-| DropTable | `JsonDataManager.LoadDropTableData` | `DropTableData_Json_Path` |
-| DropItem | `JsonDataManager.LoadDropItemData` | `DropItemData_Json_Path` |
-| Item | `ItemDatabase.Load` | `ItemData_Json_Path` |
-| Skill | `JsonDataManager.LoadSkillData`, `SkillDataBase` | `SkillData_Json_Path`(`SkillDataBase`는 문자열 직접 사용) |
-| ItemConst | 없음 | 없음 |
+| AccountConst | `ParseAccountConstData` | `AccountConstData_Json_Path` |
+| Stage | `ParseStageData` | `StageData_Json_Path` |
+| Wave | `ParseWaveData` | `WaveData_Json_Path` |
+| SpawnPattern | `ParseSpawnPatternData` | `SpawnPatternData_Json_Path` |
+| Monster | `ParseMonsterData` | `MonsterData_Json_Path` |
+| MonsterAttack | `ParseMonsterAttackData` | `MonsterAttackData_Json_Path` |
+| DropTable | `ParseDropTableData` | `DropTableData_Json_Path` |
+| DropItem | `ParseDropItemData` | `DropItemData_Json_Path` |
+| Item | `ParseItemData` | `ItemData_Json_Path` |
+| Skill | `ParseSkillData` | `SkillData_Json_Path` |
+| PlayerBaseStat | `ParsePlayerBaseStatData` | `PlayerBaseStatData_Json_Path` |
+| ItemConst | `ParseItemConstData` | `ItemConstData_Json_Path` |
+| Shop | 없음 | 없음. 서버에서 받아 저장만 하고 읽지 않는다 |
 
 ### 2.3 바꿀 흐름
 흐름도는 `StaticData.md` 4번에 있다.
@@ -81,13 +83,12 @@ IEnumerator FetchStaticData(string baseUrl, string savedVersion)
 - 버전 파일은 테이블을 모두 쓴 뒤 마지막에 쓴다. 중간에 실패하면 버전이 이전 값으로 남아, 다음 요청에서 다시 받는다.
 
 ### 2.6 메모리 교체
-- `Load*`의 `if (dic != null) return;` 때문에 그대로 다시 부르면 바뀌지 않는다.
-- 받은 테이블을 모두 파싱한 뒤 한 번에 바꾼다. 하나라도 실패하면 기존 데이터를 유지하고 저장하지 않는다. 지금의 `Load*`는 실패해도 예외를 밖으로 내지 않으므로 성공 여부를 알 수 있게 바꿔야 한다.
-- `ItemDatabase`, `SkillDataBase`도 같은 시점에 바꾼다. 갱신 전에 불렸으면 빌드 사본을 들고 있다.
+- `ApplyStaticDataResponse`가 받은 테이블을 모두 파싱한 뒤 한 번에 바꾼다. 하나라도 실패하면 기존 데이터를 유지하고 저장하지 않는다. 응답에 없는 테이블은 가진 데이터를 유지한다.
+- 교체 뒤 부수 처리는 `RebuildMonsterAttackIndex`뿐이다. 데이터를 따로 들고 있는 클래스가 없으므로 다른 곳에 알릴 필요가 없다.
 - 갱신은 로그인 전에 끝나므로 전투 중에 데이터가 바뀌는 경우는 없다.
 
 ### 2.7 버전
-- 빌드는 자신이 읽을 수 있는 첫째 자리 값을 상수로 가진다. 현재 `1`이다.
+- 빌드는 자신이 읽을 수 있는 첫째 자리 값을 상수로 가진다(`STATIC_DATA_MAJOR_VERSION`). 현재 `2`다.
 - 저장본 버전의 첫째 자리가 빌드 값과 다르면(앱 업데이트 직후) 저장본을 쓰지 않는다. 빌드 사본으로 시작하고 `version` 없이 요청한다.
 - 서버는 버전을 문자열 완전 일치로만 비교한다. 클라이언트는 첫째 자리만 숫자로 비교한다.
 

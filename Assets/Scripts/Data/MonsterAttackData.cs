@@ -1,14 +1,14 @@
 ﻿using System;
 using UnityEngine;
 
-// 보스 공격 종류. MonsterAttack.json의 "monsterAttackType" 문자열을 enum으로 바꿔서 쓴다.
+// 몬스터 공격 종류. MonsterAttack.json의 "monsterAttackType" 문자열을 enum으로 바꿔서 쓴다.
 // - Melee  : 근접 공격(돌진)
 // - Ranged : 투사체. 발 수와 퍼짐 각도로 단발/산탄/원형탄(360)
 // - Area   : 범위 공격(경고 장판 → 예고 후 폭발)
 // - Trap   : 독 장판. 유지 시간 동안 남아 있고, 밟고 있으면 일정 간격마다 피해
 public enum MonsterAttackType { Melee, Ranged, Area, Trap }
 
-// 보스 공격 패턴(한 보스가 여러 패턴을 가짐)
+// 몬스터 공격 패턴(한 몬스터가 여러 패턴을 가짐)
 [Serializable]
 public class MonsterAttackData
 {

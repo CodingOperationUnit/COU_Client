@@ -133,14 +133,6 @@ public class PlayerProfileData
 
     public int accountLevel = 1;           // 접두어 예외 (클라이언트와 이름 통일)
     public int accountExp;                 // 현재 레벨 기준 경험치 (레벨업 시 차감)
-
-    // 슬롯별 장착 장비 (FK → Inventory), 비어 있으면 Null
-    public int? equippedWeaponInventoryId;
-    public int? equippedArmorInventoryId;
-    public int? equippedBeltInventoryId;
-    public int? equippedGlovesInventoryId;
-    public int? equippedNecklaceInventoryId;
-    public int? equippedShoesInventoryId;
 }
 
 /// <summary>Currency: 보유 재화. 1:1이므로 playerId가 PK</summary>
@@ -158,14 +150,17 @@ public class CurrencyData
 [Serializable]
 public class InventoryData
 {
-    public int inventoryId;                // PK, Auto Increment
+    public long inventoryId;                // PK, Auto Increment
     public long playerId;                   // FK → PlayerProfile
-    public int itemId;                     // 논리 FK → Item (long → int)
-    public int inventoryItemLevel = 1;     // 최대값은 Item.itemMaxLevel
+    public long itemId;                     // 논리 FK → Item (long → int)
+    public int inventoryItemLevel = 1;     // 최대값은 ItemConst.maxLevel
     public DateTime inventoryAcquiredAt;   // 획득 시각 (정렬용)
 
     [JsonConverter(typeof(StringEnumConverter))]
     public ItemGrade? inventoryItemGrade;
+
+    [JsonProperty("isEquipped")] 
+    public bool inventoryEquipped; // 장착 여부 ( 서버 Equipment.equipped )
 }
 
 /// <summary>StageProgress: 스테이지 진행 정보. 1:1이므로 playerId가 PK</summary>
@@ -189,16 +184,6 @@ public class PlayerStatData
     public int playerStatHpLevel;
     public int playerStatDefenseLevel;
     public int playerStatPotionRecoveryLevel;
-}
-
-[Serializable]
-public class EquipmentSaveData
-{
-    public string instanceId;
-    public long itemId;
-    public int level = 1;
-    public bool isEquipped;
-    public ItemGrade grade;
 }
 
 /// <summary>StageRecord: 스테이지별 최장 생존 시간. 승패와 관계없이 서버가 갱신한다</summary>

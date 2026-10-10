@@ -21,7 +21,7 @@ public class ItemData
     public EquipSlotType SlotType => parsedSlotType;
     public ItemGrade Grade => parsedGrade;
 
-    // ItemDatabase.Load()에서 JSON을 읽은 직후 한 번 호출
+    // JsonDataManager에서 JSON을 읽은 직후 한 번 호출
     public void OnLoaded()
     {
         if (!Enum.TryParse(slotType, out parsedSlotType))

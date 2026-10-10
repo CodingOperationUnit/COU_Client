@@ -12,7 +12,7 @@ public class OwnedItem
 
     public ItemGrade grade;
 
-    public ItemData Data => ItemDatabase.Get(itemId);
+    public ItemData Data => GameManager.JsonData.GetItemDataFromJson(itemId);
     public ItemGrade Grade => grade;
 
     public int MaxLevel => ItemLevelConfig.MaxLevel;

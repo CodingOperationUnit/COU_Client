@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Text.RegularExpressions;
+using UnityEngine;
 
 public class ServerLoginManager : MonoSingleton<ServerLoginManager>
 {
@@ -11,7 +12,21 @@ public class ServerLoginManager : MonoSingleton<ServerLoginManager>
     
     // 버튼을 연타해도 요청이 한 번만 나가도록 막는다
     private bool isRequesting;
-    
+
+    protected override void Awake()
+    {
+        base.Awake();
+
+        if (Instance == this)
+            ApiClient.OnUnauthorized += HandleUnauthorized;
+    }
+
+    protected override void OnDestroy()
+    {
+        ApiClient.OnUnauthorized -= HandleUnauthorized;
+        base.OnDestroy();
+    }
+
     // 회원가입: onComplete(성공 여부, 안내 메시지)
     public IEnumerator SignUp(string accountLoginId, string password, Action<bool, string> onComplete)
     {
@@ -125,6 +140,20 @@ public class ServerLoginManager : MonoSingleton<ServerLoginManager>
         CurrentAccount = null;
         ApiClient.ClearAccessToken();
         GameManager.PlayerData.ClearPlayerData();
+    }
+    
+    // 토큰 만료·무효: 로그아웃하고 로그인 화면으로 보낸다
+    private void HandleUnauthorized()
+    {
+        // 로그인 안 된 상태거나, 여러 요청이 동시에 401을 받아 이미 처리한 경우
+        if (!IsLoggedIn) return;
+
+        Debug.LogWarning("[ServerLogin] 토큰이 만료되어 로그아웃합니다.");
+        Logout();   // 토큰, 계정 정보, PlayerDataManager 데이터 삭제 → IsLoggedIn = false
+
+        UIManager.Instance.CloseAll();
+        GameManager.Scene.ChangeScene(GameConstants.SceneNames.LOGIN_SCENE);
+        UIManager.Instance.Get<MessagePopup>().ShowAlert("로그인이 만료되었습니다. 다시 로그인해 주세요.");
     }
 
     private static string NormalizeLoginId(string accountLoginId)

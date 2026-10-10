@@ -148,6 +148,7 @@ public class LocalLoginManager : MonoSingleton<LocalLoginManager>
         }
     }
 
+    [Obsolete("서버 연동으로 사용하지 않음. 발표 자료용으로 코드만 보존")]
     public bool Logout(out string message)
     {
         if (!GameManager.LocalSaveLoad.Logout())

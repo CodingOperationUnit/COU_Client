@@ -215,7 +215,7 @@ public class BattleManager : MonoBehaviour
             (candidates[i], candidates[pick]) = (candidates[pick], candidates[i]);
 
             var skill = FindActiveSkill(candidates[i]);
-            var data = SkillDataBase.Get(candidates[i]);
+            var data = GameManager.JsonData.GetSkillDataFromJson(candidates[i]);
             selectWindow.SetOption(i, data.skillName, data.skillDescription, skill == null ? 1 : skill.Level + 1, skill == null);
         }
 
@@ -329,6 +329,9 @@ public class BattleManager : MonoBehaviour
 
     private void HandleResultError(ApiResult<BattleResultResponse> result)
     {
+        // 401은 ServerLoginManager가 로그아웃·로그인 화면 이동·안내를 처리한다
+        if (result.FailType == ApiFailType.Unauthorized) return;
+        
         var popup = UIManager.Instance.Get<MessagePopup>();
 
         // 통신 실패와 5xx는 같은 battleId로 다시 보낸다
