@@ -1,11 +1,10 @@
+using System;
 using UnityEngine;
 
 public static class GameManager
 {
     public static GameSceneManager Scene { get { return GameSceneManager.Instance; } }
     public static ObjectPoolManager ObjectPool { get { return ObjectPoolManager.Instance; } }
-    public static LocalSaveLoadManager LocalSaveLoad { get { return LocalSaveLoadManager.Instance; } }
-    public static LocalLoginManager LocalLogin { get { return LocalLoginManager.Instance; } }
     public static PlayerDataManager PlayerData { get { return PlayerDataManager.Instance; } }
     public static JsonDataManager JsonData { get { return JsonDataManager.Instance; } }
     public static DropItemManager DropItem { get { return DropItemManager.Instance; } }
@@ -14,6 +13,11 @@ public static class GameManager
     public static ServerLoadManager ServerLoad { get { return ServerLoadManager.Instance; } }
     public static ServerInventoryManager ServerInventory { get { return ServerInventoryManager.Instance; } }
     public static ServerShopManager ServerShop { get { return ServerShopManager.Instance; } }
+    
+    [Obsolete("서버 연동으로 사용하지 않음. 접근하면 매니저가 자동 생성되니 쓰지 말 것")]
+    public static LocalSaveLoadManager LocalSaveLoad { get { return LocalSaveLoadManager.Instance; } }
+    [Obsolete("서버 연동으로 사용하지 않음. 접근하면 매니저가 자동 생성되니 쓰지 말 것")]
+    public static LocalLoginManager LocalLogin { get { return LocalLoginManager.Instance; } }
 }
 
 public class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
