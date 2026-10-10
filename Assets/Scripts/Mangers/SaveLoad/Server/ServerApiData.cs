@@ -76,28 +76,15 @@ public class InventoryResponse
 {
     public int currencyGold;                 // /me/save의 currency와 같은 값이라 사용하지 않음
     public int currencyGem;
-    public List<EquipmentResponse> items;
-}
-
-[Serializable]
-public class EquipmentResponse
-{
-    public long inventoryId;
-    public long itemId;
-    public int inventoryItemLevel;
-
-    [JsonConverter(typeof(StringEnumConverter))]
-    public ItemGrade? inventoryItemGrade;    // "General" → ItemGrade.General
-
-    public bool isEquipped;
+    public List<InventoryData> items;
 }
 
 // POST /api/inventory/{id}/equip
 [Serializable]
 public class EquipResponse
 {
-    public EquipmentResponse equipped;      // 장착된 장비
-    public EquipmentResponse unequipped;    // 같은 슬롯에서 자동 해제된 장비 (없으면 null)
+    public InventoryData equipped;      // 장착된 장비
+    public InventoryData unequipped;    // 같은 슬롯에서 자동 해제된 장비 (없으면 null)
 }
 
 // POST /api/inventory/{id}/levelup
@@ -153,5 +140,5 @@ public class PurchaseResponse
     public int spentGem;
     public int currencyGold;                    // 구매 후 보유 골드 
     public int currencyGem;                     // 구매 후 보유 보석 
-    public List<EquipmentResponse> rewardedItems;   // 장비 상자일 때만 값이 있음
+    public List<InventoryData> rewardedItems;   // 장비 상자일 때만 값이 있음
 }

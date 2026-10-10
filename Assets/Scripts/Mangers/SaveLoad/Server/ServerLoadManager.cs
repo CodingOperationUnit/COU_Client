@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class ServerLoadManager : MonoSingleton<ServerLoadManager>
@@ -61,7 +60,8 @@ public class ServerLoadManager : MonoSingleton<ServerLoadManager>
                 yield break;
             }
 
-            ApplyInventory(data, inventoryResult.Data);
+            // 서버 장비 목록을 그대로 넣는다 (형식이 같아서 변환 없음)
+            data.inventoryList = inventoryResult.Data?.items ?? new List<InventoryData>();
 
             // 3) PlayerDataManager에 보관
             try
@@ -111,57 +111,5 @@ public class ServerLoadManager : MonoSingleton<ServerLoadManager>
         }
 
         onComplete?.Invoke(data, null);
-    }
-
-    // 서버 장비 목록 → 기존 클라 형식(inventoryList + profile 장착 칸)으로 옮겨 담는다
-    // TODO(장비 long 전환): InventoryData가 long/inventoryEquipped로 바뀌면 형변환과 장착 칸 쓰기를 제거
-    private static void ApplyInventory(PlayerSaveData data, InventoryResponse inventory)
-    {
-        data.inventoryList = new List<InventoryData>();
-        if (inventory?.items == null) return;
-
-        // 같은 슬롯에 장착 장비가 2개면 먼저 나온(작은 inventoryId) 장비만 사용 (서버 S1 규칙과 동일)
-        foreach (var item in inventory.items.OrderBy(i => i.inventoryId))
-        {
-            data.inventoryList.Add(new InventoryData
-            {
-                inventoryId = (int)item.inventoryId,
-                playerId = data.profile.playerId,
-                itemId = (int)item.itemId,
-                inventoryItemLevel = item.inventoryItemLevel,
-                inventoryItemGrade = item.inventoryItemGrade,
-                inventoryAcquiredAt = default   // 서버 응답에 아직 없음 (팀원에게 추가 요청)
-            });
-
-            if (!item.isEquipped || !TryGetSlot(item.itemId, out var slot))
-                continue;
-
-            if (PlayerInventory.GetEquippedInventoryId(data.profile, slot) == null)
-                SetEquippedSlot(data.profile, slot, (int)item.inventoryId);
-        }
-    }
-
-    private static bool TryGetSlot(long itemId, out EquipSlotType slot)
-    {
-        GameManager.JsonData.ItemDataDic.TryGetValue(itemId, out var itemData);
-        slot = itemData?.SlotType ?? default;
-
-        if (itemData == null)
-            Debug.LogWarning($"[ServerLoad] 아이템 데이터에 없는 itemId {itemId}의 장착 정보는 건너뜁니다.");
-
-        return itemData != null;
-    }
-
-    private static void SetEquippedSlot(PlayerProfileData profile, EquipSlotType slot, int inventoryId)
-    {
-        switch (slot)
-        {
-            case EquipSlotType.Weapon: profile.equippedWeaponInventoryId = inventoryId; break;
-            case EquipSlotType.Armor: profile.equippedArmorInventoryId = inventoryId; break;
-            case EquipSlotType.Belt: profile.equippedBeltInventoryId = inventoryId; break;
-            case EquipSlotType.Gloves: profile.equippedGlovesInventoryId = inventoryId; break;
-            case EquipSlotType.Necklace: profile.equippedNecklaceInventoryId = inventoryId; break;
-            case EquipSlotType.Shoes: profile.equippedShoesInventoryId = inventoryId; break;
-        }
     }
 }

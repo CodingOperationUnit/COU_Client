@@ -91,36 +91,11 @@ public class PlayerStats : MonoBehaviour
         return result;
     }
 
-    // 전투 씬: profile의 장착 칸이 가리키는 장비만 OwnedItem으로 복원 (PlayerInventory.Load와 같은 방식)
+    // 전투 씬: 장착 장비만 (규칙은 InventoryRestorer, PlayerInventory.Load와 동일)
     private static List<OwnedItem> GetEquippedFromSaveData(PlayerSaveData data)
     {
-        var result = new List<OwnedItem>();
-        if (data.profile == null || data.inventoryList == null) return result;
-
-        var byInventoryId = data.inventoryList.ToDictionary(saved => saved.inventoryId);
-
-        foreach (EquipSlotType slot in Enum.GetValues(typeof(EquipSlotType)))
-        {
-            var inventoryId = PlayerInventory.GetEquippedInventoryId(data.profile, slot);
-            if (!inventoryId.HasValue || !byInventoryId.TryGetValue(inventoryId.Value, out var saved))
-                continue;
-
-            var item = new OwnedItem(saved.itemId)
-            {
-                level = saved.inventoryItemLevel,
-                isEquipped = true
-            };
-
-            if (saved.inventoryItemGrade.HasValue)
-                item.grade = saved.inventoryItemGrade.Value;
-
-            if (item.Data.SlotType != slot)
-                continue;
-
-            result.Add(item);
-        }
-
-        return result;
+        InventoryRestorer.Restore(data.inventoryList, out var equipped);
+        return equipped.Values.ToList();
     }
 
     private void CalculateFromEquipped(List<OwnedItem> equipped)

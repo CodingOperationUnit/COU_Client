@@ -18,7 +18,7 @@ public static class InventoryApi
     public static IEnumerator Equip(long inventoryId, Action<ApiResult<EquipResponse>> onComplete)
         => PostAction(inventoryId, "equip", onComplete);
 
-    public static IEnumerator Unequip(long inventoryId, Action<ApiResult<EquipmentResponse>> onComplete)
+    public static IEnumerator Unequip(long inventoryId, Action<ApiResult<InventoryData>> onComplete)
         => PostAction(inventoryId, "unequip", onComplete);
 
     public static IEnumerator LevelUp(long inventoryId, Action<ApiResult<LevelUpResponse>> onComplete)

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -11,9 +12,6 @@ public class PlayerDataManagerEditor : Editor
     private bool showInventory = true;
     private bool showStageProgress = true;
     private bool showPlayerStat;
-
-    private static readonly EquipSlotType[] Slots =
-        (EquipSlotType[])Enum.GetValues(typeof(EquipSlotType));
 
     public override void OnInspectorGUI()
     {
@@ -81,24 +79,21 @@ public class PlayerDataManagerEditor : Editor
         }
     }
 
-    // ===== PlayerProfile.equipped{Slot}InventoryId =====
+    // ===== 장착 장비 (InventoryData.inventoryEquipped) =====
     private void DrawEquipped(PlayerSaveData data)
     {
-        if (!BeginSection(ref showEquipped, "장착 장비 (equipped{Slot}InventoryId)", data.profile))
+        if (!BeginSection(ref showEquipped, "장착 장비 (inventoryEquipped)", data.inventoryList))
             return;
 
         using (new EditorGUI.IndentLevelScope())
         using (new EditorGUI.DisabledScope(true))
         {
-            foreach (var slot in Slots)
-            {
-                int? inventoryId = PlayerInventory.GetEquippedInventoryId(data.profile, slot);
-                string label = inventoryId.HasValue
-                    ? $"inventoryId {inventoryId.Value} (itemId {FindItemId(data, inventoryId.Value)})"
-                    : "(비어 있음)";
+            var equippedList = data.inventoryList.Where(i => i != null && i.inventoryEquipped).ToList();
+            if (equippedList.Count == 0)
+                EditorGUILayout.LabelField("(장착 장비 없음)");
 
-                EditorGUILayout.TextField(slot.ToString(), label);
-            }
+            foreach (var inv in equippedList)
+                EditorGUILayout.TextField($"inventoryId {inv.inventoryId}", $"itemId {inv.itemId}");
         }
     }
 
@@ -140,13 +135,13 @@ public class PlayerDataManagerEditor : Editor
 
                     using (new EditorGUI.DisabledScope(true))
                     {
-                        EditorGUILayout.IntField("보유 장비 ID", inventory.inventoryId);
-                        EditorGUILayout.IntField("아이템 ID", inventory.itemId);
+                        EditorGUILayout.LongField("보유 장비 ID", inventory.inventoryId);
+                        EditorGUILayout.LongField("아이템 ID", inventory.itemId);
                         EditorGUILayout.IntField("장비 레벨", inventory.inventoryItemLevel);
                         EditorGUILayout.TextField("장비 등급",
                             inventory.inventoryItemGrade.HasValue ? inventory.inventoryItemGrade.Value.ToString() : "(기본 등급)");
                         EditorGUILayout.TextField("획득 시각", FormatDate(inventory.inventoryAcquiredAt));
-                        EditorGUILayout.Toggle("장착 여부", IsEquipped(data.profile, inventory.inventoryId));
+                        EditorGUILayout.Toggle("장착 여부", inventory.inventoryEquipped);
                     }
                 }
             }
@@ -201,26 +196,6 @@ public class PlayerDataManagerEditor : Editor
         }
 
         return true;
-    }
-
-    private static bool IsEquipped(PlayerProfileData profile, int inventoryId)
-    {
-        if (profile == null)
-            return false;
-
-        foreach (var slot in Slots)
-        {
-            if (PlayerInventory.GetEquippedInventoryId(profile, slot) == inventoryId)
-                return true;
-        }
-
-        return false;
-    }
-
-    private static string FindItemId(PlayerSaveData data, int inventoryId)
-    {
-        var found = data.inventoryList?.Find(i => i != null && i.inventoryId == inventoryId);
-        return found != null ? found.itemId.ToString() : "목록에 없음";
     }
 
     private static string FormatDate(DateTime? dateTime)
