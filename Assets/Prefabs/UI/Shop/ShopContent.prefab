@@ -389,6 +389,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopGemCard
   buyButton: {fileID: 3936212562520799044}
+  productId: 50026
   gemAmount: 14000
 --- !u!114 &8845508217728643502
 MonoBehaviour:
@@ -525,6 +526,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopSupplyBoxCard
   actionButton: {fileID: 1764383646475054388}
+  productId: 50002
   minGrade: 1
   maxGrade: 2
   gemCost: 150
@@ -2210,6 +2212,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopGoldCard
   buyButton: {fileID: 4939348493316863328}
+  productId: 50011
   gemCost: 30
   goldAmount: 12000
   affordableColor: {r: 0, g: 0.76862746, b: 0.3647059, a: 1}
@@ -2393,6 +2396,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopGemCard
   buyButton: {fileID: 833085355178694909}
+  productId: 50022
   gemAmount: 500
 --- !u!114 &2775925925212068678
 MonoBehaviour:
@@ -4747,6 +4751,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopGemCard
   buyButton: {fileID: 3566694867428290630}
+  productId: 50023
   gemAmount: 1200
 --- !u!114 &4057797531777472379
 MonoBehaviour:
@@ -5303,6 +5308,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopGemCard
   buyButton: {fileID: 6109331460826214091}
+  productId: 50021
   gemAmount: 80
 --- !u!114 &3363554536624645713
 MonoBehaviour:
@@ -5439,6 +5445,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopSupplyBoxCard
   actionButton: {fileID: 7019381104722281106}
+  productId: 50001
   minGrade: 0
   maxGrade: 1
   gemCost: 50
@@ -5870,6 +5877,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopGoldCard
   buyButton: {fileID: 6941683143081181376}
+  productId: 50013
   gemCost: 288
   goldAmount: 144000
   affordableColor: {r: 0, g: 0.76862746, b: 0.3647059, a: 1}
@@ -7052,6 +7060,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopGemCard
   buyButton: {fileID: 5964710822046425972}
+  productId: 50025
   gemAmount: 6500
 --- !u!114 &8268409594482808872
 MonoBehaviour:
@@ -9824,6 +9833,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopGemCard
   buyButton: {fileID: 7874412849620113862}
+  productId: 50024
   gemAmount: 2500
 --- !u!114 &3507650002229883162
 MonoBehaviour:
@@ -10096,6 +10106,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopGoldCard
   buyButton: {fileID: 6394595123769953672}
+  productId: 50012
   gemCost: 90
   goldAmount: 36000
   affordableColor: {r: 0, g: 0.76862746, b: 0.3647059, a: 1}

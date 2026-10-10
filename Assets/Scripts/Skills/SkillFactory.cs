@@ -28,7 +28,7 @@ public static class SkillFactory
             return null;
         }
 
-        SkillData data = SkillDataBase.Get(skillId);
+        SkillData data = GameManager.JsonData.GetSkillDataFromJson(skillId);
 
         if(data == null)
         {

@@ -161,7 +161,7 @@ public class InventoryData
     public int inventoryId;                // PK, Auto Increment
     public long playerId;                   // FK → PlayerProfile
     public int itemId;                     // 논리 FK → Item (long → int)
-    public int inventoryItemLevel = 1;     // 최대값은 Item.itemMaxLevel
+    public int inventoryItemLevel = 1;     // 최대값은 ItemConst.maxLevel
     public DateTime inventoryAcquiredAt;   // 획득 시각 (정렬용)
 
     [JsonConverter(typeof(StringEnumConverter))]

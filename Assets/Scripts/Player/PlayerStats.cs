@@ -17,7 +17,7 @@ public class PlayerStats : MonoBehaviour
     private int startingSkillId;
     private string equipmentSource;
 
-    private static PlayerBaseStatData Base => PlayerDatabase.BaseStats;
+    private static PlayerBaseStatData Base => GameManager.JsonData.PlayerBaseStatData;
 
     public int FinalAtk { get { EnsureCalculated(); return finalAtk; } }
     public int FinalHp { get { EnsureCalculated(); return finalHp; } }
@@ -28,12 +28,12 @@ public class PlayerStats : MonoBehaviour
     public string EquipmentSource { get { EnsureCalculated(); return equipmentSource; } } // 인벤토리 / 계정 데이터 / 더미
     public bool UsesInventory => EquipmentSource != "더미";
 
-    public int CriticalDamage => Base.criticalDamage;
-    public int CriticalChance => Base.criticalChance;
-    public int SkillDamage => Base.skillDamage;
-    public float Speed => Base.moveSpeed;
-    public float MaxSpeed => Base.maxMoveSpeed;
-    public float LootRadius => Base.lootRadius;
+    public int CriticalDamage => Base.playerBaseCriticalDamage;
+    public int CriticalChance => Base.playerBaseCriticalChance;
+    public int SkillDamage => Base.playerBaseSkillDamage;
+    public float Speed => Base.playerBaseMoveSpeed;
+    public float MaxSpeed => Base.playerBaseMaxMoveSpeed;
+    public float LootRadius => Base.playerBaseLootRadius;
 
     private void Start()
     {
@@ -64,7 +64,7 @@ public class PlayerStats : MonoBehaviour
         }
 
         Debug.Log("[PlayerStats] 장비 출처: " + equipmentSource +
-                  " / 기본 Atk: " + Base.attack + ", 기본 Hp: " + Base.hp +
+                  " / 기본 Atk: " + Base.playerBaseAttack + ", 기본 Hp: " + Base.playerBaseHp +
                   " / 최종 Atk: " + finalAtk + ", 최종 Hp: " + finalHp +
                   " / 무기: " + (hasWeapon ? equippedWeaponName + " (" + equippedWeaponType + ")" : "없음") +
                   " / 시작 스킬: " + (startingSkillId == WeaponSkillTable.NoSkill ? "없음" : startingSkillId.ToString()));
@@ -94,8 +94,6 @@ public class PlayerStats : MonoBehaviour
     // 전투 씬: profile의 장착 칸이 가리키는 장비만 OwnedItem으로 복원 (PlayerInventory.Load와 같은 방식)
     private static List<OwnedItem> GetEquippedFromSaveData(PlayerSaveData data)
     {
-        ItemDatabase.Load();
-
         var result = new List<OwnedItem>();
         if (data.profile == null || data.inventoryList == null) return result;
 
@@ -131,8 +129,8 @@ public class PlayerStats : MonoBehaviour
         int totalHp = equipped.Sum(item => item.ScaledHp);
 
         // 장비 데이터에 공격력·체력 보너스 % 필드가 없어 0%로 계산 (필드 추가 시 교체)
-        finalAtk = CalculateStat(Base.attack, totalAtk, 0);
-        finalHp = CalculateStat(Base.hp, totalHp, 0);
+        finalAtk = CalculateStat(Base.playerBaseAttack, totalAtk, 0);
+        finalHp = CalculateStat(Base.playerBaseHp, totalHp, 0);
 
         var weapon = equipped.Find(item => item.Data.SlotType == EquipSlotType.Weapon);
         hasWeapon = weapon != null;
@@ -179,8 +177,8 @@ public class PlayerStats : MonoBehaviour
             totalHpBonus += item.hpBonusPercent;
         }
 
-        finalAtk = CalculateStat(Base.attack, totalAtk, totalAtkBonus);
-        finalHp = CalculateStat(Base.hp, totalHp, totalHpBonus);
+        finalAtk = CalculateStat(Base.playerBaseAttack, totalAtk, totalAtkBonus);
+        finalHp = CalculateStat(Base.playerBaseHp, totalHp, totalHpBonus);
     }
 
     private int CalculateStat(int baseStat, int addStat, int bonusPercent)

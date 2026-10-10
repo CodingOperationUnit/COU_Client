@@ -136,3 +136,22 @@ public class SynthesizeResponse
     public int tiersGained;                 // 일괄 합성에서만 값이 옴
     public List<long> consumedInventoryIds; // 재료로 소모된 장비
 }
+
+// ===== 상점 =====
+// POST /api/shop/purchase 요청
+[Serializable]
+public class PurchaseRequest
+{
+    public int productId;
+}
+
+// POST /api/shop/purchase 응답
+[Serializable]
+public class PurchaseResponse
+{
+    public int productId;
+    public int spentGem;
+    public int currencyGold;                    // 구매 후 보유 골드 
+    public int currencyGem;                     // 구매 후 보유 보석 
+    public List<EquipmentResponse> rewardedItems;   // 장비 상자일 때만 값이 있음
+}
