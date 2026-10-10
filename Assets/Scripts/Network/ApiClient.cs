@@ -80,7 +80,8 @@ public static class ApiClient
                 request.SetRequestHeader("Content-Type", "application/json");
             }
 
-            if (auth && HasToken)
+            bool sentToken = auth && HasToken;   // 로그인/회원가입(auth:false)의 401은 비밀번호 오류라 제외
+            if (sentToken)
                 request.SetRequestHeader("Authorization", "Bearer " + AccessToken);
 
             yield return request.SendWebRequest();
@@ -90,7 +91,7 @@ public static class ApiClient
             if (!result.IsSuccess)
                 Debug.LogWarning("[ApiClient] " + method + " " + path + " 실패: " + result.Describe());
 
-            if (result.FailType == ApiFailType.Unauthorized)
+            if (result.FailType == ApiFailType.Unauthorized && sentToken)
                 OnUnauthorized?.Invoke();
 
             onComplete?.Invoke(result);

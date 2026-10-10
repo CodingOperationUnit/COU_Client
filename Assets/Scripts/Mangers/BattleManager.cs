@@ -329,6 +329,9 @@ public class BattleManager : MonoBehaviour
 
     private void HandleResultError(ApiResult<BattleResultResponse> result)
     {
+        // 401은 ServerLoginManager가 로그아웃·로그인 화면 이동·안내를 처리한다
+        if (result.FailType == ApiFailType.Unauthorized) return;
+        
         var popup = UIManager.Instance.Get<MessagePopup>();
 
         // 통신 실패와 5xx는 같은 battleId로 다시 보낸다
