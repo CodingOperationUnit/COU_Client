@@ -12,6 +12,8 @@ public class PlayerMovement : MonoBehaviour
     private PlayerHealth playerHealth;
     private PlayerStats playerStats;
 
+    public bool IsMoving => enabled && input.sqrMagnitude > 0.01f;
+
     public Vector2 FacingDirection { get; private set; }
 
     private Vector2 input;

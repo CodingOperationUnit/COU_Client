@@ -16,6 +16,8 @@ public class PlayerAppearance : MonoBehaviour
     private SPUM_Prefabs spum;
     private bool isReady;
     private PlayerState currentState = PlayerState.IDLE;
+    private float oneShotEndTime;
+    private bool isDead;
 
     private Sprite defaultRight;
     private Sprite defaultLeft;
@@ -67,29 +69,62 @@ public class PlayerAppearance : MonoBehaviour
         if (leftWeapon != null) leftWeapon.sprite = left;
     }
 
-    // ==== 애니메이션 ====
+    // ===== 애니메이션 =====
+
     public void PlayIdle() => PlayLoop(PlayerState.IDLE);
     public void PlayMove() => PlayLoop(PlayerState.MOVE);
-    public void PlayAttack() => Play(PlayerState.ATTACK, AttackIndex);
-    public void PlayDamaged() => Play(PlayerState.DAMAGED, 0);
-    public void PlayDeath() => Play(PlayerState.DEATH, 0);
 
+    public void PlayAttack()
+    {
+        if (isDead) return;
+        PlayOneShot(PlayerState.ATTACK, AttackIndex);
+    }
 
+    public void PlayDamaged()
+    {
+        if (isDead) return;
+
+        // 피격 모션이 재생 중이면 다시 시작하지 않음 (연속 피해 시 떨림 방지)
+        if (currentState == PlayerState.DAMAGED && Time.time < oneShotEndTime) return;
+
+        PlayOneShot(PlayerState.DAMAGED, 0);
+    }
+
+    public void PlayDeath()
+    {
+        if (isDead) return;
+
+        Play(PlayerState.DEATH, 0);
+        isDead = true;   // 이후 다른 모션 재생 안 함
+    }
+
+    // 대기·이동처럼 계속 유지되는 상태: 바뀔 때만, 한 번 재생 모션이 끝난 뒤에만
     private void PlayLoop(PlayerState state)
     {
+        if (isDead) return;
+        if (Time.time < oneShotEndTime) return;
         if (currentState == state) return;
+
         Play(state, 0);
     }
 
-    private void Play(PlayerState state, int index)
+    // 공격·피격처럼 한 번 재생하는 상태: 클립 길이만큼 대기·이동 전환을 막음
+    private void PlayOneShot(PlayerState state, int index)
     {
-        if (!isReady) return;
+        var clip = Play(state, index);
+        if (clip != null)
+            oneShotEndTime = Time.time + clip.length;
+    }
+
+    private AnimationClip Play(PlayerState state, int index)
+    {
+        if (!isReady) return null;
 
         var clips = GetClips(state);
-        if(clips == null || clips.Count == 0)
+        if (clips == null || clips.Count == 0)
         {
             Debug.LogWarning("[PlayerAppearance] " + state + " 애니메이션이 없습니다.", this);
-            return;
+            return null;
         }
 
         if (index < 0 || index >= clips.Count)
@@ -100,6 +135,7 @@ public class PlayerAppearance : MonoBehaviour
 
         spum.PlayAnimation(state, index);
         currentState = state;
+        return clips[index];
     }
 
     private System.Collections.Generic.List<AnimationClip> GetClips(PlayerState state) => state switch
@@ -117,7 +153,7 @@ public class PlayerAppearance : MonoBehaviour
 
     [ContextMenu("Test/Idle")] private void TestIdle() => PlayIdle();
     [ContextMenu("Test/Move")] private void TestMove() => PlayMove();
-    [ContextMenu("Test/Attack (testAttackIndex)")] private void TestAttack() => Play(PlayerState.ATTACK, testAttackIndex);
+    [ContextMenu("Test/Attack (testAttackIndex)")] private void TestAttack() => PlayOneShot(PlayerState.ATTACK, testAttackIndex);
     [ContextMenu("Test/Damaged")] private void TestDamaged() => PlayDamaged();
     [ContextMenu("Test/Death")] private void TestDeath() => PlayDeath();
     [ContextMenu("Test/Weapon (testItemId)")] private void TestWeapon() => SetWeapon(testItemId);

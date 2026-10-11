@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 
-// 플레이어 외형: 좌우 반전, 장착 무기 외형, 공격 모션
+// 플레이어 외형: 좌우 반전, 장착 무기 외형, 애니메이션 (대기·이동·공격·피격·사망)
 // 실제 그림·애니메이션은 Visual 아래 SPUM 캐릭터의 PlayerAppearance가 담당
 [RequireComponent(typeof(PlayerMovement))]
 [RequireComponent(typeof(PlayerStats))]
+[RequireComponent(typeof(PlayerHealth))]
 public class PlayerVisual : MonoBehaviour
 {
     [SerializeField] private Transform visual;                // 좌우 반전 대상 (SPUM 캐릭터의 부모)
@@ -12,8 +13,10 @@ public class PlayerVisual : MonoBehaviour
 
     private PlayerMovement playerMovement;
     private PlayerStats playerStats;
+    private PlayerHealth playerHealth;
 
     private bool isFacingRight = true;
+    private bool isDead;
 
     public PlayerAppearance Appearance => appearance;
 
@@ -21,9 +24,22 @@ public class PlayerVisual : MonoBehaviour
     {
         playerMovement = GetComponent<PlayerMovement>();
         playerStats = GetComponent<PlayerStats>();
+        playerHealth = GetComponent<PlayerHealth>();
 
         if (appearance == null)
             Debug.LogError("[PlayerVisual] Appearance(SPUM 캐릭터)가 연결되지 않았습니다.", this);
+    }
+
+    private void OnEnable()
+    {
+        playerHealth.OnDamaged += HandleDamaged;
+        playerHealth.OnDied += HandleDied;
+    }
+
+    private void OnDisable()
+    {
+        playerHealth.OnDamaged -= HandleDamaged;
+        playerHealth.OnDied -= HandleDied;
     }
 
     private void Start()
@@ -33,6 +49,18 @@ public class PlayerVisual : MonoBehaviour
     }
 
     private void Update()
+    {
+        UpdateFacing();
+
+        if (appearance == null || isDead) return;
+
+        if (playerMovement.IsMoving)
+            appearance.PlayMove();
+        else
+            appearance.PlayIdle();
+    }
+
+    private void UpdateFacing()
     {
         float x = playerMovement.FacingDirection.x;
 
@@ -48,7 +76,7 @@ public class PlayerVisual : MonoBehaviour
 
     public void PlayAttackMotion()
     {
-        if (appearance == null) return;
+        if (appearance == null || isDead) return;
 
         if (!playerStats.HasWeapon)
         {
@@ -58,5 +86,18 @@ public class PlayerVisual : MonoBehaviour
 
         appearance.PlayAttack();
         Debug.Log("[PlayerVisual] 공격 모션 재생: " + appearance.AttackIndex + "번");
+    }
+
+    private void HandleDamaged()
+    {
+        if (appearance != null)
+            appearance.PlayDamaged();
+    }
+
+    private void HandleDied()
+    {
+        isDead = true;
+        if (appearance != null)
+            appearance.PlayDeath();
     }
 }
