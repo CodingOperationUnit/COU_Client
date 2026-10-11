@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 // 전투 플레이어 스탯
@@ -54,53 +52,23 @@ public class PlayerStats : MonoBehaviour
         }
 
         var data = GameManager.PlayerData.currentData;
-        var equipped = GetEquipped(data);
+        var equipped = PlayerStatCalculator.GetEquipped(data);
+        var stat = PlayerStatCalculator.Calculate(Base, EvolutionRules.Data, data.playerStat, equipped);
 
-        // 장비
-        int equipAtk = equipped.Sum(item => item.ScaledAttack);
-        int equipHp = equipped.Sum(item => item.ScaledHp);
-
-        // 진화
-        var evolution = EvolutionRules.Data;
-        if (evolution == null)
+        if (!stat.HasEvolutionData)
             Debug.LogWarning("[PlayerStats] 진화 데이터가 없어 진화 스탯을 0으로 계산합니다.");
 
-        int evolutionAtk = EvolutionRules.GetBonus(evolution, data.playerStat, PlayerStatType.Attack);
-        int evolutionHp = EvolutionRules.GetBonus(evolution, data.playerStat, PlayerStatType.Hp);
-
-        // 장비 데이터에 공격력·체력 보너스 % 필드가 없어 0%로 계산 (필드 추가 시 교체)
-        finalAtk = CalculateStat(Base.playerBaseAttack + evolutionAtk + equipAtk, 0);
-        finalHp = CalculateStat(Base.playerBaseHp + evolutionHp + equipHp, 0);
+        finalAtk = stat.FinalAttack;
+        finalHp = stat.FinalHp;
 
         LoadWeapon(equipped);
 
-        Debug.Log("[PlayerStats] 공격력 " + finalAtk + " (기본 " + Base.playerBaseAttack + " + 진화 " + evolutionAtk + " + 장비 " + equipAtk + ")" +
-                  " / 체력 " + finalHp + " (기본 " + Base.playerBaseHp + " + 진화 " + evolutionHp + " + 장비 " + equipHp + ")" +
+        Debug.Log("[PlayerStats] 공격력 " + finalAtk + " (기본 " + stat.BaseAttack + " + 진화 " + stat.EvolutionAttack + " + 장비 " + stat.EquipmentAttack + ")" +
+                  " / 체력 " + finalHp + " (기본 " + stat.BaseHp + " + 진화 " + stat.EvolutionHp + " + 장비 " + stat.EquipmentHp + ")" +
                   " / 무기: " + (hasWeapon ? equippedWeaponName + " (" + equippedWeaponType + ")" : "없음") +
                   " / 시작 스킬: " + (startingSkillId == WeaponSkillTable.NoSkill ? "없음" : startingSkillId.ToString()));
     }
-
-    // 메인·테스트 씬은 인벤토리, 전투 씬은 계정 데이터에서 장착 장비를 가져온다
-    private static List<OwnedItem> GetEquipped(PlayerSaveData data)
-    {
-        var result = new List<OwnedItem>();
-
-        if (PlayerInventory.Instance != null)
-        {
-            foreach (EquipSlotType slot in Enum.GetValues(typeof(EquipSlotType)))
-            {
-                var item = PlayerInventory.Instance.GetEquipped(slot);
-                if (item != null)
-                    result.Add(item);
-            }
-            return result;
-        }
-
-        InventoryRestorer.Restore(data.inventoryList, out var equipped);
-        result.AddRange(equipped.Values);
-        return result;
-    }
-
+        
     private void LoadWeapon(List<OwnedItem> equipped)
     {
         var weapon = equipped.Find(item => item.Data.SlotType == EquipSlotType.Weapon);
@@ -116,9 +84,6 @@ public class PlayerStats : MonoBehaviour
             Debug.LogWarning("[PlayerStats] 무기 매핑이 없습니다: " + equippedWeaponName + " (" + weapon.itemId + "). 스킬 없이 시작, 무기 종류는 Blunt");
         }
     }
-
-    private static int CalculateStat(int sum, int bonusPercent)
-        => sum * (100 + bonusPercent) / 100;
 
     // 로그인 없이 전투에 들어온 경우: 에러 후 로그인 화면 (예외 없음 정책)
     private void HandleNotLoggedIn()
