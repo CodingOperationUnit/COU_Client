@@ -68,8 +68,6 @@ public class PlayerDebug : MonoBehaviour
         if (Keyboard.current.digit9Key.wasPressedThisFrame)
             EquipSkill(3);
 
-        if (Keyboard.current.f1Key.wasPressedThisFrame)
-            CompareFinalStats();
 
         if (Keyboard.current.f2Key.wasPressedThisFrame)
             UpgradeEvolution();
@@ -180,7 +178,7 @@ public class PlayerDebug : MonoBehaviour
         }
 
         Debug.Log("[PlayerDebug] PlayerManager 확인" +
-                  " / 장비 출처: " + player.Stats.EquipmentSource +
+                  " / 서버 스탯: " + (player.Stats.HasServerStats ? "있음" : "없음") +
                   " / 방향: " + player.Movement.FacingDirection +
                   " / 공격력: " + player.Stats.FinalAtk +
                   " / 체력: " + player.Health.CurrentHealth + "/" + player.Health.MaxHealth +
