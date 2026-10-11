@@ -14,6 +14,8 @@ public class PlayerStats : MonoBehaviour
     private bool hasWeapon;
     private WeaponType equippedWeaponType;
     private string equippedWeaponName;
+    private long? equippedWeaponItemId;
+    public long? EquippedWeaponItemId { get { EnsureCalculated(); return equippedWeaponItemId; } }   // 무기가 없으면 null
     private int startingSkillId;
 
     private static PlayerBaseStatData Base => GameManager.JsonData.PlayerBaseStatData;
@@ -73,6 +75,7 @@ public class PlayerStats : MonoBehaviour
     {
         var weapon = equipped.Find(item => item.Data.SlotType == EquipSlotType.Weapon);
         hasWeapon = weapon != null;
+        equippedWeaponItemId = hasWeapon ? weapon.itemId : null;
         if (!hasWeapon) return;
 
         equippedWeaponName = weapon.Data.itemName;
