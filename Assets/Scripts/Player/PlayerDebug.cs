@@ -134,24 +134,37 @@ public class PlayerDebug : MonoBehaviour
     }
 
     // 진화 1단계 업그레이드
+    // F2: 진화 1단계 업그레이드 (응답의 진화 레벨·재화를 계정 데이터에 반영)
     private void UpgradeEvolution()
     {
-        StartCoroutine(PlayerApi.UpgradeEvolution(result =>
+        var evolution = EvolutionRules.Data;
+        var stat = GameManager.PlayerData != null ? GameManager.PlayerData.currentData?.playerStat : null;
+        int step = EvolutionRules.GetStep(stat);
+
+        Debug.Log("[PlayerDebug] 진화 시도: 단계 " + step +
+                  ", 다음 " + EvolutionRules.GetNextStatType(evolution, step) +
+                  ", 비용 " + EvolutionRules.GetNextCost(evolution, step));
+
+        StartCoroutine(PlayerEvolution.Upgrade(result =>
         {
             if (this == null) return;
 
             if (!result.IsSuccess)
             {
-                Debug.LogWarning("[PlayerDebug] 진화 업그레이드 실패: " + result.Describe());
+                if (result.FailType == ApiFailType.ServerError && result.Error.code == PlayerApi.ErrorNotEnoughGold)
+                    Debug.LogWarning("[PlayerDebug] 진화 실패: 골드가 부족합니다.");
+                else
+                    Debug.LogWarning("[PlayerDebug] 진화 실패: " + result.Describe());
                 return;
             }
 
             var data = result.Data;
-            var stat = data.playerStat;
-            Debug.Log("[PlayerDebug] 진화 업그레이드: " + data.upgradedStatType +
-                      " (단계 " + data.evolutionStep + ", 다음 " + data.nextStatType + ", 골드 " + data.goldSpent + ")" +
-                      " / 레벨 공 " + stat.playerStatAttackLevel + " 체 " + stat.playerStatHpLevel +
-                      " 방 " + stat.playerStatDefenseLevel + " 포션 " + stat.playerStatPotionRecoveryLevel);
+            var s = data.playerStat;
+            Debug.Log("[PlayerDebug] 진화 완료: " + data.upgradedStatType +
+                      " (단계 " + data.evolutionStep + ", 다음 " + data.nextStatType + ", 소모 " + data.goldSpent + ")" +
+                      " / 남은 골드 " + (data.currency != null ? data.currency.currencyGold.ToString() : "?") +
+                      " / 레벨 공 " + s.playerStatAttackLevel + " 체 " + s.playerStatHpLevel +
+                      " 방 " + s.playerStatDefenseLevel + " 포션 " + s.playerStatPotionRecoveryLevel);
         }));
     }
 
@@ -178,7 +191,7 @@ public class PlayerDebug : MonoBehaviour
         }
 
         Debug.Log("[PlayerDebug] PlayerManager 확인" +
-                  " / 서버 스탯: " + (player.Stats.HasServerStats ? "있음" : "없음") +
+                  " / 진화 단계: " + EvolutionRules.GetStep(GameManager.PlayerData?.currentData?.playerStat) +
                   " / 방향: " + player.Movement.FacingDirection +
                   " / 공격력: " + player.Stats.FinalAtk +
                   " / 체력: " + player.Health.CurrentHealth + "/" + player.Health.MaxHealth +

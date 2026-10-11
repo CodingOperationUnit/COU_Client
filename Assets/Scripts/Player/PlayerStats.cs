@@ -1,70 +1,109 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 // 전투 플레이어 스탯
-// 숫자 스탯은 서버 최종 스탯(PlayerServerStats)을 그대로 쓰고, 계산하지 않는다
-// 장착 무기 정보(외형, 공격 모션, 시작 스킬)는 계정 데이터의 장착 장비에서 읽는다
+// 최종 = (기본 + 진화 + 장비 합계) × (100 + 보너스%) / 100, 버림
+// - 기본: PlayerBaseStat (정적 데이터)
+// - 진화: 계정 데이터의 진화 레벨 × Evolution 증가량 (정적 데이터). 데이터가 없으면 0
+// - 장비: 장착 장비의 레벨·등급 반영 스탯 합 (클라이언트 계산)
 public class PlayerStats : MonoBehaviour
 {
-    private bool isInitialized;
+    private bool isCalculated;
+    private int finalAtk;
+    private int finalHp;
     private bool hasWeapon;
     private WeaponType equippedWeaponType;
     private string equippedWeaponName;
     private int startingSkillId;
 
-    private static FinalStatsResponse Server => PlayerServerStats.Stats;
+    private static PlayerBaseStatData Base => GameManager.JsonData.PlayerBaseStatData;
 
-    public bool HasServerStats => PlayerServerStats.HasStats;
+    public int FinalAtk { get { EnsureCalculated(); return finalAtk; } }
+    public int FinalHp { get { EnsureCalculated(); return finalHp; } }
+    public bool HasWeapon { get { EnsureCalculated(); return hasWeapon; } }
+    public WeaponType EquippedWeaponType { get { EnsureCalculated(); return equippedWeaponType; } }
+    public string EquippedWeaponName { get { EnsureCalculated(); return equippedWeaponName; } }
+    public int StartingSkillId { get { EnsureCalculated(); return startingSkillId; } }   // 0이면 시작 스킬 없음
 
-    // 서버 값이 없으면 0 (에러 후 씬 이동 처리됨)
-    public int FinalAtk { get { EnsureInitialized(); return Server?.finalAttack ?? 0; } }
-    public int FinalHp { get { EnsureInitialized(); return Server?.finalHp ?? 0; } }
-    public int CriticalDamage { get { EnsureInitialized(); return Server?.criticalDamage ?? 0; } }
-    public int CriticalChance { get { EnsureInitialized(); return Server?.criticalChance ?? 0; } }
-    public int SkillDamage { get { EnsureInitialized(); return Server?.skillDamage ?? 0; } }
-    public float Speed { get { EnsureInitialized(); return Server?.moveSpeed ?? 0f; } }
-    public float MaxSpeed { get { EnsureInitialized(); return Server?.maxMoveSpeed ?? 0f; } }
-    public float LootRadius { get { EnsureInitialized(); return Server?.lootRadius ?? 0f; } }
-
-    public bool HasWeapon { get { EnsureInitialized(); return hasWeapon; } }
-    public WeaponType EquippedWeaponType { get { EnsureInitialized(); return equippedWeaponType; } }
-    public string EquippedWeaponName { get { EnsureInitialized(); return equippedWeaponName; } }
-    public int StartingSkillId { get { EnsureInitialized(); return startingSkillId; } }   // 0이면 시작 스킬 없음
+    public int CriticalDamage => Base.playerBaseCriticalDamage;
+    public int CriticalChance => Base.playerBaseCriticalChance;
+    public int SkillDamage => Base.playerBaseSkillDamage;
+    public float Speed => Base.playerBaseMoveSpeed;
+    public float MaxSpeed => Base.playerBaseMaxMoveSpeed;
+    public float LootRadius => Base.playerBaseLootRadius;
 
     private void Start()
     {
-        EnsureInitialized();
+        EnsureCalculated();
     }
 
-    private void EnsureInitialized()
+    // 누가 먼저 읽든 처음 한 번만 실행
+    private void EnsureCalculated()
     {
-        if (isInitialized) return;
-        isInitialized = true;
+        if (isCalculated) return;
+        isCalculated = true;
 
-        LoadEquippedWeapon();
+        startingSkillId = WeaponSkillTable.NoSkill;
 
-        if (!PlayerServerStats.HasStats)
+        if (!IsPlayerDataLoaded())
         {
-            HandleMissingServerStats();
+            HandleNotLoggedIn();
             return;
         }
 
-        Debug.Log("[PlayerStats] 서버 최종 스탯 / 공격력 " + Server.finalAttack + ", 체력 " + Server.finalHp +
-                  ", 이동 속도 " + Server.moveSpeed + ", 루팅 범위 " + Server.lootRadius +
+        var data = GameManager.PlayerData.currentData;
+        var equipped = GetEquipped(data);
+
+        // 장비
+        int equipAtk = equipped.Sum(item => item.ScaledAttack);
+        int equipHp = equipped.Sum(item => item.ScaledHp);
+
+        // 진화
+        var evolution = EvolutionRules.Data;
+        if (evolution == null)
+            Debug.LogWarning("[PlayerStats] 진화 데이터가 없어 진화 스탯을 0으로 계산합니다.");
+
+        int evolutionAtk = EvolutionRules.GetBonus(evolution, data.playerStat, PlayerStatType.Attack);
+        int evolutionHp = EvolutionRules.GetBonus(evolution, data.playerStat, PlayerStatType.Hp);
+
+        // 장비 데이터에 공격력·체력 보너스 % 필드가 없어 0%로 계산 (필드 추가 시 교체)
+        finalAtk = CalculateStat(Base.playerBaseAttack + evolutionAtk + equipAtk, 0);
+        finalHp = CalculateStat(Base.playerBaseHp + evolutionHp + equipHp, 0);
+
+        LoadWeapon(equipped);
+
+        Debug.Log("[PlayerStats] 공격력 " + finalAtk + " (기본 " + Base.playerBaseAttack + " + 진화 " + evolutionAtk + " + 장비 " + equipAtk + ")" +
+                  " / 체력 " + finalHp + " (기본 " + Base.playerBaseHp + " + 진화 " + evolutionHp + " + 장비 " + equipHp + ")" +
                   " / 무기: " + (hasWeapon ? equippedWeaponName + " (" + equippedWeaponType + ")" : "없음") +
                   " / 시작 스킬: " + (startingSkillId == WeaponSkillTable.NoSkill ? "없음" : startingSkillId.ToString()));
     }
 
-    private void LoadEquippedWeapon()
+    // 메인·테스트 씬은 인벤토리, 전투 씬은 계정 데이터에서 장착 장비를 가져온다
+    private static List<OwnedItem> GetEquipped(PlayerSaveData data)
     {
-        startingSkillId = WeaponSkillTable.NoSkill;
-        hasWeapon = false;
+        var result = new List<OwnedItem>();
 
-        if (!IsPlayerDataLoaded()) return;
+        if (PlayerInventory.Instance != null)
+        {
+            foreach (EquipSlotType slot in Enum.GetValues(typeof(EquipSlotType)))
+            {
+                var item = PlayerInventory.Instance.GetEquipped(slot);
+                if (item != null)
+                    result.Add(item);
+            }
+            return result;
+        }
 
-        InventoryRestorer.Restore(GameManager.PlayerData.currentData.inventoryList, out var equipped);
-        var weapon = equipped.Values.FirstOrDefault(item => item.Data.SlotType == EquipSlotType.Weapon);
+        InventoryRestorer.Restore(data.inventoryList, out var equipped);
+        result.AddRange(equipped.Values);
+        return result;
+    }
 
+    private void LoadWeapon(List<OwnedItem> equipped)
+    {
+        var weapon = equipped.Find(item => item.Data.SlotType == EquipSlotType.Weapon);
         hasWeapon = weapon != null;
         if (!hasWeapon) return;
 
@@ -78,16 +117,14 @@ public class PlayerStats : MonoBehaviour
         }
     }
 
-    // 서버 값 없이 전투에 들어온 경우: 에러 후 이동 (클라이언트 계산으로 대체하지 않음)
-    private void HandleMissingServerStats()
+    private static int CalculateStat(int sum, int bonusPercent)
+        => sum * (100 + bonusPercent) / 100;
+
+    // 로그인 없이 전투에 들어온 경우: 에러 후 로그인 화면 (예외 없음 정책)
+    private void HandleNotLoggedIn()
     {
-        bool loggedIn = IsPlayerDataLoaded();
-        string target = loggedIn ? GameConstants.SceneNames.MAIN_SCENE : GameConstants.SceneNames.LOGIN_SCENE;
-
-        Debug.LogError("[PlayerStats] 서버 최종 스탯이 없습니다. 전투 시작 버튼을 거쳐 진입해야 합니다. " +
-                       (loggedIn ? "메인" : "로그인") + " 화면으로 이동합니다.");
-
-        GameManager.Scene.ChangeScene(target);
+        Debug.LogError("[PlayerStats] 로그인 데이터가 없습니다. 로그인 화면으로 이동합니다.");
+        GameManager.Scene.ChangeScene(GameConstants.SceneNames.LOGIN_SCENE);
     }
 
     private static bool IsPlayerDataLoaded()
