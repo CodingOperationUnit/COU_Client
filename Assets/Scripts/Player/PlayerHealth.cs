@@ -77,7 +77,7 @@ public class PlayerHealth : MonoBehaviour
     }
 
     private void UpdateHpBar()
-        => hpBar.SetRatio((float)CurrentHealth / maxHealth);
+        => hpBar.SetRatio(maxHealth > 0 ? (float)CurrentHealth / maxHealth : 0f);
 
     private void DecreaseLife()
     {
