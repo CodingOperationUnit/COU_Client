@@ -24,11 +24,12 @@ public class PlayerStatDto
 // POST /api/players/me/evolution/upgrade
 public class EvolutionUpgradeResponse
 {
-    public string upgradedStatType;
+    public string upgradedStatType;   // PlayerStatType 값
     public int evolutionStep;
-    public string nextStatType;
+    public string nextStatType;       // PlayerStatType 값
     public int goldSpent;
-    public PlayerStatDto playerStat;
+    public PlayerStatData playerStat; // 계정 데이터 형식 그대로
+    public CurrencyData currency;     // 차감 후 재화
 }
 
 // GET /api/players/me/stats

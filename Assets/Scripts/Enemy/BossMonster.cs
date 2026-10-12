@@ -270,7 +270,7 @@ public class BossMonster : Enemy
             Vector2.Distance(transform.position, player.transform.position) <= dashHitRadius)
         {
             dashHit = true;
-            playerHealth?.GetDamage(currentAttack.monsterAttackDamage);
+            playerHealth?.GetDamage(ScaleDamage(currentAttack.monsterAttackDamage));
         }
 
         if (dashRemaining <= 0f) EnterState(BossState.Recovery);
@@ -303,7 +303,7 @@ public class BossMonster : Enemy
 
             GameObject obj = GameManager.ObjectPool.GetObject(projectilePrefab, transform.position, Quaternion.identity);
             obj.GetComponent<BossProjectile>()?.Launch(
-                dir, projectileSpeed, currentAttack.monsterAttackDamage, projectileLifeTime,
+                dir, projectileSpeed, ScaleDamage(currentAttack.monsterAttackDamage), projectileLifeTime,
                 player.transform, playerHealth);
         }
     }
@@ -327,7 +327,7 @@ public class BossMonster : Enemy
 
             GameObject obj = GameManager.ObjectPool.GetObject(areaWarningPrefab, position, Quaternion.identity);
             obj.GetComponent<BossAreaWarning>()?.Begin(
-                areaRadius, windupTime, currentAttack.monsterAttackDamage,
+                areaRadius, windupTime, ScaleDamage(currentAttack.monsterAttackDamage),
                 player.transform, playerHealth);
         }
     }
@@ -351,7 +351,7 @@ public class BossMonster : Enemy
 
             GameObject obj = GameManager.ObjectPool.GetObject(trapPrefab, position, Quaternion.identity);
             obj.GetComponent<TrapZone>()?.Begin(
-                trapRadius, duration, currentAttack.monsterAttackDamage,
+                trapRadius, duration, ScaleDamage(currentAttack.monsterAttackDamage),
                 player.transform, playerHealth);
         }
     }

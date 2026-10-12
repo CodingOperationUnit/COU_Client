@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -22,6 +23,8 @@ public class SkillController : MonoBehaviour
     // 장착된 액티브 스킬만 (패시브는 PassiveSkills)
     public IReadOnlyList<SkillBase> ActiveSkills => _activeSkills;
     public IReadOnlyList<SkillBase> PassiveSkills => _passiveSkills;
+    public event Action<SkillBase> OnSkillFired;
+    public event Action<SkillBase> OnSkillFireStarted;
 
     private void Awake()
     {
@@ -86,6 +89,14 @@ public class SkillController : MonoBehaviour
         // 최초 레벨 설정 후 장착해야 OnEquip에서 현재 레벨 기준으로 동작할 수 있음
         skill.Levelup();
         skill.Equip();
+
+        if (skill is CooldownSkillBase cooldownSkill)
+        {
+            cooldownSkill.OnFired += HandleSkillFired;
+            cooldownSkill.OnFireStarted += HandleSkillFireStarted;
+        }
+
+
         slots.Add(skill);
         return true;
     }
@@ -111,10 +122,25 @@ public class SkillController : MonoBehaviour
         {
             return false;
         }
+        if (skill is CooldownSkillBase cooldownSkill)
+        {
+            cooldownSkill.OnFired -= HandleSkillFired;
+            cooldownSkill.OnFireStarted -= HandleSkillFireStarted;
+        }
 
         skill.Unequip();
 
         return _activeSkills.Remove(skill) || _passiveSkills.Remove(skill);
+    }
+
+    private void HandleSkillFired(CooldownSkillBase skill)
+    {
+        OnSkillFired?.Invoke(skill);
+    }
+
+    private void HandleSkillFireStarted(CooldownSkillBase skill)
+    {
+        OnSkillFireStarted?.Invoke(skill);
     }
 
     // 액티브/패시브 구분 없이 장착된 스킬을 찾음

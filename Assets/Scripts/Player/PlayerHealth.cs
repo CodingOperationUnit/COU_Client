@@ -25,6 +25,8 @@ public class PlayerHealth : MonoBehaviour
 
     public bool IsDead => CurrentLives <= 0;
 
+    public event Action OnDamaged;
+
     [Header("Test")]
     [SerializeField] private int testDamage = 50;
     [SerializeField] private int testHeal = 20;
@@ -50,6 +52,8 @@ public class PlayerHealth : MonoBehaviour
             Debug.Log("무적 중 피해무시");
             return;
         }
+
+        OnDamaged?.Invoke();
 
         if (CurrentHealth - damage <= 0)
         {
@@ -77,7 +81,7 @@ public class PlayerHealth : MonoBehaviour
     }
 
     private void UpdateHpBar()
-        => hpBar.SetRatio((float)CurrentHealth / maxHealth);
+        => hpBar.SetRatio(maxHealth > 0 ? (float)CurrentHealth / maxHealth : 0f);
 
     private void DecreaseLife()
     {

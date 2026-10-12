@@ -9,12 +9,15 @@ public abstract class Enemy : MonoBehaviour, IPoolable
     [SerializeField] protected float attackInterval = 1f;   // 접촉 피해 간격(초)
 
     public MonsterData Data { get; private set; }
-    public int DropTableId { get; private set; }
+    // 스테이지 로스터 배율을 적용한 최대 체력
+    public int MaxHp { get; private set; }
 
     // 몬스터의 개별 상태
     public int currentHp;
     public bool isDead;
     private float nextAttackTime;
+    // 스테이지 로스터의 피해 배율
+    private float damageScale;
     // 몬스터 외형 교체(monsterAsset)
     protected SpriteRenderer spriteRenderer;
 
@@ -31,19 +34,20 @@ public abstract class Enemy : MonoBehaviour, IPoolable
 
     public MonsterType Type => Data != null ? Data.Type : MonsterType.Normal;
     public bool IsBoss => Type == MonsterType.Boss;
-    public float HpRatio => Data == null ? 0f : (float)currentHp / Data.monsterMaxHealthPoint;
+    public float HpRatio => MaxHp <= 0 ? 0f : (float)currentHp / MaxHp;
 
     protected virtual void Awake()
     {
         spriteRenderer = gameObject.GetComponentInChildren<SpriteRenderer>();
     }
 
-    // 몬스터 초기화
-    public void Init(MonsterData data, int dropTableId)
+    // 몬스터 초기화. 배율은 스테이지 로스터 값(체력 최소 1)
+    public void Init(MonsterData data, float hpScale, float damageScale)
     {
         Data = data;
-        DropTableId = dropTableId;
-        currentHp = data.monsterMaxHealthPoint;
+        this.damageScale = damageScale;
+        MaxHp = Mathf.Max(1, Mathf.RoundToInt(data.monsterMaxHealthPoint * hpScale));
+        currentHp = MaxHp;
         isDead = false;
         nextAttackTime = 0f;
         Sprite sprite = Resources.Load<Sprite>(data.monsterAsset);
@@ -114,9 +118,13 @@ public abstract class Enemy : MonoBehaviour, IPoolable
         float distance = Vector2.Distance(transform.position, player.transform.position);
         if (distance > attackRange) { return; }
 
-        playerHealth.GetDamage(Data.monsterContactDamage);
+        playerHealth.GetDamage(ScaleDamage(Data.monsterContactDamage));
         nextAttackTime = Time.time + attackInterval;
     }
+
+    // 피해 배율 적용. 원래 값이 0보다 크면 최소 1
+    protected int ScaleDamage(int baseDamage)
+        => baseDamage <= 0 ? 0 : Mathf.Max(1, Mathf.RoundToInt(baseDamage * damageScale));
 
     // 몬스터의 피격
     public virtual void Damaged(int damage)
@@ -157,7 +165,7 @@ public abstract class Enemy : MonoBehaviour, IPoolable
     // 처치 보상(자식용): 드롭 + 킬 수 집계
     protected virtual void GiveReward()
     {
-        GameManager.DropItem.SpawnTable(DropTableId, transform.position);
+        GameManager.DropItem.SpawnTable(Type, transform.position);
 
         OnDied?.Invoke(this);
     }
