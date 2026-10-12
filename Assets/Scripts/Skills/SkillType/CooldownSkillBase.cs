@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 // 쿨타임마다 사거리 안의 적을 찾아 발동하는 스킬의 공통 베이스
@@ -6,6 +7,7 @@ public abstract class CooldownSkillBase : SkillBase
     protected float cooldownTimer;
     protected Vector2 fireDirection;
     protected Transform fireTarget;
+    public event Action<CooldownSkillBase> OnFired;
 
     public override void Initialize(SkillData data)
     {
@@ -21,6 +23,7 @@ public abstract class CooldownSkillBase : SkillBase
         {
             Fire();
             ResetCooldown();
+            OnFired?.Invoke(this);
         }
     }
 

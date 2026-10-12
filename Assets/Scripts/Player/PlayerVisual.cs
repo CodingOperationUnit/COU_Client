@@ -19,12 +19,15 @@ public class PlayerVisual : MonoBehaviour
     private bool isDead;
 
     public PlayerAppearance Appearance => appearance;
+    private SkillController skillController;
+
 
     private void Awake()
     {
         playerMovement = GetComponent<PlayerMovement>();
         playerStats = GetComponent<PlayerStats>();
         playerHealth = GetComponent<PlayerHealth>();
+        skillController = GetComponent<SkillController>();
 
         if (appearance == null)
             Debug.LogError("[PlayerVisual] Appearance(SPUM 캐릭터)가 연결되지 않았습니다.", this);
@@ -34,12 +37,18 @@ public class PlayerVisual : MonoBehaviour
     {
         playerHealth.OnDamaged += HandleDamaged;
         playerHealth.OnDied += HandleDied;
+
+        if (skillController != null)
+            skillController.OnSkillFired += HandleSkillFired;
     }
 
     private void OnDisable()
     {
         playerHealth.OnDamaged -= HandleDamaged;
         playerHealth.OnDied -= HandleDied;
+
+        if (skillController != null)
+            skillController.OnSkillFired -= HandleSkillFired;
     }
 
     private void Start()
@@ -85,7 +94,7 @@ public class PlayerVisual : MonoBehaviour
         }
 
         appearance.PlayAttack();
-        Debug.Log("[PlayerVisual] 공격 모션 재생: " + appearance.AttackIndex + "번");
+        // Debug.Log("[PlayerVisual] 공격 모션 재생: " + appearance.AttackIndex + "번");
     }
 
     private void HandleDamaged()
@@ -99,5 +108,11 @@ public class PlayerVisual : MonoBehaviour
         isDead = true;
         if (appearance != null)
             appearance.PlayDeath();
+    }
+
+    private void HandleSkillFired(SkillBase skill)
+    {
+        if (skill.SkillId != playerStats.StartingSkillId) return;
+        PlayAttackMotion();
     }
 }
