@@ -17,6 +17,7 @@ public class PlayerVisual : MonoBehaviour
 
     private bool isFacingRight = true;
     private bool isDead;
+    private bool isWeaponApplied;
 
     public PlayerAppearance Appearance => appearance;
     private SkillController skillController;
@@ -39,7 +40,7 @@ public class PlayerVisual : MonoBehaviour
         playerHealth.OnDied += HandleDied;
 
         if (skillController != null)
-            skillController.OnSkillFired += HandleSkillFired;
+            skillController.OnSkillFireStarted += HandleSkillFireStarted;
     }
 
     private void OnDisable()
@@ -48,13 +49,12 @@ public class PlayerVisual : MonoBehaviour
         playerHealth.OnDied -= HandleDied;
 
         if (skillController != null)
-            skillController.OnSkillFired -= HandleSkillFired;
+            skillController.OnSkillFireStarted -= HandleSkillFireStarted;
     }
 
     private void Start()
     {
-        if (appearance != null)
-            appearance.SetWeapon(playerStats.HasWeapon ? playerStats.EquippedWeaponItemId : null);
+        EnsureWeaponApplied();
     }
 
     private void Update()
@@ -81,6 +81,22 @@ public class PlayerVisual : MonoBehaviour
         // 원본 방향과 바라볼 방향이 다르면 뒤집는다
         bool flip = isFacingRight != artFacesRight;
         visual.localScale = new Vector3(flip ? -1f : 1f, 1f, 1f);
+    }
+
+    private void EnsureWeaponApplied()
+    {
+        if (isWeaponApplied || appearance == null) return;
+
+        appearance.SetWeapon(playerStats.HasWeapon ? playerStats.EquippedWeaponItemId : null);
+        isWeaponApplied = true;
+    }
+
+    public void ApplyWeaponSkillTiming(SkillBase weaponSkill)
+    {
+        EnsureWeaponApplied();
+
+        if (appearance != null && weaponSkill is CooldownSkillBase cooldownSkill)
+            cooldownSkill.FireDelay = appearance.AttackHitTime;
     }
 
     public void PlayAttackMotion()
@@ -111,6 +127,12 @@ public class PlayerVisual : MonoBehaviour
     }
 
     private void HandleSkillFired(SkillBase skill)
+    {
+        if (skill.SkillId != playerStats.StartingSkillId) return;
+        PlayAttackMotion();
+    }
+
+    private void HandleSkillFireStarted(SkillBase skill)
     {
         if (skill.SkillId != playerStats.StartingSkillId) return;
         PlayAttackMotion();
