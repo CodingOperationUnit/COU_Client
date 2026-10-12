@@ -26,7 +26,7 @@ public static class PlayerStatsComparison
         }
 
         sb.AppendLine("서버 전용(클라이언트 미구현): 방어력 " + server.finalDefense + ", 포션 회복량 " + server.finalPotionRecovery);
-        sb.Append("클라이언트 장비 출처: " + client.EquipmentSource);
+        // sb.Append("클라이언트 장비 출처: " + client.EquipmentSource);
 
         Debug.Log(sb.ToString());
     }
