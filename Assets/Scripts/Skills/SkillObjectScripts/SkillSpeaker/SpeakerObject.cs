@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// 플레이어 주위를 도는 행성. 풀에 스스로 반환되지 않고 스킬 해제 때까지 유지됨
+// 플레이어 주위를 도는 스피커. 풀에 스스로 반환되지 않고 스킬 해제 때까지 유지됨
 // SkillStats: Speed = 초당 회전 각도, Damage = 접촉 대미지 / OrbitData: Radius = 회전 반지름
-public sealed class PlanetObject : SkillObject<OrbitData>
+public sealed class SpeakerObject : SkillObject<OrbitData>
 {
     // 기록이 이 개수 이상 쌓이면 시간이 지난 기록을 정리
     private const int PurgeThreshold = 64;
@@ -84,7 +84,7 @@ public sealed class PlanetObject : SkillObject<OrbitData>
         int damage = stats.Damage;
 
         // 대미지 확인용 임시 로그 (확인이 끝나면 삭제)
-        Debug.Log($"[Planet#{GetInstanceID()}] -> Enemy#{enemyId} dmg={damage} frame={Time.frameCount} time={now:F2}");
+        Debug.Log($"[Speaker#{GetInstanceID()}] -> Enemy#{enemyId} dmg={damage} frame={Time.frameCount} time={now:F2}");
 
         enemy.Damaged(damage);
     }

@@ -1,4 +1,4 @@
-public sealed class Skill_Shuriken : ProjectileSkillBase
+public sealed class Skill_Tumbler : ProjectileSkillBase
 {
     // 탄환 사이 간격 (도)
     private const float AnglePerProjectile = 15.0f;

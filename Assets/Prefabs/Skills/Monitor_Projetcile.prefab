@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3618473855360933245}
   - component: {fileID: 7578933503343459729}
   m_Layer: 10
-  m_Name: Katana_Projetcile
+  m_Name: Monitor_Projetcile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

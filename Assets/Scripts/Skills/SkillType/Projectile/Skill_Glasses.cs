@@ -1,4 +1,4 @@
-public sealed class Skill_Revolver : ProjectileSkillBase
+public sealed class Skill_Glasses : ProjectileSkillBase
 {
     protected override void Fire()
     {

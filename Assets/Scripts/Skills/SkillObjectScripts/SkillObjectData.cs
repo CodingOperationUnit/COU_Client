@@ -49,7 +49,7 @@ public readonly struct AoEData
     }
 }
 
-// 플레이어 주위를 도는 오브젝트 (PlanetObject)
+// 플레이어 주위를 도는 오브젝트 (SpeakerObject)
 public readonly struct OrbitData
 {
     public readonly SkillStats Stats;

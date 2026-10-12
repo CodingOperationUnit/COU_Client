@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8880632267317943781}
   - component: {fileID: 6924688872293372728}
   m_Layer: 10
-  m_Name: Bullet_Projetcile
+  m_Name: Glasses_Projetcile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

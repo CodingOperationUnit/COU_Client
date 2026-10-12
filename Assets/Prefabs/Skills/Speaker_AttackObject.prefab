@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 1109307420781812946}
   - component: {fileID: 4903028005934701476}
   - component: {fileID: 8880632267317943781}
-  - component: {fileID: 6924688872293372728}
+  - component: {fileID: 5918010912394892784}
   m_Layer: 10
-  m_Name: Bullet_Projetcile
+  m_Name: Speaker_AttackObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 3.12, y: -0.19, z: 0}
-  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
+  m_LocalScale: {x: 0.75, y: 0.75, z: 0.75}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3756951459287841001}
@@ -98,7 +98,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &6924688872293372728
+--- !u!114 &5918010912394892784
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -107,10 +107,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 4302831599789711204}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 17207021b92e83f4c8a916e4e0b95d1d, type: 3}
+  m_Script: {fileID: 11500000, guid: f1911b069dc14714694795e2cd1bbc29, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PiercingProjectile
-  lifeTime: 3
+  m_EditorClassIdentifier: Assembly-CSharp::SpeakerObject
 --- !u!1 &6821921413492626282
 GameObject:
   m_ObjectHideFlags: 0

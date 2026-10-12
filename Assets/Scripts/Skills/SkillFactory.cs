@@ -7,10 +7,10 @@ public static class SkillFactory
     private static readonly Dictionary<int, Func<SkillBase>> _creators = new()
     {
         // 액티브 (20000대)
-        { 20010, () => new Skill_Shuriken() },
-        { 20020, () => new Skill_Revolver() },
-        { 20030, () => new Skill_Katana() },
-        { 20040, () => new Skill_Planet() },
+        { 20010, () => new Skill_Tumbler() },
+        { 20020, () => new Skill_Glasses() },
+        { 20030, () => new Skill_Monitor() },
+        { 20040, () => new Skill_Speaker() },
 
         // 패시브 (21000대)
         // 임시: 실제 효과가 확정되기 전에 동작 확인용으로 기존 테스트 패시브를 연결해 둠

@@ -104,7 +104,7 @@ GameObject:
   - component: {fileID: 821606016448725858}
   - component: {fileID: 6024709397990492591}
   m_Layer: 10
-  m_Name: Shuriken_Projetcile
+  m_Name: Tumbler_Projetcile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -2,6 +2,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+public static class TemporaryConstClass
+{
+    // 액티브
+    public const int Tumbler = 20010;
+    public const int Glasses = 20020;
+    public const int Monitor = 20030;
+    public const int Speaker = 20040;
+
+    // 패시브
+    
+}
+
 public class SkillController : MonoBehaviour
 {
     // 액티브 슬롯 수 (외부에서 참조하므로 이름 유지)
@@ -42,7 +54,7 @@ public class SkillController : MonoBehaviour
         }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-        // Press 1: Shuriken, 2: Revolver, 3: Katana
+        // Press 1: Tumbler, 2: Glasses, 3: Monitor, 4: Speaker
         UpdateDebugInput();
 #endif
     }
@@ -158,7 +170,7 @@ public class SkillController : MonoBehaviour
         {
             if(EquipSkill(20010))
             {
-                Debug.Log("스킬: Shuriken");
+                Debug.Log("스킬: Tumbler");
             }
         }
 
@@ -166,7 +178,7 @@ public class SkillController : MonoBehaviour
         {
             if(EquipSkill(20020))
             {
-                Debug.Log("스킬: Revolver");
+                Debug.Log("스킬: Glasses");
             }
         }
 
@@ -174,7 +186,7 @@ public class SkillController : MonoBehaviour
         {
             if(EquipSkill(20030))
             {
-                Debug.Log("스킬: Katana");
+                Debug.Log("스킬: Monitor");
             }
         }
 
@@ -182,7 +194,7 @@ public class SkillController : MonoBehaviour
         {
             if (EquipSkill(20040))
             {
-                Debug.Log("스킬: Planet");
+                Debug.Log("스킬: Speaker");
             }
         }
 
