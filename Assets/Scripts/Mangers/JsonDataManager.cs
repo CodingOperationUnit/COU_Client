@@ -57,6 +57,9 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
 
     private EvolutionData evolutionData;
     public EvolutionData EvolutionData => evolutionData;
+
+    private CombatPowerData combatPowerData;
+    public CombatPowerData CombatPowerData => combatPowerData;
     #endregion
 
     protected override void Awake()
@@ -79,6 +82,8 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
         playerBaseStatData = LoadTable(GameConstants.Paths.PlayerBaseStatData_Json_Path, ParsePlayerBaseStatData);
         itemConstData = LoadTable(GameConstants.Paths.ItemConstData_Json_Path, ParseItemConstData);
         evolutionData = LoadTable(GameConstants.Paths.EvolutionData_Json_Path, ParseEvolutionData);
+        combatPowerData = LoadTable(GameConstants.Paths.CombatPowerData_Json_Path, ParseCombatPowerData);
+
 
         RebuildMonsterAttackIndex();
     }
@@ -138,6 +143,7 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
             var playerBaseStat = ParseResponseTable(tables, GameConstants.Paths.PlayerBaseStatData_Json_Path, ParsePlayerBaseStatData);
             var itemConst = ParseResponseTable(tables, GameConstants.Paths.ItemConstData_Json_Path, ParseItemConstData);
             var evolution = ParseResponseTable(tables, GameConstants.Paths.EvolutionData_Json_Path, ParseEvolutionData);
+            var combatPower = ParseResponseTable(tables, GameConstants.Paths.CombatPowerData_Json_Path, ParseCombatPowerData);
 
             SaveLoadHelper.SaveStaticData(version, tables);
 
@@ -155,6 +161,7 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
             playerBaseStatData = playerBaseStat ?? playerBaseStatData;
             itemConstData = itemConst ?? itemConstData;
             evolutionData = evolution ?? evolutionData;
+            combatPowerData = combatPower ?? combatPowerData;
 
             if (monsterAttacks != null)
                 RebuildMonsterAttackIndex();
@@ -793,6 +800,20 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
             throw new InvalidOperationException("Evolution 데이터 항목이 객체 형식이 아닙니다.");
 
         EvolutionData data = rows[0].ToObject<EvolutionData>();
+        data.Validate();
+        return data;
+    }
+
+    private static CombatPowerData ParseCombatPowerData(JObject root)
+    {
+        JArray rows = root["datas"] as JArray;
+        if (rows == null || rows.Count != 1)
+            throw new InvalidOperationException("CombatPower 데이터는 행이 하나여야 합니다.");
+
+        if (!(rows[0] is JObject))
+            throw new InvalidOperationException("CombatPower 데이터 항목이 객체 형식이 아닙니다.");
+
+        CombatPowerData data = rows[0].ToObject<CombatPowerData>();
         data.Validate();
         return data;
     }
