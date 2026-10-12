@@ -24,6 +24,7 @@ public static class GameConstants
         public const string SpawnPatternData_Json_Path = "Data/SpawnPattern";
         public const string DropTableData_Json_Path = "Data/DropTable";
         public const string StageData_Json_Path = "Data/Stage";
+        public const string StageRosterData_Json_Path = "Data/StageRoster";
         public const string MonsterData_Json_Path = "Data/Monster";
         public const string ItemData_Json_Path = "Data/Item";
         public const string SkillData_Json_Path = "Data/Skill";
@@ -42,7 +43,7 @@ public static class GameConstants
         public const string BASE_URL = "http://localhost:8080";
         public const string STATIC_DATA_API = "/api/static-data";
         // 이 빌드가 읽을 수 있는 정적 데이터 버전의 첫째 자리
-        public const int STATIC_DATA_MAJOR_VERSION = 2;
+        public const int STATIC_DATA_MAJOR_VERSION = 3;
         public const string SIGNUP_API = "/api/accounts/signup";
         public const string LOGIN_API = "/api/accounts/login";
         public const string PLAYER_SAVE_API = "/api/players/me/save";
