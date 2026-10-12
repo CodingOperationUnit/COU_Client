@@ -12,15 +12,17 @@ public static class PlayerStatCalculator
     {
         public int FinalAttack;
         public int FinalHp;
-
+        public int FinalDefense;
         public int BaseAttack;
         public int BaseHp;
         public int EvolutionAttack;
         public int EvolutionHp;
         public int EquipmentAttack;
+        public int EvolutionDefense;
         public int EquipmentHp;
-
         public bool HasEvolutionData;
+        public int CombatPower;
+        public bool HasCombatPowerData;
     }
 
 
@@ -40,6 +42,14 @@ public static class PlayerStatCalculator
 
         result.FinalAttack = ApplyBonus(result.BaseAttack + result.EvolutionAttack + result.EquipmentAttack, 0);
         result.FinalHp = ApplyBonus(result.BaseHp + result.EvolutionHp + result.EquipmentHp, 0);
+
+        result.EvolutionDefense = EvolutionRules.GetBonus(evolution, playerStat, PlayerStatType.Defense);
+        result.FinalDefense = result.EvolutionDefense;
+
+        // 전투력 (랭킹용, 서버와 같은 정수 계산)
+        var combatPower = GameManager.JsonData != null ? GameManager.JsonData.CombatPowerData : null;
+        result.HasCombatPowerData = combatPower != null;
+        result.CombatPower = CalculateCombatPower(combatPower, result);
 
         return result;
     }
@@ -70,6 +80,19 @@ public static class PlayerStatCalculator
         InventoryRestorer.Restore(data.inventoryList, out var equipped);
         result.AddRange(equipped.Values);
         return result;
+    }
+
+    // 전투력 = 공격력 × 가중치 + 체력 × 가중치 + 방어력 × 가중치 (정수만, 서버와 동일)
+    public static int CalculateCombatPower(CombatPowerData data, Result stat)
+    {
+        if (data == null) return 0;
+
+        if (data.combatPowerUseCritical)
+            UnityEngine.Debug.LogWarning("[PlayerStatCalculator] 치명타 반영 전투력은 아직 지원하지 않습니다. 치명타 없이 계산합니다.");
+
+        return stat.FinalAttack * data.combatPowerAttackWeight
+             + stat.FinalHp * data.combatPowerHpWeight
+             + stat.FinalDefense * data.combatPowerDefenseWeight;
     }
 
     private static int ApplyBonus(int sum, int bonusPercent)

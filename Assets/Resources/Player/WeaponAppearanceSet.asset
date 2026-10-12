@@ -16,4 +16,5 @@ MonoBehaviour:
   - itemId: 6001
     rightHand: {fileID: 21300000, guid: b52a6f107d07d664ca8464d9f42a052a, type: 3}
     leftHand: {fileID: 0}
-    attackAnimationIndex: 1
+    attackAnimationIndex: 0
+    attackHitTime: 0.3
