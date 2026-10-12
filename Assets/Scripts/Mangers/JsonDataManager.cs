@@ -28,11 +28,14 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
     private Dictionary<int, SpawnPatternData> spawnPatternDataDic;
     public IReadOnlyDictionary<int, SpawnPatternData> SpawnPatternDataDic => spawnPatternDataDic;
 
-    private Dictionary<int, List<DropTableEntryData>> dropTableDic;
-    public IReadOnlyDictionary<int, List<DropTableEntryData>> DropTableDic => dropTableDic;
+    private Dictionary<MonsterType, List<DropTableEntryData>> dropTableDic;
+    public IReadOnlyDictionary<MonsterType, List<DropTableEntryData>> DropTableDic => dropTableDic;
 
     private Dictionary<int, StageData> stageDataDic;
     public IReadOnlyDictionary<int, StageData> StageDataDic => stageDataDic;
+
+    private Dictionary<int, List<StageRosterData>> stageRosterDic;
+    public IReadOnlyDictionary<int, List<StageRosterData>> StageRosterDic => stageRosterDic;
 
     private Dictionary<int, SkillData> skillDataDic;
     public IReadOnlyDictionary<int, SkillData> SkillDataDic => skillDataDic;
@@ -67,6 +70,7 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
         waveEntryDataDic = LoadTable(GameConstants.Paths.WaveData_Json_Path, ParseWaveData);
         spawnPatternDataDic = LoadTable(GameConstants.Paths.SpawnPatternData_Json_Path, ParseSpawnPatternData);
         stageDataDic = LoadTable(GameConstants.Paths.StageData_Json_Path, ParseStageData);
+        stageRosterDic = LoadTable(GameConstants.Paths.StageRosterData_Json_Path, ParseStageRosterData);
         skillDataDic = LoadTable(GameConstants.Paths.SkillData_Json_Path, ParseSkillData);
         dropItemDataDic = LoadTable(GameConstants.Paths.DropItemData_Json_Path, ParseDropItemData);
         dropTableDic = LoadTable(GameConstants.Paths.DropTableData_Json_Path, ParseDropTableData);
@@ -125,6 +129,7 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
             var waveEntries = ParseResponseTable(tables, GameConstants.Paths.WaveData_Json_Path, ParseWaveData);
             var spawnPatterns = ParseResponseTable(tables, GameConstants.Paths.SpawnPatternData_Json_Path, ParseSpawnPatternData);
             var stages = ParseResponseTable(tables, GameConstants.Paths.StageData_Json_Path, ParseStageData);
+            var stageRosters = ParseResponseTable(tables, GameConstants.Paths.StageRosterData_Json_Path, ParseStageRosterData);
             var skills = ParseResponseTable(tables, GameConstants.Paths.SkillData_Json_Path, ParseSkillData);
             var dropItems = ParseResponseTable(tables, GameConstants.Paths.DropItemData_Json_Path, ParseDropItemData);
             var dropTables = ParseResponseTable(tables, GameConstants.Paths.DropTableData_Json_Path, ParseDropTableData);
@@ -141,6 +146,7 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
             waveEntryDataDic = waveEntries ?? waveEntryDataDic;
             spawnPatternDataDic = spawnPatterns ?? spawnPatternDataDic;
             stageDataDic = stages ?? stageDataDic;
+            stageRosterDic = stageRosters ?? stageRosterDic;
             skillDataDic = skills ?? skillDataDic;
             dropItemDataDic = dropItems ?? dropItemDataDic;
             dropTableDic = dropTables ?? dropTableDic;
@@ -253,8 +259,8 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
         return null;
     }
 
-    // 테이블 ID로 조회합니다. 행은 dropGroup 오름차순입니다. 실패 시 null을 반환합니다.
-    public IReadOnlyList<DropTableEntryData> GetDropTableFromJson(int dropTableId)
+    // 몬스터 역할로 조회합니다. 행은 dropGroup 오름차순입니다. 실패 시 null을 반환합니다.
+    public IReadOnlyList<DropTableEntryData> GetDropTableFromJson(MonsterType type)
     {
         if (dropTableDic == null)
         {
@@ -262,10 +268,10 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
             return null;
         }
 
-        if (dropTableDic.TryGetValue(dropTableId, out List<DropTableEntryData> entries))
+        if (dropTableDic.TryGetValue(type, out List<DropTableEntryData> entries))
             return entries;
 
-        Debug.LogWarning($"등록되지 않은 DropTable ID: {dropTableId}");
+        Debug.LogWarning($"등록되지 않은 DropTable 역할: {type}");
         return null;
     }
 
@@ -282,6 +288,22 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
             return data;
 
         Debug.LogWarning($"등록되지 않은 Stage ID: {stageId}");
+        return null;
+    }
+
+    // 스테이지 ID로 그 스테이지의 로스터 행들을 조회합니다. 실패 시 null을 반환합니다.
+    public IReadOnlyList<StageRosterData> GetStageRosterFromJson(int stageId)
+    {
+        if (stageRosterDic == null)
+        {
+            Debug.LogError("StageRoster 데이터가 초기화되지 않았습니다.");
+            return null;
+        }
+
+        if (stageRosterDic.TryGetValue(stageId, out List<StageRosterData> rows))
+            return rows;
+
+        Debug.LogWarning($"등록되지 않은 StageRoster 스테이지 ID: {stageId}");
         return null;
     }
 
@@ -445,6 +467,18 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
             if (loadedDatas.ContainsKey(data.waveEntryId))
                 throw new InvalidOperationException($"중복된 Wave 항목 ID: {data.waveEntryId}");
 
+            if (data.patternStartTime < 0f)
+                throw new InvalidOperationException($"Wave {data.waveEntryId}의 patternStartTime은 0 이상이어야 합니다.");
+
+            if (data.patternDuration < 0f)
+                throw new InvalidOperationException($"Wave {data.waveEntryId}의 patternDuration은 0 이상이어야 합니다.");
+
+            if (data.patternDuration > 0f && data.spawnInterval <= 0f)
+                throw new InvalidOperationException($"Wave {data.waveEntryId}의 spawnInterval은 patternDuration이 0보다 크면 0보다 커야 합니다.");
+
+            if (string.IsNullOrEmpty(data.monsterSlot))
+                throw new InvalidOperationException($"Wave {data.waveEntryId}의 monsterSlot이 비어 있습니다.");
+
             loadedDatas.Add(data.waveEntryId, data);
         }
 
@@ -473,8 +507,14 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
             if (data.spawnCount < 1)
                 throw new InvalidOperationException($"SpawnPattern {data.patternId}의 spawnCount는 1 이상이어야 합니다.");
 
+            if (data.spawnRadius < 0f)
+                throw new InvalidOperationException($"SpawnPattern {data.patternId}의 spawnRadius는 0 이상이어야 합니다.");
+
+            if (data.formationSize < 0f)
+                throw new InvalidOperationException($"SpawnPattern {data.patternId}의 formationSize는 0 이상이어야 합니다.");
+
             if (!data.OnLoaded())
-                throw new InvalidOperationException($"SpawnPattern {data.patternId}의 eventType \"{data.eventType}\" 또는 formation \"{data.formation}\"을(를) 알 수 없습니다.");
+                throw new InvalidOperationException($"SpawnPattern {data.patternId}의 formation \"{data.formation}\"을(를) 알 수 없습니다.");
 
             loadedDatas.Add(data.patternId, data);
         }
@@ -503,6 +543,56 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
 
             data.OnLoaded();
             loadedDatas.Add(data.stageId, data);
+        }
+
+        return loadedDatas;
+    }
+
+    private static Dictionary<int, List<StageRosterData>> ParseStageRosterData(JObject root)
+    {
+        JArray rows = root["datas"] as JArray;
+        if (rows == null || rows.Count == 0)
+            throw new InvalidOperationException("StageRoster 데이터 목록이 비어 있습니다.");
+
+        var loadedDatas = new Dictionary<int, List<StageRosterData>>();
+        var loadedIds = new HashSet<int>();
+        foreach (JToken row in rows)
+        {
+            if (!(row is JObject))
+                throw new InvalidOperationException("StageRoster 데이터 항목이 객체 형식이 아닙니다.");
+
+            StageRosterData data = row.ToObject<StageRosterData>();
+            if (data == null || data.stageRosterId <= 0)
+                throw new InvalidOperationException("StageRoster 데이터 또는 ID가 올바르지 않습니다.");
+
+            if (!loadedIds.Add(data.stageRosterId))
+                throw new InvalidOperationException($"중복된 StageRoster ID: {data.stageRosterId}");
+
+            if (data.stageId <= 0)
+                throw new InvalidOperationException($"StageRoster {data.stageRosterId}의 stageId는 0보다 커야 합니다.");
+
+            if (data.monsterId <= 0)
+                throw new InvalidOperationException($"StageRoster {data.stageRosterId}의 monsterId는 0보다 커야 합니다.");
+
+            if (string.IsNullOrEmpty(data.monsterSlot))
+                throw new InvalidOperationException($"StageRoster {data.stageRosterId}의 monsterSlot이 비어 있습니다.");
+
+            if (data.monsterHpScale <= 0f)
+                throw new InvalidOperationException($"StageRoster {data.stageRosterId}의 monsterHpScale은 0보다 커야 합니다.");
+
+            if (data.monsterDamageScale <= 0f)
+                throw new InvalidOperationException($"StageRoster {data.stageRosterId}의 monsterDamageScale은 0보다 커야 합니다.");
+
+            if (!loadedDatas.TryGetValue(data.stageId, out List<StageRosterData> stageRows))
+            {
+                stageRows = new List<StageRosterData>();
+                loadedDatas.Add(data.stageId, stageRows);
+            }
+
+            if (stageRows.Exists(r => r.monsterSlot == data.monsterSlot))
+                throw new InvalidOperationException($"Stage {data.stageId}의 monsterSlot \"{data.monsterSlot}\"이(가) 중복됩니다.");
+
+            stageRows.Add(data);
         }
 
         return loadedDatas;
@@ -572,38 +662,38 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
         return loadedDatas;
     }
 
-    private static Dictionary<int, List<DropTableEntryData>> ParseDropTableData(JObject root)
+    private static Dictionary<MonsterType, List<DropTableEntryData>> ParseDropTableData(JObject root)
     {
         JArray rows = root["datas"] as JArray;
         if (rows == null || rows.Count == 0)
             throw new InvalidOperationException("DropTable 데이터 목록이 비어 있습니다.");
 
-        var loadedDatas = new Dictionary<int, List<DropTableEntryData>>();
+        var loadedDatas = new Dictionary<MonsterType, List<DropTableEntryData>>();
         foreach (JToken row in rows)
         {
             if (!(row is JObject))
                 throw new InvalidOperationException("DropTable 데이터 항목이 객체 형식이 아닙니다.");
 
             DropTableEntryData data = row.ToObject<DropTableEntryData>();
-            if (data == null || data.dropTableId <= 0)
-                throw new InvalidOperationException("DropTable 데이터 또는 ID가 올바르지 않습니다.");
+            if (data == null)
+                throw new InvalidOperationException("DropTable 데이터가 올바르지 않습니다.");
 
             if (data.dropGroup < 0)
-                throw new InvalidOperationException($"DropTable {data.dropTableId}의 dropGroup은 0 이상이어야 합니다.");
+                throw new InvalidOperationException($"DropTable {data.monsterType}의 dropGroup은 0 이상이어야 합니다.");
 
             if (data.weight < 1)
-                throw new InvalidOperationException($"DropTable {data.dropTableId}의 weight는 1 이상이어야 합니다.");
+                throw new InvalidOperationException($"DropTable {data.monsterType}의 weight는 1 이상이어야 합니다.");
 
             if (data.count < 1)
-                throw new InvalidOperationException($"DropTable {data.dropTableId}의 count는 1 이상이어야 합니다.");
+                throw new InvalidOperationException($"DropTable {data.monsterType}의 count는 1 이상이어야 합니다.");
 
             if (!data.OnLoaded())
-                throw new InvalidOperationException($"DropTable {data.dropTableId}의 dropItemType \"{data.dropItemType}\"을(를) 알 수 없습니다.");
+                throw new InvalidOperationException($"DropTable의 monsterType \"{data.monsterType}\" 또는 dropItemType \"{data.dropItemType}\"을(를) 알 수 없습니다.");
 
-            if (!loadedDatas.TryGetValue(data.dropTableId, out List<DropTableEntryData> entries))
+            if (!loadedDatas.TryGetValue(data.MonsterType, out List<DropTableEntryData> entries))
             {
                 entries = new List<DropTableEntryData>();
-                loadedDatas.Add(data.dropTableId, entries);
+                loadedDatas.Add(data.MonsterType, entries);
             }
             entries.Add(data);
         }

@@ -27,7 +27,8 @@ public class MonsterSpawner : MonoSingleton<MonsterSpawner>
     private readonly List<Enemy> spawnedEnemies = new();
 
     // monsterId로 데이터 조회 -> 타입에 맞는 풀에서 꺼내 Init/SetTarget
-    public Enemy SpawnMonster(int monsterId, Vector3 position, int dropTableId)
+    // hpScale, damageScale: 스테이지 로스터 배율
+    public Enemy SpawnMonster(int monsterId, Vector3 position, float hpScale, float damageScale)
     {
         MonsterData data = GameManager.JsonData.GetMonsterDataFromJson(monsterId);
         if (data == null) { return null; }
@@ -51,7 +52,7 @@ public class MonsterSpawner : MonoSingleton<MonsterSpawner>
         Enemy enemy = obj.GetComponent<Enemy>();
 
         // 몬스터가 추적할 플레이어 연결
-        enemy.Init(data, dropTableId);
+        enemy.Init(data, hpScale, damageScale);
         enemy.SetTarget(player);
 
         // 반납 알림 구독 → 죽으면 목록에서 제거
