@@ -68,6 +68,8 @@ public class PlayerDebug : MonoBehaviour
         if (Keyboard.current.digit9Key.wasPressedThisFrame)
             EquipSkill(3);
 
+        if (Keyboard.current.f1Key.wasPressedThisFrame && playerVisual != null)
+            playerVisual.PlayAttackMotion();
 
         if (Keyboard.current.f2Key.wasPressedThisFrame)
             UpgradeEvolution();

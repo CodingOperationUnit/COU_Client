@@ -152,7 +152,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 0.46
+  orthographic size: 0.55
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -316,6 +316,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 3638474720062852016}
   m_SourcePrefab: {fileID: 100100000, guid: 66e0c429df17007418c2a28db104bec1, type: 3}
+--- !u!212 &67039198161932139 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 9142348618200188118, guid: 66e0c429df17007418c2a28db104bec1, type: 3}
+  m_PrefabInstance: {fileID: 9083213350655167421}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &198902033192896055 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8992749689983192458, guid: 66e0c429df17007418c2a28db104bec1, type: 3}
@@ -339,7 +344,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAppearance
   weaponSet: {fileID: 11400000, guid: d6522cedd82510944a3acbcbabf8b5d0, type: 2}
-  rightWeapon: {fileID: 0}
-  leftWeapon: {fileID: 0}
+  rightWeapon: {fileID: 6148211213156244057}
+  leftWeapon: {fileID: 67039198161932139}
   testItemId: 6001
   testAttackIndex: 0
+--- !u!212 &6148211213156244057 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 3124614052251390436, guid: 66e0c429df17007418c2a28db104bec1, type: 3}
+  m_PrefabInstance: {fileID: 9083213350655167421}
+  m_PrefabAsset: {fileID: 0}

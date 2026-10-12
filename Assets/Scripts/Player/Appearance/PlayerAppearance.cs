@@ -8,6 +8,7 @@ public class PlayerAppearance : MonoBehaviour
     [SerializeField] private WeaponAppearanceSet weaponSet;
     [SerializeField] private SpriteRenderer rightWeapon;
     [SerializeField] private SpriteRenderer leftWeapon;
+    [SerializeField] private bool keepInPlace = true;
 
     [Header("Test")]
     [SerializeField] private long testItemId = 6001;
@@ -18,11 +19,22 @@ public class PlayerAppearance : MonoBehaviour
     private PlayerState currentState = PlayerState.IDLE;
     private float oneShotEndTime;
     private bool isDead;
+    private Transform animatedRoot;            // 애니메이션이 움직이는 몸 기준점 (UnitRoot 아래 Root)
+    private Vector3 animatorBaseLocalPosition; // UnitRoot의 원래 위치
+    private Vector3 rootBaseLocalPosition;     // Root의 원래 위치
 
     private Sprite defaultRight;
     private Sprite defaultLeft;
 
     public int AttackIndex { get; private set; }
+
+    private void LateUpdate()
+    {
+        if (!isReady || !keepInPlace) return;
+        if (currentState == PlayerState.DEATH) return;
+
+        ResetPose();
+    }
 
     public void Awake()
     {
@@ -36,6 +48,14 @@ public class PlayerAppearance : MonoBehaviour
             Debug.LogError("[PlayerAppearance] SPUM_Prefabs의 Anim(Animator)이 비어 있습니다.", this);
             return;
         }
+        // 애니메이션 이동이 캐릭터 위치를 실제로 옮기지 않도록
+        spum._anim.applyRootMotion = false;
+
+        // 원래 위치 기억 (피격 등 한 번 재생 모션이 끝나면 되돌림)
+        animatorBaseLocalPosition = spum._anim.transform.localPosition;
+        animatedRoot = spum._anim.transform.Find("Root");
+        if (animatedRoot != null)
+            rootBaseLocalPosition = animatedRoot.localPosition;
 
         spum.OverrideControllerInit();
         isReady = true;
@@ -105,7 +125,16 @@ public class PlayerAppearance : MonoBehaviour
         if (Time.time < oneShotEndTime) return;
         if (currentState == state) return;
 
+        ResetPose();
+
         Play(state, 0);
+    }
+
+    private void ResetPose()
+    {
+        spum._anim.transform.localPosition = animatorBaseLocalPosition;
+        if (animatedRoot != null)
+            animatedRoot.localPosition = rootBaseLocalPosition;
     }
 
     // 공격·피격처럼 한 번 재생하는 상태: 클립 길이만큼 대기·이동 전환을 막음
