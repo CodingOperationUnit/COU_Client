@@ -75,6 +75,7 @@ public class CharacterEquipView : MonoBehaviour
         if (PlayerInventory.Instance == null) return;
 
         PlayerInventory.Instance.OnInventoryChanged += Refresh;
+        GameManager.PlayerData.OnPlayerDataChanged += OnPlayerDataChanged;
         Refresh();
     }
 
@@ -82,6 +83,8 @@ public class CharacterEquipView : MonoBehaviour
     {
         if (PlayerInventory.Instance != null)
             PlayerInventory.Instance.OnInventoryChanged -= Refresh;
+        if (GameManager.PlayerData != null)                                   // 추가
+            GameManager.PlayerData.OnPlayerDataChanged -= OnPlayerDataChanged;
     }
 
     private void OnSlotClicked(SlotUI slot)
@@ -92,15 +95,18 @@ public class CharacterEquipView : MonoBehaviour
         UIManager.Instance.Get<EquipDetailPopUp>().Show(equippedItem);
     }
 
+    private void OnPlayerDataChanged(PlayerSaveData _) => Refresh();
+
     private void Refresh()
     {
         foreach (var slot in slots)
             RefreshSlot(slot);
 
+        var stat = PlayerStatCalculator.CalculateCurrent();
         if (atkValueText != null)
-            atkValueText.text = PlayerInventory.Instance.GetTotalStat(o => o.ScaledAttack).ToString();
+            atkValueText.text = stat.FinalAttack.ToString();
         if (hpValueText != null)
-            hpValueText.text = PlayerInventory.Instance.GetTotalStat(o => o.ScaledHp).ToString();
+            hpValueText.text = stat.FinalHp.ToString();
     }
 
     private void RefreshSlot(SlotUI slot)
