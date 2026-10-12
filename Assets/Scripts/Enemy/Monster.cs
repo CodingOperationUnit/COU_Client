@@ -86,7 +86,7 @@ public class Monster : Enemy
             Vector2 dir = Quaternion.Euler(0f, 0f, startAngle + stepAngle * i) * baseDir;
             GameObject obj = GameManager.ObjectPool.GetObject(projectilePrefab, transform.position, Quaternion.identity);
             obj.GetComponent<BossProjectile>()?.Launch(
-                dir, projectileSpeed, attack.monsterAttackDamage, projectileLifeTime,
+                dir, projectileSpeed, ScaleDamage(attack.monsterAttackDamage), projectileLifeTime,
                 player.transform, playerHealth);
         }
     }
@@ -104,7 +104,7 @@ public class Monster : Enemy
 
             GameObject obj = GameManager.ObjectPool.GetObject(areaWarningPrefab, position, Quaternion.identity);
             obj.GetComponent<BossAreaWarning>()?.Begin(
-                areaRadius, areaDelay, attack.monsterAttackDamage, player.transform, playerHealth);
+                areaRadius, areaDelay, ScaleDamage(attack.monsterAttackDamage), player.transform, playerHealth);
         }
     }
 
@@ -123,7 +123,7 @@ public class Monster : Enemy
 
             GameObject obj = GameManager.ObjectPool.GetObject(trapPrefab, position, Quaternion.identity);
             obj.GetComponent<TrapZone>()?.Begin(
-                trapRadius, duration, attack.monsterAttackDamage, player.transform, playerHealth);
+                trapRadius, duration, ScaleDamage(attack.monsterAttackDamage), player.transform, playerHealth);
         }
     }
 

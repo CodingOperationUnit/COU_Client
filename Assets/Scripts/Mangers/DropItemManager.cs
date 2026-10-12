@@ -84,12 +84,10 @@ public class DropItemManager : MonoSingleton<DropItemManager>
         entityManager.SetComponentData(entity, new DropView { Slot = slot });
     }
 
-    // 드롭 테이블 판정: 그룹마다 가중치로 1행을 뽑아 count개 생성한다. None이면 건너뜀
-    public void SpawnTable(int dropTableId, Vector2 position)
+    // 드롭 테이블 판정: 몬스터 역할의 테이블에서 그룹마다 가중치로 1행을 뽑아 count개 생성한다. None이면 건너뜀
+    public void SpawnTable(MonsterType type, Vector2 position)
     {
-        if (dropTableId <= 0) return;
-
-        IReadOnlyList<DropTableEntryData> entries = GameManager.JsonData.GetDropTableFromJson(dropTableId);
+        IReadOnlyList<DropTableEntryData> entries = GameManager.JsonData.GetDropTableFromJson(type);
         if (entries == null) return;
 
         int start = 0;

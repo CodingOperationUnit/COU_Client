@@ -12,9 +12,10 @@ public class JsonDataManagerEditor : Editor
     private readonly HashSet<int> expandedWaveEntries = new();
     private readonly HashSet<int> expandedSpawnPatterns = new();
     private readonly HashSet<int> expandedStages = new();
+    private readonly HashSet<int> expandedStageRosters = new();
     private readonly HashSet<int> expandedSkills = new();
     private readonly HashSet<DropItemType> expandedDropItems = new();
-    private readonly HashSet<int> expandedDropTables = new();
+    private readonly HashSet<MonsterType> expandedDropTables = new();
     private readonly HashSet<long> expandedItems = new();
 
     public override void OnInspectorGUI()
@@ -27,11 +28,13 @@ public class JsonDataManagerEditor : Editor
         DrawDictionary("몬스터 공격 데이터", manager.MonsterAttackDataDic, expandedMonsterAttacks,
             data => $"몬스터 {data.monsterId} / {data.monsterAttackType}", DrawMonsterAttack);
         DrawDictionary("웨이브 데이터", manager.WaveEntryDataDic, expandedWaveEntries,
-            data => $"웨이브 {data.waveId} / 패턴 {data.patternId}", DrawWaveEntry);
+            data => $"웨이브 {data.waveId} / 패턴 {data.patternId} / {data.monsterSlot}", DrawWaveEntry);
         DrawDictionary("스폰 패턴 데이터", manager.SpawnPatternDataDic, expandedSpawnPatterns,
-            data => $"{data.eventType} / {data.formation}", DrawSpawnPattern);
+            data => $"{data.formation} × {data.spawnCount}", DrawSpawnPattern);
         DrawDictionary("스테이지 데이터", manager.StageDataDic, expandedStages,
             data => data.stageName, DrawStage);
+        DrawDictionary("스테이지 로스터 데이터", manager.StageRosterDic, expandedStageRosters,
+            rows => $"슬롯 {rows.Count}개", DrawStageRoster);
         DrawDictionary("스킬 데이터", manager.SkillDataDic, expandedSkills,
             data => data.skillName, DrawSkill);
         DrawDictionary("드롭 아이템 데이터", manager.DropItemDataDic, expandedDropItems,
@@ -144,32 +147,46 @@ public class JsonDataManagerEditor : Editor
         EditorGUILayout.IntField("웨이브 항목 ID", data.waveEntryId);
         EditorGUILayout.IntField("웨이브 ID", data.waveId);
         EditorGUILayout.FloatField("시작 시간 (초)", data.patternStartTime);
+        EditorGUILayout.FloatField("반복 지속 시간 (초)", data.patternDuration);
+        EditorGUILayout.FloatField("반복 간격 (초)", data.spawnInterval);
         EditorGUILayout.IntField("패턴 ID", data.patternId);
-        EditorGUILayout.IntField("몬스터 ID", data.monsterId);
+        EditorGUILayout.TextField("몬스터 슬롯", data.monsterSlot ?? string.Empty);
     }
 
     private static void DrawSpawnPattern(SpawnPatternData data)
     {
         EditorGUILayout.IntField("패턴 ID", data.patternId);
-        EditorGUILayout.TextField("이벤트 종류 문자열", data.eventType ?? string.Empty);
-        EditorGUILayout.EnumPopup("이벤트 종류", data.EventType);
         EditorGUILayout.TextField("배치 형태 문자열", data.formation ?? string.Empty);
         EditorGUILayout.EnumPopup("배치 형태", data.Formation);
         EditorGUILayout.IntField("스폰 마릿수", data.spawnCount);
-        EditorGUILayout.FloatField("반복 간격 (초)", data.spawnInterval);
-        EditorGUILayout.FloatField("반복 지속 시간 (초)", data.patternDuration);
-        EditorGUILayout.IntField("드롭 테이블 ID", data.dropTableId);
+        EditorGUILayout.FloatField("거리 (0이면 기본값)", data.spawnRadius);
+        EditorGUILayout.FloatField("형태 크기 (0이면 기본값)", data.formationSize);
     }
 
     private static void DrawStage(StageData data)
     {
         EditorGUILayout.IntField("스테이지 ID", data.stageId);
         EditorGUILayout.TextField("이름", data.stageName ?? string.Empty);
-        EditorGUILayout.FloatField("진행 시간 (초)", data.stageDuration);
         EditorGUILayout.IntField("웨이브 ID", data.waveId);
         EditorGUILayout.TextField("설명", data.stageDescription ?? string.Empty);
         EditorGUILayout.TextField("UI 색깔 문자열", data.stageIllustrationColor ?? string.Empty);
         EditorGUILayout.ColorField("UI 색깔 (파싱됨)", data.IllustrationColor);
+    }
+
+    private static void DrawStageRoster(List<StageRosterData> rows)
+    {
+        foreach (StageRosterData row in rows)
+        {
+            EditorGUILayout.LabelField($"행 {row.stageRosterId}");
+
+            using (new EditorGUI.IndentLevelScope())
+            {
+                EditorGUILayout.TextField("슬롯", row.monsterSlot ?? string.Empty);
+                EditorGUILayout.IntField("몬스터 ID", row.monsterId);
+                EditorGUILayout.FloatField("체력 배율", row.monsterHpScale);
+                EditorGUILayout.FloatField("피해 배율", row.monsterDamageScale);
+            }
+        }
     }
 
     private static void DrawSkill(SkillData data)
