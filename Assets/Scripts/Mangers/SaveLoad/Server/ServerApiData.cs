@@ -145,7 +145,7 @@ public class PurchaseResponse
 
 // ===== 랭킹 =====
 
-public enum RankingType { ACCOUNT_LEVEL, MAX_STAGE, STAGE_SURVIVAL }
+public enum RankingType { ACCOUNT_LEVEL, MAX_STAGE, STAGE_SURVIVAL, COMBAT_POWER }
 
 [Serializable]
 public class RankingEntryResponse

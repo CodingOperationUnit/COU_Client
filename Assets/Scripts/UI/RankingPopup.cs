@@ -42,7 +42,7 @@ public class RankingPopup : UIPopup
 
     private readonly List<RankingEntryView> entryViews = new();
 
-    private RankingType currentType = RankingType.ACCOUNT_LEVEL;
+    private RankingType currentType = RankingType.COMBAT_POWER;
     private int[] stageIds = Array.Empty<int>();
     private int stageIndex;
     private int requestId; // 탭/스테이지를 빠르게 바꿨을 때 늦게 온 응답을 버리기 위한 번호
@@ -209,6 +209,7 @@ public class RankingPopup : UIPopup
             case RankingType.ACCOUNT_LEVEL: return "계정 레벨이 높은 순서";
             case RankingType.MAX_STAGE: return "최고 클리어 스테이지 순서";
             case RankingType.STAGE_SURVIVAL: return $"스테이지 {stageId}  ·  생존 시간 순";
+            case RankingType.COMBAT_POWER: return "전투력이 높은 순서";
             default: return string.Empty;
         }
     }
@@ -220,6 +221,7 @@ public class RankingPopup : UIPopup
             case RankingType.ACCOUNT_LEVEL: return $"Lv.{value}";
             case RankingType.MAX_STAGE: return $"스테이지 {value}";
             case RankingType.STAGE_SURVIVAL: return $"{value / 60}:{value % 60:00}"; // 초 -> m:ss
+            case RankingType.COMBAT_POWER: return value.ToString("N0");
             default: return value.ToString();
         }
     }
