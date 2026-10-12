@@ -33,6 +33,7 @@ public static class GameConstants
         public const string PlayerBaseStatData_Json_Path = "Data/PlayerBaseStat";
         public const string ItemConstData_Json_Path = "Data/ItemConst";
         public const string EvolutionData_Json_Path = "Data/Evolution";
+        public const string CombatPowerData_Json_Path = "Data/CombatPower";
         public const string STATIC_DATA_DIRECTORY = "StaticData";
         public const string STATIC_DATA_VERSION_FILE = "version.txt";
         public const string AchievementData_Json_Path = "Data/Achievement";

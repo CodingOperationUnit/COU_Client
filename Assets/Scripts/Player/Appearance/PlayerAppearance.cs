@@ -27,6 +27,7 @@ public class PlayerAppearance : MonoBehaviour
     private Sprite defaultLeft;
 
     public int AttackIndex { get; private set; }
+    public float AttackHitTime { get; private set; }
 
     private void LateUpdate()
     {
@@ -68,6 +69,7 @@ public class PlayerAppearance : MonoBehaviour
         {
             SetWeaponSprites(null, null);
             AttackIndex = 0;
+            AttackHitTime = 0f;
             return;
         }
 
@@ -75,11 +77,13 @@ public class PlayerAppearance : MonoBehaviour
         {
             SetWeaponSprites(entry.rightHand, entry.leftHand);
             AttackIndex = entry.attackAnimationIndex;
+            AttackHitTime = entry.attackHitTime;
             return;
         }
 
         SetWeaponSprites(defaultRight, defaultLeft);
         AttackIndex = 0;
+        AttackHitTime = 0f;
         Debug.LogWarning("[PlayerAppearance] 무기 외형이 등록되지 않았습니다: " + itemId.Value + ". 기본 무기를 표시합니다.", this);
     }
 

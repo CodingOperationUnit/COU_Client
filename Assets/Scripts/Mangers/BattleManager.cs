@@ -25,6 +25,7 @@ public class BattleManager : MonoBehaviour
     private BattleResultWindow resultWindow;
     private PauseWindow pauseWindow;
     private SkillSelectWindow selectWindow;
+    private Enemy boss;
 
     private float elapsed;
     private int seconds;
@@ -54,6 +55,7 @@ public class BattleManager : MonoBehaviour
         playerHealth.OnDied += HandlePlayerDied;
         lootReceiver.OnLooted += HandleLooted;
         spawner.OnEnemyKilled += HandleEnemyKilled;
+        spawner.OnBossSpawned += HandleBossSpawned;
         spawner.OnBossKilled += HandleBossKilled;
     }
 
@@ -62,6 +64,7 @@ public class BattleManager : MonoBehaviour
         playerHealth.OnDied -= HandlePlayerDied;
         lootReceiver.OnLooted -= HandleLooted;
         spawner.OnEnemyKilled -= HandleEnemyKilled;
+        spawner.OnBossSpawned -= HandleBossSpawned;
         spawner.OnBossKilled -= HandleBossKilled;
     }
 
@@ -171,8 +174,27 @@ public class BattleManager : MonoBehaviour
         AddKill();
     }
 
-    private void HandleBossKilled(Enemy boss)
+    private void HandleBossSpawned(Enemy spawnedBoss)
     {
+        if (boss != null) boss.OnHpChanged -= HandleBossHpChanged;
+        boss = spawnedBoss;
+        boss.OnHpChanged += HandleBossHpChanged;
+
+        hud.ShowBoss(boss.Data.monsterName);
+        hud.SetBossHp(boss.HpRatio);
+    }
+
+    private void HandleBossHpChanged(Enemy enemy)
+    {
+        hud.SetBossHp(enemy.HpRatio);
+    }
+
+    private void HandleBossKilled(Enemy killedBoss)
+    {
+        if (boss != null) boss.OnHpChanged -= HandleBossHpChanged;
+        boss = null;
+        hud.HideBoss();
+
         victoryTimer = bossVictoryDelay;
     }
 

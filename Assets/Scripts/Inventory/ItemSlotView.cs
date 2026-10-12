@@ -51,7 +51,12 @@ public class ItemSlotView : MonoBehaviour
         }
 
         var bound = synthesisTarget.BoundItem;
-        var isMatch = bound != null && bound.itemId == boundItem.itemId;
+        // 합성 재료/대상 기준(서버 findMaterials와 동일): 같은 아이템 + 같은 등급, 재료는 미장착만
+        var isMatch = bound != null
+            && bound.CanSynthesize
+            && bound.itemId == boundItem.itemId
+            && bound.Grade == boundItem.Grade
+            && (boundItem == bound || !boundItem.isEquipped);
 
         // 오버레이 ㅈ게ㅓ
         if (lockOverlay != null) lockOverlay.SetActive(false);

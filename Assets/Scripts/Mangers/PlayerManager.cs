@@ -89,5 +89,12 @@ public class PlayerManager : MonoBehaviour
 
         bool result = Skills.EquipSkill(skillId);
         Debug.Log("[PlayerManager] 시작 스킬 " + skillId + " 등록: " + (result ? "성공" : "실패"));
+
+        if (result && Visual != null)
+        {
+            var weaponSkill = System.Linq.Enumerable.FirstOrDefault(Skills.ActiveSkills, s => s.SkillId == skillId);
+            if (weaponSkill != null)
+                Visual.ApplyWeaponSkillTiming(weaponSkill);
+        }
     }
 }

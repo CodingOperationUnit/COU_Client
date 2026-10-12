@@ -61,6 +61,9 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
     private Dictionary<int, AchievementData> achievementDataDic;
     public IReadOnlyDictionary<int, AchievementData> AchievementDataDic => achievementDataDic;
     
+
+    private CombatPowerData combatPowerData;
+    public CombatPowerData CombatPowerData => combatPowerData;
     #endregion
 
     protected override void Awake()
@@ -84,6 +87,8 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
         itemConstData = LoadTable(GameConstants.Paths.ItemConstData_Json_Path, ParseItemConstData);
         evolutionData = LoadTable(GameConstants.Paths.EvolutionData_Json_Path, ParseEvolutionData);
         achievementDataDic = LoadTable(GameConstants.Paths.AchievementData_Json_Path, ParseAchievementData);
+        combatPowerData = LoadTable(GameConstants.Paths.CombatPowerData_Json_Path, ParseCombatPowerData);
+
 
         RebuildMonsterAttackIndex();
     }
@@ -144,6 +149,7 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
             var itemConst = ParseResponseTable(tables, GameConstants.Paths.ItemConstData_Json_Path, ParseItemConstData);
             var evolution = ParseResponseTable(tables, GameConstants.Paths.EvolutionData_Json_Path, ParseEvolutionData);
             var achievements = ParseResponseTable(tables, GameConstants.Paths.AchievementData_Json_Path, ParseAchievementData);
+            var combatPower = ParseResponseTable(tables, GameConstants.Paths.CombatPowerData_Json_Path, ParseCombatPowerData);
 
             SaveLoadHelper.SaveStaticData(version, tables);
 
@@ -162,6 +168,7 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
             itemConstData = itemConst ?? itemConstData;
             evolutionData = evolution ?? evolutionData;
             achievementDataDic = achievements ?? achievementDataDic;
+            combatPowerData = combatPower ?? combatPowerData;
 
             if (monsterAttacks != null)
                 RebuildMonsterAttackIndex();
@@ -846,5 +853,19 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
         return loadedDatas;
     }
     
+
+    private static CombatPowerData ParseCombatPowerData(JObject root)
+    {
+        JArray rows = root["datas"] as JArray;
+        if (rows == null || rows.Count != 1)
+            throw new InvalidOperationException("CombatPower 데이터는 행이 하나여야 합니다.");
+
+        if (!(rows[0] is JObject))
+            throw new InvalidOperationException("CombatPower 데이터 항목이 객체 형식이 아닙니다.");
+
+        CombatPowerData data = rows[0].ToObject<CombatPowerData>();
+        data.Validate();
+        return data;
+    }
     #endregion
 }
