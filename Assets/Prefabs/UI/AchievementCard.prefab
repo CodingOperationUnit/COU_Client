@@ -239,6 +239,7 @@ GameObject:
   - component: {fileID: 4225638232865572895}
   - component: {fileID: 5040799831292948634}
   - component: {fileID: 6444954389620845343}
+  - component: {fileID: 802627580524894662}
   m_Layer: 5
   m_Name: AchievementCard
   m_TagString: Untagged
@@ -361,6 +362,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
   color: 0
+--- !u!114 &802627580524894662
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2527299868258050012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90088de6bba6b134ab9bc4eaeacfc175, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AchievementCard
+  iconImage: {fileID: 7626453490824535417}
+  nameText: {fileID: 355067230821675656}
+  descriptionText: {fileID: 1395565421989148779}
+  progressFill: {fileID: 6057535114321852023}
+  progressText: {fileID: 6157490911237739790}
 --- !u!1 &4305808003884432914
 GameObject:
   m_ObjectHideFlags: 0
@@ -581,7 +599,7 @@ GameObject:
   - component: {fileID: 6157490911237739790}
   - component: {fileID: 2547379615492144167}
   m_Layer: 5
-  m_Name: Txt_AchievementDescription (1)
+  m_Name: Txt_ProgressText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
