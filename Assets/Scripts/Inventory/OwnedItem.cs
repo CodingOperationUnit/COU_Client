@@ -22,11 +22,14 @@ public class OwnedItem
     public bool CanSynthesize => grade != ItemGrade.Rare;
     public ItemGrade NextGrade => grade + 1;
 
-    private float StatMultiplier => ItemLevelConfig.GetStatMultiplier(level) * ItemLevelConfig.GetGradeMultiplier(grade);
+    private decimal StatMultiplier => ItemLevelConfig.GetStatMultiplierExact(level) * ItemLevelConfig.GetGradeMultiplierExact(grade);
 
-    public int ScaledHp => Mathf.RoundToInt(Data.hpBonus * StatMultiplier);
-    public int ScaledAttack => Mathf.RoundToInt(Data.attackBonus * StatMultiplier);
-    public int ScaledMoveSpeed => Mathf.RoundToInt(Data.moveSpeedBonus * StatMultiplier);
+    private int Scale(int baseValue)
+    => (int)Math.Round(baseValue * StatMultiplier, MidpointRounding.ToEven);
+
+    public int ScaledHp => Scale(Data.hpBonus);
+    public int ScaledAttack => Scale(Data.attackBonus);
+    public int ScaledMoveSpeed => Scale(Data.moveSpeedBonus);
 
     public OwnedItem(long itemId)
     {

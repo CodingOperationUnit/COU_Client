@@ -17,4 +17,10 @@ public static class ItemLevelConfig
     public static float GetStatMultiplier(int level) => 1f + Const.statGrowthPerLevel * (level - 1);
 
     public static float GetGradeMultiplier(ItemGrade grade) => Const.gradeStatMultiplier[(int)grade];
+
+    public static decimal GetStatMultiplierExact(int level)
+    => 1m + (decimal)Const.statGrowthPerLevel * (level - 1);
+
+    public static decimal GetGradeMultiplierExact(ItemGrade grade)
+        => (decimal)Const.gradeStatMultiplier[(int)grade];
 }
