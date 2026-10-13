@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -27,12 +28,19 @@ public class PlayerStats : MonoBehaviour
     public string EquippedWeaponName { get { EnsureCalculated(); return equippedWeaponName; } }
     public int StartingSkillId { get { EnsureCalculated(); return startingSkillId; } }   // 0이면 시작 스킬 없음
 
-    public int CriticalDamage => Base.playerBaseCriticalDamage;
-    public int CriticalChance => Base.playerBaseCriticalChance;
+    // 기본 + 보너스 합
+    public int CriticalChance => Base.playerBaseCriticalChance + GetBonus(PlayerBonusStat.CriticalChance);
+    public int CriticalDamage => Base.playerBaseCriticalDamage + GetBonus(PlayerBonusStat.CriticalDamage);
     public int SkillDamage => Base.playerBaseSkillDamage;
     public float Speed => Base.playerBaseMoveSpeed;
     public float MaxSpeed => Base.playerBaseMaxMoveSpeed;
     public float LootRadius => Base.playerBaseLootRadius;
+
+    // 출처(패시브 등)별 보너스. 같은 출처가 다시 등록하면 덮어씀
+    private readonly Dictionary<object, Dictionary<PlayerBonusStat, int>> bonuses = new();
+
+    // 보너스가 바뀌었을 때 (치명타 표시 UI 등에서 구독 가능)
+    public event Action OnBonusChanged;
 
     private void Start()
     {
@@ -70,7 +78,63 @@ public class PlayerStats : MonoBehaviour
                   " / 무기: " + (hasWeapon ? equippedWeaponName + " (" + equippedWeaponType + ")" : "없음") +
                   " / 시작 스킬: " + (startingSkillId == WeaponSkillTable.NoSkill ? "없음" : startingSkillId.ToString()));
     }
-        
+
+    // 보너스 등록: 같은 출처·같은 스탯이면 덮어씀 (패시브 레벨업 때 다시 호출)
+    public void SetBonus(object source, PlayerBonusStat stat, int value)
+    {
+        if (source == null) return;
+
+        if (!bonuses.TryGetValue(source, out var map))
+        {
+            map = new Dictionary<PlayerBonusStat, int>();
+            bonuses[source] = map;
+        }
+
+        map[stat] = value;
+        OnBonusChanged?.Invoke();
+    }
+
+    // 출처의 보너스 전부 제거 (패시브 해제 시)
+    public void ClearBonuses(object source)
+    {
+        if (source != null && bonuses.Remove(source))
+            OnBonusChanged?.Invoke();
+    }
+
+    // 해당 스탯의 보너스 합
+    public int GetBonus(PlayerBonusStat stat)
+    {
+        int sum = 0;
+        foreach (var map in bonuses.Values)
+        {
+            if (map.TryGetValue(stat, out int value))
+                sum += value;
+        }
+        return sum;
+    }
+
+    // ===== 테스트 (전투 중 Player의 PlayerStats ⋮ 메뉴) =====
+
+    [ContextMenu("Test/치명타 확률 +50 보너스")]
+    private void TestCriticalBonus() => SetBonus(this, PlayerBonusStat.CriticalChance, 50);
+
+    [ContextMenu("Test/보너스 제거")]
+    private void TestClearBonus() => ClearBonuses(this);
+
+    [ContextMenu("Test/피해 계산 20회 (스킬 배율 1.0)")]
+    private void TestDamage()
+    {
+        int critCount = 0;
+        var sb = new System.Text.StringBuilder();
+        for (int i = 0; i < 20; i++)
+        {
+            var hit = PlayerDamageCalculator.Calculate(1.0f, this);
+            if (hit.isCritical) critCount++;
+            sb.Append(hit.damage).Append(hit.isCritical ? "! " : " ");
+        }
+        Debug.Log("[PlayerStats] 공격력 " + FinalAtk + ", 치명타 " + CriticalChance + "% / " + CriticalDamage + "% → " + sb + " (치명타 " + critCount + "회)");
+    }
+
     private void LoadWeapon(List<OwnedItem> equipped)
     {
         var weapon = equipped.Find(item => item.Data.SlotType == EquipSlotType.Weapon);
