@@ -189,13 +189,13 @@ public class SkillController : MonoBehaviour
             return;
         }
 
-        if(keyboard.digit1Key.wasPressedThisFrame)
-        {
-            if(EquipSkill(20010))
-            {
-                Debug.Log("스킬: Tumbler");
-            }
-        }
+        //if(keyboard.digit1Key.wasPressedThisFrame)
+        //{
+        //    if(EquipSkill(20010))
+        //    {
+        //        Debug.Log("스킬: Tumbler");
+        //    }
+        //}
 
         if(keyboard.digit2Key.wasPressedThisFrame)
         {
@@ -234,6 +234,22 @@ public class SkillController : MonoBehaviour
             if (EquipSkill(20060))
             {
                 Debug.Log("스킬: Keyboard");
+            }
+        }
+
+        if (keyboard.digit9Key.wasPressedThisFrame)
+        {
+            if (EquipSkill(20010))
+            {
+                Debug.Log("스킬: CtrlZ");
+            }
+        }
+
+        if (keyboard.digit8Key.wasPressedThisFrame)
+        {
+            if (EquipSkill(20020))
+            {
+                Debug.Log("스킬: PowerStrip");
             }
         }
 

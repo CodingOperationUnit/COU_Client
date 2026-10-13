@@ -119,7 +119,7 @@ Transform:
   m_GameObject: {fileID: 8339034260200281928}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.06, y: -0.21, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -174,8 +174,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26895a5655afa9147959df07361a2ec4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LinearProjectile
-  _speed: 10
-  _lifeTime: 3
+  lifeTime: 3
 --- !u!50 &6024709397990492591
 Rigidbody2D:
   serializedVersion: 5

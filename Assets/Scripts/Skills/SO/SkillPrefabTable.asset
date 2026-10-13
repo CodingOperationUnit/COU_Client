@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SkillPrefabTable
   m_EditorClassIdentifier: Assembly-CSharp::SkillPrefabTable
   _entries:
-  - SkillId: 20010
+  - SkillId: 0
     Prefab: {fileID: 821606016448725858, guid: 9346524f58e0db64ab65bb660a2cf16d, type: 3}
   - SkillId: 20020
     Prefab: {fileID: 6924688872293372728, guid: cb940683502f36140815de2a5a14f98b, type: 3}
@@ -24,4 +24,6 @@ MonoBehaviour:
   - SkillId: 20050
     Prefab: {fileID: 3662629856818879847, guid: a39695b8c8b80a34ba1d4e6b69fbbcb8, type: 3}
   - SkillId: 20060
-    Prefab: {fileID: 362644786522728949, guid: cb6041c47824d2c4293311d7109683bc, type: 3}
+    Prefab: {fileID: 156895646617383541, guid: cb6041c47824d2c4293311d7109683bc, type: 3}
+  - SkillId: 20010
+    Prefab: {fileID: 7048623749671741063, guid: e06d17da40670f548a353c4366387d1d, type: 3}

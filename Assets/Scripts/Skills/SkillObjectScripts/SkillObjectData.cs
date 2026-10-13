@@ -26,13 +26,15 @@ public readonly struct ProjectileData
     public readonly Vector2 Direction;
     public readonly Transform Target; // 직선 탄환은 null
     public readonly int PierceCount;
+    public readonly Transform Owner; // 돌아올 대상 (부메랑 등). 돌아오지 않는 탄환은 null
 
-    public ProjectileData(SkillStats stats, Vector2 direction, Transform target = null, int pierceCount = 1)
+    public ProjectileData(SkillStats stats, Vector2 direction, Transform target = null, int pierceCount = 1, Transform owner = null)
     {
         Stats = stats;
         Direction = direction.normalized;
         Target = target;
         PierceCount = pierceCount;
+        Owner = owner;
     }
 }
 
@@ -65,5 +67,20 @@ public readonly struct OrbitData
         Owner = owner;
         StartAngle = startAngle;
         Radius = radius;
+    }
+}
+
+// 두 대상을 잇는 오브젝트 (LightningObject)
+public readonly struct LinkData
+{
+    public readonly SkillStats Stats;
+    public readonly Transform Owner;  // 시작점 (스킬 사용자)
+    public readonly Transform Target; // 끝점 (대미지를 받을 적)
+
+    public LinkData(SkillStats stats, Transform owner, Transform target)
+    {
+        Stats = stats;
+        Owner = owner;
+        Target = target;
     }
 }

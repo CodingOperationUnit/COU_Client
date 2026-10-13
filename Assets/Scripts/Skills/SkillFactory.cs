@@ -7,12 +7,14 @@ public static class SkillFactory
     private static readonly Dictionary<int, Func<SkillBase>> _creators = new()
     {
         // 액티브 (20000대)
-        { 20010, () => new Skill_Tumbler() },
-        { 20020, () => new Skill_Glasses() },
+        //{ 20010, () => new Skill_Tumbler() },
+        //{ 20020, () => new Skill_Glasses() },
         { 20030, () => new Skill_Monitor() },
         { 20040, () => new Skill_Speaker() },
         { 20050, () => new Skill_Mouse() },
         { 20060, () => new Skill_Keyboard() },
+        { 20010, () => new Skill_CtrlZ() },
+        { 20020, () => new Skill_PowerStrip() },
 
         // 패시브 (21000대)
         // 임시: 실제 효과가 확정되기 전에 동작 확인용으로 기존 테스트 패시브를 연결해 둠
@@ -25,8 +27,27 @@ public static class SkillFactory
     // 수정 후 재생을 다시 시작하거나, 이미 장착한 스킬은 해제 후 다시 장착해야 반영됨
     private static readonly Dictionary<int, Action<SkillData>> _debugOverrides = new()
     {
-        // { 20050, data => { data.skillCooldown = 0.5f; data.skillDamage = 30.0f; } },
-        // { 20060, data => { data.skillRange = 8.0f; } },
+        { 20060, data => {
+            data.skillType = "Nearest";
+            data.skillCooldown = 0.75f; 
+            data.skillSpeed = 0.0f;
+            data.skillDamage = 1.25f;
+            data.skillRange = 1.0f;
+        } },
+        { 20010, data => {
+            data.skillType = "Nearest";
+            data.skillCooldown = 1.0f;
+            data.skillSpeed = 4.0f;
+            data.skillDamage = 1.0f;
+            data.skillRange = 5.0f;
+        } },
+        { 20020, data => {
+            data.skillType = "None";
+            data.skillCooldown = 1.0f;
+            data.skillSpeed = 0.0f;
+            data.skillDamage = 1.0f;
+            data.skillRange = 3.0f;
+        } },
     };
 #endif
 

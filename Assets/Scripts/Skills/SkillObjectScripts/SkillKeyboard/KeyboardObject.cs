@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // 지정한 방향으로 휘두르는 사각 범위. 판정 시점에 콜라이더와 겹친 적 모두에게 한 번씩 대미지
-// 범위의 위치/크기는 프리팹의 콜라이더로 정함 (오브젝트 pivot = 스킬 사용자 위치, 로컬 up = 휘두르는 방향)
+// 범위의 위치/크기는 프리팹의 콜라이더로 정함 (오브젝트 pivot = 스킬 사용자 위치, 로컬 right(+X) = 휘두르는 방향)
 public sealed class KeyboardObject : SkillObject<AoEData>
 {
     [SerializeField] private Collider2D _hitArea;
@@ -27,13 +27,22 @@ public sealed class KeyboardObject : SkillObject<AoEData>
         EnsureInitialized();
 
         stats = data.Stats;
-        transform.localScale = _baseScale * stats.Scale;
 
-        // 탄두 방향이 아니라 범위 오브젝트의 up이 휘두르는 방향을 향하도록 회전
+        Vector3 scale = _baseScale * stats.Scale;
+
+        // 프리팹은 오른쪽을 보고 만든 것으로 보고, 오브젝트의 right가 휘두르는 방향을 향하도록 회전
         if(data.Direction != Vector2.zero)
         {
-            transform.up = data.Direction;
+            transform.right = data.Direction;
+
+            // 왼쪽을 향하면 180도 회전해서 스프라이트가 뒤집혀 보이므로 Y 스케일을 반전해 바로 세움
+            if(data.Direction.x < 0.0f)
+            {
+                scale.y = -scale.y;
+            }
         }
+
+        transform.localScale = scale;
 
         OnLaunch();
     }
