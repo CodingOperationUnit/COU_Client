@@ -10,6 +10,8 @@ public static class PlayerApi
     public const string EvolutionUpgradePath = "/api/players/me/evolution/upgrade";
     public const string FinalStatsPath = "/api/players/me/stats";
 
+    public const string ErrorEvolutionLevelLocked = "EVOLUTION_LEVEL_LOCKED";
+
     // 서버 에러 code
     public const string ErrorPlayerStatNotFound = "PLAYER_STAT_NOT_FOUND";
     public const string ErrorInternal = "INTERNAL_ERROR";

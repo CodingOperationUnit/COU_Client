@@ -1,15 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// 진화 탭에 서버 진화 규칙(4종 순환)을 표시하고, 해금을 서버 요청으로 처리한다
+// 진화 탭에 서버 진화 규칙(4종 순환, 계정 레벨당 4단계 제한)을 표시하고, 해금을 서버 요청으로 처리한다
 // EvolutionTab과 같은 오브젝트에 붙인다
 [RequireComponent(typeof(EvolutionTab))]
 public class EvolutionTabPresenter : MonoBehaviour
 {
     [Header("Range")]
-    [SerializeField] private bool showAllPastNodes = true;          // 처음부터 지나온 노드 전부 표시
-    [SerializeField][Min(0)] private int pastNodeCount = 4;        // showAllPastNodes가 꺼져 있을 때만 사용
-    [SerializeField][Min(1)] private int futureNodeCount = 12;     // 앞으로 갈 노드
+    [SerializeField][Min(1)] private int displayMaxAccountLevel = 100;   // 이 계정 레벨까지 노드 표시
 
     [Header("Icon Colors")]
     [SerializeField] private Color attackColor = new(0.90f, 0.30f, 0.30f);
@@ -18,7 +16,7 @@ public class EvolutionTabPresenter : MonoBehaviour
     [SerializeField] private Color potionRecoveryColor = new(0.70f, 0.40f, 0.90f);
 
     private EvolutionTab tab;
-    private int unlockedInWindow;   // 표시 범위 안에서 해금된 노드 수 (= 다음 해금 노드 번호)
+    private int currentStep;        // 지금까지 진화한 단계 수 (= 다음 해금 노드 번호)
     private bool isRequesting;
     private bool isPlayerDataSubscribed;
 
@@ -37,7 +35,7 @@ public class EvolutionTabPresenter : MonoBehaviour
             isPlayerDataSubscribed = true;
         }
 
-        Rebuild();
+        Rebuild();   // 다른 탭에 갔다 와도 가장 최근 진화 노드가 가운데로
         tab.SetUnlockInteractable(!isRequesting);
     }
 
@@ -52,7 +50,7 @@ public class EvolutionTabPresenter : MonoBehaviour
 
     private void OnPlayerDataChanged(PlayerSaveData _) => Rebuild();
 
-    // 현재 진화 단계 기준으로 지나온 노드 + 앞으로 갈 노드를 만든다
+    // 0단계부터 표시 최대 계정 레벨까지 노드를 만든다
     private void Rebuild()
     {
         var dataManager = GameManager.PlayerData;
@@ -61,27 +59,24 @@ public class EvolutionTabPresenter : MonoBehaviour
         if (dataManager == null || !dataManager.isPlayerDataLoaded || evolution == null)
         {
             Debug.LogWarning("[EvolutionTabPresenter] 계정 데이터 또는 진화 데이터가 없어 진화 탭을 비웁니다.", this);
-            tab.SetLinear(System.Array.Empty<EvolutionNodeInfo>(), 0, 0);
+            tab.SetLinear(System.Array.Empty<EvolutionNodeInfo>(), 0, 0, 1, EvolutionRules.StepsPerAccountLevel);
             return;
         }
 
         var saveData = dataManager.currentData;
-        int step = EvolutionRules.GetStep(saveData.playerStat);
+        int accountLevel = saveData.profile.accountLevel;
 
-        int windowStart = showAllPastNodes ? 0 : Mathf.Max(0, step - pastNodeCount);
-        int windowEnd = step + futureNodeCount;
-        if (evolution.evolutionMaxStep > 0)
-            windowEnd = Mathf.Min(windowEnd, evolution.evolutionMaxStep);
+        int nodeCount = EvolutionRules.GetMaxStepByAccountLevel(evolution, displayMaxAccountLevel);
+        currentStep = Mathf.Min(EvolutionRules.GetStep(saveData.playerStat), nodeCount);
 
-        var nodes = new List<EvolutionNodeInfo>();
-        for (int s = windowStart; s < windowEnd; s++)
-            nodes.Add(BuildNode(evolution, s));
+        var nodes = new EvolutionNodeInfo[nodeCount];
+        for (int s = 0; s < nodeCount; s++)
+            nodes[s] = BuildNode(evolution, s);
 
-        unlockedInWindow = step - windowStart;
-        tab.SetLinear(nodes.ToArray(), unlockedInWindow, saveData.currency.currencyGold);
+        tab.SetLinear(nodes, currentStep, saveData.currency.currencyGold, accountLevel, EvolutionRules.StepsPerAccountLevel);
     }
 
-    // s번째 진화(0부터) 노드
+    // s번째 진화(0부터) 노드. level = 필요 계정 레벨 (모자라면 툴팁에 해금 버튼이 안 나옴)
     private EvolutionNodeInfo BuildNode(EvolutionData evolution, int s)
     {
         string statType = EvolutionRules.GetNextStatType(evolution, s);
@@ -90,7 +85,7 @@ public class EvolutionTabPresenter : MonoBehaviour
 
         return new EvolutionNodeInfo
         {
-            level = 0,
+            level = EvolutionRules.GetRequiredAccountLevel(s),
             name = statName,
             value = "+" + increase,
             description = statName + "이 " + increase + " 증가합니다.",
@@ -102,7 +97,7 @@ public class EvolutionTabPresenter : MonoBehaviour
     private void HandleUnlockRequested(int index)
     {
         if (isRequesting) return;
-        if (index != unlockedInWindow) return;   // 다음 해금 노드만
+        if (index != currentStep) return;   // 다음 해금 노드만
 
         isRequesting = true;
         tab.SetUnlockInteractable(false);
@@ -117,7 +112,7 @@ public class EvolutionTabPresenter : MonoBehaviour
 
         isRequesting = false;
 
-        // 진화 레벨·골드 반영은 PlayerEvolution이 이미 처리함 (탭이 닫혀 있어도 반영됨)
+        // 진화 레벨·골드 반영과 다시 그리기는 PlayerEvolution → OnPlayerDataChanged → Rebuild에서 처리됨
         if (result.IsSuccess && result.Data.currency != null)
             UIManager.Instance.Get<TopBar>().SetGold(result.Data.currency.currencyGold);
 
@@ -133,6 +128,7 @@ public class EvolutionTabPresenter : MonoBehaviour
         if (result.FailType == ApiFailType.ServerError && result.Error != null)
         {
             if (result.Error.code == PlayerApi.ErrorNotEnoughGold) return "골드가 부족합니다.";
+            if (result.Error.code == PlayerApi.ErrorEvolutionLevelLocked) return "계정 레벨이 부족합니다.";
             if (result.Error.code == PlayerApi.ErrorEvolutionMaxStepReached) return "더 이상 진화할 수 없습니다.";
         }
         return result.ToUserMessage("진화에 실패했습니다.");
