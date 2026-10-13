@@ -60,7 +60,7 @@ public class EvolutionTabPresenter : MonoBehaviour
         if (dataManager == null || !dataManager.isPlayerDataLoaded || evolution == null)
         {
             Debug.LogWarning("[EvolutionTabPresenter] 계정 데이터 또는 진화 데이터가 없어 진화 탭을 비웁니다.", this);
-            tab.SetLinear(System.Array.Empty<EvolutionNodeInfo>(), 0, 0, 1, EvolutionRules.StepsPerAccountLevel);
+            tab.SetLinear(System.Array.Empty<EvolutionNodeInfo>(), 0, 0, 1, 1);
             return;
         }
 
@@ -74,7 +74,7 @@ public class EvolutionTabPresenter : MonoBehaviour
         for (int s = 0; s < nodeCount; s++)
             nodes[s] = BuildNode(evolution, s);
 
-        tab.SetLinear(nodes, currentStep, saveData.currency.currencyGold, accountLevel, EvolutionRules.StepsPerAccountLevel);
+        tab.SetLinear(nodes, currentStep, saveData.currency.currencyGold, accountLevel, evolution.evolutionStepsPerLevel);
     }
 
     // s번째 진화(0부터) 노드. level = 필요 계정 레벨 (모자라면 툴팁에 해금 버튼이 안 나옴)
@@ -86,7 +86,7 @@ public class EvolutionTabPresenter : MonoBehaviour
 
         return new EvolutionNodeInfo
         {
-            level = EvolutionRules.GetRequiredAccountLevel(s),
+            level = EvolutionRules.GetRequiredAccountLevel(evolution, s),
             name = statName,
             value = "+" + increase,
             description = statName + "이 " + increase + " 증가합니다.",
