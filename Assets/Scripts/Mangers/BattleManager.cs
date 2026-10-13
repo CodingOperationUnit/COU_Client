@@ -21,6 +21,11 @@ public class BattleManager : MonoBehaviour
     private readonly HashSet<object> pauseRequests = new();
     private readonly List<int> candidates = new();
 
+    // 업적 진행 집계 (전투 결과와 함께 서버로 보낸다)
+    private readonly Dictionary<int, int> skillKills = new();
+    private readonly Dictionary<int, int> skillUpgrades = new();
+    private readonly Dictionary<string, int> pickups = new();
+    
     private InGameHUD hud;
     private BattleResultWindow resultWindow;
     private PauseWindow pauseWindow;
@@ -176,6 +181,10 @@ public class BattleManager : MonoBehaviour
     private void HandleEnemyKilled(Enemy enemy)
     {
         AddKill();
+        
+        // 상자는 OnDied를 부르지 않아 여기 오지 않는다
+        if (!ended && enemy.LastHitSkillId > 0)
+            Increase(skillKills, enemy.LastHitSkillId);
     }
 
     private void HandleBossSpawned(Enemy spawnedBoss)
@@ -210,6 +219,9 @@ public class BattleManager : MonoBehaviour
 
     private void HandleLooted(DropItemType type)
     {
+        if (!ended)
+            Increase(pickups, type.ToString());
+        
         if (type >= DropItemType.ExpGem1 && type <= DropItemType.ExpGem4)
             AddExp(GameManager.JsonData.GetDropItemDataFromJson(type).value);
         else if (type >= DropItemType.Gold1 && type <= DropItemType.Gold4)
@@ -269,7 +281,11 @@ public class BattleManager : MonoBehaviour
         if (candidates.Count == 0)
             playerHealth.Heal(Mathf.RoundToInt(playerHealth.MaxHealth * healRewardRatio));
         else if (FindSkill(candidates[index]) != null)
-            skillController.LevelUpSkill(candidates[index]);
+        {
+            // 최대 레벨이라 실패한 경우는 세지 않는다
+            if (skillController.LevelUpSkill(candidates[index]))
+                Increase(skillUpgrades, candidates[index]);
+        }
         else
             skillController.EquipSkill(candidates[index]);
 
@@ -330,7 +346,10 @@ public class BattleManager : MonoBehaviour
             seconds = seconds,
             kills = kills,
             gold = gold,
-            rewardBoxes = rewardBoxes
+            rewardBoxes = rewardBoxes,
+            skillKills = new Dictionary<int, int>(skillKills),
+            skillUpgrades = new Dictionary<int, int>(skillUpgrades),
+            pickups = new Dictionary<string, int>(pickups)
         };
 
         resultWindow.SetWaiting(true);
@@ -440,5 +459,10 @@ public class BattleManager : MonoBehaviour
             data.stageRecords[index] = record;
         else
             data.stageRecords.Add(record);
+    }
+    
+    private static void Increase<TKey>(Dictionary<TKey, int> counter, TKey key)
+    {
+        counter[key] = counter.TryGetValue(key, out int count) ? count + 1 : 1;
     }
 }

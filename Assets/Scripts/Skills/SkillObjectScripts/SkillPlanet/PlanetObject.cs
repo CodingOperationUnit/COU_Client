@@ -86,7 +86,7 @@ public sealed class PlanetObject : SkillObject<OrbitData>
         // 대미지 확인용 임시 로그 (확인이 끝나면 삭제)
         Debug.Log($"[Planet#{GetInstanceID()}] -> Enemy#{enemyId} dmg={damage} frame={Time.frameCount} time={now:F2}");
 
-        enemy.Damaged(damage);
+        enemy.Damaged(damage, stats.SkillId);
     }
 
     // 쿨타임이 지난 기록을 제거해서 죽은 적의 기록이 계속 쌓이지 않게 함
