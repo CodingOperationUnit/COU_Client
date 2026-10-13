@@ -10,6 +10,8 @@ public static class PlayerEvolution
         {
             if (result.IsSuccess && result.Data != null)
                 Apply(result.Data);
+
+            onComplete?.Invoke(result);
         });
     }
 
