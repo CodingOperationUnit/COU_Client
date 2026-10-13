@@ -1107,7 +1107,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 975093940618026093, guid: efb4ec5f9a8d2d449b9c741f935f873b, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1441659020596833534, guid: efb4ec5f9a8d2d449b9c741f935f873b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1211,12 +1211,20 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3289702659860382249, guid: efb4ec5f9a8d2d449b9c741f935f873b, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3631928438043424050, guid: efb4ec5f9a8d2d449b9c741f935f873b, type: 3}
       propertyPath: tabs.Array.data[3].screen
       value: 
       objectReference: {fileID: 1213683718}
+    - target: {fileID: 4093649934501153731, guid: efb4ec5f9a8d2d449b9c741f935f873b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4200869434624728928, guid: efb4ec5f9a8d2d449b9c741f935f873b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4516080389327330540, guid: efb4ec5f9a8d2d449b9c741f935f873b, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -1365,13 +1373,17 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7694697476403167726, guid: efb4ec5f9a8d2d449b9c741f935f873b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7909070753762478797, guid: efb4ec5f9a8d2d449b9c741f935f873b, type: 3}
       propertyPath: chapterTemplate
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8085865435210398446, guid: efb4ec5f9a8d2d449b9c741f935f873b, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 8112641194039028027, guid: efb4ec5f9a8d2d449b9c741f935f873b, type: 3}
       propertyPath: m_SizeDelta.y
@@ -1379,7 +1391,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8495097638242063511, guid: efb4ec5f9a8d2d449b9c741f935f873b, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8546224853778876698, guid: efb4ec5f9a8d2d449b9c741f935f873b, type: 3}
       propertyPath: m_IsActive
