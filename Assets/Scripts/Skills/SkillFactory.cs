@@ -9,13 +9,13 @@ public static class SkillFactory
         // 액티브 (20000대)
         //{ 20010, () => new Skill_Tumbler() },
         //{ 20020, () => new Skill_Glasses() },
-        { 20030, () => new Skill_Monitor() },
+        //{ 20030, () => new Skill_Monitor() },
         { 20040, () => new Skill_Speaker() },
         { 20050, () => new Skill_Mouse() },
         { 20060, () => new Skill_Keyboard() },
         { 20010, () => new Skill_CtrlZ() },
         { 20020, () => new Skill_PowerStrip() },
-        { 20070, () => new Skill_CPU() },
+        { 20030, () => new Skill_CPU() },
 
         // 패시브 (21000대)
         // 임시: 실제 효과가 확정되기 전에 동작 확인용으로 기존 테스트 패시브를 연결해 둠
@@ -47,6 +47,13 @@ public static class SkillFactory
             data.skillCooldown = 1.0f;
             data.skillSpeed = 0.0f;
             data.skillDamage = 1.0f;
+            data.skillRange = 3.0f;
+        } },
+        { 20030, data => {
+            data.skillType = "Nearest";
+            data.skillCooldown = 2.0f;
+            data.skillSpeed = 0.5f;
+            data.skillDamage = 0.0f;
             data.skillRange = 3.0f;
         } },
     };

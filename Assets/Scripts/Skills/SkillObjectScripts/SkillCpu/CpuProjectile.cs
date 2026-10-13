@@ -5,7 +5,7 @@ using UnityEngine;
 // 날아가는 동안에는 적과 부딪히지 않음 (타겟을 따라가지 않고, 타겟이 죽어도 정한 위치에서 터짐)
 public sealed class CpuProjectile : SkillProjectile
 {
-    // 도착하면 소환할 폭발. SkillObject<AoEData>가 붙은 프리팹이어야 함 (ExplosionObject 등)
+    // 도착하면 소환할 폭발. SkillObject<AoEData>가 붙은 프리팹이어야 함 (AoeHitObject 등)
     [SerializeField] private SkillObjectBase _explosionPrefab;
 
     // 포물선 높이 (월드 단위)

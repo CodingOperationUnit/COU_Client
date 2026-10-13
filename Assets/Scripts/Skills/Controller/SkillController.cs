@@ -197,13 +197,13 @@ public class SkillController : MonoBehaviour
         //    }
         //}
 
-        if(keyboard.digit2Key.wasPressedThisFrame)
-        {
-            if(EquipSkill(20020))
-            {
-                Debug.Log("스킬: Glasses");
-            }
-        }
+        //if(keyboard.digit2Key.wasPressedThisFrame)
+        //{
+        //    if(EquipSkill(20020))
+        //    {
+        //        Debug.Log("스킬: Glasses");
+        //    }
+        //}
 
         if(keyboard.digit3Key.wasPressedThisFrame)
         {
@@ -250,6 +250,14 @@ public class SkillController : MonoBehaviour
             if (EquipSkill(20020))
             {
                 Debug.Log("스킬: PowerStrip");
+            }
+        }
+
+        if (keyboard.digit7Key.wasPressedThisFrame)
+        {
+            if (EquipSkill(20030))
+            {
+                Debug.Log("스킬: CPU");
             }
         }
 

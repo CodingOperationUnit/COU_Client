@@ -102,9 +102,9 @@ GameObject:
   - component: {fileID: 87063120606551851}
   - component: {fileID: 7034198875868452484}
   - component: {fileID: 3092351193159855621}
-  - component: {fileID: 8458670832711421022}
+  - component: {fileID: -2090970527807985498}
   m_Layer: 10
-  m_Name: ExplosionObhect_AttackObject
+  m_Name: ExplosionObject_AttackObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -189,7 +189,7 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.5
---- !u!114 &8458670832711421022
+--- !u!114 &-2090970527807985498
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -198,9 +198,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 8922130877381923334}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee41c1f36dce235479c7031d637b960b, type: 3}
+  m_Script: {fileID: 11500000, guid: 165e2f68a9dd1c843a2859b75fd0653e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ExplosionObject
+  m_EditorClassIdentifier: Assembly-CSharp::AoeHitObject
   _hitArea: {fileID: 0}
   _hitDelay: 0
-  _lifeTime: 0.5
+  _lifeTime: 0.3
