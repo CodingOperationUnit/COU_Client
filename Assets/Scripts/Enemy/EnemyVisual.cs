@@ -67,7 +67,14 @@ public class EnemyVisual : MonoBehaviour
         {
             spriteRenderer.enabled = true;
             Sprite sprite = Resources.Load<Sprite>(assetPath);
-            if (sprite != null) spriteRenderer.sprite = sprite;
+            if (sprite != null)
+            {
+                spriteRenderer.sprite = sprite;
+            }
+            else
+            {
+                Debug.LogWarning($"[EnemyVisual] 외형 에셋을 찾을 수 없습니다: {assetPath}");
+            }
             renderers = new[] { spriteRenderer };
         }
 
