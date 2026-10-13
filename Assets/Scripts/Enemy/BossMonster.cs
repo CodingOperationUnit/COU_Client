@@ -67,7 +67,7 @@ public class BossMonster : Enemy
     protected override void Awake()
     {
         base.Awake();
-        if (spriteRenderer != null) originalColor = spriteRenderer.color;
+        if (visual == null && spriteRenderer != null) originalColor = spriteRenderer.color;
     }
 
     // 보스 몬스터 초기화
@@ -92,6 +92,7 @@ public class BossMonster : Enemy
     // 보스 몬스터 색상 초기화
     private void RestoreColor()
     {
+        if (visual != null) { visual.RestoreTint(); return; }
         if (spriteRenderer != null) spriteRenderer.color = originalColor;
     }
 
@@ -212,6 +213,8 @@ public class BossMonster : Enemy
         if (spriteRenderer == null) { return; }
 
         float t = Mathf.PingPong(Time.time * blinkSpeed, 1f);
+        if (visual != null) { visual.SetTint(warningColor, t); return; }
+        if (spriteRenderer == null) { return; }
         spriteRenderer.color = Color.Lerp(originalColor, warningColor, t);
     }
 

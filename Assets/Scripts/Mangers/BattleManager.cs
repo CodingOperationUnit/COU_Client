@@ -226,17 +226,19 @@ public class BattleManager : MonoBehaviour
     private void ShowSelection()
     {
         candidates.Clear();
-        foreach (var skillId in GameManager.JsonData.SkillDataDic.Keys)
+        foreach (var data in GameManager.JsonData.SkillDataDic.Values)
         {
             // 테이블에는 있지만 아직 구현되지 않은 스킬은 후보에서 뺀다
-            if (!SkillFactory.IsRegistered(skillId)) continue;
+            if (!SkillFactory.IsRegistered(data.skillId)) continue;
 
-            var skill = FindActiveSkill(skillId);
+            var skill = FindSkill(data.skillId);
             var available = skill != null
                 ? skill.Level < SkillBase.MaxLevel
-                : skillController.ActiveSkills.Count < SkillController.MaxSkillSlots;
+                : data.skillCategory == SkillCategory.Passive
+                    ? skillController.PassiveSkills.Count < SkillController.MaxPassiveSlots
+                    : skillController.ActiveSkills.Count < SkillController.MaxSkillSlots;
             if (available)
-                candidates.Add(skillId);
+                candidates.Add(data.skillId);
         }
 
         // 부분 Fisher–Yates: 앞의 count개를 무작위 후보로 채운다
@@ -246,7 +248,7 @@ public class BattleManager : MonoBehaviour
             var pick = Random.Range(i, candidates.Count);
             (candidates[i], candidates[pick]) = (candidates[pick], candidates[i]);
 
-            var skill = FindActiveSkill(candidates[i]);
+            var skill = FindSkill(candidates[i]);
             var data = GameManager.JsonData.GetSkillDataFromJson(candidates[i]);
             selectWindow.SetOption(i, data.skillName, data.skillDescription, skill == null ? 1 : skill.Level + 1, skill == null);
         }
@@ -266,7 +268,7 @@ public class BattleManager : MonoBehaviour
     {
         if (candidates.Count == 0)
             playerHealth.Heal(Mathf.RoundToInt(playerHealth.MaxHealth * healRewardRatio));
-        else if (FindActiveSkill(candidates[index]) != null)
+        else if (FindSkill(candidates[index]) != null)
             skillController.LevelUpSkill(candidates[index]);
         else
             skillController.EquipSkill(candidates[index]);
@@ -282,9 +284,13 @@ public class BattleManager : MonoBehaviour
         ReleasePause(selectWindow);
     }
 
-    private SkillBase FindActiveSkill(int skillId)
+    private SkillBase FindSkill(int skillId)
     {
         foreach (var skill in skillController.ActiveSkills)
+        {
+            if (skill.SkillId == skillId) return skill;
+        }
+        foreach (var skill in skillController.PassiveSkills)
         {
             if (skill.SkillId == skillId) return skill;
         }
