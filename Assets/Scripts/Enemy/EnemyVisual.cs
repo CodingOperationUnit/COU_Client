@@ -91,6 +91,12 @@ public class EnemyVisual : MonoBehaviour
             group.sortingLayerName = sortingLayerName;
             group.sortingOrder = 0;   // 같은 레이어 안에서는 Y축 정렬로
         }
+
+        // 몬스터가 다시 스폰될 때 유령으로 보이는 버그 수정
+        if (instance.TryGetComponent(out Animator anim))
+        {
+            anim.writeDefaultValuesOnDisable = true;
+        }
     }
 
     public void PlayWalk() => Play(WalkHash);
