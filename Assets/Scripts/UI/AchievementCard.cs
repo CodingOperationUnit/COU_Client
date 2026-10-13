@@ -3,28 +3,49 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+// 업적 카드 UI 하나. 정적 데이터(AchievementData)와 서버 진행도(PlayerAchievementData)를 받아 표시
 public class AchievementCard : MonoBehaviour
 {
+    [SerializeField] private Button button;
     [SerializeField] private Image iconImage;
     [SerializeField] private TMP_Text nameText;
     [SerializeField] private TMP_Text descriptionText;
     [SerializeField] private Image progressFill;
     [SerializeField] private TMP_Text progressText;
+    [SerializeField] private GameObject alertImage;
     
     public AchievementData Data { get; private set; }
-    
-    // tier: 보여줄 단계(0단계 부터), progressValue: 현재 누적값
-    public void set(AchievementData data, int tier = 0, long progressValue = 0)
+    public PlayerAchievementData Progress { get; private set; }
+
+    public event Action<AchievementCard> Clicked;
+
+    private void Awake()
+    {
+        button.onClick.AddListener(() => Clicked?.Invoke(this));
+    }
+
+    public void Set(AchievementData data, PlayerAchievementData progress)
     {
         Data = data;
-        tier = Mathf.Clamp(tier, 0, data.TierCount - 1);
+        Progress = progress;
 
-        long target = data.GetTargetValue(tier);
-        long current = Math.Min(progressValue, target);
+        bool allClaimed = progress.claimedStep >= data.TierCount;
+        int step = Mathf.Min(progress.claimedStep, data.TierCount - 1);   // 다음에 받을 단계 (0부터)
+        long target = data.GetTargetValue(step);
+        long current = Math.Min(progress.progress, target);
 
         nameText.text = data.achievementName;
-        descriptionText.text = data.GetDescription(tier);
+        descriptionText.text = data.GetDescription(step);
         progressFill.fillAmount = (float)current / target;
-        progressText.text = $"{current} / {target}";
+
+        if (allClaimed)
+            progressText.text = "완료";
+        else if (progress.CanClaim)
+            progressText.text = "보상 받기";
+        else
+            progressText.text = $"{current} / {target}";
+
+        if (alertImage != null)
+            alertImage.SetActive(progress.CanClaim);
     }
 }

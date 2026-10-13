@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 // 업적 탭. Header는 고정, List(ScrollRect)의 Content 안에서 카드만 스크롤된다.
 // 탭이 켜질 때 정적 업적 데이터 수만큼 카드를 던진다.
+// 열 때 정적 데이터로 카드를 만들고, 서버 진행도를 받아 다시 그린다
 public class AchievementTab : UIView
 {
     [SerializeField] private ScrollRect scrollRect;
@@ -26,6 +27,14 @@ public class AchievementTab : UIView
     {
         Refresh();
         ScrollToTop();
+        
+        GameManager.ServerAchievement.Load((success, message) =>
+        {
+            if (success)
+                Refresh();
+            else 
+                Debug.LogWarning("[AchievementTab] " + message);
+        });
     }
     
     public void Refresh()
@@ -45,16 +54,30 @@ public class AchievementTab : UIView
 
         // 부족한 카드만 새로 만든다
         while (cards.Count < sorted.Count)
-            cards.Add(Instantiate(cardPrefab, scrollRect.content));
+        {
+            var card = Instantiate(cardPrefab, scrollRect.content);
+            card.Clicked += OnCardClicked;
+            cards.Add(card);
+        }
 
         // 데이터 수만큼 켜서 초기화하고, 남는 카드는 숨긴다
+        var manager = ServerAchievementManager.Instance;
         for (int i = 0; i < cards.Count; i++)
         {
             bool used = i < sorted.Count;
             cards[i].gameObject.SetActive(used);
             if (used)
-                cards[i].set(sorted[i]);
+                cards[i].Set(sorted[i], manager.GetProgress(sorted[i].achievementId));
         }
+    }
+    
+    // 카드를 누르면 상세 팝업을 연다. 보상 수령은 팝업에서만 한다
+    private void OnCardClicked(AchievementCard card)
+    {
+        AchievementData data = card.Data;
+
+        UIManager.Instance.Get<AchievementPopup>().Show(data, () =>
+            card.Set(data, GameManager.ServerAchievement.GetProgress(data.achievementId)));
     }
     
     private void ScrollToTop()

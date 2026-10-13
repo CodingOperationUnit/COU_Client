@@ -14,4 +14,12 @@ public class RewardSlot : MonoBehaviour
         icon.color = reward.iconColor;
         amountText.text = $"x {reward.amount}";
     }
+
+    public void Set(Sprite iconSprite, int amount)
+    {
+        frame.color = GradeColor.Get(ItemGrade.General);
+        icon.sprite = iconSprite;
+        icon.color = Color.white;
+        amountText.text = $"x {amount:N0}";
+    }
 }
