@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 // 플레이어가 주는 피해의 최종 계산 (공격력, 스킬 피해 스탯, 치명타)
 // 스킬은 자기 몫인 "스킬 배율"(skillDamage × 레벨 배율 × (1 + 패시브%))만 넘기고, 맞힐 때 이 함수를 부른다
@@ -49,6 +50,26 @@ public static class PlayerDamageCalculator
     {
         if (chance <= 0) return false;
         if (chance >= 100) return true;
-        return Random.Range(0, 100) < chance;
+        return UnityEngine.Random.Range(0, 100) < chance;
+    }
+
+    // ===== 받는 피해 =====
+
+    // 방어력 기준값: 방어력이 이 값이면 받는 피해가 절반
+    public const int DefenseConstant = 100;
+
+    // 피해가 들어왔을 때 최소로 받는 피해
+    public const int MinReceivedDamage = 1;
+
+    // 받는 피해 = 피해 × 기준값 ÷ (기준값 + 방어력), 반올림(0.5는 짝수 쪽), 최소 1
+    public static int ApplyDefense(int damage, int defense)
+    {
+        if (damage <= 0) return 0;
+        if (defense <= 0) return damage;
+
+        decimal reduced = (decimal)damage * DefenseConstant / (DefenseConstant + defense);
+        int result = (int)Math.Round(reduced, MidpointRounding.ToEven);
+
+        return Math.Max(result, MinReceivedDamage);
     }
 }

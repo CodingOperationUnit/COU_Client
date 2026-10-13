@@ -23,6 +23,8 @@ public static class PlayerStatCalculator
         public bool HasEvolutionData;
         public int CombatPower;
         public bool HasCombatPowerData;
+        public int EvolutionPotionRecovery;
+        public int FinalPotionRecovery;
     }
 
 
@@ -45,6 +47,9 @@ public static class PlayerStatCalculator
 
         result.EvolutionDefense = EvolutionRules.GetBonus(evolution, playerStat, PlayerStatType.Defense);
         result.FinalDefense = result.EvolutionDefense;
+
+        result.EvolutionPotionRecovery = EvolutionRules.GetBonus(evolution, playerStat, PlayerStatType.PotionRecovery);
+        result.FinalPotionRecovery = result.EvolutionPotionRecovery;
 
         // 전투력 (랭킹용, 서버와 같은 정수 계산)
         var combatPower = GameManager.JsonData != null ? GameManager.JsonData.CombatPowerData : null;
