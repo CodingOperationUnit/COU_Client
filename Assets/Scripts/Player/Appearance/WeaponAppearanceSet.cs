@@ -12,6 +12,7 @@ public class WeaponAppearanceSet : ScriptableObject
         public Sprite rightHand;
         public Sprite leftHand;
         public int attackAnimationIndex;
+        public float attackHitTime = 0.2f;
     }
 
     [SerializeField] private List<Entry> entries = new();

@@ -8,6 +8,10 @@ public abstract class CooldownSkillBase : SkillBase
     protected Vector2 fireDirection;
     protected Transform fireTarget;
     public event Action<CooldownSkillBase> OnFired;
+    public event Action<CooldownSkillBase> OnFireStarted;
+    public float FireDelay { get; set; }
+    private bool isFirePending;
+    private float fireDelayTimer;
 
     public override void Initialize(SkillData data)
     {
@@ -17,14 +21,57 @@ public abstract class CooldownSkillBase : SkillBase
 
     public override void Tick(float deltaTime)
     {
+        // 발사 대기 중: 대기 시간이 끝나면 발사
+        if (isFirePending)
+        {
+            fireDelayTimer -= deltaTime;
+
+            if (fireDelayTimer > 0.0f)
+            {
+                return;
+            }
+
+            isFirePending = false;
+            FireNow();
+            return;
+        }
+
         ReduceCooldown(deltaTime);
 
-        if(CanActivate())
+        if (CanActivate())
         {
-            Fire();
-            ResetCooldown();
-            OnFired?.Invoke(this);
+            OnFireStarted?.Invoke(this);
+
+            if (FireDelay > 0.0f)
+            {
+                isFirePending = true;
+                fireDelayTimer = FireDelay;
+                return;
+            }
+
+            FireNow();
         }
+    }
+
+    // 실제 발사 + 쿨타임 초기화 + 알림
+    private void FireNow()
+    {
+        // 대기 중 대상이 사라졌으면 처음 조준한 방향으로만 발사
+        if (fireTarget != null && !fireTarget.gameObject.activeInHierarchy)
+        {
+            fireTarget = null;
+        }
+
+        Fire();
+        ResetCooldown();
+
+        // 선딜레이만큼 쿨타임을 줄여 발사 간격을 기존과 같게 유지
+        if (FireDelay > 0.0f)
+        {
+            cooldownTimer = Mathf.Max(cooldownTimer - FireDelay, 0.01f);
+        }
+
+        OnFired?.Invoke(this);
     }
 
     // 쿨타임이 끝났고, 사거리 안에 적이 있을 때만 발동

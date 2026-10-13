@@ -15,8 +15,25 @@ public class InventoryListView : MonoBehaviour
 
     public SortMode CurrentSortMode { get; private set; } = SortMode.Slot;
 
+    private bool subscribed;
+
     private void OnEnable()
     {
+        TrySubscribe();
+    }
+
+    // 로그인 직후에는 PlayerInventory.Awake보다 OnEnable이 먼저 실행될 수 있어서 Start에서 한 번 더 시도
+    private void Start()
+    {
+        TrySubscribe();
+    }
+
+    private void TrySubscribe()
+    {
+        if (subscribed || PlayerInventory.Instance == null)
+            return;
+
+        subscribed = true;
         PlayerInventory.Instance.OnInventoryChanged += Refresh;
         if (synthesisWindowRef != null)
             synthesisWindowRef.OnShown += Refresh;
@@ -25,6 +42,10 @@ public class InventoryListView : MonoBehaviour
 
     private void OnDisable()
     {
+        if (!subscribed)
+            return;
+
+        subscribed = false;
         if (PlayerInventory.Instance != null)
             PlayerInventory.Instance.OnInventoryChanged -= Refresh;
         if (synthesisWindowRef != null)
@@ -40,6 +61,9 @@ public class InventoryListView : MonoBehaviour
 
     private void Refresh()
     {
+        if (PlayerInventory.Instance == null)
+            return;
+
         IEnumerable<OwnedItem> items = PlayerInventory.Instance.Items.Where(i => !i.isEquipped);
 
         items = CurrentSortMode switch
