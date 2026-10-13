@@ -7,8 +7,9 @@ using UnityEngine;
 public class EvolutionTabPresenter : MonoBehaviour
 {
     [Header("Range")]
-    [SerializeField][Min(0)] private int pastNodeCount = 4;     // 지나온 노드
-    [SerializeField][Min(1)] private int futureNodeCount = 12;  // 앞으로 갈 노드
+    [SerializeField] private bool showAllPastNodes = true;          // 처음부터 지나온 노드 전부 표시
+    [SerializeField][Min(0)] private int pastNodeCount = 4;        // showAllPastNodes가 꺼져 있을 때만 사용
+    [SerializeField][Min(1)] private int futureNodeCount = 12;     // 앞으로 갈 노드
 
     [Header("Icon Colors")]
     [SerializeField] private Color attackColor = new(0.90f, 0.30f, 0.30f);
@@ -37,6 +38,7 @@ public class EvolutionTabPresenter : MonoBehaviour
         }
 
         Rebuild();
+        tab.SetUnlockInteractable(!isRequesting);
     }
 
     private void OnDisable()
@@ -66,7 +68,7 @@ public class EvolutionTabPresenter : MonoBehaviour
         var saveData = dataManager.currentData;
         int step = EvolutionRules.GetStep(saveData.playerStat);
 
-        int windowStart = Mathf.Max(0, step - pastNodeCount);
+        int windowStart = showAllPastNodes ? 0 : Mathf.Max(0, step - pastNodeCount);
         int windowEnd = step + futureNodeCount;
         if (evolution.evolutionMaxStep > 0)
             windowEnd = Mathf.Min(windowEnd, evolution.evolutionMaxStep);
@@ -104,27 +106,26 @@ public class EvolutionTabPresenter : MonoBehaviour
 
         isRequesting = true;
         tab.SetUnlockInteractable(false);
-        StartCoroutine(PlayerEvolution.Upgrade(OnUpgraded));
+
+        // 탭이 닫혀도 요청이 끝까지 처리되도록, 씬 전환에도 유지되는 PlayerDataManager에서 실행
+        GameManager.PlayerData.StartCoroutine(PlayerEvolution.Upgrade(OnUpgraded));
     }
 
     private void OnUpgraded(ApiResult<EvolutionUpgradeResponse> result)
     {
-        if (this == null) return;
+        if (this == null) return;   // 씬이 바뀌어 진화 탭이 사라진 경우
 
         isRequesting = false;
-        tab.SetUnlockInteractable(true);
 
-        if (!result.IsSuccess)
-        {
-            UIManager.Instance.Get<LogPopup>().Show("알림", GetFailMessage(result));
-            return;
-        }
-
-        // 상단바는 계정 데이터 변경을 듣지 않아서 직접 갱신
-        if (result.Data.currency != null)
+        // 진화 레벨·골드 반영은 PlayerEvolution이 이미 처리함 (탭이 닫혀 있어도 반영됨)
+        if (result.IsSuccess && result.Data.currency != null)
             UIManager.Instance.Get<TopBar>().SetGold(result.Data.currency.currencyGold);
 
-        // 진화 레벨·골드 반영과 다시 그리기는 PlayerEvolution → OnPlayerDataChanged → Rebuild에서 처리됨
+        if (!result.IsSuccess)
+            UIManager.Instance.Get<LogPopup>().Show("알림", GetFailMessage(result));
+
+        if (isActiveAndEnabled)
+            tab.SetUnlockInteractable(true);
     }
 
     private static string GetFailMessage(ApiResult<EvolutionUpgradeResponse> result)
