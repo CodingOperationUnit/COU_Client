@@ -46,6 +46,9 @@ public abstract class Enemy : MonoBehaviour, IPoolable
     // 보스 HP 바 갱신용: InGameHUD.SetBossHp(enemy.HpRatio)
     public event Action<Enemy> OnHpChanged;
 
+    // 마지막으로 피해를 준 스킬. 0이면 스킬이 아닌 피해(폭탄 등)
+    public int LastHitSkillId { get; private set; }
+    
     public MonsterType Type => Data != null ? Data.Type : MonsterType.Normal;
     public bool IsBoss => Data != null && Data.IsBoss;
     public float HpRatio => MaxHp <= 0 ? 0f : (float)currentHp / MaxHp;
@@ -65,6 +68,7 @@ public abstract class Enemy : MonoBehaviour, IPoolable
         MaxHp = Mathf.Max(1, Mathf.RoundToInt(data.monsterMaxHealthPoint * hpScale));
         currentHp = MaxHp;
         isDead = false;
+        LastHitSkillId = 0; // 풀에서 재사용되므로 초기화
         nextAttackTime = 0f;
         if (visual != null)
         {
@@ -186,11 +190,12 @@ public abstract class Enemy : MonoBehaviour, IPoolable
         => baseDamage <= 0 ? 0 : Mathf.Max(1, Mathf.RoundToInt(baseDamage * damageScale));
 
     // 몬스터의 피격
-    public virtual void Damaged(int damage)
+    public virtual void Damaged(int damage, int sourceSkillId = 0)
     {
         // 몬스터가 죽은 상태면 return
         if (isDead) { return; }
 
+        LastHitSkillId = sourceSkillId;
         currentHp -= damage;
         // 보스 HP 바 갱신
         OnHpChanged?.Invoke(this);   

@@ -54,6 +54,11 @@ public class BattleResultRequest
     public int kills;
     public int gold;
     public int rewardBoxes;
+    
+    // 업적 진행 집계
+    public Dictionary<int, int> skillKills = new();
+    public Dictionary<int, int> skillUpgrades = new();
+    public Dictionary<string, int> pickups = new();
 }
 
 [Serializable]
