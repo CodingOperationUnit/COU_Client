@@ -39,7 +39,7 @@ public static class PlayerStatCalculator
             BaseHp = baseStat.playerBaseHp,
             EvolutionAttack = EvolutionRules.GetBonus(evolution, playerStat, PlayerStatType.Attack),
             EvolutionHp = EvolutionRules.GetBonus(evolution, playerStat, PlayerStatType.Hp),
-            EquipmentMoveSpeedPercent = equipped.Sum(item => item.ScaledMoveSpeed),
+            EquipmentMoveSpeedPercent = equipped.Sum(item => item.Data.moveSpeedBonus),
             EquipmentAttack = equipped.Sum(item => item.ScaledAttack),
             EquipmentHp = equipped.Sum(item => item.ScaledHp),
             HasEvolutionData = evolution != null
