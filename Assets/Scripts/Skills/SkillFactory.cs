@@ -20,6 +20,16 @@ public static class SkillFactory
         { 21070, () => new Skill_ProjectileUp() },
     };
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+    // 테스트용: 시트 값을 무시하고 여기서 스킬 수치를 직접 덮어씀. 쓰지 않을 땐 항목을 지우거나 주석 처리할 것
+    // 수정 후 재생을 다시 시작하거나, 이미 장착한 스킬은 해제 후 다시 장착해야 반영됨
+    private static readonly Dictionary<int, Action<SkillData>> _debugOverrides = new()
+    {
+        // { 20050, data => { data.skillCooldown = 0.5f; data.skillDamage = 30.0f; } },
+        // { 20060, data => { data.skillRange = 8.0f; } },
+    };
+#endif
+
     public static bool IsRegistered(int skillId) => _creators.ContainsKey(skillId);
 
     public static SkillBase Create(int skillId)
@@ -37,6 +47,16 @@ public static class SkillFactory
             Debug.LogWarning($"[SkillFactory] 스킬 데이터가 없습니다: {skillId}");
             return null;
         }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        if(_debugOverrides.TryGetValue(skillId, out Action<SkillData> overrideAction))
+        {
+            // 딕셔너리의 원본이 바뀌지 않도록 복사본에만 적용
+            data = data.Clone();
+            overrideAction(data);
+            Debug.Log($"[SkillFactory] 디버그 덮어쓰기 적용: {skillId} (쿨타임 {data.skillCooldown}, 속도 {data.skillSpeed}, 대미지 {data.skillDamage}, 사거리 {data.skillRange})");
+        }
+#endif
 
         SkillBase skill = creator();
 
