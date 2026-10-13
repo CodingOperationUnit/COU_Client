@@ -10,6 +10,7 @@ public class BattleTab : UIView
     [SerializeField] private Button illustrationButton;
     [SerializeField] private TMP_Text staminaCostText;
     [SerializeField] private Button gameStartButton;
+    [SerializeField] private Button friendButton;
 
     private int currentStageId;
     private int staminaCost;
@@ -19,6 +20,8 @@ public class BattleTab : UIView
     {
         illustrationButton.onClick.AddListener(() => UIManager.Instance.Open<StageSelectScreen>());
         gameStartButton.onClick.AddListener(StartBattle);
+        if (friendButton != null)
+            friendButton.onClick.AddListener(() => UIManager.Instance.Open<FriendPopup>());
     }
 
     public void SetStage(StageData stage, int bestTime)

@@ -164,10 +164,29 @@ public class RankingPopup : UIPopup
         SetMine(response);
     }
 
+    private bool isSendingFriendRequest;
+
     private void OnAddFriend(RankingEntryResponse entry)
     {
-        // TODO: 친구 추가 API가 생기면 entry.playerId로 친구 요청을 보낸다.
-        UIManager.Instance.Get<MessagePopup>().ShowAlert($"'{entry.nickname}'님에게 친구 추가는 준비 중입니다.");
+        if (isSendingFriendRequest) return;   // 연타 방지
+        isSendingFriendRequest = true;
+
+        GameManager.ServerFriend.SendRequest(entry.playerId, (success, message, response) =>
+        {
+            isSendingFriendRequest = false;
+
+            var popup = UIManager.Instance.Get<MessagePopup>();
+            if (!success)
+            {
+                popup.ShowAlert(message);   // 서버 에러 메시지: 이미 친구, 요청 보냄, 한도 초과 등
+                return;
+            }
+
+            bool nowFriend = response != null && response.relation == FriendRelation.FRIEND;
+            popup.ShowAlert(nowFriend
+                ? $"'{entry.nickname}'님과 친구가 되었습니다!"
+                : $"'{entry.nickname}'님에게 친구 요청을 보냈습니다.");
+        });
     }
 
     private void SetMine(RankingResponse response)
