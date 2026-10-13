@@ -41,11 +41,13 @@ public readonly struct AoEData
 {
     public readonly SkillStats Stats;
     public readonly Vector2 Local;
+    public readonly Vector2 Direction; // 방향이 필요 없는 범위는 zero
 
-    public AoEData(SkillStats stats, Vector2 local)
+    public AoEData(SkillStats stats, Vector2 local, Vector2 direction = default)
     {
         Stats = stats;
         Local = local;
+        Direction = direction.normalized;
     }
 }
 

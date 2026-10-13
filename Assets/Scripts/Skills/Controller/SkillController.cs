@@ -10,9 +10,14 @@ public static class TemporaryConstClass
     public const int Glasses = 20020;
     public const int Monitor = 20030;
     public const int Speaker = 20040;
+    public const int Mouse = 20050;
+    public const int Keyboard = 20060;
+    public const int CPU = 20070;
+    public const int PowerStrip = 20080;
+    public const int CtrlZ = 20090;
 
     // 패시브
-    
+
 }
 
 public class SkillController : MonoBehaviour
@@ -216,22 +221,38 @@ public class SkillController : MonoBehaviour
             }
         }
 
-        // 패시브 (5: 투사체 수 증가, 6: 대미지 증가)
-        if(keyboard.digit5Key.wasPressedThisFrame)
+        if (keyboard.digit5Key.wasPressedThisFrame)
         {
-            if(EquipSkill(21010))
+            if (EquipSkill(20050))
             {
-                Debug.Log("패시브: ProjectileUp");
+                Debug.Log("스킬: Mouse");
             }
         }
 
-        if(keyboard.digit6Key.wasPressedThisFrame)
+        if (keyboard.digit6Key.wasPressedThisFrame)
         {
-            if(EquipSkill(21070))
+            if (EquipSkill(20060))
             {
-                Debug.Log("패시브: DamageUp");
+                Debug.Log("스킬: Keyboard");
             }
         }
+
+        // 패시브 (5: 투사체 수 증가, 6: 대미지 증가)
+        //if (keyboard.digit5Key.wasPressedThisFrame)
+        //{
+        //    if(EquipSkill(21010))
+        //    {
+        //        Debug.Log("패시브: ProjectileUp");
+        //    }
+        //}
+
+        //if(keyboard.digit6Key.wasPressedThisFrame)
+        //{
+        //    if(EquipSkill(21070))
+        //    {
+        //        Debug.Log("패시브: DamageUp");
+        //    }
+        //}
     }
 #endif
 }
