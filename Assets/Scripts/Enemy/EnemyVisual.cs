@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 // 몬스터 "외형"만 담당하는 컴포넌트
 public class EnemyVisual : MonoBehaviour
@@ -8,6 +10,7 @@ public class EnemyVisual : MonoBehaviour
     [SerializeField] private SpriteRenderer spriteRenderer; 
     [SerializeField] private bool assetFacesLeft = false;   // 에셋 원본이 왼쪽을 보면 체크
     [SerializeField] private int maxCachedVisuals = 3;      // 이 오브젝트가 들고 있을 외형 수 상한
+    [SerializeField] private string sortingLayerName = "Character"; // 레이어 설정
 
     private static readonly int WalkHash = Animator.StringToHash("Walk");
     private static readonly int HitHash = Animator.StringToHash("Hit");
@@ -51,6 +54,8 @@ public class EnemyVisual : MonoBehaviour
                 current = Instantiate(prefab, visualRoot);
                 current.transform.localPosition = Vector3.zero;
                 owned[assetPath] = current;
+
+                SetupInstance(current);
             }
 
             current.SetActive(true);
@@ -69,6 +74,16 @@ public class EnemyVisual : MonoBehaviour
         CacheColors();
         visualRoot.localScale = baseScale;
         Play(WalkHash);
+    }
+
+    private void SetupInstance(GameObject instance)
+    {
+        // 정렬: 몬스터 전체를 Character 레이어의 한 덩어리로
+        if (instance.TryGetComponent(out SortingGroup group))
+        {
+            group.sortingLayerName = sortingLayerName;
+            group.sortingOrder = 0;   // 같은 레이어 안에서는 Y축 정렬로
+        }
     }
 
     public void PlayWalk() => Play(WalkHash);
