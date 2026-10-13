@@ -37,6 +37,7 @@ public class BattleManager : MonoBehaviour
     private int pendingLevelUps;
     private bool ended;
     private float victoryTimer;
+    private bool clockStopped;   // 마지막 보스 등장 후 전투 시간 정지
 
     private long battleId;
     private bool hasBattleId;   // 메인 씬을 거치지 않고 실행하면 battleId가 없어 결과를 보내지 않는다
@@ -99,6 +100,8 @@ public class BattleManager : MonoBehaviour
                 return;
             }
         }
+
+        if (clockStopped) return;
 
         elapsed += Time.deltaTime;
         var current = (int)elapsed;
@@ -182,6 +185,10 @@ public class BattleManager : MonoBehaviour
 
         hud.ShowBoss(boss.Data.monsterName);
         hud.SetBossHp(boss.HpRatio);
+
+        // 마지막 보스전 시간은 기록(seconds)에 넣지 않는다. 중간 보스전은 시간이 흐른다
+        if (spawnedBoss.Type == MonsterType.Boss)
+            clockStopped = true;
     }
 
     private void HandleBossHpChanged(Enemy enemy)
@@ -195,7 +202,9 @@ public class BattleManager : MonoBehaviour
         boss = null;
         hud.HideBoss();
 
-        victoryTimer = bossVictoryDelay;
+        // 중간 보스는 처치해도 승리하지 않는다
+        if (killedBoss.Type == MonsterType.Boss)
+            victoryTimer = bossVictoryDelay;
     }
 
     private void HandleLooted(DropItemType type)

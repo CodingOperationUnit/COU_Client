@@ -8,6 +8,9 @@ public abstract class Enemy : MonoBehaviour, IPoolable
     [SerializeField] protected float attackRange = 0.6f;    // 이 거리 안이면 닿은 것으로 봄
     [SerializeField] protected float attackInterval = 1f;   // 접촉 피해 간격(초)
 
+    [Header("Charge")]
+    [SerializeField] private float chargeSpeedMultiplier = 2f;   // 돌진 속도 = monsterMoveSpeed × 배율
+
     public MonsterData Data { get; private set; }
     // 스테이지 로스터 배율을 적용한 최대 체력
     public int MaxHp { get; private set; }
@@ -18,6 +21,9 @@ public abstract class Enemy : MonoBehaviour, IPoolable
     private float nextAttackTime;
     // 스테이지 로스터의 피해 배율
     private float damageScale;
+    // 돌진 방향과 남은 돌진 거리. 남은 거리가 0이면 추적
+    private Vector3 chargeDirection;
+    private float chargeRemaining;
     // 몬스터 외형 교체(monsterAsset)
     protected SpriteRenderer spriteRenderer;
 
@@ -33,7 +39,7 @@ public abstract class Enemy : MonoBehaviour, IPoolable
     public event Action<Enemy> OnHpChanged;
 
     public MonsterType Type => Data != null ? Data.Type : MonsterType.Normal;
-    public bool IsBoss => Type == MonsterType.Boss;
+    public bool IsBoss => Data != null && Data.IsBoss;
     public float HpRatio => MaxHp <= 0 ? 0f : (float)currentHp / MaxHp;
 
     protected virtual void Awake()
@@ -50,6 +56,7 @@ public abstract class Enemy : MonoBehaviour, IPoolable
         currentHp = MaxHp;
         isDead = false;
         nextAttackTime = 0f;
+        chargeRemaining = 0f;   // 풀 재사용 시 이전 돌진이 남지 않게
         Sprite sprite = Resources.Load<Sprite>(data.monsterAsset);
         if (sprite != null) spriteRenderer.sprite = sprite;
 
@@ -63,6 +70,14 @@ public abstract class Enemy : MonoBehaviour, IPoolable
     {
         player = target;
         playerHealth = target != null ? target.GetComponent<PlayerHealth>() : null;
+    }
+
+    // direction으로 distance만큼 직진한 뒤 보상 없이 반납된다
+    public void StartCharge(Vector2 direction, float distance)
+    {
+        chargeDirection = direction.normalized;
+        if (chargeDirection.sqrMagnitude < 0.0001f) chargeDirection = Vector3.right;   // 완전히 겹쳐 있을 때 대비
+        chargeRemaining = distance;
     }
 
     // IPoolable: 풀에서 꺼내질 때마다 호출됨
@@ -88,6 +103,8 @@ public abstract class Enemy : MonoBehaviour, IPoolable
         if (isDead || Data == null || player == null) { return; }
 
         Move();
+        // 돌진을 마쳐 반납된 프레임에는 공격하지 않음
+        if (isDead) { return; }
         Attack();
         Tick();
     }
@@ -99,6 +116,17 @@ public abstract class Enemy : MonoBehaviour, IPoolable
     {
         // 몬스터가 죽은 상태면 return
         if (isDead) { return; }
+
+        // 돌진 중이면 정해진 방향으로 직진, 거리를 다 쓰면 보상·킬 수 없이 반납
+        if (chargeRemaining > 0f)
+        {
+            float step = Data.monsterMoveSpeed * chargeSpeedMultiplier * Time.deltaTime;
+            this.transform.position += chargeDirection * step;
+            chargeRemaining -= step;
+
+            if (chargeRemaining <= 0f) Die(false);
+            return;
+        }
 
         // player쪽 방향 찾기
         Vector3 direction = player.transform.position - this.transform.position;

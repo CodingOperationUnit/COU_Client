@@ -31,7 +31,7 @@ public class JsonDataManagerEditor : Editor
         DrawDictionary("웨이브 데이터", manager.WaveEntryDataDic, expandedWaveEntries,
             data => $"웨이브 {data.waveId} / 패턴 {data.patternId} / {data.monsterSlot}", DrawWaveEntry);
         DrawDictionary("스폰 패턴 데이터", manager.SpawnPatternDataDic, expandedSpawnPatterns,
-            data => $"{data.formation} × {data.spawnCount}", DrawSpawnPattern);
+            data => $"{data.formation} × {data.spawnCount} / {data.movement}", DrawSpawnPattern);
         DrawDictionary("스테이지 데이터", manager.StageDataDic, expandedStages,
             data => data.stageName, DrawStage);
         DrawDictionary("스테이지 로스터 데이터", manager.StageRosterDic, expandedStageRosters,
@@ -164,6 +164,8 @@ public class JsonDataManagerEditor : Editor
         EditorGUILayout.IntField("스폰 마릿수", data.spawnCount);
         EditorGUILayout.FloatField("거리 (0이면 기본값)", data.spawnRadius);
         EditorGUILayout.FloatField("형태 크기 (0이면 기본값)", data.formationSize);
+        EditorGUILayout.TextField("이동 문자열", data.movement ?? string.Empty);
+        EditorGUILayout.EnumPopup("이동", data.Movement);
     }
 
     private static void DrawStage(StageData data)
@@ -188,6 +190,7 @@ public class JsonDataManagerEditor : Editor
                 EditorGUILayout.IntField("몬스터 ID", row.monsterId);
                 EditorGUILayout.FloatField("체력 배율", row.monsterHpScale);
                 EditorGUILayout.FloatField("피해 배율", row.monsterDamageScale);
+                EditorGUILayout.IntField("패턴 ID (0이면 웨이브 값)", row.patternId);
             }
         }
     }

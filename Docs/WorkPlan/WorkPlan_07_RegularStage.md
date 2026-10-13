@@ -36,7 +36,7 @@
 **제외**
 - 스테이지 2 이후의 Stage·StageRoster 행. 특색 패턴 덮어쓰기는 구조만 만든다
 - 수치 밸런싱. 이 문서의 간격·마릿수·배율·드롭은 플레이테스트로 조정할 초기값이다
-- 중간 보스 전용 연출. HUD는 보스와 같이 몬스터 이름과 HP 바를 쓴다
+- 중간 보스 전용 연출. HUD는 보스와 같이 몬스터 이름과 HP 바를 쓰고, 그동안 경험치 바는 숨겨진다(`InGameHUD.ShowBoss`, `InGameHUD.cs:41`)
 - 테스트용 웨이브(45초 보스) 유지. 웨이브 1을 덮어쓴다
 - Notion 데이터 정의서 갱신(공개 페이지 API는 읽기만 된다. 유저가 갱신한다)
 
@@ -140,7 +140,7 @@ WaveManager.SpawnPattern
 - 서버
   - `StageRosterData`에 `int patternId` (필수 열)
   - 검증: `patternId == 0 || spawnPatterns.containsKey(patternId)`. SpawnPattern은 StageRoster보다 먼저 로드된다(`StaticDataService.java:113`, `:126`).
-  - `stageRosters`: `Map<Integer, Map<String, StageRosterData>>`(stageId → monsterSlot → 행). `getStageRosters()` 반환 타입도 같이 바뀐다. Stage × Wave 슬롯 검사(`:228`)는 `containsKey`라 그대로 둔다.
+  - `stageRosters`: `Map<Integer, Map<String, StageRosterData>>`(stageId → monsterSlot → 행). `getStageRosters()` 반환 타입, `:128`의 `rosterMap`, `:136`의 `putIfAbsent` 값(`row.monsterId()` → `row`), `:228`의 지역 변수 `roster` 선언 타입도 같이 바뀐다. Stage × Wave 슬롯 검사(`:230`)는 `containsKey`라 로직은 그대로다.
   - `computeStageLimit`: `StageRosterData row = roster.get(entry.monsterSlot())`, `int patternId = row.patternId() > 0 ? row.patternId() : entry.patternId()`, 몬스터는 `row.monsterId()`로 찾는다.
 
 ### 4. 돌진 (합의: 돌진 동작 신규, 속도는 이동 속도 × 2, 세부는 위임)
@@ -159,7 +159,7 @@ WaveManager.SpawnPattern
   public SpawnMovement Movement => parsedMovement;
   public bool OnLoaded() => Enum.TryParse(formation, out parsedFormation) && Enum.TryParse(movement, out parsedMovement);
   ```
-  - `JsonDataManager.cs:516`의 실패 메시지에 formation과 movement 값을 함께 적는다. 빈 값도 실패다(모든 행을 채운다).
+  - `JsonDataManager.cs:546-547`의 실패 메시지에 formation과 movement 값을 함께 적는다. 빈 값도 실패다(모든 행을 채운다).
 - 서버: SpawnPattern DTO는 patternId, spawnCount만 읽으므로 변경 없음.
 - `WaveManager.SpawnPattern`
   ```csharp
@@ -172,6 +172,7 @@ WaveManager.SpawnPattern
   ```
   - 방향: 스폰 순간의 플레이어 위치(`center`)를 향한다. 마리마다 자기 위치에서 계산하므로 Cluster는 거의 나란히 날아가고, Ring은 안쪽으로 모인다.
   - 거리: 스폰 거리의 2배. 플레이어 자리를 지나 같은 거리만큼 더 간 뒤 반납된다.
+  - 형태 제한: 거리가 스폰 거리에 비례하므로 Charge는 플레이어에서 떨어진 곳에 스폰하는 형태(Random, Ring, Line, Cluster)에만 쓴다. Screen에 붙이면 플레이어 근처에 스폰된 몬스터가 거의 바로 사라진다(거리가 정확히 0이면 추적으로 남는다). 검증은 넣지 않고 규칙을 서버 `StaticData.md`에 적는다("문서 갱신 대상").
   - 대상: Normal만 돌진한다. 엘리트·보스(`BossMonster`)도 Chase 상태에서 `base.Move()`를 부르므로, 돌진을 받으면 거리를 다 쓴 뒤 `Die(false)`로 반납된다. 보스라면 `OnBossKilled` 없이 사라져 승리할 수 없고, 시간 제한이 없어 스테이지가 끝나지 않는다. 그래서 슬롯 규칙이 아니라 이 조건으로 막는다.
   - `TestSpawnPattern`도 같은 메서드를 거치므로 패턴 10으로 돌진을 바로 확인할 수 있다.
 - `Enemy`
@@ -281,14 +282,14 @@ WaveManager.SpawnPattern
 
 ### 8. 문서 갱신 대상
 - 클라이언트 `Docs/ETC/GameData_Tags.md`
-  - `:177`, `:203`: "ExpGem2~4는 떨어뜨리는 코드가 없다", "ExpGem1만 쓴다"를 고친다. MidBoss가 ExpGem3를 떨어뜨린다.
+  - `:177`, `:178`, `:201`, `:203`: "ExpGem2~4는 떨어뜨리는 코드가 없다", "ExpGem1로 고정", "ExpGem1만 쓴다"를 고친다. MidBoss가 ExpGem3를 떨어뜨린다.
 - 서버 `Docs/Guide/StaticData.md`
   - `:38`: StageRoster 열에 patternId
   - `:141`: `getStageRosters()` 반환 타입 `Map<Integer, Map<String, StageRosterData>>`
   - `:221`: StageRoster 검증에 "patternId가 0이거나 SpawnPattern에 있음"
   - `:224`: MonsterAttack 검증 "BOSS·MIDBOSS가 아니면 MELEE가 아님"
   - `:225`: DropTable 검증의 monsterType 목록에 MidBoss
-  - `:234` "스테이지를 추가하려면?": 슬롯 이름 규칙(일반 `N1`…, 엘리트 `E1`…, 중간 보스 `M1`…, 보스 `B1`…, 상자 `BOX`)과 patternId로 특색 패턴을 바꾸는 방법
+  - `:234` "스테이지를 추가하려면?": 슬롯 이름 규칙(일반 `N1`…, 엘리트 `E1`…, 중간 보스 `M1`…, 보스 `B1`…, 상자 `BOX`)과 patternId로 특색 패턴을 바꾸는 방법, Charge는 Random·Ring·Line·Cluster에만 쓴다는 규칙
 
 ## 의존 순서 / 병렬 가능 그룹
 - **그룹 A, 데이터**: #1 → #2. #2는 유저가 한다.
@@ -318,16 +319,16 @@ WaveManager.SpawnPattern
 **컴파일·로드**
 - 클라이언트 컴파일 에러가 없다(OmniSharp 진단, Unity 콘솔).
 - 서버가 새 데이터로 빌드·시작된다(`CouServerApplicationTests` 포함). `data/version.txt`가 4.0.0이다.
-- `persistentDataPath/StaticData`를 비우고 서버 없이 LogInScene을 실행하면 14개 테이블이 로드된다(Monster 31, MonsterAttack 52, DropTable 16, SpawnPattern 8, Wave 11, StageRoster 10). 로드 에러가 없다.
+- `persistentDataPath/StaticData`를 비우고 서버 없이 LogInScene을 실행하면 16개 테이블이 로드된다(Monster 31, MonsterAttack 52, DropTable 16, SpawnPattern 8, Wave 11, StageRoster 10). 로드 에러가 없다.
 - `DropItemManager.prefabs`의 2번 칸(`DropItemType.ExpGem3`)에 `Prefabs/DropItem/ExpGem3.prefab`이 연결돼 있다(Unity CLI). ExpGem3는 이 작업에서 처음 드롭된다.
-- 서버를 켜면 `정적 데이터를 4.0.0(으)로 갱신했습니다.`가 남는다.
+- 서버를 켠 상태로 LogInScene을 실행하면 클라이언트 콘솔에 `정적 데이터를 4.0.0(으)로 갱신했습니다.`가 남는다(`JsonDataManager.cs:176`).
 
 **스테이지 1 진행**
 - 0:00~4:00: 11001이 1.5초마다 2마리 나온다.
 - 2:00: 12001이 나온다.
 - 2:20, 3:00: 체력 22인 11008 12마리가 플레이어를 원형으로 둘러싸고 원거리 공격을 한다.
 - 2:20부터 20초마다(다섯 번): 11001 8마리가 한쪽에 뭉쳐 나와, 스폰 순간의 플레이어 위치로 속도 2.0으로 직진한다. 피하면 그대로 지나가서 스폰 거리의 2배를 간 뒤 사라진다. 사라질 때 드롭과 킬 수가 없다.
-- 4:00: 중간 보스 15001(체력 78)이 나온다. 일반·엘리트가 정리되고 상자는 남는다. 결계와 HP 바가 나오고, Melee 돌진·Area 공격을 한다. 보스전 동안 일반 스폰이 멈추고 HUD 시간은 흐른다.
+- 4:00: 중간 보스 15001(체력 78)이 나온다. 일반·엘리트가 정리되고 상자는 남는다. 결계와 HP 바가 나오고(경험치 바는 숨겨짐), Melee 돌진·Area 공격을 한다. 보스전 동안 일반 스폰이 멈추고 HUD 시간은 흐른다.
 - 중간 보스 처치: 승리하지 않는다. 결계와 HP 바가 사라지고 일반 스폰이 다시 시작된다. ExpGem3, LuckyBox(행운열차), RewardBox ×3이 떨어진다.
 - 4:20~6:20: 11003이 1초마다 3마리 나온다. 6:00에 12002가 나온다.
 - 6:20~8:00: 11010이 1.5초마다 2마리 나온다.
@@ -357,7 +358,7 @@ WaveManager.SpawnPattern
 - **수치**: 간격·마릿수·배율·드롭은 초기값이다. 노말4의 동시 개체 수(초당 3마리 × 2분)가 성능에 문제없는지 플레이 중 확인한다.
 - **8:00까지 살아 있는 중간 보스**: 마지막 보스 등장 정리로 보상 없이 사라지고(`Die(false)`, `OnBossKilled` 없음) 마지막 보스로 바뀐다. `BattleManager`와 `BossArena`는 새 보스로 갱신되므로 별도 처리하지 않는다.
 - **`OnDespawn` 미호출**: `ObjectPoolManager.ReturnObject`가 `IPoolable.OnDespawn`을 부르지 않는다. 이 작업은 `Update`의 `isDead` 검사로 피하고 고치지 않는다.
-- **테스트 웨이브 제거**: 웨이브 1을 덮어써서 45초 보스 테스트 웨이브가 없어진다. 보스 확인은 `TestSpawnPattern`(testMonsterId 13001 또는 15001)으로 한다. WorkPlan 06 "동작 동일성" 항목은 더 이상 맞지 않는다.
+- **테스트 웨이브 제거**: 웨이브 1을 덮어써서 45초 보스 테스트 웨이브가 없어진다. 보스 확인은 `TestSpawnPattern`(testPatternId 1, testMonsterId 13001 또는 15001)으로 한다. testPatternId 기본값 7은 Ring 12마리라 보스가 연달아 나오고 서로 정리된다. WorkPlan 06 "동작 동일성" 항목은 더 이상 맞지 않는다.
 - **Notion 데이터 정의서**: Monster(MidBoss 타입, 15001~ 대역), StageRoster(patternId), SpawnPattern(movement) 열 변경을 유저가 반영한다.
 - **기기 저장본**: 버전 3 저장본은 첫째 자리가 달라 쓰이지 않는다(`LoadUsableSavedVersion`). 따로 지우지 않는다.
 

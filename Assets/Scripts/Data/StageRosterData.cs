@@ -11,4 +11,5 @@ public class StageRosterData
     public int monsterId;             // Monster.json 참조
     public float monsterHpScale;      // 최대 체력 배율 (0 초과)
     public float monsterDamageScale;  // 접촉 피해와 MonsterAttack 피해 배율 (0 초과)
+    public int patternId;             // SpawnPattern.json 참조. 0이면 웨이브 행의 patternId
 }
