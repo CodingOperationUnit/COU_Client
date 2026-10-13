@@ -33,6 +33,12 @@ public class EvolutionTab : UIView
     [SerializeField] private float bottomPadding = 330f;
     [SerializeField] private float topPadding = 330f;
     [SerializeField] private float rowSpacing = 300f;
+    [SerializeField] private GameObject dnaColumnRoot;
+
+    public event Action<int> UnlockRequested;
+
+    private bool isLinearMode;
+    private readonly List<GameObject> spawned = new();
 
     private UIManager manager;
     private int accountLevel;
@@ -57,7 +63,7 @@ public class EvolutionTab : UIView
     public override void Open()
     {
         base.Open();
-        UIManager.Instance.Get<TopBar>().ShowCoin(true);
+        UIManager.Instance.Get<TopBar>().ShowCoin(!isLinearMode);
     }
 
     public override void Close()
@@ -69,6 +75,10 @@ public class EvolutionTab : UIView
 
     public void Set(EvolutionInfo info)
     {
+        Clear();
+        isLinearMode = false;
+        if (dnaColumnRoot != null) dnaColumnRoot.SetActive(true);
+
         accountLevel = info.accountLevel;
         Setup(goldColumn, info.goldNodes, info.unlockedGoldNodes, info.gold, i => i);
         Setup(dnaColumn, info.dnaNodes, info.unlockedDnaNodes, info.dna, i => LevelRow(info.dnaNodes[i].level));
@@ -77,6 +87,7 @@ public class EvolutionTab : UIView
         for (var level = 1; level <= maxLevel; level++)
         {
             var mark = Instantiate(levelMarkTemplate, levelMarkTemplate.transform.parent);
+            spawned.Add(mark.gameObject);
             mark.gameObject.SetActive(true);
             mark.Set(level, level <= accountLevel);
             Place((RectTransform)mark.transform, RowY(LevelRow(level)));
@@ -102,12 +113,14 @@ public class EvolutionTab : UIView
         {
             var index = i;
             var view = Instantiate(column.nodeTemplate, column.nodeTemplate.transform.parent);
+            spawned.Add(view.gameObject);
             view.gameObject.SetActive(true);
             view.Button.onClick.AddListener(() => Select(column, index));
             Place((RectTransform)view.transform, RowY(row(i)));
             column.views.Add(view);
 
             var line = Instantiate(column.lineTemplate, column.lineTemplate.transform.parent);
+            spawned.Add(line.gameObject);
             line.gameObject.SetActive(true);
             var from = i == 0 ? 0f : RowY(row(i - 1));
             Place(line.rectTransform, from);
@@ -155,6 +168,12 @@ public class EvolutionTab : UIView
 
     private void Unlock()
     {
+        if (UnlockRequested != null)
+        {
+            UnlockRequested.Invoke(selectedIndex);
+            return;
+        }
+
         var column = selectedColumn;
         column.currency -= column.nodes[selectedIndex].cost;
         column.unlocked++;
@@ -167,6 +186,72 @@ public class EvolutionTab : UIView
             topBar.SetCoin(column.currency);
 
         Select(column, selectedIndex);
+    }
+
+    // 골드 열 하나, 아래부터 순서대로 해금하는 진화 (서버 진화 규칙용)
+    // nodesPerLevel마다 오른쪽에 계정 레벨 표시, 바닥부터 현재 계정 레벨까지 도달 영역
+    public void SetLinear(EvolutionNodeInfo[] nodes, int unlocked, int gold, int currentAccountLevel, int nodesPerLevel)
+    {
+        Clear();
+        isLinearMode = true;
+        accountLevel = currentAccountLevel;   // 노드의 level(필요 계정 레벨)로 해금 가능 여부 판단
+
+        Setup(goldColumn, nodes, unlocked, gold, i => i);
+
+        dnaColumn.nodes = Array.Empty<EvolutionNodeInfo>();
+        dnaColumn.views = new List<EvolutionNodeView>();
+        dnaColumn.lines = new List<Image>();
+        if (dnaColumnRoot != null) dnaColumnRoot.SetActive(false);
+
+        // 계정 레벨 표시: 각 레벨의 마지막 노드 옆
+        int maxLevel = nodes.Length / nodesPerLevel;
+        for (var level = 1; level <= maxLevel; level++)
+        {
+            var mark = Instantiate(levelMarkTemplate, levelMarkTemplate.transform.parent);
+            spawned.Add(mark.gameObject);
+            mark.gameObject.SetActive(true);
+            mark.Set(level, level <= accountLevel);
+            Place((RectTransform)mark.transform, RowY(level * nodesPerLevel - 1));
+        }
+
+        // 높이: 노드 개수 기준
+        var content = scrollRect.content;
+        var lastRow = Mathf.Max(nodes.Length - 1, 0);
+        content.sizeDelta = new Vector2(content.sizeDelta.x, RowY(lastRow) + topPadding);
+
+        // 도달 영역: 현재 계정 레벨 표시까지
+        var reachedRow = Mathf.Min(accountLevel * nodesPerLevel - 1, lastRow);
+        unlockedArea.sizeDelta = new Vector2(unlockedArea.sizeDelta.x, RowY(reachedRow));
+
+        // 가장 최근에 해금한 노드를 화면 가운데로
+        FocusRow(Mathf.Max(unlocked - 1, 0));
+    }
+
+    // 지정한 줄(노드)이 화면 가운데에 오도록 스크롤
+    public void FocusRow(int row)
+    {
+        // 탭을 막 켠 직후에는 레이아웃이 계산되지 않아 화면 크기가 0일 수 있음 → 먼저 계산
+        Canvas.ForceUpdateCanvases();
+
+        var content = scrollRect.content;
+        var viewportHeight = scrollRect.viewport.rect.height;
+        var scrollable = Mathf.Max(content.sizeDelta.y - viewportHeight, 1f);
+        scrollRect.verticalNormalizedPosition = Mathf.Clamp01((RowY(row) - viewportHeight / 2) / scrollable);
+    }
+
+    // 서버 요청 중 해금 버튼 잠금
+    public void SetUnlockInteractable(bool interactable)
+        => tooltip.UnlockButton.interactable = interactable;
+
+    // 이전에 만든 노드·선·레벨 표시 정리
+    private void Clear()
+    {
+        tooltip.Hide();
+        foreach (var go in spawned)
+        {
+            if (go != null) Destroy(go);
+        }
+        spawned.Clear();
     }
 
     private float RowY(int row)
