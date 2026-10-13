@@ -86,13 +86,6 @@ public class WaveManager : MonoBehaviour
             // 다른 웨이브 항목은 건너뜀
             if (data.waveId != waveId) { continue; }
 
-            SpawnPatternData pattern = GameManager.JsonData.GetSpawnPatternDataFromJson(data.patternId);
-            if (pattern == null)
-            {
-                Debug.LogWarning($"[WaveManager] waveEntryId {data.waveEntryId}의 patternId {data.patternId}를 찾을 수 없어 건너뜁니다.");
-                continue;
-            }
-
             // 슬롯을 이 스테이지 로스터의 몬스터로 바꾼다
             StageRosterData rosterRow = roster.FirstOrDefault(row => row.monsterSlot == data.monsterSlot);
             if (rosterRow == null)
@@ -105,6 +98,16 @@ public class WaveManager : MonoBehaviour
             if (monster == null)
             {
                 Debug.LogWarning($"[WaveManager] waveEntryId {data.waveEntryId}의 monsterSlot {data.monsterSlot} 몬스터 {rosterRow.monsterId}를 찾을 수 없어 건너뜁니다.");
+                continue;
+            }
+
+            // 로스터의 patternId가 있으면 스테이지 특색 패턴, 0이면 웨이브 행의 패턴
+            int patternId = rosterRow.patternId > 0 ? rosterRow.patternId : data.patternId;
+            SpawnPatternData pattern = GameManager.JsonData.GetSpawnPatternDataFromJson(patternId);
+            if (pattern == null)
+            {
+                string source = rosterRow.patternId > 0 ? $"stageRosterId {rosterRow.stageRosterId}" : $"waveEntryId {data.waveEntryId}";
+                Debug.LogWarning($"[WaveManager] {source}의 patternId {patternId}를 찾을 수 없어 waveEntryId {data.waveEntryId}을(를) 건너뜁니다.");
                 continue;
             }
 
@@ -143,9 +146,9 @@ public class WaveManager : MonoBehaviour
         bool repeat = data.patternDuration > 0f;
         float interval = Mathf.Max(data.spawnInterval, minRepeatInterval);
 
-        // 보스전 중에는 보스 몬스터가 아닌 스폰을 멈춤
+        // 보스전(중간 보스 포함) 중에는 보스 몬스터가 아닌 스폰을 멈춤
         // 보스를 잡은 뒤 한꺼번에 몰려나오지 않게 보스전 동안 지나간 스폰은 건너뜀
-        if (spawner.IsBossBattle && state.monster.Type != MonsterType.Boss)
+        if (spawner.IsBossBattle && !state.monster.IsBoss)
         {
             if (elapsed >= state.nextSpawnTime)
             {
@@ -201,7 +204,15 @@ public class WaveManager : MonoBehaviour
                 _ => center + (Vector3)(RandomDirection() * radius)
             };
 
-            spawner.SpawnMonster(monsterId, position, hpScale, damageScale);
+            Enemy enemy = spawner.SpawnMonster(monsterId, position, hpScale, damageScale);
+
+            // 돌진: 스폰 순간의 플레이어 위치로 직진해 스폰 거리의 2배를 간다
+            // 엘리트·보스는 거리를 다 쓰면 OnBossKilled 없이 반납되므로 일반 몬스터만
+            if (enemy != null && enemy.Type == MonsterType.Normal && pattern.Movement == SpawnMovement.Charge)
+            {
+                Vector2 toTarget = center - position;
+                enemy.StartCharge(toTarget, toTarget.magnitude * 2f);
+            }
         }
     }
 

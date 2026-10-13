@@ -544,7 +544,7 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
                 throw new InvalidOperationException($"SpawnPattern {data.patternId}의 formationSize는 0 이상이어야 합니다.");
 
             if (!data.OnLoaded())
-                throw new InvalidOperationException($"SpawnPattern {data.patternId}의 formation \"{data.formation}\"을(를) 알 수 없습니다.");
+                throw new InvalidOperationException($"SpawnPattern {data.patternId}의 formation \"{data.formation}\" 또는 movement \"{data.movement}\"을(를) 알 수 없습니다.");
 
             loadedDatas.Add(data.patternId, data);
         }
@@ -612,6 +612,9 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
 
             if (data.monsterDamageScale <= 0f)
                 throw new InvalidOperationException($"StageRoster {data.stageRosterId}의 monsterDamageScale은 0보다 커야 합니다.");
+
+            if (data.patternId < 0)
+                throw new InvalidOperationException($"StageRoster {data.stageRosterId}의 patternId는 0 이상이어야 합니다.");
 
             if (!loadedDatas.TryGetValue(data.stageId, out List<StageRosterData> stageRows))
             {

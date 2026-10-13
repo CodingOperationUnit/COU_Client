@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,6 +8,13 @@ public abstract class Enemy : MonoBehaviour, IPoolable
     [Header("Contact Attack")]
     [SerializeField] protected float attackRange = 0.6f;    // 이 거리 안이면 닿은 것으로 봄
     [SerializeField] protected float attackInterval = 1f;   // 접촉 피해 간격(초)
+
+    [Header("Animation")]
+    [SerializeField] private float hitAnimDuration = 0.2f;    // Hit 후 Walk 복귀까지(초)
+    [SerializeField] private float deadAnimDuration = 0.5f;   // Dead 모션 후 풀 반납까지(초)
+
+    [Header("Charge")]
+    [SerializeField] private float chargeSpeedMultiplier = 2f;   // 돌진 속도 = monsterMoveSpeed × 배율
 
     public MonsterData Data { get; private set; }
     // 스테이지 로스터 배율을 적용한 최대 체력
@@ -18,8 +26,14 @@ public abstract class Enemy : MonoBehaviour, IPoolable
     private float nextAttackTime;
     // 스테이지 로스터의 피해 배율
     private float damageScale;
+    // 돌진 방향과 남은 돌진 거리. 남은 거리가 0이면 추적
+    private Vector3 chargeDirection;
+    private float chargeRemaining;
     // 몬스터 외형 교체(monsterAsset)
     protected SpriteRenderer spriteRenderer;
+    protected EnemyVisual visual;      // 외형
+    private Collider2D hitCollider;
+    private float hitEndTime;
 
     // 추적할 Player
     public GameObject player;
@@ -33,12 +47,14 @@ public abstract class Enemy : MonoBehaviour, IPoolable
     public event Action<Enemy> OnHpChanged;
 
     public MonsterType Type => Data != null ? Data.Type : MonsterType.Normal;
-    public bool IsBoss => Type == MonsterType.Boss;
+    public bool IsBoss => Data != null && Data.IsBoss;
     public float HpRatio => MaxHp <= 0 ? 0f : (float)currentHp / MaxHp;
 
     protected virtual void Awake()
     {
         spriteRenderer = gameObject.GetComponentInChildren<SpriteRenderer>();
+        visual = GetComponent<EnemyVisual>();
+        hitCollider = GetComponent<Collider2D>();
     }
 
     // 몬스터 초기화. 배율은 스테이지 로스터 값(체력 최소 1)
@@ -50,8 +66,21 @@ public abstract class Enemy : MonoBehaviour, IPoolable
         currentHp = MaxHp;
         isDead = false;
         nextAttackTime = 0f;
-        Sprite sprite = Resources.Load<Sprite>(data.monsterAsset);
-        if (sprite != null) spriteRenderer.sprite = sprite;
+        if (visual != null)
+        {
+            visual.Apply(data.monsterAsset);
+        }
+        else
+        {
+            Sprite sprite = Resources.Load<Sprite>(data.monsterAsset);
+            if (sprite != null) spriteRenderer.sprite = sprite;
+        }
+
+        // 풀 재사용 대비 초기화
+        if (hitCollider != null) hitCollider.enabled = true;
+        hitEndTime = 0f;
+
+        chargeRemaining = 0f;   // 풀 재사용 시 이전 돌진이 남지 않게
 
         OnInit();
     }
@@ -63,6 +92,14 @@ public abstract class Enemy : MonoBehaviour, IPoolable
     {
         player = target;
         playerHealth = target != null ? target.GetComponent<PlayerHealth>() : null;
+    }
+
+    // direction으로 distance만큼 직진한 뒤 보상 없이 반납된다
+    public void StartCharge(Vector2 direction, float distance)
+    {
+        chargeDirection = direction.normalized;
+        if (chargeDirection.sqrMagnitude < 0.0001f) chargeDirection = Vector3.right;   // 완전히 겹쳐 있을 때 대비
+        chargeRemaining = distance;
     }
 
     // IPoolable: 풀에서 꺼내질 때마다 호출됨
@@ -87,7 +124,16 @@ public abstract class Enemy : MonoBehaviour, IPoolable
         // 몬스터가 죽은 상태면 Data/player가 없으면 return
         if (isDead || Data == null || player == null) { return; }
 
+        // 컨트롤러에 전환(Transition)이 없어서, Hit가 끝나면 코드가 Walk로 되돌림
+        if (hitEndTime > 0f && Time.time >= hitEndTime)
+        {
+            hitEndTime = 0f;
+            visual?.PlayWalk();
+        }
+
         Move();
+        // 돌진을 마쳐 반납된 프레임에는 공격하지 않음
+        if (isDead) { return; }
         Attack();
         Tick();
     }
@@ -100,11 +146,24 @@ public abstract class Enemy : MonoBehaviour, IPoolable
         // 몬스터가 죽은 상태면 return
         if (isDead) { return; }
 
+        // 돌진 중이면 정해진 방향으로 직진, 거리를 다 쓰면 보상·킬 수 없이 반납
+        if (chargeRemaining > 0f)
+        {
+            float step = Data.monsterMoveSpeed * chargeSpeedMultiplier * Time.deltaTime;
+            this.transform.position += chargeDirection * step;
+            chargeRemaining -= step;
+
+            if (chargeRemaining <= 0f) Die(false);
+            return;
+        }
+
         // player쪽 방향 찾기
         Vector3 direction = player.transform.position - this.transform.position;
         direction.Normalize();
 
         this.transform.position += direction * Data.monsterMoveSpeed * Time.deltaTime;
+
+        visual?.FaceTo(direction.x);
     }
 
     // 몬스터의 공격(닿아 있는 동안 attackInterval마다 피해)
@@ -140,6 +199,13 @@ public abstract class Enemy : MonoBehaviour, IPoolable
         if (currentHp <= 0)
         {
             Die();
+            return;
+        }
+
+        if (visual != null && visual.HasAnimator)
+        {
+            visual.PlayHit();
+            hitEndTime = Time.time + hitAnimDuration;
         }
     }
 
@@ -158,8 +224,19 @@ public abstract class Enemy : MonoBehaviour, IPoolable
 
         // 반납 알림
         OnBeforeReturn?.Invoke(gameObject);
+
         // 몬스터가 죽은 상태면 비활성화(Pool로 반납)
-        GameManager.ObjectPool.ReturnObject(gameObject);
+        // 처치 + 애니메이션 외형이면 Dead 모션 후 반납. 보스 등장 정리(giveReward=false)는 즉시 반납
+        if (giveReward && visual != null && visual.HasAnimator)
+        {
+            if (hitCollider != null) hitCollider.enabled = false;
+            visual.PlayDead();
+            StartCoroutine(ReturnAfter(deadAnimDuration));
+        }
+        else
+        {
+            GameManager.ObjectPool.ReturnObject(gameObject);
+        }
     }
 
     // 처치 보상(자식용): 드롭 + 킬 수 집계
@@ -168,6 +245,12 @@ public abstract class Enemy : MonoBehaviour, IPoolable
         GameManager.DropItem.SpawnTable(Type, transform.position);
 
         OnDied?.Invoke(this);
+    }
+
+    private IEnumerator ReturnAfter(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        GameManager.ObjectPool.ReturnObject(gameObject);
     }
 
     // 테스트용 피격, 죽음
