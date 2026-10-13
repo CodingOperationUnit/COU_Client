@@ -33,8 +33,8 @@ public class MonsterSpawner : MonoSingleton<MonsterSpawner>
         MonsterData data = GameManager.JsonData.GetMonsterDataFromJson(monsterId);
         if (data == null) { return null; }
 
-        // 보스 등장(남아있는 몬스터를 모두 사망 처리(보상 없음))
-        if (data.Type == MonsterType.Boss)
+        // 보스·중간 보스 등장(남아있는 몬스터를 모두 사망 처리(보상 없음))
+        if (data.IsBoss)
             ClearAllEnemies(giveReward: false);
 
         // 풀(프리팹) 선택
