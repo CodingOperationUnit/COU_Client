@@ -152,7 +152,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 0.55
+  orthographic size: 0.65
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -346,6 +346,7 @@ MonoBehaviour:
   weaponSet: {fileID: 11400000, guid: d6522cedd82510944a3acbcbabf8b5d0, type: 2}
   rightWeapon: {fileID: 6148211213156244057}
   leftWeapon: {fileID: 67039198161932139}
+  keepInPlace: 1
   testItemId: 6001
   testAttackIndex: 0
 --- !u!212 &6148211213156244057 stripped

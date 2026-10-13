@@ -14,6 +14,7 @@ public class PlayerStats : MonoBehaviour
     private int finalHp;
     private int finalDefense;
     private int finalPotionRecovery;
+    private float finalMoveSpeed;
     private bool hasWeapon;
     private WeaponType equippedWeaponType;
     private string equippedWeaponName;
@@ -36,7 +37,7 @@ public class PlayerStats : MonoBehaviour
     public int CriticalChance => Base.playerBaseCriticalChance + GetBonus(PlayerBonusStat.CriticalChance);
     public int CriticalDamage => Base.playerBaseCriticalDamage + GetBonus(PlayerBonusStat.CriticalDamage);
     public int SkillDamage => Base.playerBaseSkillDamage;
-    public float Speed => Base.playerBaseMoveSpeed;
+    public float Speed { get { EnsureCalculated(); return finalMoveSpeed; } }
     public float MaxSpeed => Base.playerBaseMaxMoveSpeed;
     public float LootRadius => Base.playerBaseLootRadius;
 
@@ -76,12 +77,14 @@ public class PlayerStats : MonoBehaviour
         finalHp = stat.FinalHp;
         finalDefense = stat.FinalDefense;
         finalPotionRecovery = stat.FinalPotionRecovery;
+        finalMoveSpeed = stat.FinalMoveSpeed;
 
         LoadWeapon(equipped);
 
         Debug.Log("[PlayerStats] 공격력 " + finalAtk + " (기본 " + stat.BaseAttack + " + 진화 " + stat.EvolutionAttack + " + 장비 " + stat.EquipmentAttack + ")" +
                   " / 체력 " + finalHp + " (기본 " + stat.BaseHp + " + 진화 " + stat.EvolutionHp + " + 장비 " + stat.EquipmentHp + ")" +
                   " / 방어력 " + finalDefense + " / 포션 회복량 +" + finalPotionRecovery +
+                  " / 이동 속도 " + finalMoveSpeed.ToString("F2") + " (+" + stat.EquipmentMoveSpeedPercent + "%)" +
                   " / 무기: " + (hasWeapon ? equippedWeaponName + " (" + equippedWeaponType + ")" : "없음") +
                   " / 시작 스킬: " + (startingSkillId == WeaponSkillTable.NoSkill ? "없음" : startingSkillId.ToString()));
     }
