@@ -135,8 +135,8 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cc13e915b534c7948ac11c859f1dfb1e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CpuProjectile
-  _explosionPrefab: {fileID: -2090970527807985498, guid: 3531badab426591429973f63544c8b8e, type: 3}
+  m_EditorClassIdentifier: Assembly-CSharp::ParabolicProjectile
+  _landingPrefab: {fileID: -2090970527807985498, guid: 3531badab426591429973f63544c8b8e, type: 3}
   _jumpPower: 1.5
   _defaultFlightTime: 0.6
   _minFlightTime: 0.2
