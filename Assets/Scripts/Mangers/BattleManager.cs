@@ -37,7 +37,7 @@ public class BattleManager : MonoBehaviour
     private int pendingLevelUps;
     private bool ended;
     private float victoryTimer;
-    private bool clockStopped;   // 마지막 보스 등장 후 전투 시간 정지
+    private int clockStopFrame = -1;   // 마지막 보스가 나온 프레임. 다음 프레임부터 전투 시간 정지
 
     private long battleId;
     private bool hasBattleId;   // 메인 씬을 거치지 않고 실행하면 battleId가 없어 결과를 보내지 않는다
@@ -101,7 +101,8 @@ public class BattleManager : MonoBehaviour
             }
         }
 
-        if (clockStopped) return;
+        // 보스가 나온 프레임의 시간까지는 더한다(WaveManager보다 늦게 Update돼도 보스 등장 시각에서 멈추게)
+        if (clockStopFrame >= 0 && Time.frameCount > clockStopFrame) return;
 
         elapsed += Time.deltaTime;
         var current = (int)elapsed;
@@ -188,7 +189,7 @@ public class BattleManager : MonoBehaviour
 
         // 마지막 보스전 시간은 기록(seconds)에 넣지 않는다. 중간 보스전은 시간이 흐른다
         if (spawnedBoss.Type == MonsterType.Boss)
-            clockStopped = true;
+            clockStopFrame = Time.frameCount;
     }
 
     private void HandleBossHpChanged(Enemy enemy)

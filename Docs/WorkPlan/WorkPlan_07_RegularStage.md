@@ -117,9 +117,10 @@ WaveManager.SpawnPattern
 - ID 대역: 15001~ 중간 보스. `MonsterData.cs`의 monsterType 문자열 주석에도 "MidBoss"를 넣는다.
 
 ### 2. 마지막 보스전 시간 정지 (합의: 표시와 기록 모두, Boss 타입만)
-- `BattleManager`에 `private bool clockStopped;`
-- `HandleBossSpawned`: `spawnedBoss.Type == MonsterType.Boss`이면 `clockStopped = true`.
-- `Update`: `victoryTimer` 처리 다음, `elapsed += Time.deltaTime` 앞에서 `if (clockStopped) return;`. 보스 처치 후 승리 대기(`bossVictoryDelay`) 동안에도 멈춘 채 끝나고, 다시 켜지 않는다.
+- `BattleManager`에 `private int clockStopFrame = -1;` (마지막 보스가 나온 프레임)
+- `HandleBossSpawned`: `spawnedBoss.Type == MonsterType.Boss`이면 `clockStopFrame = Time.frameCount`.
+- `Update`: `victoryTimer` 처리 다음, `elapsed += Time.deltaTime` 앞에서 `if (clockStopFrame >= 0 && Time.frameCount > clockStopFrame) return;`. 보스가 나온 프레임의 시간까지는 더하고 다음 프레임부터 멈춘다. 보스 처치 후 승리 대기(`bossVictoryDelay`) 동안에도 멈춘 채 끝나고, 다시 켜지 않는다.
+  - 보스가 나온 프레임에 바로 멈추면, 그 프레임에서 `WaveManager.Update`가 `BattleManager.Update`보다 먼저 돌 때 `BattleManager.elapsed`가 480에 닿기 전(479.9x)에 멈춰 07:59가 된다(검증에서 발견). 프레임 단위로 멈추면 Update 순서와 상관없이 보스 등장 시각에서 멈춘다.
 - 결과 `seconds`(HUD, 결과창, `BattleResultRequest`)가 정지 시점 값이 된다. 계정 경험치(`seconds × accountExpPerSecond`)와 `bestSurvivalSeconds`가 보스전 시간만큼 줄어든다(합의). 서버는 실제 경과보다 큰 값만 자르므로(`BattleService.java:137`) 변경 없음.
 - `WaveManager.elapsed`는 멈추지 않는다. 보스전 동안 보스 외 스폰은 이미 건너뛰고, 보스 처치가 곧 클리어라 영향이 없다.
 - 중간 보스전 동안에는 시간이 흐른다(합의).
@@ -363,4 +364,39 @@ WaveManager.SpawnPattern
 - **기기 저장본**: 버전 3 저장본은 첫째 자리가 달라 쓰이지 않는다(`LoadUsableSavedVersion`). 따로 지우지 않는다.
 
 ## 검증 결과
-작업 후 기록한다.
+2026-10-13. 스테이지 진행은 에디터 하네스로 5배속 실행했다(플레이어 매 프레임 회복, 스킬 선택 자동, 중간 보스는 4:50·마지막 보스는 8:20까지 체력 유지 후 처치). 시각은 `WaveManager.Elapsed` 기준이다.
+
+**컴파일·로드**
+- 클라이언트 컴파일 에러 없음(`recompile_status` completed, `compilationFailed: false`).
+- 서버 `gradlew test` 통과(`CouServerApplicationTests` 포함, `.env` 환경변수와 Redis 필요). 4.0.0 데이터로 기동하고 `/api/static-data`가 4.0.0을 응답한다.
+- 서버 없이(기기 저장본 3.0.0은 첫째 자리가 달라 무시됨) LogInScene: 16개 테이블 로드, Monster 31 / MonsterAttack 52 / DropTable 16 / SpawnPattern 8 / Wave 11 / StageRoster 10, 로드 에러 없음.
+- `DropItemManager.prefabs[2]` = `Prefabs/DropItem/ExpGem3.prefab`.
+
+**스테이지 1 진행** (1회차, 콘솔 에러 0)
+- 11001: 1.5초 간격(중앙값 1.50) 2마리, 마지막 238.56. 노말3 포함 총 360마리(320 + 40).
+- 12001 120.07, 12002 360.06에 1마리씩.
+- 11008: 140.06, 180.06에 12마리, 체력 22.
+- 노말3: 140~220에 20초마다 11001 8마리. 처치되지 않은 돌진 몬스터는 스폰 거리의 1.97~2.02배를 간 뒤 킬 수 없이 사라졌다. 풀에서 다시 꺼내진 돌진 몬스터 26마리는 모두 플레이어에게 다가갔다(`Init` 초기화).
+- 중간 보스 240.06: 체력 78, 등장 시 일반·엘리트 정리, 결계·HP 바 켜짐, 경험치 바 숨김, HUD 04:00(시간 흐름).
+- 중간 보스 처치(290.06): 승리 없음, 결계·HP 바 꺼짐, 경험치 바 복귀. ExpGem3 1, LuckyBox 1, RewardBox 3 드롭.
+- 건너뛰기: 11003은 290.64부터 1초 간격 3마리(몰려나옴 없음, 379.64까지 90회). 상자는 250, 270이 건너뛰어졌다(230.07 → 290.23).
+- 11010: 380.06~479.05, 1.5초 간격 2마리 134마리.
+- 보스 13001 480.05: 체력 100. 보스전 동안 보스 외 스폰 0건. 처치 후 승리.
+- 처음 구현(보스가 나온 프레임에 바로 정지)에서는 HUD와 결과창이 07:59에서 멈췄다. 구현 결정 2처럼 다음 프레임부터 멈추게 고친 뒤 다시 실행(8배속)하니 480.08에 08:00이 되고 처치(486)와 승리 대기 동안 그대로였으며, 결과창도 08:00이다.
+- 재실행에서 마지막 보스 등장 순간 살아 있던 상자 1개가 정리 후에도 남았다(alive 2 = 보스 + 상자).
+- 서버로 보낸 `seconds`는 결과창 값과 같은 변수다. 가속 실행이라 서버는 실제 경과 + 5초로 잘랐다.
+
+**특색 패턴 덮어쓰기** (2·3회차, 메모리의 로스터 값을 바꿔 실행. 로그인 후에는 서버 저장본이 읽혀 파일 대신 이 방법을 썼다)
+- N2 → 8: 140.03, 180.03에 11008 8마리. N3 → 9: 11001 6마리가 추적하고 킬 없이 사라진 개체 0.
+- E1 → 10(Charge): 엘리트 8마리를 체력 유지로 살려 두면 15.5초 뒤에도 8마리 모두 플레이어 0.5~2.1 거리에 있다(돌진하지 않고 추적).
+- 서버 상한 기준값(8081에서 test7777로 큰 값 제출): kills 895, gold 11700, rewardBoxes 12. 기대값과 일치.
+- 서버 N1 → 4: kills 999999·seconds 0·패배로 제출하면 grantedExp 1056(= 킬 상한 1056, 전투 15). 되돌린 뒤 같은 제출은 상한 895(전투 16).
+
+**데이터 오류**
+- 클라이언트 movement 빈 값: `SpawnPattern 4의 formation "Random" 또는 movement ""을(를) 알 수 없습니다.`로 로드 실패.
+- 클라이언트 patternId -1: `StageRoster 3의 patternId는 0 이상이어야 합니다.`로 로드 실패.
+- 서버 15001의 Melee 행은 기동 검증 통과.
+- 서버 patternId 99: `StageRoster 2의 patternId 99을(를) SpawnPattern에서 찾을 수 없습니다.`로 기동 실패.
+- 서버 일반 몬스터 Melee(110011, 11001): `MonsterAttack 110011: 보스·중간 보스가 아닌 몬스터(monsterId 11001)는 MELEE를 쓸 수 없습니다.`로 기동 실패.
+- 서버 MidBoss DropTable 삭제: `DropTable에는 모든 monsterType([NORMAL, ELITE, MIDBOSS, BOSS, BOX])의 행이 있어야 합니다.`로 기동 실패.
+- 서버 검증은 첫 오류에서 멈추므로, Melee와 DropTable은 오류 하나만 남긴 데이터 폴더를 클래스패스 앞에 두고 따로 기동해 확인했다.
