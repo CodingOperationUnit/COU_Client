@@ -15,6 +15,7 @@ public static class SkillFactory
         { 20060, () => new Skill_Keyboard() },
         { 20010, () => new Skill_CtrlZ() },
         { 20020, () => new Skill_PowerStrip() },
+        { 20070, () => new Skill_CPU() },
 
         // 패시브 (21000대)
         // 임시: 실제 효과가 확정되기 전에 동작 확인용으로 기존 테스트 패시브를 연결해 둠
