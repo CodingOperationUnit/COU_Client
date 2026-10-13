@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using static EvolutionRules;
 
 // 진화 탭에 서버 진화 규칙(4종 순환, 계정 레벨당 4단계 제한)을 표시하고, 해금을 서버 요청으로 처리한다
 // EvolutionTab과 같은 오브젝트에 붙인다
@@ -99,6 +100,16 @@ public class EvolutionTabPresenter : MonoBehaviour
         if (isRequesting) return;
         if (index != currentStep) return;   // 다음 해금 노드만
 
+        // 서버와 같은 순서로 먼저 확인하고, 막히면 요청 없이 안내
+        var saveData = GameManager.PlayerData.currentData;
+        var block = EvolutionRules.GetBlock(EvolutionRules.Data, currentStep,
+                                            saveData.profile.accountLevel, saveData.currency.currencyGold);
+        if (block != EvolutionBlock.None)
+        {
+            UIManager.Instance.Get<LogPopup>().Show("알림", GetBlockMessage(block));
+            return;
+        }
+
         isRequesting = true;
         tab.SetUnlockInteractable(false);
 
@@ -123,16 +134,28 @@ public class EvolutionTabPresenter : MonoBehaviour
             tab.SetUnlockInteractable(true);
     }
 
+    // 서버 에러 code를 진화 차단 이유로 바꿔 같은 문구를 사용
     private static string GetFailMessage(ApiResult<EvolutionUpgradeResponse> result)
     {
         if (result.FailType == ApiFailType.ServerError && result.Error != null)
         {
-            if (result.Error.code == PlayerApi.ErrorNotEnoughGold) return "골드가 부족합니다.";
-            if (result.Error.code == PlayerApi.ErrorEvolutionLevelLocked) return "계정 레벨이 부족합니다.";
-            if (result.Error.code == PlayerApi.ErrorEvolutionMaxStepReached) return "더 이상 진화할 수 없습니다.";
+            switch (result.Error.code)
+            {
+                case PlayerApi.ErrorEvolutionMaxStepReached: return GetBlockMessage(EvolutionBlock.MaxStepReached);
+                case PlayerApi.ErrorEvolutionLevelLocked: return GetBlockMessage(EvolutionBlock.LevelLocked);
+                case PlayerApi.ErrorNotEnoughGold: return GetBlockMessage(EvolutionBlock.NotEnoughGold);
+            }
         }
-        return result.ToUserMessage("진화에 실패했습니다.");
+        return result.ToUserMessage("진화에 실패했습니다.");   // PLAYER_PROFILE_NOT_FOUND 등은 서버 안내 문구
     }
+
+    private static string GetBlockMessage(EvolutionBlock block) => block switch
+    {
+        EvolutionBlock.MaxStepReached => "모든 진화를 완료했습니다.",
+        EvolutionBlock.LevelLocked => "계정 레벨을 올리면 더 진화할 수 있습니다.",
+        EvolutionBlock.NotEnoughGold => "골드가 부족합니다.",
+        _ => "진화할 수 없습니다."
+    };
 
     private static string GetStatName(string statType) => statType switch
     {

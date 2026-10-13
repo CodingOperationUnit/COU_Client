@@ -8,6 +8,32 @@ using UnityEngine;
 // - 진화 스탯 = 스탯별 레벨 × 그 스탯의 evolutionIncreasePerLevel
 public static class EvolutionRules
 {
+    // 진화를 막는 이유 (서버와 같은 판단 순서: 최대 단계 → 계정 레벨 → 골드)
+    public enum EvolutionBlock
+    {
+        None,
+        MaxStepReached,   // 진화 최대 단계 도달 (레벨을 올려도 더 진화 불가)
+        LevelLocked,      // 계정 레벨 제한
+        NotEnoughGold
+    }
+
+    // 지금 진화할 수 있는지, 없다면 이유 (서버 E1 검사 순서와 동일)
+    public static EvolutionBlock GetBlock(EvolutionData data, int step, int accountLevel, int gold)
+    {
+        if (data == null) return EvolutionBlock.None;
+
+        if (data.evolutionMaxStep > 0 && step >= data.evolutionMaxStep)
+            return EvolutionBlock.MaxStepReached;
+
+        if (step >= System.Math.Max(accountLevel, 0) * StepsPerAccountLevel)
+            return EvolutionBlock.LevelLocked;
+
+        if (GetNextCost(data, step) > gold)
+            return EvolutionBlock.NotEnoughGold;
+
+        return EvolutionBlock.None;
+    }
+
     public static EvolutionData Data => GameManager.JsonData != null ? GameManager.JsonData.EvolutionData : null;
 
     // 계정 레벨당 진화할 수 있는 단계 수 (서버와 같은 값, 나중에 시트로 이동 예정)
