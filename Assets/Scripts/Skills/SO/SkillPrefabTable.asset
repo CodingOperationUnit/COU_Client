@@ -21,3 +21,13 @@ MonoBehaviour:
     Prefab: {fileID: 7578933503343459729, guid: 51c416e7e70d5e848bf818f081fef0a0, type: 3}
   - SkillId: 20040
     Prefab: {fileID: 5918010912394892784, guid: 80404a537fd09fe4d988042ee070e970, type: 3}
+  - SkillId: 20050
+    Prefab: {fileID: 3662629856818879847, guid: a39695b8c8b80a34ba1d4e6b69fbbcb8, type: 3}
+  - SkillId: 20060
+    Prefab: {fileID: 156895646617383541, guid: cb6041c47824d2c4293311d7109683bc, type: 3}
+  - SkillId: 20090
+    Prefab: {fileID: 7048623749671741063, guid: e06d17da40670f548a353c4366387d1d, type: 3}
+  - SkillId: 20080
+    Prefab: {fileID: 4324540493834723641, guid: 6f237ae07fe4e82428a21bf72745b378, type: 3}
+  - SkillId: 20070
+    Prefab: {fileID: 7294035956225713027, guid: d0de6e7658d93204b833bbcf25c83d4d, type: 3}

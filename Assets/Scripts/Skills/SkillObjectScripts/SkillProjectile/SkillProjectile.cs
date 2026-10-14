@@ -18,6 +18,8 @@ public abstract class SkillProjectile : SkillObject<ProjectileData>, ISkillPoola
 
     protected virtual void ApplyDamage(Enemy enemy)
     {
-        enemy.Damaged(stats.Damage, stats.SkillId);
+        PlayerDamageCalculator.HitResult hit = stats.CalculateHit();
+
+        enemy.Damaged(hit.damage, stats.SkillId);
     }
 }

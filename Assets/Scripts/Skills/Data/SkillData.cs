@@ -35,6 +35,12 @@ public class SkillData : ISerializationCallbackReceiver
 
     [NonSerialized] public SkillTargetType TargetType;
 
+    // 테이블 원본을 건드리지 않고 값을 바꿔 쓰기 위한 얕은 복사 (필드가 모두 값 타입/문자열이라 충분함)
+    //public SkillData Clone()
+    //{
+    //    return (SkillData)MemberwiseClone();
+    //}
+
     public void OnAfterDeserialize()
     {
         if(string.IsNullOrEmpty(skillType))

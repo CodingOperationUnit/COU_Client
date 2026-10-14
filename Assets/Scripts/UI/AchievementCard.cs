@@ -29,6 +29,12 @@ public class AchievementCard : MonoBehaviour
         Data = data;
         Progress = progress;
 
+        // 업적 ID로 아이콘을 찾는다. 없으면 이미지를 숨긴다.
+        Sprite icon = AchievementIcons.Get(data.achievementId);
+        iconImage.sprite = icon;
+        iconImage.enabled = icon != null;
+        iconImage.preserveAspect = true;
+        
         bool allClaimed = progress.claimedStep >= data.TierCount;
         int step = Mathf.Min(progress.claimedStep, data.TierCount - 1);   // 다음에 받을 단계 (0부터)
         long target = data.GetTargetValue(step);

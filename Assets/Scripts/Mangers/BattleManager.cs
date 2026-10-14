@@ -46,6 +46,7 @@ public class BattleManager : MonoBehaviour
     private bool ended;
     private float victoryTimer;
     private int clockStopFrame = -1;   // 마지막 보스가 나온 프레임. 다음 프레임부터 전투 시간 정지
+    private int luckTrains;   // 업적: 행운열차 완주 횟수
 
     private long battleId;
     private bool hasBattleId;   // 메인 씬을 거치지 않고 실행하면 battleId가 없어 결과를 보내지 않는다
@@ -182,6 +183,13 @@ public class BattleManager : MonoBehaviour
         kills++;
         hud.SetKillCount(kills);
         pauseWindow.SetKillCount(kills);
+    }
+    
+    // 행운열차가 끝까지 진행됐을 때 PlayerLuckTrain이 부른다 (건너뜀·중단은 세지 않음)
+    public void AddLuckTrain()
+    {
+        if (ended) return;
+        luckTrains++;
     }
 
     public void AddGold(int amount)
@@ -366,7 +374,8 @@ public class BattleManager : MonoBehaviour
             rewardBoxes = rewardBoxes,
             skillKills = new Dictionary<int, int>(skillKills),
             skillUpgrades = new Dictionary<int, int>(skillUpgrades),
-            pickups = new Dictionary<string, int>(pickups)
+            pickups = new Dictionary<string, int>(pickups),
+            luckTrains = luckTrains
         };
 
         resultWindow.SetWaiting(true);

@@ -115,11 +115,12 @@ public abstract class SkillBase
     // 스킬 오브젝트에 넘길 최종 수치 계산 (레벨 배율, 패시브 보너스 반영)
     protected SkillStats BuildStats()
     {
-        int damage = Mathf.RoundToInt(GetPercentStat(SkillPercentStat.Damage, skillData.skillDamage * DamageMultiplier));
+        // 반올림하지 않고 배율 그대로 넘김 (공격력, 치명타, 반올림은 맞힐 때 PlayerDamageCalculator가 처리)
+        float skillMultiplier = GetPercentStat(SkillPercentStat.Damage, skillData.skillDamage * DamageMultiplier);
         float speed = GetPercentStat(SkillPercentStat.Speed, skillData.skillSpeed);
         float scale = GetPercentStat(SkillPercentStat.Area, 1.0f);
 
-        return new SkillStats(SkillId, damage, speed, scale);
+        return new SkillStats(SkillId, skillMultiplier, speed, scale, stats);
     }
 
     // 풀에서 스킬 오브젝트를 꺼내 초기화. 초기화 인자 구조체 타입(TInitData)은 호출부에서 추론됨
