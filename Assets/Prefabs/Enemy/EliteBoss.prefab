@@ -115,11 +115,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BossMonster
   attackRange: 0.6
   attackInterval: 1
+  hitAnimDuration: 0.2
+  deadAnimDuration: 0.5
+  chargeSpeedMultiplier: 2
   currentHp: 0
   isDead: 0
   player: {fileID: 2129776847289895548, guid: ddf2cdd10591fe24994fba07b40bb824, type: 3}
-  hitAnimDuration: 0.2
-  deadAnimDuration: 0.5
   chaseDurationRange: {x: 2, y: 3.5}
   idleDurationRange: {x: 0.6, y: 1.2}
   windupTime: 0.8
@@ -155,9 +156,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyVisual
   visualRoot: {fileID: 4712657861277433800}
-  legacyRenderer: {fileID: 6894254765569232408}
+  spriteRenderer: {fileID: 6894254765569232408}
   assetFacesLeft: 1
   maxCachedVisuals: 3
+  sortingLayerName: Character
 --- !u!1 &4593731353086508635
 GameObject:
   m_ObjectHideFlags: 0

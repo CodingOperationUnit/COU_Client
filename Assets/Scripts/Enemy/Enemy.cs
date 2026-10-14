@@ -16,6 +16,11 @@ public abstract class Enemy : MonoBehaviour, IPoolable
     [Header("Charge")]
     [SerializeField] private float chargeSpeedMultiplier = 2f;   // 돌진 속도 = monsterMoveSpeed × 배율
 
+    [Header("Knockback")]
+    [SerializeField] private float knockbackDistance = 0.3f;   // 한 번에 밀리는 거리 (0이면 제자리 경직)
+    [SerializeField] private float knockbackDuration = 0.1f;   // 밀리는 시간(초)
+    [SerializeField] private float knockbackCooldown = 0.25f;  // 다시 밀릴 수 있기까지(초, 연속 피격 시 계속 밀리지 않게)
+
     public MonsterData Data { get; private set; }
     // 스테이지 로스터 배율을 적용한 최대 체력
     public int MaxHp { get; private set; }
@@ -35,6 +40,10 @@ public abstract class Enemy : MonoBehaviour, IPoolable
     private Collider2D hitCollider;
     private float hitEndTime;
 
+    private Vector3 knockbackVelocity;   // 넉백 중 이동 속도
+    private float knockbackEndTime;      // 이 시각까지 넉백 중
+    private float nextKnockbackTime;     // 이 시각 이후에 다시 넉백 가능
+
     // 추적할 Player
     public GameObject player;
     protected PlayerHealth playerHealth;
@@ -52,6 +61,14 @@ public abstract class Enemy : MonoBehaviour, IPoolable
     public MonsterType Type => Data != null ? Data.Type : MonsterType.Normal;
     public bool IsBoss => Data != null && Data.IsBoss;
     public float HpRatio => MaxHp <= 0 ? 0f : (float)currentHp / MaxHp;
+
+    // 등급별 넉백 저항(0 = 100% 밀림, 1 = 안 밀림) 기본값
+    protected virtual float KnockbackResistance => Type switch
+    {
+        MonsterType.Normal => 0f,
+        MonsterType.Elite => 0.5f,
+        _ => 1f      // Boss, Box: 밀리지 않음
+    };
 
     protected virtual void Awake()
     {
@@ -85,6 +102,11 @@ public abstract class Enemy : MonoBehaviour, IPoolable
         hitEndTime = 0f;
 
         chargeRemaining = 0f;   // 풀 재사용 시 이전 돌진이 남지 않게
+
+        // 풀 재사용 시 이전 넉백이 남지 않게
+        knockbackEndTime = 0f;
+        nextKnockbackTime = 0f;
+        knockbackVelocity = Vector3.zero;
 
         OnInit();
     }
@@ -135,7 +157,15 @@ public abstract class Enemy : MonoBehaviour, IPoolable
             visual?.PlayWalk();
         }
 
-        Move();
+        // 넉백 중이면 추적(Move) 대신 밀려나는 이동만 함. 끝나면 다시 추적
+        if (Time.time < knockbackEndTime)
+        {
+            transform.position += knockbackVelocity * Time.deltaTime;
+        }
+        else
+        {
+            Move();
+        }
         // 돌진을 마쳐 반납된 프레임에는 공격하지 않음
         if (isDead) { return; }
         Attack();
@@ -212,9 +242,32 @@ public abstract class Enemy : MonoBehaviour, IPoolable
             visual.PlayHit();
             hitEndTime = Time.time + hitAnimDuration;
         }
+
+        // 살아남았을 때만 넉백
+        ApplyKnockback();
     }
 
-    // 스킬이 아닌 즉사(폭탄 등). 마지막 타격 스킬을 지워서 스킬 처치 업적에 집계되지 않게 한다
+    // 플레이어 반대 방향으로 knockbackDuration 동안 (거리 × 저항 반영)만큼 밀어냄
+    private void ApplyKnockback()
+    {
+        float power = 1f - KnockbackResistance;
+        if (power <= 0f) { return; }                        // 보스, 상자
+        if (chargeRemaining > 0f) { return; }               // 돌진 중에는 끊지 않음
+        if (Time.time < nextKnockbackTime) { return; }      // 쿨타임 중
+        if (player == null) { return; }
+
+        Vector3 direction = transform.position - player.transform.position;
+        if (direction.sqrMagnitude < 0.0001f) direction = Vector3.right;   // 완전히 겹쳤을 때 대비
+        direction.Normalize();
+
+        // 거리 = 속력 × 시간 → 속력 = 거리 ÷ 시간
+        float speed = knockbackDistance * power / Mathf.Max(knockbackDuration, 0.01f);
+        knockbackVelocity = direction * speed;
+        knockbackEndTime = Time.time + knockbackDuration;
+        nextKnockbackTime = Time.time + knockbackCooldown;
+    }
+
+    // 스킬이 아닌 즉사(폭탄 등). 마지막 타격 스킬을 지워서 스킬 처치 업적에 집계되지 않음
     public void Kill()
     {
         LastHitSkillId = 0;

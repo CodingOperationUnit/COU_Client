@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Serialization;
 
 // 몬스터 "외형"만 담당하는 컴포넌트
 public class EnemyVisual : MonoBehaviour
 {
     [SerializeField] private Transform visualRoot;          // 외형 프리팹을 붙일 곳
+    [FormerlySerializedAs("legacyRenderer")]                // 프리팹 파일에 "legacyRenderer"로 저장된 값을 이 필드로 읽어 옴
     [SerializeField] private SpriteRenderer spriteRenderer; 
     [SerializeField] private bool assetFacesLeft = false;   // 에셋 원본이 왼쪽을 보면 체크
     [SerializeField] private int maxCachedVisuals = 3;      // 이 오브젝트가 들고 있을 외형 수 상한
@@ -18,6 +20,9 @@ public class EnemyVisual : MonoBehaviour
 
     // 모든 몬스터가 함께 쓰는 static 캐시
     private static readonly Dictionary<string, GameObject> prefabCache = new();
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetCache() => prefabCache.Clear();
 
     // 같은 외형을 다시 입을 때 Instantiate하지 않고 켜기만 함
     private readonly Dictionary<string, GameObject> owned = new();
@@ -76,6 +81,10 @@ public class EnemyVisual : MonoBehaviour
                 Debug.LogWarning($"[EnemyVisual] 외형 에셋을 찾을 수 없습니다: {assetPath}");
             }
             renderers = new[] { spriteRenderer };
+        }
+        else
+        {
+            Debug.LogWarning($"[EnemyVisual] {name}: spriteRenderer가 연결되지 않아 외형을 적용할 수 없습니다 ({assetPath})", this);
         }
 
         CacheColors();
