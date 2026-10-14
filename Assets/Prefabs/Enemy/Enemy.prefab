@@ -115,11 +115,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Monster
   attackRange: 0.6
   attackInterval: 1
+  hitAnimDuration: 0.2
+  deadAnimDuration: 0.5
+  chargeSpeedMultiplier: 2
   currentHp: 0
   isDead: 0
   player: {fileID: 2129776847289895548, guid: ddf2cdd10591fe24994fba07b40bb824, type: 3}
-  hitAnimDuration: 0.2
-  deadAnimDuration: 0.5
   projectilePrefab: {fileID: 6102526803870317478, guid: fcb17a9c66770c74ca68170cf7fc4f06, type: 3}
   projectileSpeed: 5
   projectileLifeTime: 3
@@ -144,9 +145,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyVisual
   visualRoot: {fileID: 434148136971551842}
-  legacyRenderer: {fileID: 6894254765569232408}
+  spriteRenderer: {fileID: 6894254765569232408}
   assetFacesLeft: 1
   maxCachedVisuals: 3
+  sortingLayerName: Character
 --- !u!1 &5214109458787997363
 GameObject:
   m_ObjectHideFlags: 0
