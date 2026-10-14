@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections;
-using UnityEngine;
 
-public static class PlayerEvolution
+// 진화 처리: 서버 요청 + 응답의 진화 레벨·재화를 계정 데이터에 덮어쓰기
+// 골드는 직접 빼지 않고 서버 응답 값으로 덮어쓴다 (전투 입장 응답 처리와 같은 방식)
+// 사용: StartCoroutine(EvolutionService.Upgrade(result => { ... }));
+public static class EvolutionService
 {
     public static IEnumerator Upgrade(Action<ApiResult<EvolutionUpgradeResponse>> onComplete)
     {
@@ -15,12 +17,13 @@ public static class PlayerEvolution
         });
     }
 
-    public static void Apply (EvolutionUpgradeResponse response)
+    private static void Apply(EvolutionUpgradeResponse response)
     {
         var dataManager = GameManager.PlayerData;
         if (dataManager == null || !dataManager.isPlayerDataLoaded) return;
 
         var data = dataManager.currentData;
+
         if (response.playerStat != null)
             data.playerStat = response.playerStat;
 

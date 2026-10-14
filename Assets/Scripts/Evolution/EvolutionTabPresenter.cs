@@ -114,7 +114,7 @@ public class EvolutionTabPresenter : MonoBehaviour
         tab.SetUnlockInteractable(false);
 
         // 탭이 닫혀도 요청이 끝까지 처리되도록, 씬 전환에도 유지되는 PlayerDataManager에서 실행
-        GameManager.PlayerData.StartCoroutine(PlayerEvolution.Upgrade(OnUpgraded));
+        GameManager.PlayerData.StartCoroutine(EvolutionService.Upgrade(OnUpgraded));
     }
 
     private void OnUpgraded(ApiResult<EvolutionUpgradeResponse> result)
