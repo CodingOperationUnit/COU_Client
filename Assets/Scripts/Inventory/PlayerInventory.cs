@@ -378,7 +378,21 @@ public class PlayerInventory : MonoBehaviour
         SyncAndNotify();
         return added;
     }
-    
+
+    // 서버가 지급한 장비 목록을 추가한다 (개발용 장비 지급)
+    public List<OwnedItem> AddServerItems(List<InventoryData> saved)
+    {
+        var added = new List<OwnedItem>();
+        foreach (var data in saved)
+        {
+            var item = AddServerItem(data);
+            if (item != null) added.Add(item);
+        }
+
+        SyncAndNotify();
+        return added;
+    }
+
     // 서버가 만든 장비를 추가한다 (ID는 서버 값 그대로, 이미 있으면 무시)
     private OwnedItem AddServerItem(InventoryData saved)
     {
