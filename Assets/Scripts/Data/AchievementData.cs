@@ -3,8 +3,10 @@ using System;
 // 시트 값과 이름이 같아야 한다 (Enum.TryParse는 대소문자를 구분한다.)
 public enum AchievementConditionType
 {
-    KillBySkill, PickupDropItem, UpgradeSkill, GainBattleExp
+    KillBySkill, PickupDropItem, UpgradeSkill, GainBattleExp,
+    GainBattleGold, ClearStage, PlayLuckTrain
 }
+
 public enum AchievementRewardType { Gold, Gem }
 
 // 업적 하나. 단계는 배열 순서이고, targetValue·rewardItemType·rewardAmount의 같은 칸이 한 단계다.

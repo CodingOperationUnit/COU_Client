@@ -59,6 +59,7 @@ public class BattleResultRequest
     public Dictionary<int, int> skillKills = new();
     public Dictionary<int, int> skillUpgrades = new();
     public Dictionary<string, int> pickups = new();
+    public int luckTrains;   // 행운열차 완주 횟수
 }
 
 [Serializable]
