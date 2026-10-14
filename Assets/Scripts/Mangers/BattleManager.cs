@@ -8,6 +8,9 @@ public class BattleManager : MonoBehaviour
 
     public static BattleManager Instance { get; private set; }
 
+    // 배속. 일시정지가 모두 풀리면 이 값으로 돌아간다
+    public float Speed { get; private set; } = 1f;
+
     [SerializeField] private PlayerHealth playerHealth;
     [SerializeField] private PlayerLootReceiver lootReceiver;
     [SerializeField] private SkillController skillController;
@@ -63,6 +66,7 @@ public class BattleManager : MonoBehaviour
         spawner.OnEnemyKilled += HandleEnemyKilled;
         spawner.OnBossSpawned += HandleBossSpawned;
         spawner.OnBossKilled += HandleBossKilled;
+        lootReceiver.OnPickedUp += HandlePickedUp;
     }
 
     private void OnDisable()
@@ -72,6 +76,7 @@ public class BattleManager : MonoBehaviour
         spawner.OnEnemyKilled -= HandleEnemyKilled;
         spawner.OnBossSpawned -= HandleBossSpawned;
         spawner.OnBossKilled -= HandleBossKilled;
+        lootReceiver.OnPickedUp -= HandlePickedUp;
     }
 
     private void Start()
@@ -133,7 +138,14 @@ public class BattleManager : MonoBehaviour
     {
         pauseRequests.Remove(requester);
         if (pauseRequests.Count == 0)
-            Time.timeScale = 1f;
+            Time.timeScale = Speed;
+    }
+
+    public void SetSpeed(float value)
+    {
+        Speed = value;
+        if (pauseRequests.Count == 0)
+            Time.timeScale = Speed;
     }
 
     public void Surrender()
@@ -159,6 +171,9 @@ public class BattleManager : MonoBehaviour
         if (pendingLevelUps > 0 && !selectWindow.IsOpen)
             ShowSelection();
     }
+
+    // 다음 레벨까지 남은 경험치를 채워 한 레벨 올린다
+    public void LevelUp() => AddExp(RequiredExp - exp);
 
     public void AddKill()
     {
@@ -217,11 +232,13 @@ public class BattleManager : MonoBehaviour
             victoryTimer = bossVictoryDelay;
     }
 
+    private void HandlePickedUp(DropItemType type)
+    {
+        if (!ended) Increase(pickups, type.ToString());
+    }
+    
     private void HandleLooted(DropItemType type)
     {
-        if (!ended)
-            Increase(pickups, type.ToString());
-        
         if (type >= DropItemType.ExpGem1 && type <= DropItemType.ExpGem4)
             AddExp(GameManager.JsonData.GetDropItemDataFromJson(type).value);
         else if (type >= DropItemType.Gold1 && type <= DropItemType.Gold4)
