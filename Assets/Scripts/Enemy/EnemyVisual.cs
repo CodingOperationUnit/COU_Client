@@ -21,6 +21,9 @@ public class EnemyVisual : MonoBehaviour
     // 모든 몬스터가 함께 쓰는 static 캐시
     private static readonly Dictionary<string, GameObject> prefabCache = new();
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetCache() => prefabCache.Clear();
+
     // 같은 외형을 다시 입을 때 Instantiate하지 않고 켜기만 함
     private readonly Dictionary<string, GameObject> owned = new();
 
