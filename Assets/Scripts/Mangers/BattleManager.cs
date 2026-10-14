@@ -63,6 +63,7 @@ public class BattleManager : MonoBehaviour
         spawner.OnEnemyKilled += HandleEnemyKilled;
         spawner.OnBossSpawned += HandleBossSpawned;
         spawner.OnBossKilled += HandleBossKilled;
+        lootReceiver.OnPickedUp += HandlePickedUp;
     }
 
     private void OnDisable()
@@ -72,6 +73,7 @@ public class BattleManager : MonoBehaviour
         spawner.OnEnemyKilled -= HandleEnemyKilled;
         spawner.OnBossSpawned -= HandleBossSpawned;
         spawner.OnBossKilled -= HandleBossKilled;
+        lootReceiver.OnPickedUp -= HandlePickedUp;
     }
 
     private void Start()
@@ -217,11 +219,13 @@ public class BattleManager : MonoBehaviour
             victoryTimer = bossVictoryDelay;
     }
 
+    private void HandlePickedUp(DropItemType type)
+    {
+        if (!ended) Increase(pickups, type.ToString());
+    }
+    
     private void HandleLooted(DropItemType type)
     {
-        if (!ended)
-            Increase(pickups, type.ToString());
-        
         if (type >= DropItemType.ExpGem1 && type <= DropItemType.ExpGem4)
             AddExp(GameManager.JsonData.GetDropItemDataFromJson(type).value);
         else if (type >= DropItemType.Gold1 && type <= DropItemType.Gold4)
