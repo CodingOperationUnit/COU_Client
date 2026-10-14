@@ -59,7 +59,9 @@ public class AoeHitObject : SkillObject<AoEData>
     // 판정에 걸린 적 하나에 주는 효과. 기본은 대미지
     protected virtual void OnHitEnemy(Enemy enemy)
     {
-        enemy.Damaged(stats.Damage, stats.SkillId);
+        PlayerDamageCalculator.HitResult hit = stats.CalculateHit();
+
+        enemy.Damaged(hit.damage, stats.SkillId);
     }
 
     private void Update()

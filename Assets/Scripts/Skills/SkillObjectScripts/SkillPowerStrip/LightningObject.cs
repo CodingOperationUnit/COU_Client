@@ -39,7 +39,9 @@ public sealed class LightningObject : SkillObject<LinkData>
 
         if(_target != null && _target.TryGetComponent(out Enemy enemy))
         {
-            enemy.Damaged(stats.Damage, stats.SkillId);
+            PlayerDamageCalculator.HitResult hit = stats.CalculateHit();
+
+            enemy.Damaged(hit.damage, stats.SkillId);
         }
 
         UpdateShape();

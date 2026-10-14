@@ -2,19 +2,28 @@ using UnityEngine;
 
 // 레벨 배율과 패시브 보너스가 모두 반영된, 스킬 오브젝트가 그대로 쓰는 최종 수치
 // SkillData(기획 원본 값)와 달리 스킬 클래스가 계산을 끝낸 값만 담음
+// 대미지는 스킬 몫인 배율까지만 계산해 두고, 공격력/치명타/반올림은 맞힐 때 플레이어 쪽(PlayerDamageCalculator)에서 계산함
 public readonly struct SkillStats
 {
     public readonly int SkillId; // 피해를 준 스킬 (업적 '스킬로 처치' 집계용)
-    public readonly int Damage;
+    public readonly float SkillMultiplier; // 반올림하지 않은 스킬 배율 (skillDamage × 레벨 배율 × 패시브)
     public readonly float Speed;
     public readonly float Scale; // 1.0 = 프리팹 원래 크기
+    public readonly PlayerStats PlayerStats;
 
-    public SkillStats(int skillId, int damage, float speed, float scale)
+    public SkillStats(int skillId, float skillMultiplier, float speed, float scale, PlayerStats playerStats)
     {
         SkillId = skillId;
-        Damage = damage;
+        SkillMultiplier = skillMultiplier;
         Speed = speed;
         Scale = scale;
+        PlayerStats = playerStats;
+    }
+
+    // 적을 맞힐 때마다 호출. 치명타는 맞힐 때마다 따로 판정됨
+    public PlayerDamageCalculator.HitResult CalculateHit()
+    {
+        return PlayerDamageCalculator.Calculate(SkillMultiplier, PlayerStats);
     }
 }
 
