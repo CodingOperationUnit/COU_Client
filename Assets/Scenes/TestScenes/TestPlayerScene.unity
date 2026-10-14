@@ -256,17 +256,6 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
---- !u!114 &596966427 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2300210516906745010, guid: ddf2cdd10591fe24994fba07b40bb824, type: 3}
-  m_PrefabInstance: {fileID: 927589469}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 156be5555660ea943b3c5482791338e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
 --- !u!1 &616673701
 GameObject:
   m_ObjectHideFlags: 0
@@ -518,56 +507,9 @@ MonoBehaviour:
   weaponSet: {fileID: 11400000, guid: d6522cedd82510944a3acbcbabf8b5d0, type: 2}
   rightWeapon: {fileID: 1883431559}
   leftWeapon: {fileID: 1528063732}
+  keepInPlace: 1
   testItemId: 6001
   testAttackIndex: 0
---- !u!1 &1486163991
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1486163993}
-  - component: {fileID: 1486163992}
-  m_Layer: 0
-  m_Name: PlayerDebug
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &1486163992
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1486163991}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d13a89f6e1cca446aa6b4ce5f5d2604, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerDebug
-  playerHealth: {fileID: 596966427}
-  testDamage: 50
-  testHeal: 20
-  dropSpawnRange: 5
---- !u!4 &1486163993
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1486163991}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.62067, y: 0.52544, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1528063732 stripped
 SpriteRenderer:
   m_CorrespondingSourceObject: {fileID: 9142348618200188118, guid: 66e0c429df17007418c2a28db104bec1, type: 3}
@@ -1033,6 +975,7 @@ MonoBehaviour:
   - {fileID: 378594412524781042, guid: ab6603c669c7fb0419b3e1d410417649, type: 3}
   - {fileID: 1865253456388194576, guid: 676b04199e6683743b4a43b0c293756c, type: 3}
   - {fileID: 5453479888057110866, guid: 523eeee7abf2ca447b544bdefb0abd0b, type: 3}
+  dropSpreadRadius: 1
   recoilDistance: 1
   recoilDuration: 0.15
   chaseStartSpeed: 5
@@ -1060,7 +1003,6 @@ SceneRoots:
   - {fileID: 544105669}
   - {fileID: 1618805596}
   - {fileID: 927589469}
-  - {fileID: 1486163993}
   - {fileID: 1568508994}
   - {fileID: 616673703}
   - {fileID: 1936436312}
