@@ -13,6 +13,9 @@ public class PlayerLootReceiver : MonoBehaviour, ILootReceiver
 
     // Potion, Magnet, Bomb을 제외한 아이템 획득 알림 (경험치, 골드, 상자)
     public event Action<DropItemType> OnLooted;
+    
+    // 종류와 상관없이 모든 아이템 획득 알림 (업적 집계)
+    public event Action<DropItemType> OnPickedUp;
 
     public Vector2 Position => transform.position;
     public float LootRadius => playerStats.LootRadius;
@@ -37,10 +40,16 @@ public class PlayerLootReceiver : MonoBehaviour, ILootReceiver
 
     public void OnLoot(DropItemType type)
     {
+        OnPickedUp?.Invoke(type);
+        
         switch (type)
         {
             case DropItemType.Potion:
-                playerHealth.Heal(GameManager.JsonData.GetDropItemDataFromJson(DropItemType.Potion).value);
+                // 포션 회복 = 데이터 값 + 포션 회복량(진화)
+                int potionHeal = GameManager.JsonData.GetDropItemDataFromJson(DropItemType.Potion).value
+                               + (playerStats != null ? playerStats.FinalPotionRecovery : 0);
+                playerHealth.Heal(potionHeal);
+                Debug.Log("[PlayerLootReceiver] 포션 회복 " + potionHeal);
                 break;
 
             case DropItemType.Magnet:
@@ -83,7 +92,7 @@ public class PlayerLootReceiver : MonoBehaviour, ILootReceiver
 
             if (enemy.Type == MonsterType.Normal)
             {
-                enemy.Die();
+                enemy.Kill();   // 폭탄 처치는 스킬 처치로 집계하지 않는다
                 killed++;
             }
             else

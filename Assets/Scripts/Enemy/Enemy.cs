@@ -214,6 +214,13 @@ public abstract class Enemy : MonoBehaviour, IPoolable
         }
     }
 
+    // 스킬이 아닌 즉사(폭탄 등). 마지막 타격 스킬을 지워서 스킬 처치 업적에 집계되지 않게 한다
+    public void Kill()
+    {
+        LastHitSkillId = 0;
+        Die();
+    }
+
     // 몬스터가 죽었을 때
     public void Die(bool giveReward = true)
     {
