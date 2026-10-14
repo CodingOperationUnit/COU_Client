@@ -9,6 +9,7 @@ using UnityEngine.Jobs;
 public class DropItemManager : MonoSingleton<DropItemManager>
 {
     [SerializeField] private GameObject[] prefabs;
+    [SerializeField] private float dropSpreadRadius = 1f;
     [SerializeField] private float recoilDistance = 1f;
     [SerializeField] private float recoilDuration = 0.15f;
     [SerializeField] private float chaseStartSpeed = 5f;
@@ -90,6 +91,7 @@ public class DropItemManager : MonoSingleton<DropItemManager>
         IReadOnlyList<DropTableEntryData> entries = GameManager.JsonData.GetDropTableFromJson(type);
         if (entries == null) return;
 
+        int dropIndex = 0;
         int start = 0;
         while (start < entries.Count)
         {
@@ -109,8 +111,17 @@ public class DropItemManager : MonoSingleton<DropItemManager>
 
                 if (!entries[i].IsNone)
                 {
-                    for (int n = 0; n < entries[i].count; n++)
-                        Spawn(entries[i].Type, position);
+                    // 1번째는 정위치, 2~9번째는 8각형 꼭짓점, 10번째부터는 다시 정위치
+                    for (int n = 0; n < entries[i].count; n++, dropIndex++)
+                    {
+                        Vector2 offset = Vector2.zero;
+                        if (dropIndex >= 1 && dropIndex <= 8)
+                        {
+                            float angle = (dropIndex - 1) * 45f * Mathf.Deg2Rad;
+                            offset = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * dropSpreadRadius;
+                        }
+                        Spawn(entries[i].Type, position + offset);
+                    }
                 }
                 break;
             }

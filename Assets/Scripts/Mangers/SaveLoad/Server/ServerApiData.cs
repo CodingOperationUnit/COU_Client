@@ -54,6 +54,11 @@ public class BattleResultRequest
     public int kills;
     public int gold;
     public int rewardBoxes;
+    
+    // 업적 진행 집계
+    public Dictionary<int, int> skillKills = new();
+    public Dictionary<int, int> skillUpgrades = new();
+    public Dictionary<string, int> pickups = new();
 }
 
 [Serializable]
@@ -166,4 +171,60 @@ public class RankingResponse
     public List<RankingEntryResponse> entries;
     public int? myRank;        // 기록 없으면 null
     public int? myValue;
+}
+
+// ===== 친구 =====
+
+public enum FriendRelation { NONE, FRIEND, REQUEST_SENT, REQUEST_RECEIVED }
+
+// 친구 한 명 (친구 목록, 수락 응답)
+[Serializable]
+public class FriendResponse
+{
+    public long playerId;
+    public string nickname;
+    public int accountLevel;
+    public long combatPower;
+    public bool online;
+}
+
+// GET /api/friends 응답
+[Serializable]
+public class FriendListResponse
+{
+    public List<FriendResponse> friends;
+    public int maxFriends;
+}
+
+// GET /api/friends/requests 응답 한 줄 (받은 요청)
+[Serializable]
+public class FriendRequestResponse
+{
+    public long requestId;
+    public long playerId;
+    public string nickname;
+    public int accountLevel;
+}
+
+// GET /api/friends/search 응답 한 줄
+[Serializable]
+public class FriendSearchResponse
+{
+    public long playerId;
+    public string nickname;
+    public int accountLevel;
+    public FriendRelation relation;
+}
+
+// POST /api/friends/requests 요청 / 응답
+[Serializable]
+public class FriendRequestBody
+{
+    public long targetPlayerId;
+}
+
+[Serializable]
+public class FriendRequestResultResponse
+{
+    public FriendRelation relation; // REQUEST_SENT 또는 FRIEND(상대가 먼저 보낸 상태라 바로 친구) /
 }
