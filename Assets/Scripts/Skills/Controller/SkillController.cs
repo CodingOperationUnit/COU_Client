@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class SkillController : MonoBehaviour
 {
@@ -43,11 +42,6 @@ public class SkillController : MonoBehaviour
         {
             skill.Tick(Time.deltaTime);
         }
-
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-        // Press 1: Shuriken, 2: Revolver, 3: Katana
-        UpdateDebugInput();
-#endif
     }
 
     public bool EquipSkill(int skillId)
@@ -168,66 +162,4 @@ public class SkillController : MonoBehaviour
             Gizmos.DrawWireSphere(transform.position, _activeSkills[i].Range);
         }
     }
-
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-    // 테스트
-    private void UpdateDebugInput()
-    {
-        Keyboard keyboard = Keyboard.current;
-
-        if(keyboard == null)
-        {
-            return;
-        }
-
-        if(keyboard.digit1Key.wasPressedThisFrame)
-        {
-            if(EquipSkill(20010))
-            {
-                Debug.Log("스킬: Shuriken");
-            }
-        }
-
-        if(keyboard.digit2Key.wasPressedThisFrame)
-        {
-            if(EquipSkill(20020))
-            {
-                Debug.Log("스킬: Revolver");
-            }
-        }
-
-        if(keyboard.digit3Key.wasPressedThisFrame)
-        {
-            if(EquipSkill(20030))
-            {
-                Debug.Log("스킬: Katana");
-            }
-        }
-
-        if (keyboard.digit4Key.wasPressedThisFrame)
-        {
-            if (EquipSkill(20040))
-            {
-                Debug.Log("스킬: Planet");
-            }
-        }
-
-        // 패시브 (5: 투사체 수 증가, 6: 대미지 증가)
-        if(keyboard.digit5Key.wasPressedThisFrame)
-        {
-            if(EquipSkill(21010))
-            {
-                Debug.Log("패시브: ProjectileUp");
-            }
-        }
-
-        if(keyboard.digit6Key.wasPressedThisFrame)
-        {
-            if(EquipSkill(21070))
-            {
-                Debug.Log("패시브: DamageUp");
-            }
-        }
-    }
-#endif
 }

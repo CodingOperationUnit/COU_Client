@@ -23,6 +23,10 @@ public static class PlayerStatCalculator
         public bool HasEvolutionData;
         public int CombatPower;
         public bool HasCombatPowerData;
+        public int EvolutionPotionRecovery;
+        public int FinalPotionRecovery;
+        public int EquipmentMoveSpeedPercent;
+        public float FinalMoveSpeed;
     }
 
 
@@ -35,6 +39,7 @@ public static class PlayerStatCalculator
             BaseHp = baseStat.playerBaseHp,
             EvolutionAttack = EvolutionRules.GetBonus(evolution, playerStat, PlayerStatType.Attack),
             EvolutionHp = EvolutionRules.GetBonus(evolution, playerStat, PlayerStatType.Hp),
+            EquipmentMoveSpeedPercent = equipped.Sum(item => item.Data.moveSpeedBonus),
             EquipmentAttack = equipped.Sum(item => item.ScaledAttack),
             EquipmentHp = equipped.Sum(item => item.ScaledHp),
             HasEvolutionData = evolution != null
@@ -45,6 +50,12 @@ public static class PlayerStatCalculator
 
         result.EvolutionDefense = EvolutionRules.GetBonus(evolution, playerStat, PlayerStatType.Defense);
         result.FinalDefense = result.EvolutionDefense;
+
+        result.EvolutionPotionRecovery = EvolutionRules.GetBonus(evolution, playerStat, PlayerStatType.PotionRecovery);
+        result.FinalPotionRecovery = result.EvolutionPotionRecovery;
+
+        float moveSpeed = baseStat.playerBaseMoveSpeed * (100 + result.EquipmentMoveSpeedPercent) / 100f;
+        result.FinalMoveSpeed = Mathf.Min(moveSpeed, baseStat.playerBaseMaxMoveSpeed);
 
         // 전투력 (랭킹용, 서버와 같은 정수 계산)
         var combatPower = GameManager.JsonData != null ? GameManager.JsonData.CombatPowerData : null;

@@ -8,6 +8,9 @@ public class BattleManager : MonoBehaviour
 
     public static BattleManager Instance { get; private set; }
 
+    // 배속. 일시정지가 모두 풀리면 이 값으로 돌아간다
+    public float Speed { get; private set; } = 1f;
+
     [SerializeField] private PlayerHealth playerHealth;
     [SerializeField] private PlayerLootReceiver lootReceiver;
     [SerializeField] private SkillController skillController;
@@ -135,7 +138,14 @@ public class BattleManager : MonoBehaviour
     {
         pauseRequests.Remove(requester);
         if (pauseRequests.Count == 0)
-            Time.timeScale = 1f;
+            Time.timeScale = Speed;
+    }
+
+    public void SetSpeed(float value)
+    {
+        Speed = value;
+        if (pauseRequests.Count == 0)
+            Time.timeScale = Speed;
     }
 
     public void Surrender()
@@ -161,6 +171,9 @@ public class BattleManager : MonoBehaviour
         if (pendingLevelUps > 0 && !selectWindow.IsOpen)
             ShowSelection();
     }
+
+    // 다음 레벨까지 남은 경험치를 채워 한 레벨 올린다
+    public void LevelUp() => AddExp(RequiredExp - exp);
 
     public void AddKill()
     {

@@ -53,18 +53,22 @@ public class PlayerHealth : MonoBehaviour
             return;
         }
 
+        // 방어력 적용 (모든 받는 피해가 여기로 들어오므로 몬스터·보스 코드 수정 불필요)
+        int finalDamage = PlayerDamageCalculator.ApplyDefense(damage, playerStats.FinalDefense);
+
         OnDamaged?.Invoke();
 
-        if (CurrentHealth - damage <= 0)
+        if (CurrentHealth - finalDamage <= 0)
         {
             CurrentHealth = 0;
             DecreaseLife();
         }
         else
-            CurrentHealth -= damage;
+            CurrentHealth -= finalDamage;
 
         UpdateHpBar();
-        Debug.Log("현재 체력 : " + CurrentHealth + ", 현재 목숨 : " + CurrentLives);
+        Debug.Log("피해 " + damage + " → " + finalDamage + " (방어력 " + playerStats.FinalDefense + ")" +
+                  ", 현재 체력 : " + CurrentHealth + ", 현재 목숨 : " + CurrentLives);
     }
 
     public void Heal(int heal)
