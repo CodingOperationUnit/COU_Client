@@ -126,6 +126,9 @@ public abstract class Enemy : MonoBehaviour, IPoolable
         chargeDirection = direction.normalized;
         if (chargeDirection.sqrMagnitude < 0.0001f) chargeDirection = Vector3.right;   // 완전히 겹쳐 있을 때 대비
         chargeRemaining = distance;
+
+        // 돌진 시 방향 고정
+        visual?.FaceTo(chargeDirection.x);
     }
 
     // IPoolable: 풀에서 꺼내질 때마다 호출됨
