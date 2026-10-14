@@ -141,9 +141,9 @@ public class EvolutionTabPresenter : MonoBehaviour
         {
             switch (result.Error.code)
             {
-                case PlayerApi.ErrorEvolutionMaxStepReached: return GetBlockMessage(EvolutionBlock.MaxStepReached);
-                case PlayerApi.ErrorEvolutionLevelLocked: return GetBlockMessage(EvolutionBlock.LevelLocked);
-                case PlayerApi.ErrorNotEnoughGold: return GetBlockMessage(EvolutionBlock.NotEnoughGold);
+                case EvolutionApi.ErrorMaxStepReached: return GetBlockMessage(EvolutionBlock.MaxStepReached);
+                case EvolutionApi.ErrorLevelLocked: return GetBlockMessage(EvolutionBlock.LevelLocked);
+                case EvolutionApi.ErrorNotEnoughGold: return GetBlockMessage(EvolutionBlock.NotEnoughGold);
             }
         }
         return result.ToUserMessage("진화에 실패했습니다.");   // PLAYER_PROFILE_NOT_FOUND 등은 서버 안내 문구

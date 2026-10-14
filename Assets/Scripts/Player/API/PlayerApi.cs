@@ -1,24 +1,12 @@
 using System;
 using System.Collections;
-using UnityEngine;
 
-
-// 플레이어 시스템 서버 API 호출부
-// 사용 : StartCorutine(PlayerAPi.GetFinalStats(result => { .... }));
+// 플레이어 스탯 서버 API 호출부
+// 최종 스탯(E2)은 클라이언트 전투에는 쓰지 않고, 랭킹·검증용으로 유지
+// 사용: StartCoroutine(PlayerApi.GetFinalStats(result => { ... }));
 public static class PlayerApi
 {
-    public const string EvolutionUpgradePath = "/api/players/me/evolution/upgrade";
     public const string FinalStatsPath = "/api/players/me/stats";
-
-
-    // 서버 에러 code
-    public const string ErrorNotEnoughGold = "NOT_ENOUGH_GOLD";
-    public const string ErrorEvolutionMaxStepReached = "EVOLUTION_MAX_STEP_REACHED";
-    public const string ErrorEvolutionLevelLocked = "EVOLUTION_LEVEL_LOCKED";
-
-    // 진화 1단계 업그레이드
-    public static IEnumerator UpgradeEvolution(Action<ApiResult<EvolutionUpgradeResponse>> onComplete)
-        => ApiClient.Post(EvolutionUpgradePath, null, onComplete);
 
     // 최종 스탯 조회
     public static IEnumerator GetFinalStats(Action<ApiResult<FinalStatsResponse>> onComplete)

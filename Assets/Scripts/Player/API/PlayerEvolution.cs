@@ -6,7 +6,7 @@ public static class PlayerEvolution
 {
     public static IEnumerator Upgrade(Action<ApiResult<EvolutionUpgradeResponse>> onComplete)
     {
-        yield return PlayerApi.UpgradeEvolution(result =>
+        yield return EvolutionApi.Upgrade(result =>
         {
             if (result.IsSuccess && result.Data != null)
                 Apply(result.Data);

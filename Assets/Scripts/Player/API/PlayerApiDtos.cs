@@ -1,26 +1,6 @@
 using Newtonsoft.Json;
 
-// 서버 플레이어 시스템 API 응답 형식 (필드 이름은 서버 응답과 동일하게 유지)
-
-// statType 값 (서버 대문자 문자열 그대로 비교)
-public static class PlayerStatType
-{
-    public const string Attack = "ATTACK";
-    public const string Hp = "HP";
-    public const string Defense = "DEFENSE";
-    public const string PotionRecovery = "POTION_RECOVERY";
-}
-
-// POST /api/players/me/evolution/upgrade
-public class EvolutionUpgradeResponse
-{
-    public string upgradedStatType;   // PlayerStatType 값
-    public int evolutionStep;
-    public string nextStatType;       // PlayerStatType 값
-    public int goldSpent;
-    public PlayerStatData playerStat; // 계정 데이터 형식 그대로
-    public CurrencyData currency;     // 차감 후 재화
-}
+// 플레이어 스탯 서버 API 응답 형식 (필드 이름은 서버 응답과 동일하게 유지)
 
 // GET /api/players/me/stats
 public class FinalStatsResponse
@@ -40,7 +20,7 @@ public class FinalStatsResponse
 
 public class StatBreakdown
 {
-    [JsonProperty("base")]
+    [JsonProperty("base")]            // base는 C# 예약어라 이름을 따로 지정
     public StatParts baseStats;
     public StatParts equipment;
     public StatParts evolution;
