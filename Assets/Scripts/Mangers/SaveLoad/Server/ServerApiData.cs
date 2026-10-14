@@ -223,3 +223,21 @@ public class FriendRequestResultResponse
 {
     public FriendRelation relation; // REQUEST_SENT 또는 FRIEND(상대가 먼저 보낸 상태라 바로 친구) /
 }
+
+
+// GET/POST /api/chat/{friendPlayerId}/messages 응답
+[Serializable]
+public class ChatMessageResponse
+{
+    public long messageId;
+    public long senderId;
+    public bool mine;           // 내가 보낸 메시지인지
+    public string content;
+    public DateTime createdAt; 
+}
+
+[Serializable]
+public class ChatSendRequest
+{
+    public string content;
+}

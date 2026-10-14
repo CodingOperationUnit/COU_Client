@@ -16,6 +16,7 @@ public static class GameManager
     public static ServerRankingManager ServerRanking { get { return ServerRankingManager.Instance; } }
     public static ServerFriendManager ServerFriend { get { return ServerFriendManager.Instance; } }
     public static ServerPresenceManager ServerPresence { get { return ServerPresenceManager.Instance; } }
+    public static ServerChatManager ServerChat { get { return ServerChatManager.Instance; } }
 
     [Obsolete("서버 연동으로 사용하지 않음. 접근하면 매니저가 자동 생성되니 쓰지 말 것")]
     public static LocalSaveLoadManager LocalSaveLoad { get { return LocalSaveLoadManager.Instance; } }

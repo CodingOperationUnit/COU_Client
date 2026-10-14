@@ -139,6 +139,7 @@ public class ServerLoginManager : MonoSingleton<ServerLoginManager>
     public void Logout()
     {
         GameManager.ServerPresence.StopHeartbeat();
+        GameManager.ServerChat.StopConversation();
         FriendRequestState.Set(0);
         CurrentAccount = null;
         ApiClient.ClearAccessToken();
