@@ -16,7 +16,6 @@ public class PlayerStats : MonoBehaviour
     private int finalPotionRecovery;
     private float finalMoveSpeed;
     private bool hasWeapon;
-    private WeaponType equippedWeaponType;
     private string equippedWeaponName;
     private long? equippedWeaponItemId;
     public long? EquippedWeaponItemId { get { EnsureCalculated(); return equippedWeaponItemId; } }   // 무기가 없으면 null
@@ -29,7 +28,6 @@ public class PlayerStats : MonoBehaviour
     public int FinalDefense { get { EnsureCalculated(); return finalDefense; } }
     public int FinalPotionRecovery { get { EnsureCalculated(); return finalPotionRecovery; } }
     public bool HasWeapon { get { EnsureCalculated(); return hasWeapon; } }
-    public WeaponType EquippedWeaponType { get { EnsureCalculated(); return equippedWeaponType; } }
     public string EquippedWeaponName { get { EnsureCalculated(); return equippedWeaponName; } }
     public int StartingSkillId { get { EnsureCalculated(); return startingSkillId; } }   // 0이면 시작 스킬 없음
 
@@ -38,7 +36,6 @@ public class PlayerStats : MonoBehaviour
     public int CriticalDamage => Base.playerBaseCriticalDamage + GetBonus(PlayerBonusStat.CriticalDamage);
     public int SkillDamage => Base.playerBaseSkillDamage;
     public float Speed { get { EnsureCalculated(); return finalMoveSpeed; } }
-    public float MaxSpeed => Base.playerBaseMaxMoveSpeed;
     public float LootRadius => Base.playerBaseLootRadius;
 
     // 출처(패시브 등)별 보너스. 같은 출처가 다시 등록하면 덮어씀
@@ -85,7 +82,7 @@ public class PlayerStats : MonoBehaviour
                   " / 체력 " + finalHp + " (기본 " + stat.BaseHp + " + 진화 " + stat.EvolutionHp + " + 장비 " + stat.EquipmentHp + ")" +
                   " / 방어력 " + finalDefense + " / 포션 회복량 +" + finalPotionRecovery +
                   " / 이동 속도 " + finalMoveSpeed.ToString("F2") + " (+" + stat.EquipmentMoveSpeedPercent + "%)" +
-                  " / 무기: " + (hasWeapon ? equippedWeaponName + " (" + equippedWeaponType + ")" : "없음") +
+                  " / 무기: " + (hasWeapon ? equippedWeaponName + ")" : "없음") +
                   " / 시작 스킬: " + (startingSkillId == WeaponSkillTable.NoSkill ? "없음" : startingSkillId.ToString()));
     }
 
@@ -155,11 +152,8 @@ public class PlayerStats : MonoBehaviour
         equippedWeaponName = weapon.Data.itemName;
         startingSkillId = WeaponSkillTable.GetSkillByItem(weapon.itemId);
 
-        if (!WeaponSkillTable.TryGetTypeBySkill(startingSkillId, out equippedWeaponType))
-        {
-            equippedWeaponType = WeaponType.Blunt;
-            Debug.LogWarning("[PlayerStats] 무기 매핑이 없습니다: " + equippedWeaponName + " (" + weapon.itemId + "). 스킬 없이 시작, 무기 종류는 Blunt");
-        }
+        if (startingSkillId == WeaponSkillTable.NoSkill)
+            Debug.LogWarning("[PlayerStats] 무기 → 시작 스킬 매핑이 없습니다: " + equippedWeaponName + " (" + weapon.itemId + "). 스킬 없이 시작");
     }
 
     // 로그인 없이 전투에 들어온 경우: 에러 후 로그인 화면 (예외 없음 정책)
