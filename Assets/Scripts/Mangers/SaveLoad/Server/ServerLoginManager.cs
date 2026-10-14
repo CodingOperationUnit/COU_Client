@@ -130,6 +130,7 @@ public class ServerLoginManager : MonoSingleton<ServerLoginManager>
 
             ApiClient.SetAccessToken(result.Data.accessToken);
             CurrentAccount = result.Data.account;
+            GameManager.ServerPresence.StartHeartbeat();   // 친구에게 온라인으로 보이도록 접속을 알린다
             onComplete?.Invoke(true, "로그인되었습니다.");
         });
     }
@@ -137,6 +138,8 @@ public class ServerLoginManager : MonoSingleton<ServerLoginManager>
     // 로그아웃: 서버에 따로 알릴 필요 없이 토큰과 플레이어 데이터를 지운다
     public void Logout()
     {
+        GameManager.ServerPresence.StopHeartbeat();
+        FriendRequestState.Set(0);
         CurrentAccount = null;
         ApiClient.ClearAccessToken();
         GameManager.PlayerData.ClearPlayerData();

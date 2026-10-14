@@ -41,6 +41,7 @@ public class SkillController : MonoBehaviour
     public IReadOnlyList<SkillBase> ActiveSkills => _activeSkills;
     public IReadOnlyList<SkillBase> PassiveSkills => _passiveSkills;
     public event Action<SkillBase> OnSkillFired;
+    public event Action<SkillBase> OnSkillFireStarted;
 
     private void Awake()
     {
@@ -109,6 +110,7 @@ public class SkillController : MonoBehaviour
         if (skill is CooldownSkillBase cooldownSkill)
         {
             cooldownSkill.OnFired += HandleSkillFired;
+            cooldownSkill.OnFireStarted += HandleSkillFireStarted;
         }
 
 
@@ -139,7 +141,8 @@ public class SkillController : MonoBehaviour
         }
         if (skill is CooldownSkillBase cooldownSkill)
         {
-            cooldownSkill.OnFired -= HandleSkillFired;   // 추가
+            cooldownSkill.OnFired -= HandleSkillFired;
+            cooldownSkill.OnFireStarted -= HandleSkillFireStarted;
         }
 
         skill.Unequip();
@@ -150,6 +153,11 @@ public class SkillController : MonoBehaviour
     private void HandleSkillFired(CooldownSkillBase skill)
     {
         OnSkillFired?.Invoke(skill);
+    }
+
+    private void HandleSkillFireStarted(CooldownSkillBase skill)
+    {
+        OnSkillFireStarted?.Invoke(skill);
     }
 
     // 액티브/패시브 구분 없이 장착된 스킬을 찾음

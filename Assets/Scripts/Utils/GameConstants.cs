@@ -33,8 +33,10 @@ public static class GameConstants
         public const string PlayerBaseStatData_Json_Path = "Data/PlayerBaseStat";
         public const string ItemConstData_Json_Path = "Data/ItemConst";
         public const string EvolutionData_Json_Path = "Data/Evolution";
+        public const string CombatPowerData_Json_Path = "Data/CombatPower";
         public const string STATIC_DATA_DIRECTORY = "StaticData";
         public const string STATIC_DATA_VERSION_FILE = "version.txt";
+        public const string AchievementData_Json_Path = "Data/Achievement";
     }
 
     // 서버 통신 상수
@@ -43,7 +45,7 @@ public static class GameConstants
         public const string BASE_URL = "http://localhost:8080";
         public const string STATIC_DATA_API = "/api/static-data";
         // 이 빌드가 읽을 수 있는 정적 데이터 버전의 첫째 자리
-        public const int STATIC_DATA_MAJOR_VERSION = 3;
+        public const int STATIC_DATA_MAJOR_VERSION = 4;
         public const string SIGNUP_API = "/api/accounts/signup";
         public const string LOGIN_API = "/api/accounts/login";
         public const string PLAYER_SAVE_API = "/api/players/me/save";

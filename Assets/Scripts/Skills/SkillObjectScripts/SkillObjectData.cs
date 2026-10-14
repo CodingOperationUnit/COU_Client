@@ -4,12 +4,14 @@ using UnityEngine;
 // SkillData(기획 원본 값)와 달리 스킬 클래스가 계산을 끝낸 값만 담음
 public readonly struct SkillStats
 {
+    public readonly int SkillId; // 피해를 준 스킬 (업적 '스킬로 처치' 집계용)
     public readonly int Damage;
     public readonly float Speed;
     public readonly float Scale; // 1.0 = 프리팹 원래 크기
 
-    public SkillStats(int damage, float speed, float scale)
+    public SkillStats(int skillId, int damage, float speed, float scale)
     {
+        SkillId = skillId;
         Damage = damage;
         Speed = speed;
         Scale = scale;

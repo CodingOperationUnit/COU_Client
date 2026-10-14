@@ -9,6 +9,7 @@ public class EvolutionData
     public int evolutionBaseCost;
     public int evolutionCostPerStep;
     public int evolutionMaxStep;
+    public int evolutionStepsPerLevel;
 
     private static readonly string[] RequiredStatTypes =
     {
@@ -43,6 +44,9 @@ public class EvolutionData
 
         if (evolutionBaseCost < 0 || evolutionCostPerStep < 0 || evolutionMaxStep < 0)
             throw new InvalidOperationException("Evolution의 비용·최대 단계는 0 이상이어야 합니다.");
+
+        if (evolutionStepsPerLevel < 1)
+            throw new InvalidOperationException("Evolution의 evolutionStepsPerLevel은 1 이상이어야 합니다.");
     }
     
 }

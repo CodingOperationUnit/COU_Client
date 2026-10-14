@@ -119,7 +119,7 @@ public abstract class SkillBase
         float speed = GetPercentStat(SkillPercentStat.Speed, skillData.skillSpeed);
         float scale = GetPercentStat(SkillPercentStat.Area, 1.0f);
 
-        return new SkillStats(damage, speed, scale);
+        return new SkillStats(SkillId, damage, speed, scale);
     }
 
     // 풀에서 스킬 오브젝트를 꺼내 초기화. 초기화 인자 구조체 타입(TInitData)은 호출부에서 추론됨

@@ -17,6 +17,7 @@ public class JsonDataManagerEditor : Editor
     private readonly HashSet<DropItemType> expandedDropItems = new();
     private readonly HashSet<MonsterType> expandedDropTables = new();
     private readonly HashSet<long> expandedItems = new();
+    private readonly HashSet<int> expandedAchievements = new();
 
     public override void OnInspectorGUI()
     {
@@ -30,7 +31,7 @@ public class JsonDataManagerEditor : Editor
         DrawDictionary("웨이브 데이터", manager.WaveEntryDataDic, expandedWaveEntries,
             data => $"웨이브 {data.waveId} / 패턴 {data.patternId} / {data.monsterSlot}", DrawWaveEntry);
         DrawDictionary("스폰 패턴 데이터", manager.SpawnPatternDataDic, expandedSpawnPatterns,
-            data => $"{data.formation} × {data.spawnCount}", DrawSpawnPattern);
+            data => $"{data.formation} × {data.spawnCount} / {data.movement}", DrawSpawnPattern);
         DrawDictionary("스테이지 데이터", manager.StageDataDic, expandedStages,
             data => data.stageName, DrawStage);
         DrawDictionary("스테이지 로스터 데이터", manager.StageRosterDic, expandedStageRosters,
@@ -46,6 +47,8 @@ public class JsonDataManagerEditor : Editor
         DrawSingle("계정 상수 데이터", manager.AccountConstData, DrawAccountConst);
         DrawSingle("플레이어 기본 스탯 데이터", manager.PlayerBaseStatData, DrawPlayerBaseStat);
         DrawSingle("장비 상수 데이터", manager.ItemConstData, DrawItemConst);
+        DrawDictionary("업적 데이터", manager.AchievementDataDic, expandedAchievements,
+            data => $"{data.achievementName} / {data.ConditionType} / {data.TierCount}단계", DrawAchievement);
     }
 
     private static void DrawDictionary<TKey, T>(string title, IReadOnlyDictionary<TKey, T> datas,
@@ -161,6 +164,8 @@ public class JsonDataManagerEditor : Editor
         EditorGUILayout.IntField("스폰 마릿수", data.spawnCount);
         EditorGUILayout.FloatField("거리 (0이면 기본값)", data.spawnRadius);
         EditorGUILayout.FloatField("형태 크기 (0이면 기본값)", data.formationSize);
+        EditorGUILayout.TextField("이동 문자열", data.movement ?? string.Empty);
+        EditorGUILayout.EnumPopup("이동", data.Movement);
     }
 
     private static void DrawStage(StageData data)
@@ -185,6 +190,7 @@ public class JsonDataManagerEditor : Editor
                 EditorGUILayout.IntField("몬스터 ID", row.monsterId);
                 EditorGUILayout.FloatField("체력 배율", row.monsterHpScale);
                 EditorGUILayout.FloatField("피해 배율", row.monsterDamageScale);
+                EditorGUILayout.IntField("패턴 ID (0이면 웨이브 값)", row.patternId);
             }
         }
     }
@@ -247,6 +253,32 @@ public class JsonDataManagerEditor : Editor
         EditorGUILayout.IntField("공격력 보너스", data.attackBonus);
         EditorGUILayout.IntField("이동 속도 보너스", data.moveSpeedBonus);
         EditorGUILayout.TextField("등급 스킬", data.gradeSkills != null ? string.Join(", ", data.gradeSkills) : string.Empty);
+    }
+    
+    private static void DrawAchievement(AchievementData data)
+    {
+        EditorGUILayout.IntField("업적 ID", data.achievementId);
+        EditorGUILayout.TextField("이름", data.achievementName ?? string.Empty);
+        EditorGUILayout.TextField("설명", data.achievementDescription ?? string.Empty);
+        EditorGUILayout.TextField("조건 종류 문자열", data.achievementConditionType ?? string.Empty);
+        EditorGUILayout.EnumPopup("조건 종류", data.ConditionType);
+        EditorGUILayout.IntField("대상 스킬 ID", data.targetSkillId);
+        EditorGUILayout.TextField("대상 드롭 아이템 문자열", data.targetDropItemType ?? string.Empty);
+        if (data.HasTargetDropItem)
+            EditorGUILayout.EnumPopup("대상 드롭 아이템", data.TargetDropItemType);
+
+        for (int i = 0; i < data.TierCount; i++)
+        {
+            EditorGUILayout.LabelField($"{i + 1}단계");
+
+            using (new EditorGUI.IndentLevelScope())
+            {
+                EditorGUILayout.IntField("목표값", data.GetTargetValue(i));
+                EditorGUILayout.EnumPopup("보상 종류", data.GetRewardType(i));
+                EditorGUILayout.IntField("보상 수량", data.GetRewardAmount(i));
+                EditorGUILayout.TextField("표시 설명", data.GetDescription(i));
+            }
+        }
     }
 
     private static void DrawAccountConst(AccountConstData data)

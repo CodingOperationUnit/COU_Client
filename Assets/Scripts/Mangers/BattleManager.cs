@@ -21,6 +21,11 @@ public class BattleManager : MonoBehaviour
     private readonly HashSet<object> pauseRequests = new();
     private readonly List<int> candidates = new();
 
+    // 업적 진행 집계 (전투 결과와 함께 서버로 보낸다)
+    private readonly Dictionary<int, int> skillKills = new();
+    private readonly Dictionary<int, int> skillUpgrades = new();
+    private readonly Dictionary<string, int> pickups = new();
+    
     private InGameHUD hud;
     private BattleResultWindow resultWindow;
     private PauseWindow pauseWindow;
@@ -37,6 +42,7 @@ public class BattleManager : MonoBehaviour
     private int pendingLevelUps;
     private bool ended;
     private float victoryTimer;
+    private int clockStopFrame = -1;   // 마지막 보스가 나온 프레임. 다음 프레임부터 전투 시간 정지
 
     private long battleId;
     private bool hasBattleId;   // 메인 씬을 거치지 않고 실행하면 battleId가 없어 결과를 보내지 않는다
@@ -99,6 +105,9 @@ public class BattleManager : MonoBehaviour
                 return;
             }
         }
+
+        // 보스가 나온 프레임의 시간까지는 더한다(WaveManager보다 늦게 Update돼도 보스 등장 시각에서 멈추게)
+        if (clockStopFrame >= 0 && Time.frameCount > clockStopFrame) return;
 
         elapsed += Time.deltaTime;
         var current = (int)elapsed;
@@ -172,6 +181,10 @@ public class BattleManager : MonoBehaviour
     private void HandleEnemyKilled(Enemy enemy)
     {
         AddKill();
+        
+        // 상자는 OnDied를 부르지 않아 여기 오지 않는다
+        if (!ended && enemy.LastHitSkillId > 0)
+            Increase(skillKills, enemy.LastHitSkillId);
     }
 
     private void HandleBossSpawned(Enemy spawnedBoss)
@@ -182,6 +195,10 @@ public class BattleManager : MonoBehaviour
 
         hud.ShowBoss(boss.Data.monsterName);
         hud.SetBossHp(boss.HpRatio);
+
+        // 마지막 보스전 시간은 기록(seconds)에 넣지 않는다. 중간 보스전은 시간이 흐른다
+        if (spawnedBoss.Type == MonsterType.Boss)
+            clockStopFrame = Time.frameCount;
     }
 
     private void HandleBossHpChanged(Enemy enemy)
@@ -195,11 +212,16 @@ public class BattleManager : MonoBehaviour
         boss = null;
         hud.HideBoss();
 
-        victoryTimer = bossVictoryDelay;
+        // 중간 보스는 처치해도 승리하지 않는다
+        if (killedBoss.Type == MonsterType.Boss)
+            victoryTimer = bossVictoryDelay;
     }
 
     private void HandleLooted(DropItemType type)
     {
+        if (!ended)
+            Increase(pickups, type.ToString());
+        
         if (type >= DropItemType.ExpGem1 && type <= DropItemType.ExpGem4)
             AddExp(GameManager.JsonData.GetDropItemDataFromJson(type).value);
         else if (type >= DropItemType.Gold1 && type <= DropItemType.Gold4)
@@ -216,17 +238,19 @@ public class BattleManager : MonoBehaviour
     private void ShowSelection()
     {
         candidates.Clear();
-        foreach (var skillId in GameManager.JsonData.SkillDataDic.Keys)
+        foreach (var data in GameManager.JsonData.SkillDataDic.Values)
         {
             // 테이블에는 있지만 아직 구현되지 않은 스킬은 후보에서 뺀다
-            if (!SkillFactory.IsRegistered(skillId)) continue;
+            if (!SkillFactory.IsRegistered(data.skillId)) continue;
 
-            var skill = FindActiveSkill(skillId);
+            var skill = FindSkill(data.skillId);
             var available = skill != null
                 ? skill.Level < SkillBase.MaxLevel
-                : skillController.ActiveSkills.Count < SkillController.MaxSkillSlots;
+                : data.skillCategory == SkillCategory.Passive
+                    ? skillController.PassiveSkills.Count < SkillController.MaxPassiveSlots
+                    : skillController.ActiveSkills.Count < SkillController.MaxSkillSlots;
             if (available)
-                candidates.Add(skillId);
+                candidates.Add(data.skillId);
         }
 
         // 부분 Fisher–Yates: 앞의 count개를 무작위 후보로 채운다
@@ -236,7 +260,7 @@ public class BattleManager : MonoBehaviour
             var pick = Random.Range(i, candidates.Count);
             (candidates[i], candidates[pick]) = (candidates[pick], candidates[i]);
 
-            var skill = FindActiveSkill(candidates[i]);
+            var skill = FindSkill(candidates[i]);
             var data = GameManager.JsonData.GetSkillDataFromJson(candidates[i]);
             selectWindow.SetOption(i, data.skillName, data.skillDescription, skill == null ? 1 : skill.Level + 1, skill == null);
         }
@@ -256,8 +280,12 @@ public class BattleManager : MonoBehaviour
     {
         if (candidates.Count == 0)
             playerHealth.Heal(Mathf.RoundToInt(playerHealth.MaxHealth * healRewardRatio));
-        else if (FindActiveSkill(candidates[index]) != null)
-            skillController.LevelUpSkill(candidates[index]);
+        else if (FindSkill(candidates[index]) != null)
+        {
+            // 최대 레벨이라 실패한 경우는 세지 않는다
+            if (skillController.LevelUpSkill(candidates[index]))
+                Increase(skillUpgrades, candidates[index]);
+        }
         else
             skillController.EquipSkill(candidates[index]);
 
@@ -272,9 +300,13 @@ public class BattleManager : MonoBehaviour
         ReleasePause(selectWindow);
     }
 
-    private SkillBase FindActiveSkill(int skillId)
+    private SkillBase FindSkill(int skillId)
     {
         foreach (var skill in skillController.ActiveSkills)
+        {
+            if (skill.SkillId == skillId) return skill;
+        }
+        foreach (var skill in skillController.PassiveSkills)
         {
             if (skill.SkillId == skillId) return skill;
         }
@@ -314,7 +346,10 @@ public class BattleManager : MonoBehaviour
             seconds = seconds,
             kills = kills,
             gold = gold,
-            rewardBoxes = rewardBoxes
+            rewardBoxes = rewardBoxes,
+            skillKills = new Dictionary<int, int>(skillKills),
+            skillUpgrades = new Dictionary<int, int>(skillUpgrades),
+            pickups = new Dictionary<string, int>(pickups)
         };
 
         resultWindow.SetWaiting(true);
@@ -424,5 +459,10 @@ public class BattleManager : MonoBehaviour
             data.stageRecords[index] = record;
         else
             data.stageRecords.Add(record);
+    }
+    
+    private static void Increase<TKey>(Dictionary<TKey, int> counter, TKey key)
+    {
+        counter[key] = counter.TryGetValue(key, out int count) ? count + 1 : 1;
     }
 }

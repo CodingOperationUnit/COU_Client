@@ -13,7 +13,11 @@ public static class GameManager
     public static ServerLoadManager ServerLoad { get { return ServerLoadManager.Instance; } }
     public static ServerInventoryManager ServerInventory { get { return ServerInventoryManager.Instance; } }
     public static ServerShopManager ServerShop { get { return ServerShopManager.Instance; } }
-    
+    public static ServerRankingManager ServerRanking { get { return ServerRankingManager.Instance; } }
+    public static ServerAchievementManager ServerAchievement { get { return ServerAchievementManager.Instance; } }
+    public static ServerFriendManager ServerFriend { get { return ServerFriendManager.Instance; } }
+    public static ServerPresenceManager ServerPresence { get { return ServerPresenceManager.Instance; } }
+
     [Obsolete("서버 연동으로 사용하지 않음. 접근하면 매니저가 자동 생성되니 쓰지 말 것")]
     public static LocalSaveLoadManager LocalSaveLoad { get { return LocalSaveLoadManager.Instance; } }
     [Obsolete("서버 연동으로 사용하지 않음. 접근하면 매니저가 자동 생성되니 쓰지 말 것")]

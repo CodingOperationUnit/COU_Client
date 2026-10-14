@@ -54,6 +54,11 @@ public class BattleResultRequest
     public int kills;
     public int gold;
     public int rewardBoxes;
+    
+    // 업적 진행 집계
+    public Dictionary<int, int> skillKills = new();
+    public Dictionary<int, int> skillUpgrades = new();
+    public Dictionary<string, int> pickups = new();
 }
 
 [Serializable]
@@ -141,4 +146,85 @@ public class PurchaseResponse
     public int currencyGold;                    // 구매 후 보유 골드 
     public int currencyGem;                     // 구매 후 보유 보석 
     public List<InventoryData> rewardedItems;   // 장비 상자일 때만 값이 있음
+}
+
+// ===== 랭킹 =====
+
+public enum RankingType { ACCOUNT_LEVEL, MAX_STAGE, STAGE_SURVIVAL, COMBAT_POWER }
+
+[Serializable]
+public class RankingEntryResponse
+{
+    public int rank;
+    public long playerId;
+    public string nickname;
+    public int accountLevel;
+    public int value;          // 종류별 점수 (레벨 / 최고 스테이지 / 생존 초)
+}
+
+// GET /api/ranking 응답
+[Serializable]
+public class RankingResponse
+{
+    public string type;
+    public int? stageId;
+    public List<RankingEntryResponse> entries;
+    public int? myRank;        // 기록 없으면 null
+    public int? myValue;
+}
+
+// ===== 친구 =====
+
+public enum FriendRelation { NONE, FRIEND, REQUEST_SENT, REQUEST_RECEIVED }
+
+// 친구 한 명 (친구 목록, 수락 응답)
+[Serializable]
+public class FriendResponse
+{
+    public long playerId;
+    public string nickname;
+    public int accountLevel;
+    public long combatPower;
+    public bool online;
+}
+
+// GET /api/friends 응답
+[Serializable]
+public class FriendListResponse
+{
+    public List<FriendResponse> friends;
+    public int maxFriends;
+}
+
+// GET /api/friends/requests 응답 한 줄 (받은 요청)
+[Serializable]
+public class FriendRequestResponse
+{
+    public long requestId;
+    public long playerId;
+    public string nickname;
+    public int accountLevel;
+}
+
+// GET /api/friends/search 응답 한 줄
+[Serializable]
+public class FriendSearchResponse
+{
+    public long playerId;
+    public string nickname;
+    public int accountLevel;
+    public FriendRelation relation;
+}
+
+// POST /api/friends/requests 요청 / 응답
+[Serializable]
+public class FriendRequestBody
+{
+    public long targetPlayerId;
+}
+
+[Serializable]
+public class FriendRequestResultResponse
+{
+    public FriendRelation relation; // REQUEST_SENT 또는 FRIEND(상대가 먼저 보낸 상태라 바로 친구) /
 }

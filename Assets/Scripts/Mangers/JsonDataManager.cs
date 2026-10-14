@@ -57,6 +57,13 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
 
     private EvolutionData evolutionData;
     public EvolutionData EvolutionData => evolutionData;
+    
+    private Dictionary<int, AchievementData> achievementDataDic;
+    public IReadOnlyDictionary<int, AchievementData> AchievementDataDic => achievementDataDic;
+    
+
+    private CombatPowerData combatPowerData;
+    public CombatPowerData CombatPowerData => combatPowerData;
     #endregion
 
     protected override void Awake()
@@ -79,6 +86,9 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
         playerBaseStatData = LoadTable(GameConstants.Paths.PlayerBaseStatData_Json_Path, ParsePlayerBaseStatData);
         itemConstData = LoadTable(GameConstants.Paths.ItemConstData_Json_Path, ParseItemConstData);
         evolutionData = LoadTable(GameConstants.Paths.EvolutionData_Json_Path, ParseEvolutionData);
+        achievementDataDic = LoadTable(GameConstants.Paths.AchievementData_Json_Path, ParseAchievementData);
+        combatPowerData = LoadTable(GameConstants.Paths.CombatPowerData_Json_Path, ParseCombatPowerData);
+
 
         RebuildMonsterAttackIndex();
     }
@@ -138,6 +148,8 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
             var playerBaseStat = ParseResponseTable(tables, GameConstants.Paths.PlayerBaseStatData_Json_Path, ParsePlayerBaseStatData);
             var itemConst = ParseResponseTable(tables, GameConstants.Paths.ItemConstData_Json_Path, ParseItemConstData);
             var evolution = ParseResponseTable(tables, GameConstants.Paths.EvolutionData_Json_Path, ParseEvolutionData);
+            var achievements = ParseResponseTable(tables, GameConstants.Paths.AchievementData_Json_Path, ParseAchievementData);
+            var combatPower = ParseResponseTable(tables, GameConstants.Paths.CombatPowerData_Json_Path, ParseCombatPowerData);
 
             SaveLoadHelper.SaveStaticData(version, tables);
 
@@ -155,6 +167,8 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
             playerBaseStatData = playerBaseStat ?? playerBaseStatData;
             itemConstData = itemConst ?? itemConstData;
             evolutionData = evolution ?? evolutionData;
+            achievementDataDic = achievements ?? achievementDataDic;
+            combatPowerData = combatPower ?? combatPowerData;
 
             if (monsterAttacks != null)
                 RebuildMonsterAttackIndex();
@@ -351,6 +365,22 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
         Debug.LogWarning($"등록되지 않은 아이템 ID: {itemId}");
         return null;
     }
+    
+    public AchievementData GetAchievementDataFromJson(int achievementId)
+    {
+        if (achievementDataDic == null)
+        {
+            Debug.LogError("Achievement 데이터가 초기화되지 않았습니다.");
+            return null;
+        }
+
+        if (achievementDataDic.TryGetValue(achievementId, out AchievementData data))
+            return data;
+
+        Debug.LogWarning($"등록되지 않은 Achievement ID: {achievementId}");
+        return null;
+    }
+    
     #endregion
 
     #region LoadData
@@ -514,7 +544,7 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
                 throw new InvalidOperationException($"SpawnPattern {data.patternId}의 formationSize는 0 이상이어야 합니다.");
 
             if (!data.OnLoaded())
-                throw new InvalidOperationException($"SpawnPattern {data.patternId}의 formation \"{data.formation}\"을(를) 알 수 없습니다.");
+                throw new InvalidOperationException($"SpawnPattern {data.patternId}의 formation \"{data.formation}\" 또는 movement \"{data.movement}\"을(를) 알 수 없습니다.");
 
             loadedDatas.Add(data.patternId, data);
         }
@@ -582,6 +612,9 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
 
             if (data.monsterDamageScale <= 0f)
                 throw new InvalidOperationException($"StageRoster {data.stageRosterId}의 monsterDamageScale은 0보다 커야 합니다.");
+
+            if (data.patternId < 0)
+                throw new InvalidOperationException($"StageRoster {data.stageRosterId}의 patternId는 0 이상이어야 합니다.");
 
             if (!loadedDatas.TryGetValue(data.stageId, out List<StageRosterData> stageRows))
             {
@@ -793,6 +826,47 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
             throw new InvalidOperationException("Evolution 데이터 항목이 객체 형식이 아닙니다.");
 
         EvolutionData data = rows[0].ToObject<EvolutionData>();
+        data.Validate();
+        return data;
+    }
+    
+    private static Dictionary<int, AchievementData> ParseAchievementData(JObject root)
+    {
+        JArray rows = root["datas"] as JArray;
+        if (rows == null || rows.Count == 0)
+            throw new InvalidOperationException("Achievement 데이터 목록이 비어 있습니다.");
+
+        var loadedDatas = new Dictionary<int, AchievementData>();
+        foreach (JToken row in rows)
+        {
+            if (!(row is JObject))
+                throw new InvalidOperationException("Achievement 데이터 항목이 객체 형식이 아닙니다.");
+
+            AchievementData data = row.ToObject<AchievementData>();
+            if (data == null || data.achievementId <= 0)
+                throw new InvalidOperationException("Achievement 데이터 또는 ID가 올바르지 않습니다.");
+
+            if (loadedDatas.ContainsKey(data.achievementId))
+                throw new InvalidOperationException($"중복된 Achievement ID: {data.achievementId}");
+
+            data.OnLoaded();
+            loadedDatas.Add(data.achievementId, data);
+        }
+
+        return loadedDatas;
+    }
+    
+
+    private static CombatPowerData ParseCombatPowerData(JObject root)
+    {
+        JArray rows = root["datas"] as JArray;
+        if (rows == null || rows.Count != 1)
+            throw new InvalidOperationException("CombatPower 데이터는 행이 하나여야 합니다.");
+
+        if (!(rows[0] is JObject))
+            throw new InvalidOperationException("CombatPower 데이터 항목이 객체 형식이 아닙니다.");
+
+        CombatPowerData data = rows[0].ToObject<CombatPowerData>();
         data.Validate();
         return data;
     }
