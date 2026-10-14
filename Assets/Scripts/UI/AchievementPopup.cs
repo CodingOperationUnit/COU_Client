@@ -200,6 +200,12 @@ public class AchievementPopup : UIPopup
                 return data.targetSkillId != 0 ? $"{GetSkillName(data.targetSkillId)} 강화" : "스킬 강화";
             case AchievementConditionType.GainBattleExp:
                 return "전투 경험치 획득";
+            case AchievementConditionType.GainBattleGold:
+                return "전투에서 골드 획득";
+            case AchievementConditionType.ClearStage:
+                return "스테이지 클리어";
+            case AchievementConditionType.PlayLuckTrain:
+                return "행운열차 완주";
             default:
                 return string.Empty;
         }
@@ -211,6 +217,8 @@ public class AchievementPopup : UIPopup
         {
             case AchievementConditionType.KillBySkill: return $"누적 {value:N0}마리";
             case AchievementConditionType.GainBattleExp: return $"누적 경험치 {value:N0}";
+            case AchievementConditionType.GainBattleGold: return $"누적 골드 {value:N0}";
+            case AchievementConditionType.ClearStage: return $"누적 {value:N0}회 클리어";
             default: return $"누적 {value:N0}회";
         }
     }
@@ -228,7 +236,7 @@ public class AchievementPopup : UIPopup
         {
             case DropItemType.Bomb: return "폭탄";
             case DropItemType.Magnet: return "자석";
-            case DropItemType.Potion: return "포션";
+            case DropItemType.Potion: return "회복약";
             default: return type.ToString();
         }
     }
