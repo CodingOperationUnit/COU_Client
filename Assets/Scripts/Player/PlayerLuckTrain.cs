@@ -255,6 +255,7 @@ public class PlayerLuckTrain : MonoBehaviour
 
     private void HandleFinished()
     {
+        // 행운열차 레벨업은 연마 업적에 넣지 않는다 (BattleManager의 skillUpgrades 집계를 거치지 않음)
         foreach (int skillId in selectedSkillIds)
         {
             bool result = skillController.LevelUpSkill(skillId);
@@ -262,6 +263,7 @@ public class PlayerLuckTrain : MonoBehaviour
         }
 
         BattleManager.Instance?.AddGold(rewardGold);
+        BattleManager.Instance?.AddLuckTrain();
 
         BattleManager.Instance?.ReleasePause(this);
         isShowing = false;
