@@ -11,16 +11,6 @@ public static class PlayerStatType
     public const string PotionRecovery = "POTION_RECOVERY";
 }
 
-// PlayerStat (진화 강화 진행도)
-public class PlayerStatDto
-{
-    public long playerId;
-    public int playerStatAttackLevel;
-    public int playerStatHpLevel;
-    public int playerStatDefenseLevel;
-    public int playerStatPotionRecoveryLevel;
-}
-
 // POST /api/players/me/evolution/upgrade
 public class EvolutionUpgradeResponse
 {

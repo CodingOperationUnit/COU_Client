@@ -12,13 +12,9 @@ public static class PlayerApi
 
 
     // 서버 에러 code
-    public const string ErrorPlayerStatNotFound = "PLAYER_STAT_NOT_FOUND";
-    public const string ErrorInternal = "INTERNAL_ERROR";
     public const string ErrorNotEnoughGold = "NOT_ENOUGH_GOLD";
     public const string ErrorEvolutionMaxStepReached = "EVOLUTION_MAX_STEP_REACHED";
-    public const string ErrorCurrencyNotFound = "CURRENCY_NOT_FOUND";
     public const string ErrorEvolutionLevelLocked = "EVOLUTION_LEVEL_LOCKED";
-    public const string ErrorPlayerProfileNotFound = "PLAYER_PROFILE_NOT_FOUND";
 
     // 진화 1단계 업그레이드
     public static IEnumerator UpgradeEvolution(Action<ApiResult<EvolutionUpgradeResponse>> onComplete)
