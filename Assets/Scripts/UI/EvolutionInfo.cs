@@ -20,6 +20,7 @@ public struct EvolutionNodeInfo
     public string name;
     public string value;
     public string description;
+    public Sprite icon;
     public Color iconColor;
     public int cost;
 }
