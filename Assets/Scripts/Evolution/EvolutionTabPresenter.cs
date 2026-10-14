@@ -114,7 +114,7 @@ public class EvolutionTabPresenter : MonoBehaviour
         tab.SetUnlockInteractable(false);
 
         // 탭이 닫혀도 요청이 끝까지 처리되도록, 씬 전환에도 유지되는 PlayerDataManager에서 실행
-        GameManager.PlayerData.StartCoroutine(PlayerEvolution.Upgrade(OnUpgraded));
+        GameManager.PlayerData.StartCoroutine(EvolutionService.Upgrade(OnUpgraded));
     }
 
     private void OnUpgraded(ApiResult<EvolutionUpgradeResponse> result)
@@ -141,9 +141,9 @@ public class EvolutionTabPresenter : MonoBehaviour
         {
             switch (result.Error.code)
             {
-                case PlayerApi.ErrorEvolutionMaxStepReached: return GetBlockMessage(EvolutionBlock.MaxStepReached);
-                case PlayerApi.ErrorEvolutionLevelLocked: return GetBlockMessage(EvolutionBlock.LevelLocked);
-                case PlayerApi.ErrorNotEnoughGold: return GetBlockMessage(EvolutionBlock.NotEnoughGold);
+                case EvolutionApi.ErrorMaxStepReached: return GetBlockMessage(EvolutionBlock.MaxStepReached);
+                case EvolutionApi.ErrorLevelLocked: return GetBlockMessage(EvolutionBlock.LevelLocked);
+                case EvolutionApi.ErrorNotEnoughGold: return GetBlockMessage(EvolutionBlock.NotEnoughGold);
             }
         }
         return result.ToUserMessage("진화에 실패했습니다.");   // PLAYER_PROFILE_NOT_FOUND 등은 서버 안내 문구

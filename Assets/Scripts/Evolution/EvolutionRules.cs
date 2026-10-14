@@ -93,7 +93,4 @@ public static class EvolutionRules
 
     public static int GetNextCost(EvolutionData data, int step)
         => data == null ? 0 : data.evolutionBaseCost + data.evolutionCostPerStep * step;
-
-    public static bool IsMaxStep(EvolutionData data, int step)
-        => data != null && data.evolutionMaxStep > 0 && step >= data.evolutionMaxStep;
 }
