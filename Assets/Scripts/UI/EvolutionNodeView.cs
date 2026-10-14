@@ -19,6 +19,10 @@ public class EvolutionNodeView : MonoBehaviour
     {
         border.color = unlocked ? unlockedBorderColor : UIPalette.Get(lockedBorderColor);
         inner.color = unlocked ? unlockedInnerColor : UIPalette.Get(lockedInnerColor);
+
+        if (node.icon != null)
+            icon.sprite = node.icon;
+
         icon.color = unlocked ? node.iconColor : UIPalette.Get(lockedIconColor);
     }
 }

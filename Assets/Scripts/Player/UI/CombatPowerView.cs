@@ -6,7 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(TMP_Text))]
 public class CombatPowerView : MonoBehaviour
 {
-    [SerializeField] private string format = "전투력 {0}";
+    [SerializeField][TextArea] private string format = "전투력\n{0}";
 
     private TMP_Text label;
     private bool isInventorySubscribed;

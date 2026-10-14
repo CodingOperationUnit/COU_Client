@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 using static EvolutionRules;
 
 // 진화 탭에 서버 진화 규칙(4종 순환, 계정 레벨당 4단계 제한)을 표시하고, 해금을 서버 요청으로 처리한다
@@ -10,11 +11,8 @@ public class EvolutionTabPresenter : MonoBehaviour
     [Header("Range")]
     [SerializeField][Min(1)] private int displayMaxAccountLevel = 100;   // 이 계정 레벨까지 노드 표시
 
-    [Header("Icon Colors")]
-    [SerializeField] private Color attackColor = new(0.90f, 0.30f, 0.30f);
-    [SerializeField] private Color hpColor = new(0.30f, 0.80f, 0.40f);
-    [SerializeField] private Color defenseColor = new(0.30f, 0.55f, 0.95f);
-    [SerializeField] private Color potionRecoveryColor = new(0.70f, 0.40f, 0.90f);
+    [Header("Icons")]
+    [SerializeField] private EvolutionIconSet iconSet;
 
     private EvolutionTab tab;
     private int currentStep;        // 지금까지 진화한 단계 수 (= 다음 해금 노드 번호)
@@ -80,6 +78,9 @@ public class EvolutionTabPresenter : MonoBehaviour
     // s번째 진화(0부터) 노드. level = 필요 계정 레벨 (모자라면 툴팁에 해금 버튼이 안 나옴)
     private EvolutionNodeInfo BuildNode(EvolutionData evolution, int s)
     {
+        if (iconSet == null)
+            Debug.LogWarning("[EvolutionTabPresenter] Icon Set이 연결되지 않아 기본 아이콘으로 표시합니다.", this); 
+
         string statType = EvolutionRules.GetNextStatType(evolution, s);
         int increase = EvolutionRules.GetIncreasePerLevel(evolution, statType);
         string statName = GetStatName(statType);
@@ -90,7 +91,8 @@ public class EvolutionTabPresenter : MonoBehaviour
             name = statName,
             value = "+" + increase,
             description = statName + "이 " + increase + " 증가합니다.",
-            iconColor = GetStatColor(statType),
+            icon = iconSet != null ? iconSet.Get(statType) : null,
+            iconColor = Color.white,
             cost = EvolutionRules.GetNextCost(evolution, s)
         };
     }
@@ -164,14 +166,5 @@ public class EvolutionTabPresenter : MonoBehaviour
         PlayerStatType.Defense => "방어력",
         PlayerStatType.PotionRecovery => "포션 회복량",
         _ => statType
-    };
-
-    private Color GetStatColor(string statType) => statType switch
-    {
-        PlayerStatType.Attack => attackColor,
-        PlayerStatType.Hp => hpColor,
-        PlayerStatType.Defense => defenseColor,
-        PlayerStatType.PotionRecovery => potionRecoveryColor,
-        _ => Color.white
     };
 }
