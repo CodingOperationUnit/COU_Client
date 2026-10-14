@@ -49,6 +49,24 @@ public class PlayerStats : MonoBehaviour
         EnsureCalculated();
     }
 
+    // 로그용: 기준 피해(배율 1.0)와 시작 스킬 Lv1 피해 (치명타 판정 없이 일반·치명타 값)
+    private string GetDamageLog()
+    {
+        var basic = PlayerDamageCalculator.Preview(1f, this);
+        string log = "\n / 피해(배율 1.0) " + basic.normal + " (치명타 " + basic.critical + ", " + CriticalChance + "%)";
+
+        if (startingSkillId == WeaponSkillTable.NoSkill)
+            return log;
+
+        var skillData = GameManager.JsonData.GetSkillDataFromJson(startingSkillId);
+        if (skillData == null)
+            return log;
+
+        // 레벨 1, 패시브 없음 기준이라 스킬 배율 = skillDamage
+        var skill = PlayerDamageCalculator.Preview(skillData.skillDamage, this);
+        return log + " / 시작 스킬 Lv1 피해 " + skill.normal + " (치명타 " + skill.critical + ")";
+    }
+
     // 누가 먼저 읽든 처음 한 번만 실행
     private void EnsureCalculated()
     {
@@ -79,11 +97,12 @@ public class PlayerStats : MonoBehaviour
         LoadWeapon(equipped);
 
         Debug.Log("[PlayerStats] 공격력 " + finalAtk + " (기본 " + stat.BaseAttack + " + 진화 " + stat.EvolutionAttack + " + 장비 " + stat.EquipmentAttack + ")" +
-                  " / 체력 " + finalHp + " (기본 " + stat.BaseHp + " + 진화 " + stat.EvolutionHp + " + 장비 " + stat.EquipmentHp + ")" +
-                  " / 방어력 " + finalDefense + " / 포션 회복량 +" + finalPotionRecovery +
-                  " / 이동 속도 " + finalMoveSpeed.ToString("F2") + " (+" + stat.EquipmentMoveSpeedPercent + "%)" +
-                  " / 무기: " + (hasWeapon ? equippedWeaponName + ")" : "없음") +
-                  " / 시작 스킬: " + (startingSkillId == WeaponSkillTable.NoSkill ? "없음" : startingSkillId.ToString()));
+          " / 체력 " + finalHp + " (기본 " + stat.BaseHp + " + 진화 " + stat.EvolutionHp + " + 장비 " + stat.EquipmentHp + ")" +
+          " / 방어력 " + finalDefense + " / 포션 회복량 +" + finalPotionRecovery +
+          " / 이동 속도 " + finalMoveSpeed.ToString("F2") + " (+" + stat.EquipmentMoveSpeedPercent + "%)" +
+          " / 무기: " + (hasWeapon ? equippedWeaponName : "없음") +
+          " / 시작 스킬: " + (startingSkillId == WeaponSkillTable.NoSkill ? "없음" : startingSkillId.ToString()) +
+          GetDamageLog());
     }
 
     // 보너스 등록: 같은 출처·같은 스탯이면 덮어씀 (패시브 레벨업 때 다시 호출)

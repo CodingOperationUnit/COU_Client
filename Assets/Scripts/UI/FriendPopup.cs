@@ -198,8 +198,7 @@ public class FriendPopup : UIPopup
 
     private void OnChat(FriendResponse friend)
     {
-        // 채팅 구현
-        Alert($"'{friend.nickname}'님과의 채팅은 준비 중입니다.");
+        UIManager.Instance.Get<ChatPopup>().Show(friend.playerId, friend.nickname);
     }
 
     private void ConfirmRemove(FriendResponse friend)
