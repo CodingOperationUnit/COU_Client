@@ -89,7 +89,7 @@ public class ChatPopup : UIPopup
 
         ScrollToBottom();
     }
-    // 폴링으로 새 메시지가 왔을 때 (내가 방금 보낸 것 포함)
+    // 새 메시지가 왔을 때: WebSocket 푸시 또는 복구 조회 (내가 방금 보낸 것 포함)
     private void OnMessagesReceived(List<ChatMessageResponse> list)
     {
         bool stick = scrollRect.verticalNormalizedPosition <= StickToBottomThreshold
