@@ -22,13 +22,18 @@ public class CharacterEquipView : MonoBehaviour
     [SerializeField] private TMP_Text atkValueText;
     [SerializeField] private TMP_Text hpValueText;
 
-    // 장비를 장착하지 않았을 때 모든 부위 슬롯에 공통으로 띄우는 기본 아이콘.
+    // 장비를 장착하지 않았을 때 띄우는 빈 슬롯 이미지.
+    // 부위별 이미지(Empty + 부위명, 예: EmptyArmor)가 있으면 그걸 쓰고, 없으면 공통 기본 아이콘을 쓴다.
     private const string EmptySlotIconPath = "Equip/Inven/Item/Weapon/Weapon";
+    private const string EmptySlotFolder = "Equip/Inven/Item/Weapon/EmptySlot/";
     private Sprite emptySlotSprite;
+    private readonly System.Collections.Generic.Dictionary<EquipSlotType, Sprite> emptySlotSprites = new();
 
     // 아이콘 크기
     [SerializeField] private Vector2 equippedIconSize = new(75f, 75f);
     [SerializeField] private Vector2 emptySlotIconSize = new(85f, 85f);
+    // 부위별 빈 슬롯 이미지는 프레임까지 포함돼 있어서 등급 프레임과 같은 크기로 띄운다.
+    [SerializeField] private Vector2 emptySlotFramedSize = new(150f, 150f);
 
     private static readonly System.Collections.Generic.Dictionary<EquipSlotType, Vector2> SlotGridPosition = new()
     {
@@ -46,6 +51,10 @@ public class CharacterEquipView : MonoBehaviour
 
         foreach (var slot in slots)
         {
+            var perSlot = Resources.Load<Sprite>(EmptySlotFolder + "Empty" + slot.slotType);
+            if (perSlot != null)
+                emptySlotSprites[slot.slotType] = perSlot;
+
             if (slot.button != null && SlotGridPosition.TryGetValue(slot.slotType, out var pos))
             {
                 var slotRect = slot.button.GetComponent<RectTransform>();
@@ -142,9 +151,12 @@ public class CharacterEquipView : MonoBehaviour
 
             if (slot.icon != null)
             {
-                slot.icon.sprite = emptySlotSprite;
-                slot.icon.enabled = emptySlotSprite != null;
-                slot.icon.rectTransform.sizeDelta = emptySlotIconSize;
+                var hasPerSlot = emptySlotSprites.TryGetValue(slot.slotType, out var sprite);
+                if (!hasPerSlot) sprite = emptySlotSprite;
+
+                slot.icon.sprite = sprite;
+                slot.icon.enabled = sprite != null;
+                slot.icon.rectTransform.sizeDelta = hasPerSlot ? emptySlotFramedSize : emptySlotIconSize;
             }
 
             if (slot.frame != null)
