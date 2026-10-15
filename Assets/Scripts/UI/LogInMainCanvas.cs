@@ -14,6 +14,9 @@ public class LogInMainCanvas : MonoBehaviour
     // 서버 정적 데이터 확인이 끝나기 전에는 로그인/가입을 막는다
     private bool isStaticDataChecked;
     private bool isAppUpdateRequired;
+    
+    // 자동 로그인 [확인] 후 데이터를 불러오는 중
+    private bool isAutoLoggingIn;
 
     private void Awake()
     {
@@ -28,10 +31,45 @@ public class LogInMainCanvas : MonoBehaviour
             isAppUpdateRequired = appUpdateRequired;
 
             if (appUpdateRequired)
+            {
                 popUp_Alarm.Show(AppUpdateRequiredMessage);
+                return;
+            }
+
+            ShowAutoLoginPopup();
         }));
     }
 
+    // ===== 자동 로그인 =====
+    
+    // 이전에 게임에 들어간 적이 있는 계정이 저장되어 있으면 자동 로그인 여부를 묻는다
+    // 저장된 세션이 없으면 아무것도 하지 않고 직접 로그인을 기다린다
+    private void ShowAutoLoginPopup()
+    {
+        if (!GameManager.ServerLogin.TryGetSavedLoginId(out string savedLoginId)) return;
+        
+        GameManager.UI.Get<MessagePopup>().ShowConfirm(
+            $"{savedLoginId} 계정으로 자동 로그인합니다.",
+            StartAutoLogin,                                         // [확인]
+            () => Debug.Log("[Login] 자동 로그인 취소 -> 직접 로그인")   // [취소]: 팝업만 닫힘
+            );
+    }
+
+    private void StartAutoLogin()
+    {
+        if (!GameManager.ServerLogin.TryRestoreSession())
+        {
+            popUp_Alarm.Show("자동 로그인 정보를 불러오지 못했습니다. 직접 로그인해 주세요.");
+            return;
+        }
+
+        isAutoLoggingIn = true;
+        Debug.Log($"[Login] 자동 로그인 시도: accountLoginId = {GameManager.ServerLogin.CurrentAccount.accountLoginId}");
+        StartCoroutine(GameManager.ServerLoad.LoadPlayerData(OnPlayerDataLoaded));
+    }
+    
+    // ===== 직접 로그인 / 회원가입 =====
+    
     private bool CanProceed()
     {
         if (!isStaticDataChecked)
@@ -96,18 +134,30 @@ public class LogInMainCanvas : MonoBehaviour
         ));
     }
     
+    // 직접 로그인 / 자동 로그인 공통: 데이터 로드 결과 처리
     private void OnPlayerDataLoaded(bool success, string message)
     {
+        bool wasAutoLogin = isAutoLoggingIn;
+        isAutoLoggingIn = false;
+        
         if (!success)
         {
-            // 로그인은 됐지만 데이터를 못 받은 경우: 토큰을 지워서 다시 로그인할 수 있게 한다
-            GameManager.ServerLogin.Logout();
-            popUp_Alarm.Show(message);
+            // 이미 로그아웃됨 = 토큰 만료(401)로 HandleUnauthorized가 저장된 세션까지 지운 경우
+            if (!GameManager.ServerLogin.IsLoggedIn)
+            {
+                popUp_Alarm.Show(wasAutoLogin ? "로그인 정보가 만료되었습니다. 다시 로그인해주세요." : message);
+                return;
+            }
+            
+            // 서버 연결 실패 등: 다시 로그인할 수 있게 토큰은 지우되, 자동 로그인 정보는 남겨둔다
+            GameManager.ServerLogin.Logout(clearSavedSession: false);
+            popUp_Alarm.Show(wasAutoLogin ? "자동 로그인에 실패했습니다.\n" + message : message);
             return;
         }
 
-        // 인증과 데이터 로드가 모두 성공하면 입장
-        Debug.Log("[Login] 로그인 및 플레이어 데이터 로드 완료");
+        // 인증과 데이터 로드가 모두 성공 → 자동 로그인용 세션 저장 후 입장
+        GameManager.ServerLogin.CompleteLogin();
+        Debug.Log(wasAutoLogin ? "[Login] 자동 로그인 및 플레이어 데이터 로드 완료" : "[Login] 로그인 및 플레이어 데이터 로드 완료");
         GameManager.Scene.ChangeScene(GameConstants.SceneNames.MAIN_SCENE);
     }
 }
