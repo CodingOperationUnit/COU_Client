@@ -60,7 +60,13 @@ public class ItemSlotView : MonoBehaviour
 
         // 오버레이 ㅈ게ㅓ
         if (lockOverlay != null) lockOverlay.SetActive(false);
-        if (checkOverlay != null) checkOverlay.SetActive(isMatch);
+        if (checkOverlay != null)
+        {
+            var wasShown = checkOverlay.activeSelf;
+            checkOverlay.SetActive(isMatch);
+            if (isMatch && !wasShown)
+                UITween.PopIn(checkOverlay.transform, 0f, 0f);   // 합성 재료로 맞게 되면 체크가 튀어나온다
+        }
     }
 
     private void OnClicked()

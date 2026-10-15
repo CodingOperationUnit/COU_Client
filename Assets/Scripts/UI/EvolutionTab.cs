@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -186,6 +187,26 @@ public class EvolutionTab : UIView
             topBar.SetCoin(column.currency);
 
         Select(column, selectedIndex);
+        PlayUnlocked(column, selectedIndex);
+    }
+
+    // 서버 해금 성공 후 다시 그려진 골드 열에서 연출한다
+    public void PlayUnlocked(int index)
+    {
+        if (index >= 0 && index < goldColumn.views.Count)
+            PlayUnlocked(goldColumn, index);
+    }
+
+    // 아래에서 이어지는 선이 차오르고 방금 해금한 노드가 튀어나온다
+    private static void PlayUnlocked(Column column, int index)
+    {
+        var line = column.lines[index].rectTransform;
+        line.DOKill(true);
+        var size = line.sizeDelta;
+        line.sizeDelta = new Vector2(size.x, 0f);
+        line.DOSizeDelta(size, 0.25f).SetEase(Ease.OutCubic).AsUI(line);
+
+        UITween.PopIn(column.views[index].transform, 0.15f, 0.5f, 0.35f);
     }
 
     // 골드 열 하나, 아래부터 순서대로 해금하는 진화 (서버 진화 규칙용)
@@ -236,7 +257,7 @@ public class EvolutionTab : UIView
         var content = scrollRect.content;
         var viewportHeight = scrollRect.viewport.rect.height;
         var scrollable = Mathf.Max(content.sizeDelta.y - viewportHeight, 1f);
-        scrollRect.verticalNormalizedPosition = Mathf.Clamp01((RowY(row) - viewportHeight / 2) / scrollable);
+        UITween.ScrollTo(scrollRect, Mathf.Clamp01((RowY(row) - viewportHeight / 2) / scrollable));
     }
 
     // 서버 요청 중 해금 버튼 잠금

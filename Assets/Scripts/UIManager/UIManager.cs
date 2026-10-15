@@ -1,13 +1,17 @@
 using System;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class UIManager : MonoSingleton<UIManager>
 {
     private const string ThemeKey = "UITheme";
 
     [SerializeField] private Canvas overlayCanvas;
+    [SerializeField] private Image sceneFade;   // 씬이 바뀌면 이 화면이 걷히며 새 씬이 드러난다
 
     private readonly Dictionary<Type, UIView> views = new();
     private readonly List<UIPopup> popups = new();
@@ -30,6 +34,23 @@ public class UIManager : MonoSingleton<UIManager>
         Register(overlayCanvas, UILayer.Overlay);
 
         cancelAction = InputSystem.actions.FindAction("UI/Cancel");
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        var color = sceneFade.color;
+        color.a = 1f;
+        sceneFade.DOKill();
+        sceneFade.color = color;
+        sceneFade.DOFade(0f, 0.4f).SetEase(Ease.InQuad).AsUI(sceneFade);
     }
 
     private void Update()

@@ -23,6 +23,7 @@ public class EvolutionTooltip : MonoBehaviour
         costText.text = $"x {node.cost}";
         ((RectTransform)transform).anchoredPosition = position;
         gameObject.SetActive(true);
+        UITween.PopIn(transform, 0f, 0.6f, 0.2f);
     }
 
     public void Hide()

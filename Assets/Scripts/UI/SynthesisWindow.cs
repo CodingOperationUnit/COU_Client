@@ -1,3 +1,4 @@
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -155,6 +156,46 @@ public class SynthesisWindow : UIView
             UIManager.Instance.Get<MessagePopup>().ShowAlert(message);
 
         Refresh();   // 합성 가능 여부에 따라 버튼 활성화를 다시 결정
+
+        if (success)
+            PlaySynthesized();
+    }
+
+    // 대상·재료 칸이 결과 아이콘으로 빨려 들어간 뒤 결과가 튀어나온다
+    private void PlaySynthesized()
+    {
+        this.DOKill(true);   // 이전 연출이 남아 있으면 끝내서 칸을 제자리로 돌려 놓는다
+
+        var parts = new[] { beforeGradeIcon.transform, materialSlot1GradeIcon.transform, materialSlot2GradeIcon.transform };
+        var homes = new Vector3[parts.Length];
+        var scales = new Vector3[parts.Length];
+        var target = resultGradeIcon.transform.position;
+        var sequence = DOTween.Sequence();
+
+        for (var i = 0; i < parts.Length; i++)
+        {
+            homes[i] = parts[i].localPosition;
+            scales[i] = parts[i].localScale;
+            sequence.Join(parts[i].DOMove(target, 0.3f).SetEase(Ease.InBack));
+            sequence.Join(parts[i].DOScale(scales[i] * 0.3f, 0.3f));
+        }
+
+        sequence
+            .OnComplete(() =>
+            {
+                UITween.PopIn(resultItemIcon.transform, 0f, 0.3f, 0.35f);
+                UITween.Punch(nameText.transform, 0.2f);
+            })
+            .OnKill(() =>
+            {
+                for (var i = 0; i < parts.Length; i++)
+                {
+                    parts[i].localPosition = homes[i];
+                    parts[i].localScale = scales[i];
+                }
+            })
+            .SetTarget(this)
+            .AsUI(this);
     }
 
     private void SetButtonsInteractable(bool interactable)

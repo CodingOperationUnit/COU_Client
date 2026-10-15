@@ -678,6 +678,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bafa2844cfb9be4893e27740382c06e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BattleResultWindow
+  panel: {fileID: 0}
   banner: {fileID: 350099544108038425}
   ribbon: {fileID: 3669128718154199061}
   titleText: {fileID: 8096150455728864287}
@@ -2400,6 +2401,7 @@ GameObject:
   - component: {fileID: 6743916888646595173}
   - component: {fileID: 2772172896382664229}
   - component: {fileID: 3210162525558889633}
+  - component: {fileID: 7518567501243826341}
   m_Layer: 5
   m_Name: ConfirmButton
   m_TagString: Untagged
@@ -2509,6 +2511,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &7518567501243826341
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7801024963546964170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &7839083652401902886
 GameObject:
   m_ObjectHideFlags: 0

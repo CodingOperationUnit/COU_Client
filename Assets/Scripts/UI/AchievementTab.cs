@@ -19,15 +19,16 @@ public class AchievementTab : UIView
     private void Awake()
     {
         backButton.onClick.AddListener(Close);
-        topButton.onClick.AddListener(ScrollToTop);
+        topButton.onClick.AddListener(() => UITween.ScrollTo(scrollRect, 1f));
     }
-    
+
     // Open()으로 열 때도, 인스펙터에서 직접 켤 때도 다시 채운다
     private void OnEnable()
     {
         Refresh();
         ScrollToTop();
-        
+        UITween.Stagger(cards, 0.03f);
+
         GameManager.ServerAchievement.Load((success, message) =>
         {
             if (success)

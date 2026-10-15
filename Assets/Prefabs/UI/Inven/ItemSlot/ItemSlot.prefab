@@ -164,6 +164,7 @@ GameObject:
   - component: {fileID: 2016300126792259477}
   - component: {fileID: 8971193421872234310}
   - component: {fileID: -3062444217487401672}
+  - component: {fileID: 839241803856424860}
   m_Layer: 5
   m_Name: ItemSlot
   m_TagString: Untagged
@@ -306,6 +307,20 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &839241803856424860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5441296803476484900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &6055987771731085819
 GameObject:
   m_ObjectHideFlags: 0
