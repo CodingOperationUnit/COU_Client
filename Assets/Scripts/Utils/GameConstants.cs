@@ -38,6 +38,10 @@ public static class GameConstants
         public const string STATIC_DATA_DIRECTORY = "StaticData";
         public const string STATIC_DATA_VERSION_FILE = "version.txt";
         public const string AchievementData_Json_Path = "Data/Achievement";
+        
+        public const string LOGIN_PASSWORD_ICON_SHEET = "UI/Icon_Login_Password";
+        public const string LOGIN_PASSWORD_ICON_MASKED = "Icon_Login_Password_Visible";      // * 표시 중 → 눈동자
+        public const string LOGIN_PASSWORD_ICON_UNMASKED = "Icon_Login_Password_Unvisible";  // * 표시 해제 → 빗금 눈동자
     }
 
     // 서버 통신 상수
@@ -51,6 +55,14 @@ public static class GameConstants
         public const string LOGIN_API = "/api/accounts/login";
         public const string PLAYER_SAVE_API = "/api/players/me/save";
         public const string INVENTORY_API = "/api/inventory";   // Server 클래스에 추가
+    }
+
+    // PlayerPrefs 저장 키
+    public static class PrefsKeys
+    {
+        // 자동 로그인 세션 (AuthSessionStore)
+        public const string AUTH_ACCESS_TOKEN = "COU.Auth.AccessToken";
+        public const string AUTH_ACCOUNT = "COU.Auth.Account";
     }
 
     public static class Value
