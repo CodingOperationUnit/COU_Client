@@ -18,9 +18,15 @@ public static class SkillFactory
         { 20090, () => new Skill_CtrlZ() },
 
         // 패시브 (21000대)
-        // 임시: 실제 효과가 확정되기 전에 동작 확인용으로 기존 테스트 패시브를 연결해 둠
-        //{ 21010, () => new Skill_DamageUp() },
-        //{ 21070, () => new Skill_ProjectileUp() },
+        { 21010, () => new Skill_EnergyDrink() },
+        { 21020, () => new Skill_EyeDrops() },
+        { 21030, () => new Skill_SecondMonitor() },
+        { 21040, () => new Skill_Earbuds() },
+        { 21050, () => new Skill_MousePad() },
+        { 21060, () => new Skill_KeyboardSwitch() },
+        { 21070, () => new Skill_Overclock() },
+        { 21080, () => new Skill_StaticShock() },
+        { 21090, () => new Skill_ShiftKey() },
     };
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD

@@ -28,7 +28,11 @@ public abstract class SkillBase
     public float DamageMultiplier => Mathf.Pow(DamageMultiplierPerLevel, Mathf.Max(level - 1, 0));
 
     public int SkillId => skillData != null ? skillData.skillId : -1;
-    public float Range => skillData != null ? skillData.skillRange : 0.0f;
+    // 적 탐지 범위. 사거리증가 보너스 포함
+    public float Range => skillData != null ? GetPercentStat(SkillPercentStat.Range, skillData.skillRange) : 0.0f;
+
+    // 이번 발동의 대미지 비율 (반복으로 다시 발동한 스킬은 낮춤)
+    protected virtual float DamageScale => 1.0f;
 
     public virtual void Initialize(SkillData data)
     {
@@ -116,7 +120,7 @@ public abstract class SkillBase
     protected SkillStats BuildStats()
     {
         // 반올림하지 않고 배율 그대로 넘김 (공격력, 치명타, 반올림은 맞힐 때 PlayerDamageCalculator가 처리)
-        float skillMultiplier = GetPercentStat(SkillPercentStat.Damage, skillData.skillDamage * DamageMultiplier);
+        float skillMultiplier = GetPercentStat(SkillPercentStat.Damage, skillData.skillDamage * DamageMultiplier) * DamageScale;
         float speed = GetPercentStat(SkillPercentStat.Speed, skillData.skillSpeed);
         float scale = GetPercentStat(SkillPercentStat.Area, 1.0f);
 

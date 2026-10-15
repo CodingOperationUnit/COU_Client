@@ -1,9 +1,16 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 // 쿨타임마다 사거리 안의 적을 찾아 발동하는 스킬의 공통 베이스
 public abstract class CooldownSkillBase : SkillBase
 {
+    // 반복 발동 사이 간격 (초). 임시 수치
+    private const float RepeatInterval = 0.15f;
+
+    // 반복으로 다시 발동한 스킬의 대미지 비율
+    private const float RepeatDamageRatio = 0.5f;
+
     protected float cooldownTimer;
     protected Vector2 fireDirection;
     protected Transform fireTarget;
@@ -13,6 +20,12 @@ public abstract class CooldownSkillBase : SkillBase
     private bool isFirePending;
     private float fireDelayTimer;
 
+    private int _remainingRepeats;
+    private float _repeatTimer;
+    private bool _isRepeating;
+
+    protected override float DamageScale => _isRepeating ? RepeatDamageRatio : 1.0f;
+
     public override void Initialize(SkillData data)
     {
         base.Initialize(data);
@@ -21,6 +34,9 @@ public abstract class CooldownSkillBase : SkillBase
 
     public override void Tick(float deltaTime)
     {
+        // 반복 발동은 쿨타임과 따로 진행
+        TickRepeat(deltaTime);
+
         // 발사 대기 중: 대기 시간이 끝나면 발사
         if (isFirePending)
         {
@@ -71,7 +87,42 @@ public abstract class CooldownSkillBase : SkillBase
             cooldownTimer = Mathf.Max(cooldownTimer - FireDelay, 0.01f);
         }
 
+        // 반복 패시브만큼 간격을 두고 다시 발동 (앞선 반복이 남아 있으면 새 발동 기준으로 덮어씀)
+        _remainingRepeats = GetFlatStat(SkillFlatStat.Repeat, 0);
+        _repeatTimer = RepeatInterval;
+
         OnFired?.Invoke(this);
+    }
+
+    // 반복 발동. 쿨타임, 발동 알림(OnFired 등)과 관계없이 Fire만 다시 부르고 대미지는 RepeatDamageRatio만큼
+    private void TickRepeat(float deltaTime)
+    {
+        if(_remainingRepeats <= 0)
+        {
+            return;
+        }
+
+        _repeatTimer -= deltaTime;
+
+        if(_repeatTimer > 0.0f)
+        {
+            return;
+        }
+
+        _remainingRepeats--;
+        _repeatTimer = RepeatInterval;
+
+        // 앞선 발동에 대상이 죽었을 수 있으므로 다시 조준. 사거리 안에 적이 없으면 직전 방향 그대로 발사
+        FindFireDirection();
+
+        if(fireTarget != null && !fireTarget.gameObject.activeInHierarchy)
+        {
+            fireTarget = null;
+        }
+
+        _isRepeating = true;
+        Fire();
+        _isRepeating = false;
     }
 
     // 쿨타임이 끝났고, 사거리 안에 적이 있을 때만 발동
@@ -91,9 +142,9 @@ public abstract class CooldownSkillBase : SkillBase
     // 사거리 안의 적을 찾아서 발사 방향(fireDirection)을 정함. 적이 없으면 false
     private bool FindFireDirection()
     {
-        Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, skillData.skillRange, LayerMask.GetMask("Enemy"));
+        List<Collider2D> enemies = SkillTargeting.OverlapEnemies(transform.position, Range);
 
-        if(enemies.Length == 0)
+        if(enemies.Count == 0)
         {
             return false;
         }
@@ -106,22 +157,23 @@ public abstract class CooldownSkillBase : SkillBase
             return true;
         }
 
-        // Nearest: 사거리 안에서 가장 가까운 적 방향
-        Collider2D nearest = enemies[0];
-        float minDistance = Vector2.Distance(transform.position, nearest.transform.position);
+        // Nearest: 사거리 안에서 가장 가까운 적 방향 (제곱 거리로 비교해 제곱근 계산을 줄임)
+        Vector2 origin = transform.position;
+        Collider2D nearest = null;
+        float minSqrDistance = float.MaxValue;
 
         foreach(Collider2D enemy in enemies)
         {
-            float distance = Vector2.Distance(transform.position, enemy.transform.position);
+            float sqrDistance = ((Vector2)enemy.transform.position - origin).sqrMagnitude;
 
-            if(distance < minDistance)
+            if(sqrDistance < minSqrDistance)
             {
-                minDistance = distance;
+                minSqrDistance = sqrDistance;
                 nearest = enemy;
             }
         }
 
-        fireDirection = (nearest.transform.position - transform.position).normalized;
+        fireDirection = ((Vector2)nearest.transform.position - origin).normalized;
         fireTarget = nearest.transform;
         return true;
     }

@@ -1,41 +1,16 @@
 using UnityEngine;
 
-// 지정된 타겟을 수명이 끝날 때까지 쫓아가는 탄환. 타겟이 사라지면 마지막 방향으로 직진
+// 지정된 타겟을 쫓아가는 탄환. 타겟이 사라지면 마지막 방향으로 직진
+// 추적, 관통, 연쇄 처리는 LinearProjectile이 담당하고 여기서는 처음 쫓을 적만 정함
 public sealed class HomingProjectile : LinearProjectile
 {
-    private Enemy _targetEnemy;
-
     protected override void OnLaunch()
     {
         base.OnLaunch();
 
-        _targetEnemy = null;
-
-        if(target != null)
+        if(target != null && target.TryGetComponent(out Enemy targetEnemy))
         {
-            target.TryGetComponent(out _targetEnemy);
+            homingTarget = targetEnemy;
         }
-    }
-
-    protected override void Movement()
-    {
-        if(IsTargetAlive())
-        {
-            Vector2 toTarget = _targetEnemy.transform.position - transform.position;
-
-            if(toTarget.sqrMagnitude > 0.0001f)
-            {
-                direction = toTarget.normalized;
-                transform.up = direction;
-            }
-        }
-
-        base.Movement();
-    }
-
-    // 죽었거나 풀로 반환된 적은 따라가지 않음
-    private bool IsTargetAlive()
-    {
-        return _targetEnemy != null && !_targetEnemy.isDead && _targetEnemy.gameObject.activeInHierarchy;
     }
 }

@@ -36,16 +36,18 @@ public readonly struct ProjectileData
     public readonly SkillStats Stats;
     public readonly Vector2 Direction;
     public readonly Transform Target; // 직선 탄환은 null
-    public readonly int PierceCount;
+    public readonly int PierceCount; // 맞힐 수 있는 적 수 (1 = 첫 적을 맞히면 사라짐)
     public readonly Transform Owner; // 돌아올 대상 (부메랑 등). 돌아오지 않는 탄환은 null
+    public readonly int ChainCount;  // 관통을 다 쓴 뒤 주변 적에게 튕기는 횟수
 
-    public ProjectileData(SkillStats stats, Vector2 direction, Transform target = null, int pierceCount = 1, Transform owner = null)
+    public ProjectileData(SkillStats stats, Vector2 direction, Transform target = null, int pierceCount = 1, Transform owner = null, int chainCount = 0)
     {
         Stats = stats;
         Direction = direction.normalized;
         Target = target;
         PierceCount = pierceCount;
         Owner = owner;
+        ChainCount = chainCount;
     }
 }
 

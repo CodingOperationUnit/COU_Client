@@ -6,13 +6,12 @@ using UnityEngine;
 public abstract class PersistentSkillBase : SkillBase
 {
     // 오브젝트를 만들 때 수치가 고정되는 보너스. 이 값들이 바뀔 때만 다시 생성함
-    // (쿨타임, 치명타 등 오브젝트와 관계없는 보너스가 바뀔 때마다 다시 생성되지 않도록 함)
+    // (쿨타임, 치명타, 사거리 등 오브젝트와 관계없는 보너스가 바뀔 때마다 다시 생성되지 않도록 함)
     private static readonly SkillPercentStat[] SpawnPercentStats =
     {
         SkillPercentStat.Damage,
         SkillPercentStat.Speed,
-        SkillPercentStat.Area,
-        SkillPercentStat.Range
+        SkillPercentStat.Area
     };
 
     private static readonly SkillFlatStat[] SpawnFlatStats =
