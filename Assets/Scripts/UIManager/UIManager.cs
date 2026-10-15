@@ -12,6 +12,7 @@ public class UIManager : MonoSingleton<UIManager>
 
     [SerializeField] private Canvas overlayCanvas;
     [SerializeField] private Image sceneFade;   // 씬이 바뀌면 이 화면이 걷히며 새 씬이 드러난다
+    [SerializeField] private LoadingScreen loadingScreen;   // 추가: 씬 이동 로딩창
 
     private readonly Dictionary<Type, UIView> views = new();
     private readonly List<UIPopup> popups = new();
@@ -19,6 +20,7 @@ public class UIManager : MonoSingleton<UIManager>
     private InputAction cancelAction;
 
     public UITheme Theme { get; private set; }
+    public LoadingScreen Loading => loadingScreen; 
 
     public event Action ThemeChanged;
 

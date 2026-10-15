@@ -65,6 +65,7 @@ public class LogInMainCanvas : MonoBehaviour
 
         isAutoLoggingIn = true;
         Debug.Log($"[Login] 자동 로그인 시도: accountLoginId = {GameManager.ServerLogin.CurrentAccount.accountLoginId}");
+        UIManager.Instance.Loading.Show();   // [로딩] 데이터 로드부터 로딩창
         StartCoroutine(GameManager.ServerLoad.LoadPlayerData(OnPlayerDataLoaded));
     }
     
@@ -81,6 +82,12 @@ public class LogInMainCanvas : MonoBehaviour
         if (isAppUpdateRequired)
         {
             popUp_Alarm.Show(AppUpdateRequiredMessage);
+            return false;
+        }
+
+        if (isAutoLoggingIn)
+        {
+            popUp_Alarm.Show("자동 로그인 중입니다. 잠시만 기다려 주세요.");
             return false;
         }
 
@@ -128,7 +135,8 @@ public class LogInMainCanvas : MonoBehaviour
 
                 Debug.Log($"[Login] 서버 로그인 성공: accountId={GameManager.ServerLogin.CurrentAccount.accountId}");
 
-                // 로그인 성공 → 플레이어 데이터 불러오기
+                // 로그인 성공 → 로딩창을 띄우고 플레이어 데이터 불러오기
+                UIManager.Instance.Loading.Show();   // [로딩]
                 StartCoroutine(GameManager.ServerLoad.LoadPlayerData(OnPlayerDataLoaded));
             }
         ));
@@ -142,6 +150,8 @@ public class LogInMainCanvas : MonoBehaviour
         
         if (!success)
         {
+            UIManager.Instance.Loading.Hide();   // [로딩] 안내 팝업이 로딩창에 가려지지 않게
+
             // 이미 로그아웃됨 = 토큰 만료(401)로 HandleUnauthorized가 저장된 세션까지 지운 경우
             if (!GameManager.ServerLogin.IsLoggedIn)
             {
@@ -158,6 +168,6 @@ public class LogInMainCanvas : MonoBehaviour
         // 인증과 데이터 로드가 모두 성공 → 자동 로그인용 세션 저장 후 입장
         GameManager.ServerLogin.CompleteLogin();
         Debug.Log(wasAutoLogin ? "[Login] 자동 로그인 및 플레이어 데이터 로드 완료" : "[Login] 로그인 및 플레이어 데이터 로드 완료");
-        GameManager.Scene.ChangeScene(GameConstants.SceneNames.MAIN_SCENE);
+        GameManager.Scene.ChangeSceneWithLoading(GameConstants.SceneNames.MAIN_SCENE);   // [로딩]
     }
 }

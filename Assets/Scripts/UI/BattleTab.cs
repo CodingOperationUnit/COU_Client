@@ -79,7 +79,7 @@ public class BattleTab : UIView
             GameManager.PlayerData.currentData.currency = result.Data.currency;
             GameManager.PlayerData.NotifyPlayerDataChanged();
 
-            GameManager.Scene.ChangeScene(GameConstants.SceneNames.BATTLE_SCENE, stageId, result.Data.battleId);
+            GameManager.Scene.ChangeSceneWithLoading(GameConstants.SceneNames.BATTLE_SCENE, stageId, result.Data.battleId);
         }));
     }
 

@@ -70,5 +70,6 @@ public static class GameConstants
         public const int REQUEST_TIMEOUT_SECONDS = 10;
         public const long CONNECTION_FAILED = 0;
         public const long ALREADY_REQUESTING = -1; 
+        public const float MIN_LOADING_SECONDS = 1f;   // 추가: 로딩이 빨라도 최소 이 시간은 로딩창을 보여준다
     }
 }
