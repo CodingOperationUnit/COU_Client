@@ -32,12 +32,18 @@ public class SettingsPopup : UIPopup
     {
         AudioListener.volume = AudioListener.volume > 0f ? 0f : 1f;
         muteMark.SetActive(AudioListener.volume == 0f);
+        if (muteMark.activeSelf)
+            UITween.PopIn(muteMark.transform, 0f, 0f);
     }
 
     private void SetTheme(UITheme theme)
     {
+        var changed = UIManager.Instance.Theme != theme;
         UIManager.Instance.SetTheme(theme);
         RefreshThemeMarks();
+
+        if (changed)
+            UITween.PopIn((theme == UITheme.Dark ? darkThemeMark : lightThemeMark).transform, 0f, 0f);
     }
 
     private void RefreshThemeMarks()

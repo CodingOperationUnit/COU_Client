@@ -163,6 +163,7 @@ GameObject:
   - component: {fileID: 3688329277494268387}
   - component: {fileID: 3641578092769067047}
   - component: {fileID: 5036138852769919794}
+  - component: {fileID: 8399774715028610949}
   m_Layer: 5
   m_Name: gloves
   m_TagString: Untagged
@@ -286,6 +287,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
   color: 0
+--- !u!114 &8399774715028610949
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 459914603899199696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &1335101843368640097
 GameObject:
   m_ObjectHideFlags: 0
@@ -428,6 +443,7 @@ GameObject:
   - component: {fileID: 2384572927024064946}
   - component: {fileID: 4212257398189993403}
   - component: {fileID: 3463796083254813382}
+  - component: {fileID: 9097241986036039280}
   m_Layer: 5
   m_Name: shoes
   m_TagString: Untagged
@@ -551,6 +567,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
   color: 0
+--- !u!114 &9097241986036039280
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1863999003278756292}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &1939332794697015153
 GameObject:
   m_ObjectHideFlags: 0
@@ -1186,6 +1216,7 @@ GameObject:
   - component: {fileID: 9162366509462108170}
   - component: {fileID: 6234127010286083533}
   - component: {fileID: 6581305388462237502}
+  - component: {fileID: 6400190851300455568}
   m_Layer: 5
   m_Name: weapon
   m_TagString: Untagged
@@ -1309,6 +1340,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
   color: 0
+--- !u!114 &6400190851300455568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3477958385829919940}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &3985428524937110049
 GameObject:
   m_ObjectHideFlags: 0
@@ -1322,6 +1367,7 @@ GameObject:
   - component: {fileID: 1875007650128916570}
   - component: {fileID: 1385516067157381457}
   - component: {fileID: 6573429462518412056}
+  - component: {fileID: 2144594262022525686}
   m_Layer: 5
   m_Name: armor
   m_TagString: Untagged
@@ -1445,6 +1491,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
   color: 0
+--- !u!114 &2144594262022525686
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3985428524937110049}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &3995729984670447561
 GameObject:
   m_ObjectHideFlags: 0
@@ -2358,6 +2418,7 @@ GameObject:
   - component: {fileID: 7312951476083877311}
   - component: {fileID: 6234247639569726308}
   - component: {fileID: 8522072753573753460}
+  - component: {fileID: 580576451783559607}
   m_Layer: 5
   m_Name: necklace
   m_TagString: Untagged
@@ -2481,6 +2542,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
   color: 0
+--- !u!114 &580576451783559607
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6138312671874283710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &6161503445123627548
 GameObject:
   m_ObjectHideFlags: 0
@@ -2700,6 +2775,7 @@ GameObject:
   - component: {fileID: 8079549967684594694}
   - component: {fileID: 3772891698524698053}
   - component: {fileID: 133104956243454005}
+  - component: {fileID: 2350712802705125879}
   m_Layer: 5
   m_Name: AddButton
   m_TagString: Untagged
@@ -2821,6 +2897,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19c7151120a54c2fb071b3a7b4b4aaa8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SynthesisEntryButton
+--- !u!114 &2350712802705125879
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7061656117668164609}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &7178045120353056329
 GameObject:
   m_ObjectHideFlags: 0
@@ -2909,6 +2999,7 @@ GameObject:
   - component: {fileID: 1440094789933073321}
   - component: {fileID: 6365518143405413899}
   - component: {fileID: 3866898420352771132}
+  - component: {fileID: 3456023332463370482}
   m_Layer: 5
   m_Name: belt
   m_TagString: Untagged
@@ -3032,6 +3123,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
   color: 0
+--- !u!114 &3456023332463370482
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7404260402053005738}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &7518850010030811374
 GameObject:
   m_ObjectHideFlags: 0
@@ -3515,6 +3620,7 @@ GameObject:
   - component: {fileID: 4132071452999126229}
   - component: {fileID: 3502477264302960538}
   - component: {fileID: 8444806236736531328}
+  - component: {fileID: 1053096690837434377}
   m_Layer: 5
   m_Name: SlotButton
   m_TagString: Untagged
@@ -3639,6 +3745,20 @@ MonoBehaviour:
   button: {fileID: 3502477264302960538}
   label: {fileID: 7717496526997424058}
   listView: {fileID: 9064629737341279553}
+--- !u!114 &1053096690837434377
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8058562207144259125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &8171926481937831197
 GameObject:
   m_ObjectHideFlags: 0

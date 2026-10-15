@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1520170757811148645}
   - component: {fileID: 5057433945902064540}
   - component: {fileID: 6001680841086757915}
+  - component: {fileID: 848012572148033546}
   m_Layer: 5
   m_Name: BatchLevelUpButton
   m_TagString: Untagged
@@ -121,6 +122,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &848012572148033546
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 13059224572826943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &406798528851980772
 GameObject:
   m_ObjectHideFlags: 0
@@ -336,6 +351,7 @@ GameObject:
   - component: {fileID: 7192078793380142095}
   - component: {fileID: 4953460875203399022}
   - component: {fileID: 657039746016781312}
+  - component: {fileID: 7936736361878007063}
   m_Layer: 5
   m_Name: EquipButton
   m_TagString: Untagged
@@ -445,6 +461,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &7936736361878007063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 759135827869925218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &883818050890527389
 GameObject:
   m_ObjectHideFlags: 0
@@ -926,6 +956,7 @@ GameObject:
   - component: {fileID: 7976445084378705710}
   - component: {fileID: 3963313975559296109}
   - component: {fileID: 1897202270974882631}
+  - component: {fileID: 2742987513310520502}
   m_Layer: 5
   m_Name: LevelUpButton
   m_TagString: Untagged
@@ -1035,6 +1066,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2742987513310520502
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2595772641893283188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &2736402196986899454
 GameObject:
   m_ObjectHideFlags: 0
@@ -1848,6 +1893,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbc82505cf105fb45bf1da4c4cc29369, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EquipDetailPopUp
+  panel: {fileID: 4023392681864037966}
   gradeBanner: {fileID: 8510445238663628063}
   gradeBannerText: {fileID: 2907953741201343996}
   itemIcon: {fileID: 6826481656949670452}
@@ -2962,6 +3008,7 @@ GameObject:
   - component: {fileID: 1207294706750390413}
   - component: {fileID: 7524420542988248678}
   - component: {fileID: 4102650944897642134}
+  - component: {fileID: 3104411379007608213}
   m_Layer: 5
   m_Name: CloseButton
   m_TagString: Untagged
@@ -3071,6 +3118,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &3104411379007608213
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8356971310138081891}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &8810749509603274340
 GameObject:
   m_ObjectHideFlags: 0

@@ -42,7 +42,7 @@ public class AchievementCard : MonoBehaviour
 
         nameText.text = data.achievementName;
         descriptionText.text = data.GetDescription(step);
-        progressFill.fillAmount = (float)current / target;
+        UITween.Fill(progressFill, (float)current / target);
 
         if (allClaimed)
             progressText.text = "완료";
@@ -52,6 +52,12 @@ public class AchievementCard : MonoBehaviour
             progressText.text = $"{current} / {target}";
 
         if (alertImage != null)
+        {
             alertImage.SetActive(progress.CanClaim);
+            if (progress.CanClaim)
+                UITween.Pulse(alertImage.transform, 0.15f);
+            else
+                UITween.StopPulse(alertImage.transform);
+        }
     }
 }

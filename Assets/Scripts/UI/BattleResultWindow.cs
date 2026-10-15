@@ -24,15 +24,19 @@ public class BattleResultWindow : UIView
         confirmButton.onClick.AddListener(() => GameManager.Scene.ChangeScene(GameConstants.SceneNames.MAIN_SCENE));
     }
 
+    // 배너가 크게 찍히듯 내려앉고 리본이 펼쳐진다
     public void Show(bool victory)
     {
         titleText.text = victory ? "승리" : "실패";
         banner.color = ribbon.color = victory ? victoryColor : defeatColor;
         Open();
+
+        UITween.PopIn(banner.transform, 0f, 1.6f, 0.35f);
+        UITween.PopIn(ribbon.transform, 0.15f, 0f, 0.3f);
     }
 
     public void SetTime(int seconds)
-        => timeText.text = FormatTime(seconds);
+        => UITween.Count(timeText, 0, seconds, FormatTime, 0.8f);
 
     public void SetChapter(int chapter)
         => chapterText.text = $"{chapter} 챕터";
@@ -41,21 +45,29 @@ public class BattleResultWindow : UIView
         => bestTimeText.text = $"최고:<color=#A8F000>{FormatTime(seconds)}</color>";
 
     public void SetKillCount(int kills)
-        => killText.text = kills.ToString();
+        => UITween.Count(killText, 0, kills, value => value.ToString(), 0.8f);
 
     public void SetBoxCount(int count)
     {
         box.SetActive(count > 0);
         boxCountText.text = $"x{count}";
+        if (count > 0)
+            UITween.PopIn(box.transform, 0f, 0f);
     }
 
     public void SetGold(int gold)
-        => goldText.text = $"x{FormatAmount(gold)}";
+    {
+        UITween.StopBlink(goldText);
+        UITween.Count(goldText, 0, gold, value => $"x{FormatAmount(value)}", 0.8f);
+    }
 
     public void SetExp(int exp)
-        => expText.text = $"x{FormatAmount(exp)}";
+    {
+        UITween.StopBlink(expText);
+        UITween.Count(expText, 0, exp, value => $"x{FormatAmount(value)}", 0.8f);
+    }
 
-    // 서버 응답을 기다리는 동안 지급값을 비우고 확인 버튼을 막는다
+    // 서버 응답을 기다리는 동안 지급값을 비워 깜빡이고 확인 버튼을 막는다
     public void SetWaiting(bool waiting)
     {
         confirmButton.interactable = !waiting;
@@ -63,6 +75,8 @@ public class BattleResultWindow : UIView
 
         box.SetActive(false);
         goldText.text = expText.text = "x-";
+        UITween.Blink(goldText);
+        UITween.Blink(expText);
     }
 
     private static string FormatTime(int seconds)

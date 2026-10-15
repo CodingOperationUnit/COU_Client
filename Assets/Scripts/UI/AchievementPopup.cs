@@ -96,8 +96,7 @@ public class AchievementPopup : UIPopup
         float distanceFromTop = -rowCenter.y;   // Conditions pivot y = 1 기준
 
         float offset = Mathf.Clamp(distanceFromTop - viewHeight * 0.5f, 0f, scrollable);
-        stepScroll.StopMovement();
-        stepScroll.verticalNormalizedPosition = 1f - offset / scrollable;
+        UITween.ScrollTo(stepScroll, 1f - offset / scrollable);
     }
 
     // ---------- 보상 ----------
@@ -170,7 +169,11 @@ public class AchievementPopup : UIPopup
                           $" (보유 골드 {currency.currencyGold:N0}, 보석 {currency.currencyGem:N0})");
 
             onClaimed?.Invoke();        // 탭의 카드 갱신
-            if (IsOpen) Refresh();      // 다음 단계로 팝업 갱신
+            if (!IsOpen) return;
+
+            Refresh();                  // 다음 단계로 팝업 갱신
+            UITween.Punch(totalProgressText.transform);
+            UITween.Stagger(rewardItems, 0.06f);   // 다음 단계 보상이 새로 나온다
         });
     }
 

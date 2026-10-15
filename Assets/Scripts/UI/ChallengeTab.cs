@@ -25,8 +25,5 @@ public class ChallengeTab : UIView
     }
 
     private void ScrollToTop()
-    {
-        scrollRect.StopMovement();
-        scrollRect.verticalNormalizedPosition = 1f;
-    }
+        => UITween.ScrollTo(scrollRect, 1f);
 }

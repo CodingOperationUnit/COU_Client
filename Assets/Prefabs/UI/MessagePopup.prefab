@@ -227,6 +227,7 @@ GameObject:
   - component: {fileID: 3717897143667984596}
   - component: {fileID: 1092888883982941784}
   - component: {fileID: 4312001617005339289}
+  - component: {fileID: 253822089228374015}
   m_Layer: 5
   m_Name: CancelButton
   m_TagString: Untagged
@@ -336,6 +337,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &253822089228374015
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2227028405077289207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &2766890495691942458
 GameObject:
   m_ObjectHideFlags: 0
@@ -348,6 +363,7 @@ GameObject:
   - component: {fileID: 1221349277420157996}
   - component: {fileID: 2118762879329527435}
   - component: {fileID: 8761423792475863046}
+  - component: {fileID: 1853443994090186948}
   m_Layer: 5
   m_Name: ConfirmButton
   m_TagString: Untagged
@@ -457,6 +473,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1853443994090186948
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2766890495691942458}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &3906336286054237383
 GameObject:
   m_ObjectHideFlags: 0
@@ -947,6 +977,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3dfe118444792c4dbca6419ed44e18f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MessagePopup
+  panel: {fileID: 5055068650972318829}
   messageText: {fileID: 4484770489778256493}
   confirmButton: {fileID: 8761423792475863046}
   cancelButton: {fileID: 4312001617005339289}

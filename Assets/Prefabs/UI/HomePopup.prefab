@@ -503,6 +503,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50129054d56548947b609e32095de77d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HomePopup
+  panel: {fileID: 1558159612337571320}
   exitButton: {fileID: 1180399380913198510}
   continueButton: {fileID: 2003793269345901672}
 --- !u!1 &3598367003898448825
@@ -517,6 +518,7 @@ GameObject:
   - component: {fileID: 618006371503070317}
   - component: {fileID: 4430120139390345306}
   - component: {fileID: 1180399380913198510}
+  - component: {fileID: 1885809712132831792}
   m_Layer: 5
   m_Name: ExitButton
   m_TagString: Untagged
@@ -626,6 +628,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1885809712132831792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3598367003898448825}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &4158021754749404001
 GameObject:
   m_ObjectHideFlags: 0
@@ -1125,6 +1141,7 @@ GameObject:
   - component: {fileID: 5318370402969593128}
   - component: {fileID: 2263009560880026911}
   - component: {fileID: 2003793269345901672}
+  - component: {fileID: 3716089991997951519}
   m_Layer: 5
   m_Name: ContinueButton
   m_TagString: Untagged
@@ -1234,6 +1251,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &3716089991997951519
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7738232454411579091}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &8472637769283877499
 GameObject:
   m_ObjectHideFlags: 0

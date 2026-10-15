@@ -775,6 +775,7 @@ GameObject:
   - component: {fileID: 4825386444962046920}
   - component: {fileID: 3067546400531896241}
   - component: {fileID: 2957310898343033411}
+  - component: {fileID: 9199406140627646982}
   m_Layer: 5
   m_Name: ProfileIcon
   m_TagString: Untagged
@@ -884,6 +885,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &9199406140627646982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4513634543141361761}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &4696828397405599985
 GameObject:
   m_ObjectHideFlags: 0
@@ -1453,6 +1468,7 @@ GameObject:
   - component: {fileID: 8902406735900681874}
   - component: {fileID: 2500388570222303089}
   - component: {fileID: 1603183618462765154}
+  - component: {fileID: 7787375003627728490}
   m_Layer: 5
   m_Name: PlusButton
   m_TagString: Untagged
@@ -1562,6 +1578,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &7787375003627728490
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6235859725712787039}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &6240616692275580104
 GameObject:
   m_ObjectHideFlags: 0
@@ -1649,6 +1679,7 @@ GameObject:
   - component: {fileID: 392059978385693317}
   - component: {fileID: 1284202218935139055}
   - component: {fileID: 3860965120868992215}
+  - component: {fileID: 1341661021262162312}
   m_Layer: 5
   m_Name: PlusButton
   m_TagString: Untagged
@@ -1758,6 +1789,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1341661021262162312
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6480164061251682832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &7183874705011168575
 GameObject:
   m_ObjectHideFlags: 0
@@ -1770,6 +1815,7 @@ GameObject:
   - component: {fileID: 4702211969293949669}
   - component: {fileID: 6538795573485979477}
   - component: {fileID: 6191754589403947924}
+  - component: {fileID: 6697608129502516784}
   m_Layer: 5
   m_Name: PlusButton
   m_TagString: Untagged
@@ -1879,6 +1925,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &6697608129502516784
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7183874705011168575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &7194581570842711270
 GameObject:
   m_ObjectHideFlags: 0
@@ -2796,7 +2856,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb818436da99e4847a92d9d4ab9149ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TopBar
+  panel: {fileID: 0}
   profileButton: {fileID: 2957310898343033411}
+  staminaPlusButton: {fileID: 6191754589403947924}
+  gemPlusButton: {fileID: 3860965120868992215}
+  goldPlusButton: {fileID: 1603183618462765154}
   nicknameText: {fileID: 7639279531392518840}
   levelText: {fileID: 7837668072878792400}
   expFill: {fileID: 565496702518505939}

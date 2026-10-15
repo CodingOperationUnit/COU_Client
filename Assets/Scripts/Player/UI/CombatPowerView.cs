@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 
@@ -7,8 +8,11 @@ using UnityEngine;
 public class CombatPowerView : MonoBehaviour
 {
     [SerializeField][TextArea] private string format = "전투력\n{0}";
+    [SerializeField] private Color increaseColor = new(0.55f, 0.9f, 0.4f);
+    [SerializeField] private Color decreaseColor = new(1f, 0.4f, 0.4f);
 
     private TMP_Text label;
+    private int power = -1;   // 표시 중인 전투력. -1은 아직 숫자를 표시한 적 없음
     private bool isInventorySubscribed;
     private bool isPlayerDataSubscribed;
 
@@ -52,9 +56,12 @@ public class CombatPowerView : MonoBehaviour
 
     private void Refresh()
     {
+        label.DOKill();   // 굴리던 숫자를 멈추면 OnKill에서 원래 색으로 돌아온다
+
         if (GameManager.PlayerData == null || !GameManager.PlayerData.isPlayerDataLoaded)
         {
             label.text = string.Format(format, "-");
+            power = -1;
             return;
         }
 
@@ -63,11 +70,25 @@ public class CombatPowerView : MonoBehaviour
         if (!stat.HasCombatPowerData)
         {
             label.text = string.Format(format, "-");
+            power = -1;
             Debug.LogWarning("[CombatPowerView] 전투력 데이터가 없습니다.", this);
             return;
         }
 
-        // 천 단위 쉼표 (2,325)
-        label.text = string.Format(format, stat.CombatPower.ToString("N0", CultureInfo.InvariantCulture));
+        // 바뀐 만큼 굴려서 보여주고, 도는 동안 오르면 초록·내리면 빨강으로 표시한다
+        var next = stat.CombatPower;
+        var baseColor = label.color;
+        var count = UITween.Count(label, power, next, FormatPower);
+        if (count != null)
+        {
+            label.color = next > power ? increaseColor : decreaseColor;
+            count.OnKill(() => label.color = baseColor);
+            UITween.Punch(label.transform);
+        }
+        power = next;
     }
+
+    // 천 단위 쉼표 (2,325)
+    private string FormatPower(int value)
+        => string.Format(format, value.ToString("N0", CultureInfo.InvariantCulture));
 }
