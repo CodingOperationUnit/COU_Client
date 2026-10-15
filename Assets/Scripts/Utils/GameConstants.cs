@@ -52,6 +52,14 @@ public static class GameConstants
         public const string INVENTORY_API = "/api/inventory";   // Server 클래스에 추가
     }
 
+    // PlayerPrefs 저장 키
+    public static class PrefsKeys
+    {
+        // 자동 로그인 세션 (AuthSessionStore)
+        public const string AUTH_ACCESS_TOKEN = "COU.Auth.AccessToken";
+        public const string AUTH_ACCOUNT = "COU.Auth.Account";
+    }
+
     public static class Value
     {
         public const int REQUEST_TIMEOUT_SECONDS = 10;
