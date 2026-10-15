@@ -37,6 +37,10 @@ public static class GameConstants
         public const string STATIC_DATA_DIRECTORY = "StaticData";
         public const string STATIC_DATA_VERSION_FILE = "version.txt";
         public const string AchievementData_Json_Path = "Data/Achievement";
+        
+        public const string LOGIN_PASSWORD_ICON_SHEET = "UI/Icon_Login_Password";
+        public const string LOGIN_PASSWORD_ICON_MASKED = "Icon_Login_Password_Visible";      // * 표시 중 → 눈동자
+        public const string LOGIN_PASSWORD_ICON_UNMASKED = "Icon_Login_Password_Unvisible";  // * 표시 해제 → 빗금 눈동자
     }
 
     // 서버 통신 상수
