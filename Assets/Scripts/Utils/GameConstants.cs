@@ -28,6 +28,7 @@ public static class GameConstants
         public const string MonsterData_Json_Path = "Data/Monster";
         public const string ItemData_Json_Path = "Data/Item";
         public const string SkillData_Json_Path = "Data/Skill";
+        public const string SkillIcon_Path = "Skill/Icons/";
         public const string DropItemData_Json_Path = "Data/DropItem";
         public const string AccountConstData_Json_Path = "Data/AccountConst";
         public const string PlayerBaseStatData_Json_Path = "Data/PlayerBaseStat";

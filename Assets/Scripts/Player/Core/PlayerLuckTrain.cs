@@ -99,7 +99,7 @@ public class PlayerLuckTrain : MonoBehaviour
         {
             int skillId = candidates[Random.Range(0, candidates.Count)].SkillId;
             slotSkillIds[i] = skillId;
-            window.SetSlot(i, GameManager.JsonData.GetSkillDataFromJson(skillId).skillName);
+            window.SetSlot(i, Resources.Load<Sprite>(GameManager.JsonData.GetSkillDataFromJson(skillId).IconPath));
         }
 
         int[] selected = DrawSelection(candidates);
@@ -119,7 +119,7 @@ public class PlayerLuckTrain : MonoBehaviour
             previewLevels[skillId] = level;
 
             var data = GameManager.JsonData.GetSkillDataFromJson(skillId);
-            window.SetReward(i, data.skillName, level, "Lv." + level);
+            window.SetReward(i, Resources.Load<Sprite>(data.IconPath), data.skillName, level, "Lv." + level);
         }
 
         int goldMax = GameManager.JsonData.AccountConstData.luckTrainGoldMax;

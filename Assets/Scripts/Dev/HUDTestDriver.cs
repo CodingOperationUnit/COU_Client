@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 public class HUDTestDriver : MonoBehaviour
 {
-    private static readonly string[] DummySkillNames = { "쿠나이", "리볼버", "수리검", "카타나" };
+    private static readonly string[] DummySkillNames = { "Tumbler", "Glasses", "Monitor", "Speaker" };
     private static readonly int[][] LuckTrainPatterns =
     {
         new[] { 2 },
@@ -39,7 +39,7 @@ public class HUDTestDriver : MonoBehaviour
         hud.SetLevel(level);
 
         for (var i = 0; i < 16; i++)
-            luckTrain.SetSlot(i, DummySkillNames[i % DummySkillNames.Length]);
+            luckTrain.SetSlot(i, LoadDummyIcon(i));
     }
 
     private void Update()
@@ -113,7 +113,10 @@ public class HUDTestDriver : MonoBehaviour
         luckTrainPattern = (luckTrainPattern + 1) % LuckTrainPatterns.Length;
 
         for (var i = 0; i < selected.Length; i++)
-            luckTrain.SetReward(i, DummySkillNames[selected[i] % DummySkillNames.Length], i + 1, $"Lv.{i + 1}");
+            luckTrain.SetReward(i, LoadDummyIcon(selected[i]), DummySkillNames[selected[i] % DummySkillNames.Length], i + 1, $"Lv.{i + 1}");
         luckTrain.Show(selected, selected.Length, 200 * selected.Length);
     }
+
+    private static Sprite LoadDummyIcon(int index)
+        => Resources.Load<Sprite>(GameConstants.Paths.SkillIcon_Path + DummySkillNames[index % DummySkillNames.Length]);
 }

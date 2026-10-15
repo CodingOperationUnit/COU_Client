@@ -13,7 +13,7 @@ public class LuckTrainWindow : UIView
         Result
     }
 
-    [SerializeField] private TMP_Text[] slotNames;
+    [SerializeField] private Image[] slotIcons;
     [SerializeField] private GameObject[] slotHighlights;
     [SerializeField] private TMP_Text goldText;
     [SerializeField] private Button startButton;
@@ -52,11 +52,11 @@ public class LuckTrainWindow : UIView
             UpdateReveal();
     }
 
-    public void SetSlot(int index, string name)
-        => slotNames[index].text = name;
+    public void SetSlot(int index, Sprite icon)
+        => slotIcons[index].sprite = icon;
 
-    public void SetReward(int index, string name, int grade, string description)
-        => rewardCards[index].Set(name, grade, description);
+    public void SetReward(int index, Sprite icon, string name, int grade, string description)
+        => rewardCards[index].Set(icon, name, grade, description);
 
     public void Show(int[] selected, int count, int gold)
     {
@@ -102,10 +102,12 @@ public class LuckTrainWindow : UIView
             slotHighlights[highlighted].SetActive(false);
             slotHighlights[index].SetActive(true);
             highlighted = index;
+            UITween.Punch(slotIcons[index].transform, 0.12f);
         }
         goldText.text = Mathf.FloorToInt(gold * progress).ToString();
 
         if (t < 1f) return;
+        UITween.Punch(slotIcons[highlighted].transform, 0.35f);
         revealed = 1;
         timer = 0f;
         state = State.Reveal;
@@ -118,7 +120,12 @@ public class LuckTrainWindow : UIView
         timer = 0f;
 
         if (revealed < count)
-            slotHighlights[selected[revealed++]].SetActive(true);
+        {
+            var slot = selected[revealed++];
+            slotHighlights[slot].SetActive(true);
+            UITween.PopIn(slotHighlights[slot].transform, 0f, 0.5f);
+            UITween.Punch(slotIcons[slot].transform, 0.35f);
+        }
         else
             ShowResult();
     }
@@ -133,6 +140,7 @@ public class LuckTrainWindow : UIView
 
         skipArea.gameObject.SetActive(false);
         resultPanel.SetActive(true);
+        UITween.Stagger(rewardCards, 0.1f);
         state = State.Result;
     }
 
