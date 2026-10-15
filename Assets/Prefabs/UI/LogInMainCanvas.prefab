@@ -757,6 +757,7 @@ GameObject:
   - component: {fileID: 7426708654110519715}
   - component: {fileID: 2535317845792914863}
   - component: {fileID: 540617760672648967}
+  - component: {fileID: 8870381558215770883}
   m_Layer: 5
   m_Name: Button_Confirm
   m_TagString: Untagged
@@ -878,6 +879,20 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &8870381558215770883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3846287569030851446}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &4675065654922637119
 GameObject:
   m_ObjectHideFlags: 0
@@ -890,6 +905,7 @@ GameObject:
   - component: {fileID: 667534768533449301}
   - component: {fileID: 395561081696522781}
   - component: {fileID: 6075782785937667741}
+  - component: {fileID: 1049061905019132988}
   m_Layer: 5
   m_Name: Button_SignUp
   m_TagString: Untagged
@@ -1011,6 +1027,20 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &1049061905019132988
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4675065654922637119}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &4707540028396676136
 GameObject:
   m_ObjectHideFlags: 0
@@ -2621,6 +2651,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Popup_Alarm
   tmp_AlarmContext: {fileID: 7353409270885660603}
+  panel: {fileID: 8936625877310149849}
 --- !u!1 &8385571526411074922
 GameObject:
   m_ObjectHideFlags: 0
@@ -2784,6 +2815,7 @@ GameObject:
   - component: {fileID: 5560844645381063818}
   - component: {fileID: 7601824097410590995}
   - component: {fileID: 2746570351364465011}
+  - component: {fileID: 4155373713338010867}
   m_Layer: 5
   m_Name: Button_LogIn
   m_TagString: Untagged
@@ -2905,6 +2937,20 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &4155373713338010867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9029182309531755298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &9165023642610508025
 GameObject:
   m_ObjectHideFlags: 0

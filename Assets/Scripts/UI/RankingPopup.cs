@@ -162,6 +162,10 @@ public class RankingPopup : UIPopup
             statusText.gameObject.SetActive(false);
 
         SetMine(response);
+
+        // 포디움은 3위 → 2위 → 1위 순으로, 목록은 위에서부터 차례로 나온다
+        UITween.Stagger(podiums.Reverse(), 0.12f);
+        UITween.Stagger(entryViews, 0.03f);
     }
 
     private bool isSendingFriendRequest;

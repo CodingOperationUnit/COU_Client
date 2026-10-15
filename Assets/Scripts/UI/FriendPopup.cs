@@ -165,6 +165,7 @@ public class FriendPopup : UIPopup
             friends = response.friends ?? new List<FriendResponse>();
             if (response.maxFriends > 0) maxFriends = response.maxFriends;
             RenderFriends();
+            if (showLoading) PopRows();   // 주기적 갱신 때는 목록이 튀지 않게 그대로 둔다
         });
     }
 
@@ -198,8 +199,7 @@ public class FriendPopup : UIPopup
 
     private void OnChat(FriendResponse friend)
     {
-        // 채팅 구현
-        Alert($"'{friend.nickname}'님과의 채팅은 준비 중입니다.");
+        UIManager.Instance.Get<ChatPopup>().Show(friend.playerId, friend.nickname);
     }
 
     private void ConfirmRemove(FriendResponse friend)
@@ -247,6 +247,7 @@ public class FriendPopup : UIPopup
             requests = response ?? new List<FriendRequestResponse>();
             UpdateRequestBadge();
             RenderRequests();
+            PopRows();
         });
     }
 
@@ -373,6 +374,7 @@ public class FriendPopup : UIPopup
 
             searchResults = response ?? new List<FriendSearchResponse>();
             RenderSearch();
+            PopRows();
         });
     }
 
@@ -458,6 +460,10 @@ public class FriendPopup : UIPopup
             Destroy(row.gameObject);
         rows.Clear();
     }
+
+    // 서버에서 새로 받아 그린 목록만 차례로 나오게 한다
+    private void PopRows()
+        => UITween.Stagger(rows, 0.03f);
 
     private void ShowStatus(string message)
     {

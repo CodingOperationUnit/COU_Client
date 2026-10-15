@@ -33,5 +33,7 @@ public class RewardBoxResultPopup : UIPopup
         }
 
         Open();
+        UITween.Punch(boxCountText.transform, 0.3f);
+        UITween.Stagger(slots, 0.06f);
     }
 }

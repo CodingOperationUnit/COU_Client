@@ -10,6 +10,9 @@ public class ServerLoginManager : MonoSingleton<ServerLoginManager>
     public ServerAccountData CurrentAccount { get; private set; }
     public bool IsLoggedIn => CurrentAccount != null;
     
+    // [자동 로그인] 저장된 세션으로 로그인해 데이터를 불러오는 중 (게임 입장 전까지)
+    public bool IsRestoringSession { get; private set; }
+    
     // 버튼을 연타해도 요청이 한 번만 나가도록 막는다
     private bool isRequesting;
 
@@ -135,10 +138,50 @@ public class ServerLoginManager : MonoSingleton<ServerLoginManager>
         });
     }
     
-    // 로그아웃: 서버에 따로 알릴 필요 없이 토큰과 플레이어 데이터를 지운다
-    public void Logout()
+    // [자동 로그인] 저장된 세션이 있으면 그 계정 아이디를 알려준다 (팝업 표시용, 로그인 상태는 바꾸지 않음)
+    public bool TryGetSavedLoginId(out string accountLoginId)
     {
+        accountLoginId = null;
+        if (IsLoggedIn) return false;
+        if (!AuthSessionStore.TryLoad(out _, out ServerAccountData account)) return false;
+
+        accountLoginId = account.accountLoginId;
+        return true;
+    }
+    
+    // [자동 로그인] 저장된 토큰과 계정 정보로 로그인 상태를 되살린다.
+    // 토큰이 아직 유효한지는 이어서 부르는 LoadPlayerData가 확인한다 (만료된 401 -> HandleUnauthorized)
+    public bool TryRestoreSession()
+    {
+        if (IsLoggedIn) return false;
+        if (!AuthSessionStore.TryLoad(out string token, out ServerAccountData account)) return false;
+        
+        ApiClient.SetAccessToken(token);
+        CurrentAccount = account;
+        IsRestoringSession = true;
+        
+        return true;
+    }
+    
+    // [자동 로그인] 로그인(직접/자동)과 데이터 로드가 모두 끝나 게임에 들어갈 때 호출
+    // 여기서 저장하므로 "게임에 들어가 본 적이 있는" 계정만 자동 로그인 대상
+    public void CompleteLogin()
+    {
+        if (!IsLoggedIn) return;
+
+        IsRestoringSession = false;
+        AuthSessionStore.Save(ApiClient.AccessToken, CurrentAccount);
+        GameManager.ServerPresence.StartHeartbeat(); // 자동 로그인은 Login()을 거치지 않으므로 여기서 시작 (이미 돌고 있으면 무시)
+    }
+    
+    // 로그아웃: 서버에 따로 알릴 필요 없이 토큰과 플레이어 데이터를 지운다
+    // [자동 로그인] clearSavedSession = false : 서버 연결 실패처럼 일시적인 문제일 때 자동 로그인 정보는 남겨 둔다
+    public void Logout(bool clearSavedSession = true)
+    {
+        if (clearSavedSession) AuthSessionStore.Clear();
+        
         GameManager.ServerPresence.StopHeartbeat();
+        GameManager.ServerChat.StopConversation();
         FriendRequestState.Set(0);
         CurrentAccount = null;
         ApiClient.ClearAccessToken();

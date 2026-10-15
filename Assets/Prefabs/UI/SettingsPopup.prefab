@@ -392,6 +392,7 @@ GameObject:
   - component: {fileID: 6538413119381695077}
   - component: {fileID: 4229502566835452190}
   - component: {fileID: 5349044593896159319}
+  - component: {fileID: 937627754385329464}
   m_Layer: 5
   m_Name: LogoutButton
   m_TagString: Untagged
@@ -501,6 +502,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &937627754385329464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1468507934018572879}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &1606019213539887905
 GameObject:
   m_ObjectHideFlags: 0
@@ -750,6 +765,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de768b837652fb54a9c5b5067d0ab2a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SettingsPopup
+  panel: {fileID: 7951609017219816043}
   closeButton: {fileID: 7218964542471735737}
   soundButton: {fileID: 4898506236587042555}
   muteMark: {fileID: 4300918366458164053}
@@ -1096,6 +1112,7 @@ GameObject:
   - component: {fileID: 2101738154797304025}
   - component: {fileID: 5074709832362333134}
   - component: {fileID: 7763984867763828852}
+  - component: {fileID: 3014028310247208398}
   m_Layer: 5
   m_Name: LightThemeButton
   m_TagString: Untagged
@@ -1206,6 +1223,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &3014028310247208398
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3340735688398811363}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &3512029408772283544
 GameObject:
   m_ObjectHideFlags: 0
@@ -1218,6 +1249,7 @@ GameObject:
   - component: {fileID: 3430365937460018898}
   - component: {fileID: 1652715149680680421}
   - component: {fileID: 7218964542471735737}
+  - component: {fileID: 4115335443972584992}
   m_Layer: 5
   m_Name: CloseButton
   m_TagString: Untagged
@@ -1327,6 +1359,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4115335443972584992
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3512029408772283544}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &3869407982126345876
 GameObject:
   m_ObjectHideFlags: 0
@@ -1777,6 +1823,7 @@ GameObject:
   - component: {fileID: 4898506236587042555}
   - component: {fileID: 7636654201995023798}
   - component: {fileID: 2480778875372977206}
+  - component: {fileID: 2266466579958984309}
   m_Layer: 5
   m_Name: SoundButton
   m_TagString: Untagged
@@ -1887,6 +1934,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &2266466579958984309
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5636647137503231369}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &5694183957141603958
 GameObject:
   m_ObjectHideFlags: 0
@@ -2078,6 +2139,7 @@ GameObject:
   - component: {fileID: 3840551378455174043}
   - component: {fileID: 3747307356979445585}
   - component: {fileID: 3631185013645239187}
+  - component: {fileID: 4042055447769947548}
   m_Layer: 5
   m_Name: DarkThemeButton
   m_TagString: Untagged
@@ -2188,6 +2250,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4042055447769947548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6011103192628487837}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &6500606921662416354
 GameObject:
   m_ObjectHideFlags: 0

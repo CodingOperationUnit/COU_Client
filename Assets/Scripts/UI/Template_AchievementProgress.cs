@@ -36,7 +36,11 @@ public class Template_AchievementProgress : MonoBehaviour
 
         stateIcon.sprite = GetSprite(State);
         stateIcon.enabled = stateIcon.sprite != null;
-        
+        if (State == AchievementStepState.Claimable)
+            UITween.Pulse(stateIcon.transform, 0.15f);
+        else
+            UITween.StopPulse(stateIcon.transform);
+
         stepText.text = BuildText(data, step, progress);
         stepText.alpha = GetAlpha(State);
     }

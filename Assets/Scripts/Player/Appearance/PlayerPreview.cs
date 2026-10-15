@@ -51,4 +51,10 @@ public class PlayerPreview : MonoBehaviour
         appearance.SetWeapon(itemId);
         appearance.PlayIdle();
     }
+    
+    // 로딩창: 제자리 달리기
+    public void PlayMove()
+    {
+        appearance.PlayMove();
+    }
 }

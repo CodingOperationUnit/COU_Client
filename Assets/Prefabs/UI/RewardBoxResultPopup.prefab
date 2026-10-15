@@ -282,6 +282,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c99f031d520ef314695994a6f69903ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RewardBoxResultPopup
+  panel: {fileID: 0}
   boxCountText: {fileID: 7804095187237502873}
   content: {fileID: 3781508203338599259}
   itemSlotPrefab: {fileID: 8971193421872234310, guid: 7ffa536faf99cca4b9c20829281119de, type: 3}
@@ -878,6 +879,7 @@ GameObject:
   - component: {fileID: 6743916888646595173}
   - component: {fileID: 2772172896382664229}
   - component: {fileID: 3210162525558889633}
+  - component: {fileID: 7343804591931157998}
   m_Layer: 5
   m_Name: ConfirmButton
   m_TagString: Untagged
@@ -987,6 +989,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &7343804591931157998
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7801024963546964170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &7839083652401902886
 GameObject:
   m_ObjectHideFlags: 0

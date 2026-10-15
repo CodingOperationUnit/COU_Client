@@ -235,7 +235,6 @@ GameObject:
   - component: {fileID: 864964650288857896}
   - component: {fileID: 8978643984529243594}
   - component: {fileID: 4059537166128330434}
-  - component: {fileID: 3936212562520799044}
   - component: {fileID: 9186121771248313121}
   - component: {fileID: 8845508217728643502}
   m_Layer: 5
@@ -332,50 +331,6 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
---- !u!114 &3936212562520799044
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 334337791543000855}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
-  m_Navigation:
-    m_Mode: 3
-    m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
-  m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
-  m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
-  m_AnimationTriggers:
-    m_NormalTrigger: Normal
-    m_HighlightedTrigger: Highlighted
-    m_PressedTrigger: Pressed
-    m_SelectedTrigger: Selected
-    m_DisabledTrigger: Disabled
-  m_Interactable: 1
-  m_TargetGraphic: {fileID: 8978643984529243594}
-  m_OnClick:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &9186121771248313121
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -388,7 +343,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db6fc545139559cf56b695db384c983f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopGemCard
-  buyButton: {fileID: 3936212562520799044}
+  buyButton: {fileID: 3146401671558990746}
   productId: 50026
   gemAmount: 14000
 --- !u!114 &8845508217728643502
@@ -2242,7 +2197,6 @@ GameObject:
   - component: {fileID: 7848840705348208802}
   - component: {fileID: 5546133821595983907}
   - component: {fileID: 1162028354420918242}
-  - component: {fileID: 833085355178694909}
   - component: {fileID: 6263384042832427243}
   - component: {fileID: 2775925925212068678}
   m_Layer: 5
@@ -2339,50 +2293,6 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
---- !u!114 &833085355178694909
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2409783992071592964}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
-  m_Navigation:
-    m_Mode: 3
-    m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
-  m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
-  m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
-  m_AnimationTriggers:
-    m_NormalTrigger: Normal
-    m_HighlightedTrigger: Highlighted
-    m_PressedTrigger: Pressed
-    m_SelectedTrigger: Selected
-    m_DisabledTrigger: Disabled
-  m_Interactable: 1
-  m_TargetGraphic: {fileID: 5546133821595983907}
-  m_OnClick:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &6263384042832427243
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2395,7 +2305,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db6fc545139559cf56b695db384c983f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopGemCard
-  buyButton: {fileID: 833085355178694909}
+  buyButton: {fileID: 1570724963853886670}
   productId: 50022
   gemAmount: 500
 --- !u!114 &2775925925212068678
@@ -2854,6 +2764,7 @@ GameObject:
   - component: {fileID: 4192666995906419049}
   - component: {fileID: 6394595123769953672}
   - component: {fileID: 719033511932329991}
+  - component: {fileID: 1249743006786204260}
   m_Layer: 5
   m_Name: PriceButton
   m_TagString: Untagged
@@ -2983,6 +2894,20 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &1249743006786204260
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3305027724751929184}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &3406666893309825085
 GameObject:
   m_ObjectHideFlags: 0
@@ -3279,6 +3204,7 @@ GameObject:
   - component: {fileID: 2109158221151544031}
   - component: {fileID: 3702962209225815708}
   - component: {fileID: 1764383646475054388}
+  - component: {fileID: 4248131936387453146}
   m_Layer: 5
   m_Name: ActionButton
   m_TagString: Untagged
@@ -3388,6 +3314,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4248131936387453146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3840880895937147353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &3861717964514090087
 GameObject:
   m_ObjectHideFlags: 0
@@ -4016,6 +3956,7 @@ GameObject:
   - component: {fileID: 5697493652239610277}
   - component: {fileID: 8798225410963082489}
   - component: {fileID: 7281452099612275566}
+  - component: {fileID: 4170031231566802307}
   m_Layer: 5
   m_Name: PriceButton
   m_TagString: Untagged
@@ -4145,6 +4086,20 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &4170031231566802307
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4414493985128107618}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &4444147563532856839
 GameObject:
   m_ObjectHideFlags: 0
@@ -4597,7 +4552,6 @@ GameObject:
   - component: {fileID: 5210495999009522286}
   - component: {fileID: 610896160206451642}
   - component: {fileID: 4599669740831479497}
-  - component: {fileID: 3566694867428290630}
   - component: {fileID: 2241833815700447772}
   - component: {fileID: 4057797531777472379}
   m_Layer: 5
@@ -4694,50 +4648,6 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
---- !u!114 &3566694867428290630
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4736529661868641234}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
-  m_Navigation:
-    m_Mode: 3
-    m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
-  m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
-  m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
-  m_AnimationTriggers:
-    m_NormalTrigger: Normal
-    m_HighlightedTrigger: Highlighted
-    m_PressedTrigger: Pressed
-    m_SelectedTrigger: Selected
-    m_DisabledTrigger: Disabled
-  m_Interactable: 1
-  m_TargetGraphic: {fileID: 610896160206451642}
-  m_OnClick:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &2241833815700447772
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4750,7 +4660,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db6fc545139559cf56b695db384c983f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopGemCard
-  buyButton: {fileID: 3566694867428290630}
+  buyButton: {fileID: 5423044354791216876}
   productId: 50023
   gemAmount: 1200
 --- !u!114 &4057797531777472379
@@ -5154,7 +5064,6 @@ GameObject:
   - component: {fileID: 3744216767486394941}
   - component: {fileID: 8262157260560790595}
   - component: {fileID: 3691965910268532278}
-  - component: {fileID: 6109331460826214091}
   - component: {fileID: 4165262312473966886}
   - component: {fileID: 3363554536624645713}
   m_Layer: 5
@@ -5251,50 +5160,6 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
---- !u!114 &6109331460826214091
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4884471252618867686}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
-  m_Navigation:
-    m_Mode: 3
-    m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
-  m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
-  m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
-  m_AnimationTriggers:
-    m_NormalTrigger: Normal
-    m_HighlightedTrigger: Highlighted
-    m_PressedTrigger: Pressed
-    m_SelectedTrigger: Selected
-    m_DisabledTrigger: Disabled
-  m_Interactable: 1
-  m_TargetGraphic: {fileID: 8262157260560790595}
-  m_OnClick:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &4165262312473966886
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5307,7 +5172,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db6fc545139559cf56b695db384c983f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopGemCard
-  buyButton: {fileID: 6109331460826214091}
+  buyButton: {fileID: 8798225410963082489}
   productId: 50021
   gemAmount: 80
 --- !u!114 &3363554536624645713
@@ -5627,6 +5492,7 @@ GameObject:
   - component: {fileID: 7015482049988406681}
   - component: {fileID: 7136830177258936644}
   - component: {fileID: 4918508900647519628}
+  - component: {fileID: 3296017405433985567}
   m_Layer: 5
   m_Name: PriceButton
   m_TagString: Untagged
@@ -5756,6 +5622,20 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &3296017405433985567
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5248650157176257407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &5345754112675440879
 GameObject:
   m_ObjectHideFlags: 0
@@ -5908,6 +5788,7 @@ GameObject:
   - component: {fileID: 6249956564458793750}
   - component: {fileID: 3146401671558990746}
   - component: {fileID: 2714853023818503208}
+  - component: {fileID: 4263343748538518879}
   m_Layer: 5
   m_Name: PriceButton
   m_TagString: Untagged
@@ -6037,6 +5918,20 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &4263343748538518879
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5359093363460552900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &5366403626549553754
 GameObject:
   m_ObjectHideFlags: 0
@@ -6469,6 +6364,7 @@ GameObject:
   - component: {fileID: 67138630341132173}
   - component: {fileID: 1570724963853886670}
   - component: {fileID: 5518411181481411341}
+  - component: {fileID: 3068263105884747649}
   m_Layer: 5
   m_Name: PriceButton
   m_TagString: Untagged
@@ -6598,6 +6494,20 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &3068263105884747649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5589684318582239825}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &5647364958459304747
 GameObject:
   m_ObjectHideFlags: 0
@@ -6765,6 +6675,7 @@ GameObject:
   - component: {fileID: 8912827052675382642}
   - component: {fileID: 5423044354791216876}
   - component: {fileID: 5039856591863183296}
+  - component: {fileID: 1857819153232168162}
   m_Layer: 5
   m_Name: PriceButton
   m_TagString: Untagged
@@ -6894,6 +6805,20 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &1857819153232168162
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5774296295960386850}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &6016942796467496481
 GameObject:
   m_ObjectHideFlags: 0
@@ -6906,7 +6831,6 @@ GameObject:
   - component: {fileID: 6940519355198299053}
   - component: {fileID: 2981488020944099649}
   - component: {fileID: 2940852429441911251}
-  - component: {fileID: 5964710822046425972}
   - component: {fileID: 5518675553916183910}
   - component: {fileID: 8268409594482808872}
   m_Layer: 5
@@ -7003,50 +6927,6 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
---- !u!114 &5964710822046425972
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6016942796467496481}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
-  m_Navigation:
-    m_Mode: 3
-    m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
-  m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
-  m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
-  m_AnimationTriggers:
-    m_NormalTrigger: Normal
-    m_HighlightedTrigger: Highlighted
-    m_PressedTrigger: Pressed
-    m_SelectedTrigger: Selected
-    m_DisabledTrigger: Disabled
-  m_Interactable: 1
-  m_TargetGraphic: {fileID: 2981488020944099649}
-  m_OnClick:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &5518675553916183910
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7059,7 +6939,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db6fc545139559cf56b695db384c983f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopGemCard
-  buyButton: {fileID: 5964710822046425972}
+  buyButton: {fileID: 7136830177258936644}
   productId: 50025
   gemAmount: 6500
 --- !u!114 &8268409594482808872
@@ -7742,6 +7622,7 @@ GameObject:
   - component: {fileID: 9039042209056627839}
   - component: {fileID: 6941683143081181376}
   - component: {fileID: 3338842932643512864}
+  - component: {fileID: 3846952030108768793}
   m_Layer: 5
   m_Name: PriceButton
   m_TagString: Untagged
@@ -7871,6 +7752,20 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &3846952030108768793
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6630892480645074600}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &6862841178336080628
 GameObject:
   m_ObjectHideFlags: 0
@@ -8718,6 +8613,7 @@ GameObject:
   - component: {fileID: 4720583431518398107}
   - component: {fileID: 2336985478263419361}
   - component: {fileID: 2298929693086080452}
+  - component: {fileID: 3603230037920930078}
   m_Layer: 5
   m_Name: PriceButton
   m_TagString: Untagged
@@ -8847,6 +8743,20 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &3603230037920930078
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7069982624838770217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &7284268635563152219
 GameObject:
   m_ObjectHideFlags: 0
@@ -8859,6 +8769,7 @@ GameObject:
   - component: {fileID: 3783422291113568349}
   - component: {fileID: 3945535887234363796}
   - component: {fileID: 7019381104722281106}
+  - component: {fileID: 8942695756071776630}
   m_Layer: 5
   m_Name: ActionButton
   m_TagString: Untagged
@@ -8968,6 +8879,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &8942695756071776630
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7284268635563152219}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &7332329116329376238
 GameObject:
   m_ObjectHideFlags: 0
@@ -9207,6 +9132,7 @@ GameObject:
   - component: {fileID: 7120172406728839006}
   - component: {fileID: 4939348493316863328}
   - component: {fileID: 6574300949961773818}
+  - component: {fileID: 6091609838013465363}
   m_Layer: 5
   m_Name: PriceButton
   m_TagString: Untagged
@@ -9336,6 +9262,20 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &6091609838013465363
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7581900287329915252}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &7928967410417602825
 GameObject:
   m_ObjectHideFlags: 0
@@ -9679,7 +9619,6 @@ GameObject:
   - component: {fileID: 5396543627360408008}
   - component: {fileID: 8397963359015786113}
   - component: {fileID: 128094427984167887}
-  - component: {fileID: 7874412849620113862}
   - component: {fileID: 6467127431789072175}
   - component: {fileID: 3507650002229883162}
   m_Layer: 5
@@ -9776,50 +9715,6 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
---- !u!114 &7874412849620113862
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8153205612958966872}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
-  m_Navigation:
-    m_Mode: 3
-    m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
-  m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
-  m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
-  m_AnimationTriggers:
-    m_NormalTrigger: Normal
-    m_HighlightedTrigger: Highlighted
-    m_PressedTrigger: Pressed
-    m_SelectedTrigger: Selected
-    m_DisabledTrigger: Disabled
-  m_Interactable: 1
-  m_TargetGraphic: {fileID: 8397963359015786113}
-  m_OnClick:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &6467127431789072175
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9832,7 +9727,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db6fc545139559cf56b695db384c983f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopGemCard
-  buyButton: {fileID: 7874412849620113862}
+  buyButton: {fileID: 2336985478263419361}
   productId: 50024
   gemAmount: 2500
 --- !u!114 &3507650002229883162

@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.Layouts;
@@ -30,6 +31,8 @@ public class VirtualJoystick : OnScreenControl, IPointerDownHandler, IDragHandle
     {
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
             (RectTransform)transform, eventData.position, eventData.pressEventCamera, out var point);
+        knob.DOKill();
+        knob.anchoredPosition = Vector2.zero;
         stickBase.localPosition = point;
     }
 
@@ -42,9 +45,10 @@ public class VirtualJoystick : OnScreenControl, IPointerDownHandler, IDragHandle
         SendValueToControl(offset.normalized);
     }
 
+    // 손을 떼면 노브가 가운데로 튕기듯 돌아온다
     public void OnPointerUp(PointerEventData eventData)
     {
-        knob.anchoredPosition = Vector2.zero;
+        knob.DOAnchorPos(Vector2.zero, 0.15f).SetEase(Ease.OutBack).AsUI(knob);
         stickBase.anchoredPosition = homePosition;
         SendValueToControl(Vector2.zero);
     }

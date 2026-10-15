@@ -703,6 +703,7 @@ GameObject:
   - component: {fileID: 8550797977380594715}
   - component: {fileID: 8389800654989241065}
   - component: {fileID: 196740751812381723}
+  - component: {fileID: 8845562988818823944}
   m_Layer: 5
   m_Name: Btn_Claim
   m_TagString: Untagged
@@ -812,6 +813,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &8845562988818823944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5737516479737944672}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &7854569650416683459
 GameObject:
   m_ObjectHideFlags: 0
@@ -1298,6 +1313,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 3624181778279127674}
   m_SourcePrefab: {fileID: 100100000, guid: 4cc27e4bc5a1a33449cdf5678c959095, type: 3}
+--- !u!224 &2494716905923320209 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7951609017219816043, guid: 4cc27e4bc5a1a33449cdf5678c959095, type: 3}
+  m_PrefabInstance: {fileID: 5532330792729347066}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &2947645038449756739 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7218964542471735737, guid: 4cc27e4bc5a1a33449cdf5678c959095, type: 3}
@@ -1337,6 +1357,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bb5105ea4b79d643bacd2814c783d25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AchievementPopup
+  panel: {fileID: 2494716905923320209}
   titleText: {fileID: 4150404421648936125}
   summaryText: {fileID: 4088591399242344857}
   totalProgressText: {fileID: 5287323454901823006}

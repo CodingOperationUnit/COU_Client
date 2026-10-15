@@ -7,7 +7,7 @@ public static class PlayerDamageCalculator
 {
     // true: 기본 공격력일 때 피해 = 스킬 배율 (몬스터 체력 기획 전까지)
     // false: 피해 = 공격력 × 스킬 배율 (몬스터 체력 기획 후 전환)
-    public static readonly bool UseRelativeAttack = true;
+    public static readonly bool UseRelativeAttack = false;
 
     public readonly struct HitResult
     {
@@ -27,7 +27,7 @@ public static class PlayerDamageCalculator
         if (stats == null || skillMultiplier <= 0f)
             return new HitResult(0, false);
 
-        float damage = skillMultiplier * GetAttackFactor(stats) * (stats.SkillDamage / 100f);
+        float damage = GetBaseDamage(skillMultiplier, stats);
 
         bool isCritical = RollCritical(stats.CriticalChance);
         if (isCritical)
@@ -35,6 +35,22 @@ public static class PlayerDamageCalculator
 
         return new HitResult(Mathf.Max(1, Mathf.RoundToInt(damage)), isCritical);
     }
+
+    // 치명타 판정 없이 일반·치명타 피해를 미리 계산 (로그·UI 표시용, Calculate와 같은 공식)
+    public static (int normal, int critical) Preview(float skillMultiplier, PlayerStats stats)
+    {
+        if (stats == null || skillMultiplier <= 0f)
+            return (0, 0);
+
+        float damage = GetBaseDamage(skillMultiplier, stats);
+        int normal = Mathf.Max(1, Mathf.RoundToInt(damage));
+        int critical = Mathf.Max(1, Mathf.RoundToInt(damage * stats.CriticalDamage / 100f));
+        return (normal, critical);
+    }
+
+    // 치명타 전 피해 (반올림 전)
+    private static float GetBaseDamage(float skillMultiplier, PlayerStats stats)
+        => skillMultiplier * GetAttackFactor(stats) * (stats.SkillDamage / 100f);
 
     private static float GetAttackFactor(PlayerStats stats)
     {

@@ -16,19 +16,25 @@ public class CharacterEquipView : MonoBehaviour
 
         [NonSerialized] public Sprite defaultFrameSprite;
         [NonSerialized] public bool cached;
+        [NonSerialized] public OwnedItem shownItem;
     }
 
     [SerializeField] private SlotUI[] slots;
     [SerializeField] private TMP_Text atkValueText;
     [SerializeField] private TMP_Text hpValueText;
 
-    // 장비를 장착하지 않았을 때 모든 부위 슬롯에 공통으로 띄우는 기본 아이콘.
+    // 장비를 장착하지 않았을 때 띄우는 빈 슬롯 이미지.
+    // 부위별 이미지(Empty + 부위명, 예: EmptyArmor)가 있으면 그걸 쓰고, 없으면 공통 기본 아이콘을 쓴다.
     private const string EmptySlotIconPath = "Equip/Inven/Item/Weapon/Weapon";
+    private const string EmptySlotFolder = "Equip/Inven/Item/Weapon/EmptySlot/";
     private Sprite emptySlotSprite;
+    private readonly System.Collections.Generic.Dictionary<EquipSlotType, Sprite> emptySlotSprites = new();
 
     // 아이콘 크기
     [SerializeField] private Vector2 equippedIconSize = new(75f, 75f);
     [SerializeField] private Vector2 emptySlotIconSize = new(85f, 85f);
+    // 부위별 빈 슬롯 이미지는 프레임까지 포함돼 있어서 등급 프레임과 같은 크기로 띄운다.
+    [SerializeField] private Vector2 emptySlotFramedSize = new(150f, 150f);
 
     private static readonly System.Collections.Generic.Dictionary<EquipSlotType, Vector2> SlotGridPosition = new()
     {
@@ -46,6 +52,10 @@ public class CharacterEquipView : MonoBehaviour
 
         foreach (var slot in slots)
         {
+            var perSlot = Resources.Load<Sprite>(EmptySlotFolder + "Empty" + slot.slotType);
+            if (perSlot != null)
+                emptySlotSprites[slot.slotType] = perSlot;
+
             if (slot.button != null && SlotGridPosition.TryGetValue(slot.slotType, out var pos))
             {
                 var slotRect = slot.button.GetComponent<RectTransform>();
@@ -104,13 +114,23 @@ public class CharacterEquipView : MonoBehaviour
 
         var stat = PlayerStatCalculator.CalculateCurrent();
         if (atkValueText != null)
-            atkValueText.text = stat.FinalAttack.ToString();
+            SetValue(atkValueText, stat.FinalAttack.ToString());
         if (hpValueText != null)
-            hpValueText.text = stat.FinalHp.ToString();
+            SetValue(hpValueText, stat.FinalHp.ToString());
+    }
+
+    // 값이 바뀌었을 때만 튕긴다
+    private static void SetValue(TMP_Text text, string value)
+    {
+        if (text.text == value) return;
+
+        text.text = value;
+        UITween.Punch(text.transform);
     }
 
     private void RefreshSlot(SlotUI slot)
     {
+        var firstRefresh = !slot.cached;
         if (!slot.cached)
         {
             slot.defaultFrameSprite = slot.frame != null ? slot.frame.sprite : null;
@@ -118,6 +138,11 @@ public class CharacterEquipView : MonoBehaviour
         }
 
         var equippedItem = PlayerInventory.Instance.GetEquipped(slot.slotType);
+
+        // 장비를 바꿔 끼면 아이콘이 튀어나온다 (처음 그릴 때는 그대로)
+        if (!firstRefresh && slot.shownItem != equippedItem && slot.icon != null)
+            UITween.PopIn(slot.icon.transform, 0f, 0.5f);
+        slot.shownItem = equippedItem;
 
         if (equippedItem != null)
         {
@@ -142,9 +167,12 @@ public class CharacterEquipView : MonoBehaviour
 
             if (slot.icon != null)
             {
-                slot.icon.sprite = emptySlotSprite;
-                slot.icon.enabled = emptySlotSprite != null;
-                slot.icon.rectTransform.sizeDelta = emptySlotIconSize;
+                var hasPerSlot = emptySlotSprites.TryGetValue(slot.slotType, out var sprite);
+                if (!hasPerSlot) sprite = emptySlotSprite;
+
+                slot.icon.sprite = sprite;
+                slot.icon.enabled = sprite != null;
+                slot.icon.rectTransform.sizeDelta = hasPerSlot ? emptySlotFramedSize : emptySlotIconSize;
             }
 
             if (slot.frame != null)

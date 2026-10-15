@@ -1149,6 +1149,7 @@ GameObject:
   - component: {fileID: 8550797977380594715}
   - component: {fileID: 8389800654989241065}
   - component: {fileID: 196740751812381723}
+  - component: {fileID: 9069238504315498912}
   m_Layer: 5
   m_Name: StartButton
   m_TagString: Untagged
@@ -1258,6 +1259,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &9069238504315498912
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5737516479737944672}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &6058504847554417826
 GameObject:
   m_ObjectHideFlags: 0
@@ -1859,6 +1874,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1815207229670893183}
   m_SourcePrefab: {fileID: 100100000, guid: 4cc27e4bc5a1a33449cdf5678c959095, type: 3}
+--- !u!224 &2494716905923320209 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7951609017219816043, guid: 4cc27e4bc5a1a33449cdf5678c959095, type: 3}
+  m_PrefabInstance: {fileID: 5532330792729347066}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &2947645038449756739 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7218964542471735737, guid: 4cc27e4bc5a1a33449cdf5678c959095, type: 3}
@@ -1898,6 +1918,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e37693bdf4e51544900d89be4bc713b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChallengePopup
+  panel: {fileID: 2494716905923320209}
   titleText: {fileID: 4150404421648936125}
   closeButton: {fileID: 2947645038449756739}
   conditionTemplate: {fileID: 301178463552896849}

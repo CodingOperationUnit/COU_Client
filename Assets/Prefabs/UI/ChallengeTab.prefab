@@ -163,6 +163,7 @@ GameObject:
   - component: {fileID: 8268259190441032973}
   - component: {fileID: 3565033232604724473}
   - component: {fileID: 3884603744933433827}
+  - component: {fileID: 3642737020546440192}
   m_Layer: 5
   m_Name: BackButton
   m_TagString: Untagged
@@ -272,6 +273,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &3642737020546440192
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 454003965503779620}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &1382933006945897620
 GameObject:
   m_ObjectHideFlags: 0
@@ -464,6 +479,7 @@ GameObject:
   - component: {fileID: 8201882565685760179}
   - component: {fileID: 385555871483929736}
   - component: {fileID: 6804081692587432329}
+  - component: {fileID: 6754063987771026139}
   m_Layer: 5
   m_Name: TopButton
   m_TagString: Untagged
@@ -573,6 +589,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &6754063987771026139
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2076348723369527266}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &2917128305199520801
 GameObject:
   m_ObjectHideFlags: 0
@@ -1200,6 +1230,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9b2083848b604b4dbaf37b8b71ec007, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChallengeTab
+  panel: {fileID: 0}
   scrollRect: {fileID: 6979665020009157245}
   chapterTemplate: {fileID: 7798001933282902137}
   backButton: {fileID: 3884603744933433827}

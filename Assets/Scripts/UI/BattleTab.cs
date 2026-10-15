@@ -1,3 +1,4 @@
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,6 +12,7 @@ public class BattleTab : UIView
     [SerializeField] private TMP_Text staminaCostText;
     [SerializeField] private Button gameStartButton;
     [SerializeField] private Button friendButton;
+    [SerializeField] private Button rankingButton;
 
     private int currentStageId;
     private int staminaCost;
@@ -20,18 +22,30 @@ public class BattleTab : UIView
     {
         illustrationButton.onClick.AddListener(() => UIManager.Instance.Open<StageSelectScreen>());
         gameStartButton.onClick.AddListener(StartBattle);
-        if (friendButton != null)
-            friendButton.onClick.AddListener(() => UIManager.Instance.Open<FriendPopup>());
+        friendButton.onClick.AddListener(() => UIManager.Instance.Open<FriendPopup>());
+        rankingButton.onClick.AddListener(() => UIManager.Instance.Open<RankingPopup>());
     }
 
+    // 다른 스테이지로 바뀌면 일러스트 색이 넘어가고 이름이 튀어나온다 (처음 설정할 때는 바로 적용)
     public void SetStage(StageData stage, int bestTime)
     {
+        var changed = currentStageId != 0 && currentStageId != stage.stageId;
+
         currentStageId = stage.stageId;
         stageNameText.text = stage.stageName;
         bestTimeText.text = bestTime > 0
             ? $"최장 생존시간: {bestTime / 60:00}:{bestTime % 60:00}"
             : "최장 생존시간:";
-        illustration.color = stage.IllustrationColor;
+
+        illustration.DOKill();
+        if (!changed)
+        {
+            illustration.color = stage.IllustrationColor;
+            return;
+        }
+
+        illustration.DOColor(stage.IllustrationColor, 0.3f).AsUI(illustration);
+        UITween.PopIn(stageNameText.transform);
     }
 
     public void SetStaminaCost(int cost)
@@ -45,6 +59,7 @@ public class BattleTab : UIView
     {
         if (isRequesting) return;
         isRequesting = true;
+        UITween.Blink(gameStartButton.targetGraphic, 0.5f);   // 응답을 기다리는 동안 버튼이 깜빡인다
 
         // 응답의 재화 반영(NotifyPlayerDataChanged)이 선택 스테이지를 다시 설정하므로 요청한 스테이지를 잡아 둔다
         int stageId = currentStageId;
@@ -52,6 +67,7 @@ public class BattleTab : UIView
         StartCoroutine(BattleApi.Enter(stageId, result =>
         {
             isRequesting = false;
+            UITween.StopBlink(gameStartButton.targetGraphic);
 
             if (!result.IsSuccess)
             {
@@ -63,7 +79,7 @@ public class BattleTab : UIView
             GameManager.PlayerData.currentData.currency = result.Data.currency;
             GameManager.PlayerData.NotifyPlayerDataChanged();
 
-            GameManager.Scene.ChangeScene(GameConstants.SceneNames.BATTLE_SCENE, stageId, result.Data.battleId);
+            GameManager.Scene.ChangeSceneWithLoading(GameConstants.SceneNames.BATTLE_SCENE, stageId, result.Data.battleId);
         }));
     }
 
