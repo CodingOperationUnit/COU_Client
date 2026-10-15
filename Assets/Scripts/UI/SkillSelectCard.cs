@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class SkillSelectCard : MonoBehaviour
 {
     [SerializeField] private Button button;
+    [SerializeField] private Image iconImage;
     [SerializeField] private TMP_Text nameText;
     [SerializeField] private TMP_Text descriptionText;
     [SerializeField] private GameObject newTag;
@@ -33,11 +34,17 @@ public class SkillSelectCard : MonoBehaviour
     }
 
     // grade: 선택하면 도달하는 등급(채울 별 개수). 마지막으로 채워지는 별이 깜빡인다
-    public void Set(string title, string description, int grade, bool isNew)
+    public void Set(Sprite icon, string title, string description, int grade, bool isNew)
     {
+        iconImage.sprite = icon;
+        iconImage.enabled = icon != null;
         nameText.text = title;
         descriptionText.text = description;
         newTag.SetActive(isNew);
+        if (isNew)
+            UITween.Pulse(newTag.transform, 0.15f, 0.4f);
+        else
+            UITween.StopPulse(newTag.transform);
 
         for (var i = 0; i < stars.Length; i++)
             stars[i].color = i < grade ? filledColor : UIPalette.Get(emptyColor);

@@ -23,6 +23,8 @@ public class BattleManager : MonoBehaviour
 
     private readonly HashSet<object> pauseRequests = new();
     private readonly List<int> candidates = new();
+    private readonly List<Sprite> slotIcons = new();
+    private readonly List<int> slotGrades = new();
 
     // 업적 진행 집계 (전투 결과와 함께 서버로 보낸다)
     private readonly Dictionary<int, int> skillKills = new();
@@ -33,6 +35,7 @@ public class BattleManager : MonoBehaviour
     private BattleResultWindow resultWindow;
     private PauseWindow pauseWindow;
     private SkillSelectWindow selectWindow;
+    private AlarmView alarmView;
     private Enemy boss;
 
     private float elapsed;
@@ -86,8 +89,10 @@ public class BattleManager : MonoBehaviour
         resultWindow = UIManager.Instance.Get<BattleResultWindow>();
         pauseWindow = UIManager.Instance.Get<PauseWindow>();
         selectWindow = UIManager.Instance.Get<SkillSelectWindow>();
+        alarmView = UIManager.Instance.Get<AlarmView>();
 
         selectWindow.OnSelected += HandleSkillSelected;
+        pauseWindow.OnOpened += HandlePauseOpened;
 
         hasBattleId = GameManager.Scene.TryConsumePendingBattleId(out battleId);
 
@@ -218,6 +223,7 @@ public class BattleManager : MonoBehaviour
 
         hud.ShowBoss(boss.Data.monsterName);
         hud.SetBossHp(boss.HpRatio);
+        alarmView.Show("보스 습격");
 
         // 마지막 보스전 시간은 기록(seconds)에 넣지 않는다. 중간 보스전은 시간이 흐른다
         if (spawnedBoss.Type == MonsterType.Boss)
@@ -287,16 +293,17 @@ public class BattleManager : MonoBehaviour
 
             var skill = FindSkill(candidates[i]);
             var data = GameManager.JsonData.GetSkillDataFromJson(candidates[i]);
-            selectWindow.SetOption(i, data.skillName, data.skillDescription, skill == null ? 1 : skill.Level + 1, skill == null);
+            selectWindow.SetOption(i, Resources.Load<Sprite>(data.IconPath), data.skillName, data.skillDescription, skill == null ? 1 : skill.Level + 1, skill == null);
         }
 
         if (count == 0)
         {
-            selectWindow.SetOption(0, "회복", $"HP {healRewardRatio:0%}", 0, false);
+            selectWindow.SetOption(0, null, "회복", $"HP {healRewardRatio:0%}", 0, false);
             count = 1;
         }
 
-        selectWindow.SetWeaponSlots(skillController.ActiveSkills.Count);
+        selectWindow.SetWeaponSlots(LoadSkillIcons(skillController.ActiveSkills));
+        selectWindow.SetSupportSlots(LoadSkillIcons(skillController.PassiveSkills));
         RequestPause(selectWindow);
         selectWindow.Show(count);
     }
@@ -323,6 +330,28 @@ public class BattleManager : MonoBehaviour
 
         selectWindow.Close();
         ReleasePause(selectWindow);
+    }
+
+    private void HandlePauseOpened()
+    {
+        pauseWindow.SetWeaponSlots(LoadSkillIcons(skillController.ActiveSkills), LoadSkillGrades(skillController.ActiveSkills));
+        pauseWindow.SetSupportSlots(LoadSkillIcons(skillController.PassiveSkills), LoadSkillGrades(skillController.PassiveSkills));
+    }
+
+    private List<Sprite> LoadSkillIcons(IReadOnlyList<SkillBase> skills)
+    {
+        slotIcons.Clear();
+        foreach (var skill in skills)
+            slotIcons.Add(Resources.Load<Sprite>(GameManager.JsonData.GetSkillDataFromJson(skill.SkillId).IconPath));
+        return slotIcons;
+    }
+
+    private List<int> LoadSkillGrades(IReadOnlyList<SkillBase> skills)
+    {
+        slotGrades.Clear();
+        foreach (var skill in skills)
+            slotGrades.Add(skill.Level);
+        return slotGrades;
     }
 
     private SkillBase FindSkill(int skillId)
@@ -397,6 +426,8 @@ public class BattleManager : MonoBehaviour
             var data = GameManager.PlayerData.currentData;
             ApplyBattleChanges(data, response.profile, response.currency, response.stageProgress);
             SetStageRecord(data, response.stageRecord);
+            if (resultRequest.victory)
+                SelectNextStage(data, response.stageRecord.stageId);
             data.inventoryList.AddRange(response.rewards);
             GameManager.PlayerData.NotifyPlayerDataChanged();
 
@@ -476,6 +507,22 @@ public class BattleManager : MonoBehaviour
         data.profile.accountExp = profile.accountExp;
         data.currency = currency;
         data.stageProgress = stageProgress;
+    }
+
+    // 클리어한 스테이지의 다음 스테이지를 메인 화면의 선택 스테이지로 둔다 (마지막 스테이지면 그대로)
+    private static void SelectNextStage(PlayerSaveData data, int clearedStageId)
+    {
+        if (!data.stageProgress.IsCleared(clearedStageId)) return;
+
+        int next = int.MaxValue;
+        foreach (int stageId in GameManager.JsonData.StageDataDic.Keys)
+        {
+            if (stageId > clearedStageId && stageId < next)
+                next = stageId;
+        }
+
+        if (next != int.MaxValue)
+            data.stageProgress.currentStageId = next;
     }
 
     private static void SetStageRecord(PlayerSaveData data, StageRecordSaveData record)

@@ -56,6 +56,7 @@ public class InventoryListView : MonoBehaviour
     {
         CurrentSortMode = (SortMode)(((int)CurrentSortMode + 1) % 3);
         Refresh();
+        UITween.Stagger(pool, 0.02f);   // 정렬이 바뀌면 슬롯이 차례로 다시 나온다
         return CurrentSortMode;
     }
 

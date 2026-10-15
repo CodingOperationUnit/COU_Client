@@ -28,6 +28,7 @@ public static class GameConstants
         public const string MonsterData_Json_Path = "Data/Monster";
         public const string ItemData_Json_Path = "Data/Item";
         public const string SkillData_Json_Path = "Data/Skill";
+        public const string SkillIcon_Path = "Skill/Icons/";
         public const string DropItemData_Json_Path = "Data/DropItem";
         public const string AccountConstData_Json_Path = "Data/AccountConst";
         public const string PlayerBaseStatData_Json_Path = "Data/PlayerBaseStat";
@@ -37,6 +38,10 @@ public static class GameConstants
         public const string STATIC_DATA_DIRECTORY = "StaticData";
         public const string STATIC_DATA_VERSION_FILE = "version.txt";
         public const string AchievementData_Json_Path = "Data/Achievement";
+        
+        public const string LOGIN_PASSWORD_ICON_SHEET = "UI/Icon_Login_Password";
+        public const string LOGIN_PASSWORD_ICON_MASKED = "Icon_Login_Password_Visible";      // * 표시 중 → 눈동자
+        public const string LOGIN_PASSWORD_ICON_UNMASKED = "Icon_Login_Password_Unvisible";  // * 표시 해제 → 빗금 눈동자
     }
 
     // 서버 통신 상수
@@ -52,10 +57,19 @@ public static class GameConstants
         public const string INVENTORY_API = "/api/inventory";   // Server 클래스에 추가
     }
 
+    // PlayerPrefs 저장 키
+    public static class PrefsKeys
+    {
+        // 자동 로그인 세션 (AuthSessionStore)
+        public const string AUTH_ACCESS_TOKEN = "COU.Auth.AccessToken";
+        public const string AUTH_ACCOUNT = "COU.Auth.Account";
+    }
+
     public static class Value
     {
         public const int REQUEST_TIMEOUT_SECONDS = 10;
         public const long CONNECTION_FAILED = 0;
         public const long ALREADY_REQUESTING = -1; 
+        public const float MIN_LOADING_SECONDS = 1f;   // 추가: 로딩이 빨라도 최소 이 시간은 로딩창을 보여준다
     }
 }

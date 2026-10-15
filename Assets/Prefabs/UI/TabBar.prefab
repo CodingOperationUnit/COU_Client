@@ -50,6 +50,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0de0d65b8a990b40a37d05e0bc33b13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TabBar
+  panel: {fileID: 0}
   tabs:
   - button: {fileID: 2232643692310397921}
     background: {fileID: 795957214459174511}
@@ -109,6 +110,7 @@ GameObject:
   - component: {fileID: 6696279007500477390}
   - component: {fileID: 4954351323797508071}
   - component: {fileID: 2883232861916654878}
+  - component: {fileID: 5765199311053501436}
   m_Layer: 5
   m_Name: Challenge
   m_TagString: Untagged
@@ -239,6 +241,20 @@ MonoBehaviour:
   m_FlexibleWidth: 1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &5765199311053501436
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 503554730245029497}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &1031545185340297488
 GameObject:
   m_ObjectHideFlags: 0
@@ -252,6 +268,7 @@ GameObject:
   - component: {fileID: 2413506452301041576}
   - component: {fileID: 6289700282238068514}
   - component: {fileID: 5237475151594176596}
+  - component: {fileID: 1424823591196477694}
   m_Layer: 5
   m_Name: Inventory
   m_TagString: Untagged
@@ -382,6 +399,20 @@ MonoBehaviour:
   m_FlexibleWidth: 1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &1424823591196477694
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1031545185340297488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &1626824670217179091
 GameObject:
   m_ObjectHideFlags: 0
@@ -1275,6 +1306,7 @@ GameObject:
   - component: {fileID: 795957214459174511}
   - component: {fileID: 2232643692310397921}
   - component: {fileID: 4253049260622602285}
+  - component: {fileID: 4345132581359466951}
   m_Layer: 5
   m_Name: Shop
   m_TagString: Untagged
@@ -1405,6 +1437,20 @@ MonoBehaviour:
   m_FlexibleWidth: 1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &4345132581359466951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5491347885901162560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &5642582793848699055
 GameObject:
   m_ObjectHideFlags: 0
@@ -1748,6 +1794,7 @@ GameObject:
   - component: {fileID: 3819606295164209356}
   - component: {fileID: 3097966124394519235}
   - component: {fileID: 8663880404312957744}
+  - component: {fileID: 26454326748109788}
   m_Layer: 5
   m_Name: Battle
   m_TagString: Untagged
@@ -1878,6 +1925,20 @@ MonoBehaviour:
   m_FlexibleWidth: 1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &26454326748109788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8528659423597752432}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &8738212927029600410
 GameObject:
   m_ObjectHideFlags: 0
@@ -1891,6 +1952,7 @@ GameObject:
   - component: {fileID: 6795438593929651611}
   - component: {fileID: 7915541091024919898}
   - component: {fileID: 4077725622245200813}
+  - component: {fileID: 1006966613995558292}
   m_Layer: 5
   m_Name: Evolution
   m_TagString: Untagged
@@ -2021,6 +2083,20 @@ MonoBehaviour:
   m_FlexibleWidth: 1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &1006966613995558292
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8738212927029600410}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &8791589274323711599
 GameObject:
   m_ObjectHideFlags: 0

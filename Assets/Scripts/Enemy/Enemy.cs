@@ -21,6 +21,9 @@ public abstract class Enemy : MonoBehaviour, IPoolable
     [SerializeField] private float knockbackDuration = 0.1f;   // 밀리는 시간(초)
     [SerializeField] private float knockbackCooldown = 0.25f;  // 다시 밀릴 수 있기까지(초, 연속 피격 시 계속 밀리지 않게)
 
+    [Header("Damage Text")]
+    [SerializeField] private Vector3 damageTextOffset = new(0f, 1f, 0f);
+
     public MonsterData Data { get; private set; }
     // 스테이지 로스터 배율을 적용한 최대 체력
     public int MaxHp { get; private set; }
@@ -126,6 +129,9 @@ public abstract class Enemy : MonoBehaviour, IPoolable
         chargeDirection = direction.normalized;
         if (chargeDirection.sqrMagnitude < 0.0001f) chargeDirection = Vector3.right;   // 완전히 겹쳐 있을 때 대비
         chargeRemaining = distance;
+
+        // 돌진 시 방향 고정
+        visual?.FaceTo(chargeDirection.x);
     }
 
     // IPoolable: 풀에서 꺼내질 때마다 호출됨
@@ -229,6 +235,8 @@ public abstract class Enemy : MonoBehaviour, IPoolable
         currentHp -= damage;
         // 보스 HP 바 갱신
         OnHpChanged?.Invoke(this);   
+
+        DamageTextSpawner.Instance?.Show(damage, transform.position + damageTextOffset);
 
         // 몬스터가 죽으면
         if (currentHp <= 0)

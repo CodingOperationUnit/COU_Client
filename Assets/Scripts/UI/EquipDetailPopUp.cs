@@ -151,9 +151,16 @@ public class EquipDetailPopUp : UIPopup
         if (!success)
             UIManager.Instance.Get<MessagePopup>().ShowAlert(message);
 
+        var shownLevel = levelText.text;
         Refresh();
+
+        // 레벨이 올랐으면 레벨과 스탯이 튕긴다
+        if (levelText.text == shownLevel) return;
+        UITween.Punch(levelText.transform, 0.25f);
+        UITween.Punch(atkText.transform, 0.25f, 0.05f);
+        UITween.Punch(hpText.transform, 0.25f, 0.1f);
     }
-    
+
     private void SetButtonsInteractable(bool interactable)
     {
         equipButton.interactable = interactable;

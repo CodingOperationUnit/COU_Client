@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,12 +8,16 @@ public class PauseWindow : UIView
 {
     [SerializeField] private TMP_Text killText;
     [SerializeField] private TMP_Text goldText;
+    [SerializeField] private PauseSkillSlot[] weaponSlots;
+    [SerializeField] private PauseSkillSlot[] supportSlots;
     [SerializeField] private Button homeButton;
     [SerializeField] private Button continueButton;
     [SerializeField] private Button soundButton;
     [SerializeField] private GameObject muteMark;
 
     private bool muted;
+
+    public event Action OnOpened;
 
     private void Awake()
     {
@@ -25,6 +31,7 @@ public class PauseWindow : UIView
         base.Open();
         if (BattleManager.Instance != null)
             BattleManager.Instance.RequestPause(this);
+        OnOpened?.Invoke();
     }
 
     public override void Close()
@@ -39,6 +46,23 @@ public class PauseWindow : UIView
 
     public void SetGold(int gold)
         => goldText.text = gold.ToString();
+
+    public void SetWeaponSlots(IReadOnlyList<Sprite> icons, IReadOnlyList<int> grades)
+        => SetSlots(weaponSlots, icons, grades);
+
+    public void SetSupportSlots(IReadOnlyList<Sprite> icons, IReadOnlyList<int> grades)
+        => SetSlots(supportSlots, icons, grades);
+
+    private static void SetSlots(PauseSkillSlot[] slots, IReadOnlyList<Sprite> icons, IReadOnlyList<int> grades)
+    {
+        for (var i = 0; i < slots.Length; i++)
+        {
+            if (i < icons.Count)
+                slots[i].Set(icons[i], grades[i]);
+            else
+                slots[i].Clear();
+        }
+    }
 
     private void ToggleMute()
     {

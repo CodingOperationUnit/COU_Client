@@ -132,8 +132,11 @@ public class EvolutionTabPresenter : MonoBehaviour
         if (!result.IsSuccess)
             UIManager.Instance.Get<LogPopup>().Show("알림", GetFailMessage(result));
 
-        if (isActiveAndEnabled)
-            tab.SetUnlockInteractable(true);
+        if (!isActiveAndEnabled) return;
+
+        tab.SetUnlockInteractable(true);
+        if (result.IsSuccess)
+            tab.PlayUnlocked(currentStep - 1);   // Rebuild로 currentStep은 이미 다음 노드를 가리킨다
     }
 
     // 서버 에러 code를 진화 차단 이유로 바꿔 같은 문구를 사용

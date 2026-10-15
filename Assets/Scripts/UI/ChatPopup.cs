@@ -87,7 +87,7 @@ public class ChatPopup : UIPopup
         if (list.Count == 0) ShowStatus("첫 메시지를 보내보세요!");
         else HideStatus();
 
-        ScrollToBottom();
+        ScrollToBottom(false);
     }
     // 새 메시지가 왔을 때: WebSocket 푸시 또는 복구 조회 (내가 방금 보낸 것 포함)
     private void OnMessagesReceived(List<ChatMessageResponse> list)
@@ -99,12 +99,13 @@ public class ChatPopup : UIPopup
         foreach (var m in list)
         {
             AddMessage(m);
+            UITween.PopIn(views[^1].transform, 0f, 0.6f);   // 새로 온 말풍선만 튀어나온다
             hasMine |= m.mine;
         }
 
         HideStatus();
 
-        if (stick || hasMine) ScrollToBottom();
+        if (stick || hasMine) ScrollToBottom(true);
     }
 
     private void Send()
@@ -153,17 +154,21 @@ public class ChatPopup : UIPopup
         views.Clear();
     }
 
-    private void ScrollToBottom()
+    // smooth: 새 메시지는 부드럽게 내려가고, 처음 불러올 때는 바로 맨 아래로
+    private void ScrollToBottom(bool smooth)
     {
         if (scrollRoutine != null) StopCoroutine(scrollRoutine);
-        scrollRoutine = StartCoroutine(ScrollToBottomNextFrame());
+        scrollRoutine = StartCoroutine(ScrollToBottomNextFrame(smooth));
     }
 
-    private IEnumerator ScrollToBottomNextFrame()
+    private IEnumerator ScrollToBottomNextFrame(bool smooth)
     {
-        yield return null;  
+        yield return null;
         LayoutRebuilder.ForceRebuildLayoutImmediate(listRoot);
-        scrollRect.verticalNormalizedPosition = 0f;
+        if (smooth)
+            UITween.ScrollTo(scrollRect, 0f);
+        else
+            scrollRect.verticalNormalizedPosition = 0f;
         scrollRoutine = null;
     }
 

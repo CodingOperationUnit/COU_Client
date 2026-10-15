@@ -1042,6 +1042,7 @@ GameObject:
   - component: {fileID: 667822863272936731}
   - component: {fileID: 158066108774341054}
   - component: {fileID: 613693633226966702}
+  - component: {fileID: 6012591655102822287}
   m_Layer: 5
   m_Name: BatchLevelUpButton
   m_TagString: Untagged
@@ -1151,6 +1152,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &6012591655102822287
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 416972739829904791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &447406011059206010
 GameObject:
   m_ObjectHideFlags: 0
@@ -2703,6 +2718,7 @@ GameObject:
   - component: {fileID: 430398451731442645}
   - component: {fileID: 852327753557659328}
   - component: {fileID: 222086435739061466}
+  - component: {fileID: 673515336390931764}
   m_Layer: 5
   m_Name: CloseButton
   m_TagString: Untagged
@@ -2812,6 +2828,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &673515336390931764
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 896335516962425094}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &902110880203759928
 GameObject:
   m_ObjectHideFlags: 0
@@ -2975,6 +3005,7 @@ GameObject:
   - component: {fileID: 869419315321707748}
   - component: {fileID: 490551871618107262}
   - component: {fileID: 220142436938099981}
+  - component: {fileID: 798976078772964799}
   m_Layer: 5
   m_Name: BackButton
   m_TagString: Untagged
@@ -3084,6 +3115,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &798976078772964799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 940137603882775368}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &944728616173934983
 GameObject:
   m_ObjectHideFlags: 0
@@ -3173,6 +3218,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0be51f03204948b7a00e786c4d70b219, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SynthesisWindow
+  panel: {fileID: 0}
   resultItemIcon: {fileID: 675567115093369005}
   resultGradeIcon: {fileID: 971665170945492150}
   nameText: {fileID: 944941215085607887}
@@ -3208,6 +3254,7 @@ GameObject:
   - component: {fileID: 754702628219765268}
   - component: {fileID: 244531255698162737}
   - component: {fileID: 688368873565935288}
+  - component: {fileID: 1053954974199322575}
   m_Layer: 5
   m_Name: EquipButton
   m_TagString: Untagged
@@ -3317,6 +3364,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1053954974199322575
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 957271922321491736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &964718042889888453
 GameObject:
   m_ObjectHideFlags: 0
@@ -3495,6 +3556,7 @@ GameObject:
   - component: {fileID: 974868335338653920}
   - component: {fileID: 280055633614434011}
   - component: {fileID: 831883041829712328}
+  - component: {fileID: 5263296628989579813}
   m_Layer: 5
   m_Name: LevelUpButton
   m_TagString: Untagged
@@ -3604,6 +3666,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &5263296628989579813
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 989344329611574130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4339587c2d6e1f439c4a421f8ca18ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
+  pressedScale: 0.92
+  pulse: 0
 --- !u!1 &990041426994597831
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,4 +1,5 @@
 using System;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -26,7 +27,7 @@ public class TabBar : UIView
     [SerializeField] private float selectedIconScale = 1.35f;
 
     private UIManager manager;
-    private int selectedIndex;
+    private int selectedIndex = -1;   // -1: 아직 선택 전. 첫 선택은 연출 없이 바로 적용한다
 
     private void Awake()
     {
@@ -58,6 +59,7 @@ public class TabBar : UIView
             return;
         }
 
+        var animate = selectedIndex >= 0;
         selectedIndex = index;
         ApplyColors();
 
@@ -65,9 +67,28 @@ public class TabBar : UIView
         {
             var tab = tabs[i];
             var selected = i == index;
-            tab.layout.flexibleWidth = selected ? selectedWidth : 1f;
-            tab.icon.localScale = Vector3.one * (selected ? selectedIconScale : 1f);
+            var width = selected ? selectedWidth : 1f;
+            var iconScale = Vector3.one * (selected ? selectedIconScale : 1f);
+
+            tab.layout.DOKill();
+            tab.icon.DOKill();
+            if (animate)
+            {
+                // 선택한 탭이 넓어지고 아이콘이 커진다
+                DOTween.To(() => tab.layout.flexibleWidth, value => tab.layout.flexibleWidth = value, width, 0.2f)
+                    .SetEase(Ease.OutCubic).SetTarget(tab.layout).AsUI(tab.layout);
+                tab.icon.DOScale(iconScale, 0.2f).SetEase(Ease.OutBack).AsUI(tab.icon);
+            }
+            else
+            {
+                tab.layout.flexibleWidth = width;
+                tab.icon.localScale = iconScale;
+            }
+
+            var wasLabelShown = tab.label.activeSelf;
             tab.label.SetActive(selected);
+            if (animate && selected && !wasLabelShown)
+                UITween.PopIn(tab.label.transform, 0.05f, 0f);
 
             if (selected)
                 tab.screen.Open();
@@ -84,7 +105,14 @@ public class TabBar : UIView
 
     public void SetBadge(int index, string mark)
     {
-        tabs[index].badge.SetActive(!string.IsNullOrEmpty(mark));
+        var badge = tabs[index].badge;
+        var show = !string.IsNullOrEmpty(mark);
+        var wasShown = badge.activeSelf;
+
+        badge.SetActive(show);
         tabs[index].badgeText.text = mark;
+
+        if (show && !wasShown)
+            UITween.PopIn(badge.transform, 0f, 0f);
     }
 }

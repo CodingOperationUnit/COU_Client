@@ -67,5 +67,12 @@ public class FriendBadge : MonoBehaviour
     }
 
     private void Apply(int count)
-        => badge.gameObject.SetActive(count > 0);
+    {
+        var show = count > 0;
+        var wasShown = badge.gameObject.activeSelf;
+
+        badge.gameObject.SetActive(show);
+        if (show && !wasShown)
+            UITween.PopIn(badge, 0f, 0f);
+    }
 }

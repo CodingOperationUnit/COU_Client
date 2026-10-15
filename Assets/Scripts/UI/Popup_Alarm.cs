@@ -5,6 +5,7 @@ using UnityEngine;
 public class Popup_Alarm : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI tmp_AlarmContext;
+    [SerializeField] private RectTransform panel;
 
     private Action onConfirm;
 
@@ -12,8 +13,11 @@ public class Popup_Alarm : MonoBehaviour
     {
         tmp_AlarmContext.text = message;
         this.onConfirm = onConfirm;
-        
+
+        if (gameObject.activeSelf) return;
+
         gameObject.SetActive(true);
+        UITween.PopIn(panel, 0f, 0.9f);
     }
 
     public void OnClickConfirm()

@@ -16,6 +16,7 @@ public class CharacterEquipView : MonoBehaviour
 
         [NonSerialized] public Sprite defaultFrameSprite;
         [NonSerialized] public bool cached;
+        [NonSerialized] public OwnedItem shownItem;
     }
 
     [SerializeField] private SlotUI[] slots;
@@ -113,13 +114,23 @@ public class CharacterEquipView : MonoBehaviour
 
         var stat = PlayerStatCalculator.CalculateCurrent();
         if (atkValueText != null)
-            atkValueText.text = stat.FinalAttack.ToString();
+            SetValue(atkValueText, stat.FinalAttack.ToString());
         if (hpValueText != null)
-            hpValueText.text = stat.FinalHp.ToString();
+            SetValue(hpValueText, stat.FinalHp.ToString());
+    }
+
+    // 값이 바뀌었을 때만 튕긴다
+    private static void SetValue(TMP_Text text, string value)
+    {
+        if (text.text == value) return;
+
+        text.text = value;
+        UITween.Punch(text.transform);
     }
 
     private void RefreshSlot(SlotUI slot)
     {
+        var firstRefresh = !slot.cached;
         if (!slot.cached)
         {
             slot.defaultFrameSprite = slot.frame != null ? slot.frame.sprite : null;
@@ -127,6 +138,11 @@ public class CharacterEquipView : MonoBehaviour
         }
 
         var equippedItem = PlayerInventory.Instance.GetEquipped(slot.slotType);
+
+        // 장비를 바꿔 끼면 아이콘이 튀어나온다 (처음 그릴 때는 그대로)
+        if (!firstRefresh && slot.shownItem != equippedItem && slot.icon != null)
+            UITween.PopIn(slot.icon.transform, 0f, 0.5f);
+        slot.shownItem = equippedItem;
 
         if (equippedItem != null)
         {
