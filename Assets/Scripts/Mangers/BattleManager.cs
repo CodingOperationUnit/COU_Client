@@ -426,6 +426,8 @@ public class BattleManager : MonoBehaviour
             var data = GameManager.PlayerData.currentData;
             ApplyBattleChanges(data, response.profile, response.currency, response.stageProgress);
             SetStageRecord(data, response.stageRecord);
+            if (resultRequest.victory)
+                SelectNextStage(data, response.stageRecord.stageId);
             data.inventoryList.AddRange(response.rewards);
             GameManager.PlayerData.NotifyPlayerDataChanged();
 
@@ -505,6 +507,22 @@ public class BattleManager : MonoBehaviour
         data.profile.accountExp = profile.accountExp;
         data.currency = currency;
         data.stageProgress = stageProgress;
+    }
+
+    // 클리어한 스테이지의 다음 스테이지를 메인 화면의 선택 스테이지로 둔다 (마지막 스테이지면 그대로)
+    private static void SelectNextStage(PlayerSaveData data, int clearedStageId)
+    {
+        if (!data.stageProgress.IsCleared(clearedStageId)) return;
+
+        int next = int.MaxValue;
+        foreach (int stageId in GameManager.JsonData.StageDataDic.Keys)
+        {
+            if (stageId > clearedStageId && stageId < next)
+                next = stageId;
+        }
+
+        if (next != int.MaxValue)
+            data.stageProgress.currentStageId = next;
     }
 
     private static void SetStageRecord(PlayerSaveData data, StageRecordSaveData record)
