@@ -158,7 +158,10 @@ public class SynthesisWindow : UIView
         Refresh();   // 합성 가능 여부에 따라 버튼 활성화를 다시 결정
 
         if (success)
+        {
+            GameManager.Sound.PlaySFX(GameConstants.Sfx.SYNTHESIZE);
             PlaySynthesized();
+        }
     }
 
     // 대상·재료 칸이 결과 아이콘으로 빨려 들어간 뒤 결과가 튀어나온다

@@ -162,6 +162,8 @@ public class AchievementPopup : UIPopup
                 return;
             }
 
+            GameManager.Sound.PlaySFX(GameConstants.Sfx.ACHIEVEMENT);
+
             // 재화는 ServerAchievementManager.ApplyCurrency에서 이미 계정에 반영됨 (TopBar 갱신)
             var currency = GameManager.PlayerData.currentData.currency;
             foreach (var reward in rewards)

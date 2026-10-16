@@ -34,7 +34,7 @@ public class SoundManager : MonoSingleton<SoundManager>
 
     private readonly Dictionary<string, AudioClip> bgmCache = new();
     private readonly Dictionary<string, AudioClip> sfxCache = new();
-    private readonly HashSet<string> missing = new(); // 없는 클립 경고는 한 번만
+    private readonly HashSet<string> missing = new(); // 없는 클립은 경고 한 번만, 이후엔 다시 찾지 않는다
     private readonly List<AudioSource> sfxPool = new();
     private readonly Dictionary<AudioClip, float> lastSfxTime = new();
 
@@ -105,6 +105,8 @@ public class SoundManager : MonoSingleton<SoundManager>
 
         for (var i = 0; i < SFX_POOL_INITIAL; i++)
             sfxPool.Add(CreateSource($"SFX_{i}"));
+
+        gameObject.AddComponent<ButtonClickSound>(); // 모든 버튼 클릭음
     }
 
     private AudioSource CreateSource(string objName)
@@ -225,16 +227,19 @@ public class SoundManager : MonoSingleton<SoundManager>
 
     public void ToggleMute() => IsMuted = !IsMuted;
 
-    private AudioClip LoadClip(Dictionary<string, AudioClip> cache, string folder, string name)
+    private AudioClip LoadClip(Dictionary<string, AudioClip> cache, string folder, string name, bool warn = true)
     {
         if (string.IsNullOrEmpty(name)) return null;
         if (cache.TryGetValue(name, out var cached)) return cached;
 
         var path = folder + name;
+        if (missing.Contains(path)) return null; // 이미 없다고 확인된 클립은 매번 Resources를 뒤지지 않는다
+
         var clip = Resources.Load<AudioClip>(path);
         if (clip == null)
         {
-            if (missing.Add(path))
+            missing.Add(path);
+            if (warn)
                 Debug.LogWarning($"[SoundManager] 클립을 찾을 수 없음: Resources/{path}");
             return null;
         }
