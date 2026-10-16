@@ -25,6 +25,8 @@ public class LogInMainCanvas : MonoBehaviour
 
     private void Start()
     {
+        //GameManager.Sound.PlayBGM("EX"); 예시
+
         StartCoroutine(GameManager.JsonData.FetchStaticData(appUpdateRequired =>
         {
             isStaticDataChecked = true;

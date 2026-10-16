@@ -15,8 +15,6 @@ public class PauseWindow : UIView
     [SerializeField] private Button soundButton;
     [SerializeField] private GameObject muteMark;
 
-    private bool muted;
-
     public event Action OnOpened;
 
     private void Awake()
@@ -29,6 +27,7 @@ public class PauseWindow : UIView
     public override void Open()
     {
         base.Open();
+        muteMark.SetActive(GameManager.Sound.IsMuted);
         if (BattleManager.Instance != null)
             BattleManager.Instance.RequestPause(this);
         OnOpened?.Invoke();
@@ -66,8 +65,7 @@ public class PauseWindow : UIView
 
     private void ToggleMute()
     {
-        muted = !muted;
-        AudioListener.volume = muted ? 0f : 1f;
-        muteMark.SetActive(muted);
+        GameManager.Sound.ToggleMute();
+        muteMark.SetActive(GameManager.Sound.IsMuted);
     }
 }

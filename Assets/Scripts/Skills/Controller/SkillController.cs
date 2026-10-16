@@ -46,6 +46,32 @@ public class SkillController : MonoBehaviour
     {
         PlayerMovement = GetComponent<PlayerMovement>();
         PlayerStats = GetComponent<PlayerStats>();
+
+        Modifiers.OnChanged += SyncPlayerBonuses;
+    }
+
+    private void OnDestroy()
+    {
+        Modifiers.OnChanged -= SyncPlayerBonuses;
+
+        if(PlayerStats != null)
+        {
+            PlayerStats.ClearBonuses(this);
+        }
+    }
+
+    // 치명타 판정은 플레이어 쪽(PlayerDamageCalculator)에 있으므로 패시브의 치명타 합계를 PlayerStats 보너스로 넘김
+    // 컨트롤러 하나를 출처로 덮어쓰기 때문에 패시브가 해제되면 줄어든 합계로 자동 갱신됨
+    private void SyncPlayerBonuses()
+    {
+        if(PlayerStats == null)
+        {
+            return;
+        }
+
+        // 임시: PlayerStats 보너스가 int라서 합계를 반올림해 넘김 (플레이어 쪽이 float를 받게 되면 변환 제거)
+        PlayerStats.SetBonus(this, PlayerBonusStat.CriticalChance, Mathf.RoundToInt(Modifiers.GetAddTotal(SkillAddStat.CritChance)));
+        PlayerStats.SetBonus(this, PlayerBonusStat.CriticalDamage, Mathf.RoundToInt(Modifiers.GetAddTotal(SkillAddStat.CritDamage)));
     }
 
     private void Update()

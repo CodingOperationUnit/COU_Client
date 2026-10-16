@@ -6,6 +6,7 @@ public abstract class SkillProjectile : SkillObject<ProjectileData>, ISkillPoola
     protected Vector2 direction;
     protected Transform target;
     protected int pierceCount;
+    protected int chainCount;
 
     protected override void OnInit(ProjectileData data)
     {
@@ -13,6 +14,7 @@ public abstract class SkillProjectile : SkillObject<ProjectileData>, ISkillPoola
         direction = data.Direction;
         target = data.Target;
         pierceCount = data.PierceCount;
+        chainCount = data.ChainCount;
         OnLaunch();
     }
 

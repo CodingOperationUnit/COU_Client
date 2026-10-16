@@ -9551,8 +9551,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.HorizontalLayoutGroup
   m_Padding:
-    m_Left: 24
-    m_Right: 24
+    m_Left: 90
+    m_Right: 90
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 4
@@ -12133,8 +12133,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.HorizontalLayoutGroup
   m_Padding:
-    m_Left: 24
-    m_Right: 24
+    m_Left: 90
+    m_Right: 90
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 4

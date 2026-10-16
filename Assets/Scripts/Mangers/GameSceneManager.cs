@@ -13,6 +13,7 @@ public class GameSceneManager : MonoSingleton<GameSceneManager>
     {
         pendingStageId = null;
         pendingBattleId = null;
+        GameManager.Sound.StopBGM(0f);
         SceneManager.LoadScene(sceneName);
     }
 
@@ -21,6 +22,7 @@ public class GameSceneManager : MonoSingleton<GameSceneManager>
     {
         pendingStageId = stageId;
         pendingBattleId = battleId;
+        GameManager.Sound.StopBGM(0f);
         SceneManager.LoadScene(sceneName);
     }
 
@@ -46,6 +48,9 @@ public class GameSceneManager : MonoSingleton<GameSceneManager>
     {
         if (isLoading) return;
         isLoading = true;
+
+        // 씬을 떠나면 현재 BGM은 즉시 끈다. 다음 씬에서 필요하면 PlayBGM으로 다시 튼다
+        GameManager.Sound.StopBGM(0f);
 
         // UIManager는 항상 DontDestroy라 씬이 바뀌어도 코루틴이 끊기지 않는다
         // (에디터에서 MainScene부터 실행하면 GameSceneManager가 DontDestroy가 아닐 수 있음)
