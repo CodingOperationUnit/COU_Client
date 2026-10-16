@@ -1,4 +1,4 @@
-using System.Linq;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -73,7 +73,44 @@ public class EquipDetailPopUp : UIPopup
 
         levelText.text = $"레벨: {boundItem.level}/{boundItem.MaxLevel}";
 
-        skillListText.text = string.Join("\n", data.gradeSkills.Select(FormatSkillLine));
+        // 신규 장비 등급 효과 데이터로 설명 문구 구성
+        // C6에서 등급별 UI 및 색상 표현을 정식으로 구현한다.
+        var skillLines = new List<string>();
+
+        foreach (ItemGrade grade in new[]
+        {
+            ItemGrade.General,
+            ItemGrade.Super,
+            ItemGrade.Rare
+        })
+        {
+            var effects = GameManager.JsonData
+                .GetItemGradeEffectsFromJson(boundItem.itemId, grade);
+
+            foreach (var effect in effects)
+            {
+                // 79xxx 제외 효과는 화면에 표시하지 않는다.
+                if (effect.IsExcluded)
+                    continue;
+
+                string description =
+                    $"{GradeLabel(grade)}: {effect.effectDescription}";
+
+                // 현재 장비 인스턴스 등급 이하이면 해금
+                if (grade <= boundItem.Grade)
+                {
+                    skillLines.Add(FormatSkillLine(description));
+                }
+                else
+                {
+                    // 아직 해금되지 않은 효과
+                    skillLines.Add(
+                        $"<color=#888888>■ [잠금] {description}</color>");
+                }
+            }
+        }
+
+        skillListText.text = string.Join("\n", skillLines);
 
         RefreshLevelUpArea();
         RefreshEquipButton();

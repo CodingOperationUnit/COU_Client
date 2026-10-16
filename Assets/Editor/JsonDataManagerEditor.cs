@@ -252,7 +252,6 @@ public class JsonDataManagerEditor : Editor
         EditorGUILayout.IntField("체력 보너스", data.hpBonus);
         EditorGUILayout.IntField("공격력 보너스", data.attackBonus);
         EditorGUILayout.IntField("이동 속도 보너스", data.moveSpeedBonus);
-        EditorGUILayout.TextField("등급 스킬", data.gradeSkills != null ? string.Join(", ", data.gradeSkills) : string.Empty);
     }
     
     private static void DrawAchievement(AchievementData data)
