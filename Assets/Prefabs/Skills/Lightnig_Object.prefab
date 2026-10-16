@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8070983975422107078}
   - component: {fileID: 3068463361277476544}
+  - component: {fileID: 4697970477075628775}
   m_Layer: 0
   m_Name: Sprite
   m_TagString: Untagged
@@ -25,13 +26,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2656153858849084083}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 87063120606551851}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
 --- !u!212 &3068463361277476544
 SpriteRenderer:
   serializedVersion: 2
@@ -81,16 +82,37 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  m_Sprite: {fileID: 21300000, guid: a23dc21221806ff49809e3a8f5fbbad7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.17944536, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &4697970477075628775
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2656153858849084083}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 666050ca232d96346958f372c27de867, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpriteFlipbook
+  _renderer: {fileID: 0}
+  _frames:
+  - {fileID: 21300000, guid: ab419146b6345ba4889301a14fb614bb, type: 3}
+  - {fileID: 21300000, guid: 18e3dea9b9bad0846b3c89a9e5fef491, type: 3}
+  - {fileID: 21300000, guid: 5b72df1454a2bbf4b8d5aa16f3474a90, type: 3}
+  - {fileID: 21300000, guid: b7827e06f44f83e4cb32fd4c5ab7154a, type: 3}
+  - {fileID: 21300000, guid: 51379112c3a6fcd4581bff6182de09dc, type: 3}
+  _duration: 0.2
+  _loop: 0
 --- !u!1 &8922130877381923334
 GameObject:
   m_ObjectHideFlags: 0
@@ -118,7 +140,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 0.25, z: 1}
+  m_LocalScale: {x: 1, y: 3.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8070983975422107078}
@@ -136,4 +158,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebaa4ed55733d7b41bf47165b3eccf51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LightningObject
-  _displayTime: 0.1
+  _displayTime: 0.2

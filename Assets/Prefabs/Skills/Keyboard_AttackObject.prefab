@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8070983975422107078}
   - component: {fileID: 3068463361277476544}
+  - component: {fileID: 4516571996064905904}
   m_Layer: 0
   m_Name: Sprite
   m_TagString: Untagged
@@ -91,6 +92,27 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &4516571996064905904
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2656153858849084083}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 666050ca232d96346958f372c27de867, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpriteFlipbook
+  _renderer: {fileID: 0}
+  _frames:
+  - {fileID: 2806544284753480583, guid: 22712c6bfdd4a364b9fd74b4bbd8b903, type: 3}
+  - {fileID: -8617916312281327213, guid: 93c30a35ca29b334d91560f4c6d82017, type: 3}
+  - {fileID: 1247037573410855324, guid: dae78052f46fdbc45882c67015d8664f, type: 3}
+  - {fileID: -8337202458009736734, guid: 926d2caebcabbf145988b95b2d200102, type: 3}
+  - {fileID: 4067185420343384206, guid: dd4c5e3348b62f14f9c79a6d4b8aa821, type: 3}
+  _duration: 0.2
+  _loop: 0
 --- !u!1 &8922130877381923334
 GameObject:
   m_ObjectHideFlags: 0
@@ -213,4 +235,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::KeyboardObject
   _hitArea: {fileID: 0}
   _hitDelay: 0
-  _lifeTime: 0.3
+  _lifeTime: 0.2

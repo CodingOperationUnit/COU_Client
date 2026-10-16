@@ -10,8 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2897524496744960214}
   - component: {fileID: 964190845083834752}
+  - component: {fileID: 5691536992459736089}
   m_Layer: 10
-  m_Name: Circle
+  m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -91,6 +92,35 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &5691536992459736089
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6100588673922764134}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 666050ca232d96346958f372c27de867, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpriteFlipbook
+  _renderer: {fileID: 0}
+  _frames:
+  - {fileID: -1556451554, guid: beb0b566e2daee14d829c6839371886d, type: 3}
+  - {fileID: -308761749, guid: beb0b566e2daee14d829c6839371886d, type: 3}
+  - {fileID: 838962050, guid: beb0b566e2daee14d829c6839371886d, type: 3}
+  - {fileID: -1711691517, guid: beb0b566e2daee14d829c6839371886d, type: 3}
+  - {fileID: -1549639323, guid: beb0b566e2daee14d829c6839371886d, type: 3}
+  - {fileID: 1217715277, guid: beb0b566e2daee14d829c6839371886d, type: 3}
+  - {fileID: 402214222, guid: beb0b566e2daee14d829c6839371886d, type: 3}
+  - {fileID: 496120380, guid: beb0b566e2daee14d829c6839371886d, type: 3}
+  - {fileID: 1207071967, guid: beb0b566e2daee14d829c6839371886d, type: 3}
+  - {fileID: -1904505819, guid: beb0b566e2daee14d829c6839371886d, type: 3}
+  - {fileID: 258082836, guid: beb0b566e2daee14d829c6839371886d, type: 3}
+  - {fileID: -469261303, guid: beb0b566e2daee14d829c6839371886d, type: 3}
+  - {fileID: 1584893777, guid: beb0b566e2daee14d829c6839371886d, type: 3}
+  _duration: 1
+  _loop: 0
 --- !u!1 &8922130877381923334
 GameObject:
   m_ObjectHideFlags: 0
@@ -203,4 +233,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AoeHitObject
   _hitArea: {fileID: 0}
   _hitDelay: 0
-  _lifeTime: 0.3
+  _lifeTime: 1
