@@ -1,4 +1,4 @@
-using System.Linq;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -73,10 +73,92 @@ public class EquipDetailPopUp : UIPopup
 
         levelText.text = $"레벨: {boundItem.level}/{boundItem.MaxLevel}";
 
-        skillListText.text = string.Join("\n", data.gradeSkills.Select(FormatSkillLine));
+        // 신규 장비 등급 효과 데이터로 설명 문구 구성
+        // C6에서 등급별 UI 및 색상 표현을 정식으로 구현한다.
+        var skillLines = new List<string>();
+
+        foreach (ItemGrade grade in new[]
+        {
+            ItemGrade.General,
+            ItemGrade.Super,
+            ItemGrade.Rare
+        })
+        {
+            var effects = GameManager.JsonData
+                .GetItemGradeEffectsFromJson(boundItem.itemId, grade);
+
+            foreach (var effect in effects)
+            {
+                // 79xxx 제외 효과는 화면에 표시하지 않는다.
+                if (effect.IsExcluded)
+                    continue;
+
+                string description =
+                    $"{GradeLabel(grade)}: {effect.effectDescription}";
+
+                // 현재 장비 인스턴스 등급 이하이면 해금
+                if (grade <= boundItem.Grade)
+                {
+                    skillLines.Add(FormatSkillLine(description));
+                }
+                else
+                {
+                    // 아직 해금되지 않은 효과
+                    skillLines.Add(
+                        $"<color=#888888>■ [잠금] {description}</color>");
+                }
+            }
+        }
+
+        // 장비 등급 효과: 등급별 제목 + 효과 줄, 현재 등급보다 높은 등급은 잠금
+        skillListText.text = BuildGradeEffectText();
 
         RefreshLevelUpArea();
         RefreshEquipButton();
+    }
+
+    private static readonly ItemGrade[] GradeOrder = { ItemGrade.General, ItemGrade.Super, ItemGrade.Rare };
+
+    // 등급별 제목 줄 + 효과 한 줄 (같은 등급의 효과는 " · "로 이어 붙임)
+    // - 인스턴스 등급 이하: 등급 색 제목, 등급 색 박스
+    // - 높은 등급: 회색 제목 + [잠금], 박스·문구 모두 회색
+    // - 제외(79xxx)는 숨기고, 표시할 효과가 없는 등급은 제목도 생략
+    private string BuildGradeEffectText()
+    {
+        var lines = new List<string>();
+        string lockedHex = ColorUtility.ToHtmlStringRGB(UIPalette.Get(UIColor.SubContent));
+
+        foreach (var grade in GradeOrder)
+        {
+            var effects = GameManager.JsonData.GetItemGradeEffectsFromJson(boundItem.itemId, grade);
+
+            var descriptions = new List<string>();
+            foreach (var effect in effects)
+            {
+                if (effect != null && !effect.IsExcluded)
+                    descriptions.Add(effect.effectDescription);
+            }
+
+            if (descriptions.Count == 0)
+                continue;
+
+            string text = string.Join(" · ", descriptions);
+            bool unlocked = grade <= boundItem.Grade;
+
+            if (unlocked)
+            {
+                string gradeHex = ColorUtility.ToHtmlStringRGB(GradeColor(grade));
+                lines.Add($"<color=#{gradeHex}><b>{GradeLabel(grade)}</b></color>");
+                lines.Add($" <color=#{gradeHex}>■</color> {text}");
+            }
+            else
+            {
+                lines.Add($"<color=#{lockedHex}><b>{GradeLabel(grade)}</b>  [잠금]</color>");
+                lines.Add($" <color=#{lockedHex}>■ {text}</color>");
+            }
+        }
+
+        return string.Join("\n", lines);
     }
 
     private string FormatSkillLine(string skill)
@@ -133,12 +215,16 @@ public class EquipDetailPopUp : UIPopup
         SetButtonsInteractable(false);
 
         if (boundItem.isEquipped)
-            GameManager.ServerInventory.Unequip(boundItem, OnRequestFinished);
+            GameManager.ServerInventory.Unequip(boundItem, (success, message) =>
+            {
+                if (success) GameManager.Sound.PlaySFX(GameConstants.Sfx.UNEQUIP);
+                OnRequestFinished(success, message);
+            });
         else
             GameManager.ServerInventory.Equip(boundItem, (success, message) =>
             {
                 // 서버가 장착을 승인했을 때만 효과음
-                if (success) GameManager.Sound.PlaySFX("Equip");
+                if (success) GameManager.Sound.PlaySFX(GameConstants.Sfx.EQUIP);
                 OnRequestFinished(success, message);
             });
         
@@ -161,6 +247,7 @@ public class EquipDetailPopUp : UIPopup
 
         // 레벨이 올랐으면 레벨과 스탯이 튕긴다
         if (levelText.text == shownLevel) return;
+        GameManager.Sound.PlaySFX(GameConstants.Sfx.EQUIP_LEVEL_UP);
         UITween.Punch(levelText.transform, 0.25f);
         UITween.Punch(atkText.transform, 0.25f, 0.05f);
         UITween.Punch(hpText.transform, 0.25f, 0.1f);

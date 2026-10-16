@@ -14,6 +14,7 @@ public class TabBar : UIView
         public LayoutElement layout;
         public RectTransform icon;
         public GameObject label;
+        public GameObject indicator;
         public GameObject badge;
         public TMP_Text badgeText;
         public UIView screen;
@@ -24,7 +25,7 @@ public class TabBar : UIView
     [SerializeField] private UIColor selectedColor = UIColor.Surface;
     [SerializeField] private UIColor normalColor = UIColor.Base;
     [SerializeField] private float selectedWidth = 1.9f;
-    [SerializeField] private float selectedIconScale = 1.35f;
+    [SerializeField] private float selectedIconScale = 1.33f;
 
     private UIManager manager;
     private int selectedIndex = -1;   // -1: 아직 선택 전. 첫 선택은 연출 없이 바로 적용한다
@@ -87,6 +88,7 @@ public class TabBar : UIView
 
             var wasLabelShown = tab.label.activeSelf;
             tab.label.SetActive(selected);
+            tab.indicator.SetActive(selected);
             if (animate && selected && !wasLabelShown)
                 UITween.PopIn(tab.label.transform, 0.05f, 0f);
 

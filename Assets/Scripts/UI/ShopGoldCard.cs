@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,6 +13,9 @@ public class ShopGoldCard : MonoBehaviour
 
     [SerializeField] private Color affordableColor = new Color(0.243f, 0.702f, 0.008f, 1f);
     [SerializeField] private Color normalColor = new Color(1f, 1f, 1f, 0.15f);
+    [SerializeField] private TMP_Text label;
+    [SerializeField] private Color affordableTextColor = new Color32(0x28, 0x31, 0x3C, 0xFF);
+    [SerializeField] private Color normalTextColor = Color.white;
 
     private void Awake()
     {
@@ -34,6 +38,7 @@ public class ShopGoldCard : MonoBehaviour
     {
         var affordable = PlayerInventory.Instance.Gem >= gemCost;
         buyButton.targetGraphic.color = affordable ? affordableColor : normalColor;
+        label.color = affordable ? affordableTextColor : normalTextColor;
     }
 
     private void OnCardClicked()
@@ -60,6 +65,7 @@ public class ShopGoldCard : MonoBehaviour
             return;
         }
 
+        GameManager.Sound.PlaySFX(GameConstants.Sfx.BUY_GOLD);
         UIManager.Instance.Get<LogPopup>().Show("구매 완료!", "골드 구매가 완료되었습니다!");
     }
 }

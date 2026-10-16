@@ -27,6 +27,8 @@ public static class GameConstants
         public const string StageRosterData_Json_Path = "Data/StageRoster";
         public const string MonsterData_Json_Path = "Data/Monster";
         public const string ItemData_Json_Path = "Data/Item";
+        public const string EquipEffectData_Json_Path = "Data/EquipEffect";
+        public const string ItemGradeEffectData_Json_Path = "Data/ItemGradeEffect";
         public const string SkillData_Json_Path = "Data/Skill";
         public const string SkillLevelData_Json_Path = "Data/SkillLevel";
         public const string SkillIcon_Path = "Skill/Icons/";
@@ -62,6 +64,35 @@ public static class GameConstants
         public const string LOGIN_API = "/api/accounts/login";
         public const string PLAYER_SAVE_API = "/api/players/me/save";
         public const string INVENTORY_API = "/api/inventory";   // Server 클래스에 추가
+    }
+
+    // 배경음 이름 (Resources/Sound/BGM/{이름})
+    public static class Bgm
+    {
+        public const string MAIN = "Main";            // 로그인·메인 씬
+        private const string STAGE_PREFIX = "Stage";  // 전투: Stage1, Stage2 ... (스테이지 id 그대로)
+
+        public static string ForStage(int stageId) => STAGE_PREFIX + stageId;
+
+        // 씬 전체가 한 곡을 쓰는 씬의 곡 이름. 전투 씬은 스테이지에 따라 달라서 null
+        public static string ForScene(string sceneName)
+            => sceneName == SceneNames.LOGIN_SCENE || sceneName == SceneNames.MAIN_SCENE ? MAIN : null;
+    }
+
+    // 효과음 이름 (Resources/Sound/SFX/{이름})
+    public static class Sfx
+    {
+        // UI (Resources/Sound/SFX/UI/ 폴더)
+        public const string CLICK = "UI/Click";                   // 모든 버튼 공통 (ButtonClickSound가 자동 재생)
+        public const string EQUIP = "UI/Equip";                   // 장비 장착
+        public const string UNEQUIP = "UI/Unequip";               // 장비 해제
+        public const string EQUIP_LEVEL_UP = "UI/EquipLevelUp";   // 장비 레벨업
+        public const string SYNTHESIZE = "UI/Synthesize";         // 장비 합성
+        public const string EVOLVE = "UI/Evolve";                 // 진화
+        public const string ACHIEVEMENT = "UI/Achievement";       // 업적 보상 수령
+        public const string BUY_SUPPLY_BOX = "UI/BuySupplyBox";   // 전리품 상자 구매
+        public const string BUY_GOLD = "UI/BuyGold";              // 골드 구매
+        public const string BUY_GEM = "UI/BuyGem";                // 젬 구매
     }
 
     // PlayerPrefs 저장 키

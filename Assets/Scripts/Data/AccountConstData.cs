@@ -16,6 +16,7 @@ public class AccountConstData
     public int accountExpPerKill;
     public int accountExpPerSecond;
     public int luckTrainGoldMax;
+    public int patrolStaminaCost;   // 순찰 스태미나 비용
 
     // level에서 다음 레벨까지 필요한 계정 경험치
     public int GetRequiredExp(int level) => accountBaseRequiredExp + accountRequiredExpIncrement * (level - 1);

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,6 +14,9 @@ public class ShopSupplyBoxCard : MonoBehaviour
 
     [SerializeField] private Color affordableColor = new Color(0.243f, 0.702f, 0.008f, 1f);
     [SerializeField] private Color normalColor = new Color(1f, 1f, 1f, 0.15f);
+    [SerializeField] private TMP_Text label;
+    [SerializeField] private Color affordableTextColor = new Color32(0x28, 0x31, 0x3C, 0xFF);
+    [SerializeField] private Color normalTextColor = Color.white;
 
     private void Awake()
     {
@@ -35,6 +39,7 @@ public class ShopSupplyBoxCard : MonoBehaviour
     {
         var affordable = PlayerInventory.Instance.Gem >= gemCost;
         actionButton.targetGraphic.color = affordable ? affordableColor : normalColor;
+        label.color = affordable ? affordableTextColor : normalTextColor;
     }
 
     private void OnActionButtonClicked()
@@ -60,6 +65,8 @@ public class ShopSupplyBoxCard : MonoBehaviour
             UIManager.Instance.Get<LogPopup>().Show("알림", message);
             return;
         }
+
+        GameManager.Sound.PlaySFX(GameConstants.Sfx.BUY_SUPPLY_BOX);
 
         if (rewardedItems != null && rewardedItems.Count > 0)
             UIManager.Instance.Get<SupplyResultPopup>().Show(rewardedItems[0]);

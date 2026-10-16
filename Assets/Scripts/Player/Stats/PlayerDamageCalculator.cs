@@ -74,18 +74,68 @@ public static class PlayerDamageCalculator
     // 방어력 기준값: 방어력이 이 값이면 받는 피해가 절반
     public const int DefenseConstant = 100;
 
-    // 피해가 들어왔을 때 최소로 받는 피해
+    // 피해가 들어왔을 때 최소로 받는 피해 (회피·무효로 0이 된 경우는 제외)
     public const int MinReceivedDamage = 1;
 
-    // 받는 피해 = 피해 × 기준값 ÷ (기준값 + 방어력), 반올림(0.5는 짝수 쪽), 최소 1
-    public static int ApplyDefense(int damage, int defense)
+    public readonly struct ReceivedDamageResult
     {
-        if (damage <= 0) return 0;
-        if (defense <= 0) return damage;
+        public readonly int damage;
+        public readonly bool isDodged;
+        public readonly bool isNegated;
 
-        decimal reduced = (decimal)damage * DefenseConstant / (DefenseConstant + defense);
-        int result = (int)Math.Round(reduced, MidpointRounding.ToEven);
+        public ReceivedDamageResult(int damage, bool isDodged, bool isNegated)
+        {
+            this.damage = damage;
+            this.isDodged = isDodged;
+            this.isNegated = isNegated;
+        }
+    }
 
-        return Math.Max(result, MinReceivedDamage);
+    // 받는 피해: 회피 → 피해 무효 → 방어력 → 받는 피해 감소 → 반올림(짝수 쪽) 한 번 → 최소 1
+    public static ReceivedDamageResult CalculateReceived(int damage, PlayerStats stats)
+    {
+        if (damage <= 0) return new ReceivedDamageResult(0, false, false);
+        if (stats == null) return new ReceivedDamageResult(damage, false, false);
+
+        if (RollChance(stats.DodgeChance))
+            return new ReceivedDamageResult(0, true, false);
+
+        if (RollChance(stats.NegateDamageChance))
+            return new ReceivedDamageResult(0, false, true);
+
+        decimal value = ApplyDefense(damage, stats.FinalDefense);
+        value = ApplyDamageReduction(value, stats.DamageReduction);
+
+        int result = (int)Math.Round(value, MidpointRounding.ToEven);
+        return new ReceivedDamageResult(Math.Max(result, MinReceivedDamage), false, false);
+    }
+
+    // 방어력 비율 감소만 (반올림·최소 피해는 CalculateReceived에서)
+    public static decimal ApplyDefense(decimal damage, int defense)
+        => defense <= 0 ? damage : damage * DefenseConstant / (DefenseConstant + defense);
+
+    // 받는 피해 감소: × (100 − 감소%) ÷ 100 (감소%는 0~100으로 제한)
+    public static decimal ApplyDamageReduction(decimal damage, int reductionPercent)
+    {
+        int reduction = Math.Clamp(reductionPercent, 0, 100);
+        return damage * (100 - reduction) / 100;
+    }
+
+    // ===== 회복 =====
+
+    // 받는 치유량 보정: 회복량 × (100 + 치유량%) ÷ 100, 버림, 최소 1
+    public static int ApplyHealReceived(int amount, int healReceivedPercent)
+    {
+        if (amount <= 0) return 0;
+        int result = amount * (100 + Math.Max(healReceivedPercent, 0)) / 100;
+        return Math.Max(result, 1);
+    }
+
+    // 확률(%) 판정. 0 이하면 없음, 100 이상이면 항상
+    private static bool RollChance(float chance)
+    {
+        if (chance <= 0f) return false;
+        if (chance >= 100f) return true;
+        return UnityEngine.Random.value * 100f < chance;
     }
 }

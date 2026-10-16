@@ -13,7 +13,6 @@ public class ItemData
     public int hpBonus;
     public int attackBonus;
     public int moveSpeedBonus;
-    public string[] gradeSkills; 
 
     [NonSerialized] private EquipSlotType parsedSlotType;
     [NonSerialized] private ItemGrade parsedGrade;

@@ -17,6 +17,8 @@ public class JsonDataManagerEditor : Editor
     private readonly HashSet<DropItemType> expandedDropItems = new();
     private readonly HashSet<MonsterType> expandedDropTables = new();
     private readonly HashSet<long> expandedItems = new();
+    private readonly HashSet<long> expandedEquipEffects = new();
+    private readonly HashSet<int> expandedItemGradeEffects = new();
     private readonly HashSet<int> expandedAchievements = new();
 
     public override void OnInspectorGUI()
@@ -42,8 +44,9 @@ public class JsonDataManagerEditor : Editor
             data => $"ID {data.dropItemId}", DrawDropItem);
         DrawDictionary("드롭 테이블 데이터", manager.DropTableDic, expandedDropTables,
             rows => $"행 {rows.Count}개", DrawDropTable);
-        DrawDictionary("아이템 데이터", manager.ItemDataDic, expandedItems,
-            data => data.itemName, DrawItem);
+        DrawDictionary("아이템 데이터", manager.ItemDataDic, expandedItems, data => data.itemName, DrawItem);
+        DrawDictionary("장비 효과 정의 데이터 (EquipEffect)", manager.EquipEffectDataDic, expandedEquipEffects, data => data.effectDescription ?? string.Empty, DrawEquipEffect);
+        DrawItemGradeEffects(manager);
         DrawSingle("계정 상수 데이터", manager.AccountConstData, DrawAccountConst);
         DrawSingle("플레이어 기본 스탯 데이터", manager.PlayerBaseStatData, DrawPlayerBaseStat);
         DrawSingle("장비 상수 데이터", manager.ItemConstData, DrawItemConst);
@@ -239,6 +242,157 @@ public class JsonDataManagerEditor : Editor
         }
     }
 
+    private static void DrawEquipEffect(EquipEffectData data)
+    {
+        // 효과 기본 정보
+        EditorGUILayout.LongField("효과 ID", data.effectId);
+        EditorGUILayout.TextField(
+            "효과 설명", data.effectDescription ?? string.Empty);
+
+        // 효과 종류
+        EditorGUILayout.TextField(
+            "카테고리 문자열", data.effectCategory ?? string.Empty);
+        EditorGUILayout.EnumPopup("카테고리", data.Category);
+
+        // 79xxx 제외 여부
+        EditorGUILayout.Toggle("제외 효과 (79xxx)", data.IsExcluded);
+
+        // Stat형 정보
+        EditorGUILayout.TextField(
+            "스탯 종류 문자열", data.statType ?? string.Empty);
+        EditorGUILayout.EnumPopup("스탯 종류", data.StatType);
+
+        EditorGUILayout.TextField(
+            "값 종류 문자열", data.valueType ?? string.Empty);
+        EditorGUILayout.EnumPopup("값 종류", data.ValueType);
+
+        EditorGUILayout.FloatField("효과 수치", data.effectValue);
+
+        // Trigger형 정보
+        EditorGUILayout.TextField(
+            "발동 조건 문자열", data.triggerType ?? string.Empty);
+        EditorGUILayout.EnumPopup("발동 조건", data.TriggerType);
+
+        EditorGUILayout.FloatField(
+            "발동 확률 (%)", data.triggerChance);
+        EditorGUILayout.FloatField(
+            "발동 간격 (초)", data.triggerInterval);
+
+        // 발동 시 실행 동작
+        EditorGUILayout.TextField(
+            "동작 종류 문자열", data.actionType ?? string.Empty);
+        EditorGUILayout.EnumPopup("동작 종류", data.ActionType);
+
+        EditorGUILayout.FloatField("동작 수치", data.actionValue);
+    }
+
+    private void DrawItemGradeEffects(JsonDataManager manager)
+    {
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField(
+            "아이템 등급 효과 연결 데이터 (ItemGradeEffect)",
+            EditorStyles.boldLabel);
+
+        IReadOnlyList<ItemGradeEffectData> rows =
+            manager.ItemGradeEffectRows;
+
+        if (rows == null)
+        {
+            EditorGUILayout.HelpBox(
+                "아직 로드된 ItemGradeEffect 데이터가 없습니다.",
+                MessageType.Info);
+            return;
+        }
+
+        EditorGUILayout.LabelField("등록 수", rows.Count.ToString());
+
+        // JSON의 원본 행 순서를 유지한다.
+        foreach (ItemGradeEffectData row in rows)
+        {
+            if (row == null)
+            {
+                EditorGUILayout.LabelField("데이터가 없는 행");
+                continue;
+            }
+
+            // 연결된 아이템 정보 조회
+            ItemData item = null;
+
+            if (manager.ItemDataDic != null)
+            {
+                manager.ItemDataDic.TryGetValue(
+                    row.itemId, out item);
+            }
+
+            string itemName = item != null
+                ? item.itemName
+                : "아이템 없음";
+
+            // 연결된 효과 정의 조회
+            EquipEffectData effect =
+                manager.GetEquipEffectDataFromJson(row.effectId);
+
+            string effectDescription = effect != null
+                ? effect.effectDescription
+                : "효과 정의 없음";
+
+            // 연결 행 ID를 기준으로 펼침 상태 관리
+            bool expanded = EditorGUILayout.Foldout(
+                expandedItemGradeEffects.Contains(
+                    row.itemGradeEffectId),
+                $"{row.itemGradeEffectId} / {itemName} " +
+                $"/ {row.Grade} / {effectDescription}",
+                true);
+
+            if (expanded)
+                expandedItemGradeEffects.Add(
+                    row.itemGradeEffectId);
+            else
+                expandedItemGradeEffects.Remove(
+                    row.itemGradeEffectId);
+
+            if (!expanded)
+                continue;
+
+            using (new EditorGUI.IndentLevelScope())
+            using (new EditorGUI.DisabledScope(true))
+            {
+                // ItemGradeEffect 원본 정보
+                EditorGUILayout.IntField(
+                    "연결 행 ID", row.itemGradeEffectId);
+
+                EditorGUILayout.LongField(
+                    "아이템 ID", row.itemId);
+
+                EditorGUILayout.TextField(
+                    "아이템 이름", itemName ?? string.Empty);
+
+                EditorGUILayout.TextField(
+                    "등급 문자열", row.grade ?? string.Empty);
+
+                EditorGUILayout.EnumPopup(
+                    "해금 등급", row.Grade);
+
+                EditorGUILayout.LongField(
+                    "효과 ID", row.effectId);
+
+                // 연결된 EquipEffect 정보
+                EditorGUILayout.TextField(
+                    "효과 설명",
+                    effectDescription ?? string.Empty);
+
+                if (effect != null)
+                {
+                    EditorGUILayout.EnumPopup(
+                        "효과 카테고리", effect.Category);
+
+                    EditorGUILayout.Toggle(
+                        "제외 효과 (79xxx)", effect.IsExcluded);
+                }
+            }
+        }
+    }
+
     private static void DrawItem(ItemData data)
     {
         EditorGUILayout.LongField("아이템 ID", data.itemId);
@@ -252,7 +406,6 @@ public class JsonDataManagerEditor : Editor
         EditorGUILayout.IntField("체력 보너스", data.hpBonus);
         EditorGUILayout.IntField("공격력 보너스", data.attackBonus);
         EditorGUILayout.IntField("이동 속도 보너스", data.moveSpeedBonus);
-        EditorGUILayout.TextField("등급 스킬", data.gradeSkills != null ? string.Join(", ", data.gradeSkills) : string.Empty);
     }
     
     private static void DrawAchievement(AchievementData data)

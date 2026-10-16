@@ -8,9 +8,9 @@ public static class WeaponSkillTable
     // 무기 아이템 ID → 시작 스킬 ID
     private static readonly Dictionary<long, int> itemToSkill = new()
     {
-        { 6001, 20030 },   // 낡은 검 → Katana
-        { 6002, 20020 },   // 연발 권총 → Revolver
-        { 6003, 20010 },   // 그림자 쿠나이 → Shuriken
+        { 6001, 20060 },   // 낡은 검 → Katana
+        { 6002, 20050 },   // 연발 권총 → Revolver
+        { 6003, 20030 },   // 그림자 쿠나이 → Shuriken
     };
 
     public static int GetSkillByItem(long itemId)

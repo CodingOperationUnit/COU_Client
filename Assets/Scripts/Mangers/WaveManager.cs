@@ -55,6 +55,7 @@ public class WaveManager : MonoBehaviour
     public void SetupStage(int newStageId)
     {
         stageId = newStageId;
+        GameManager.Sound.PlayBGM(GameConstants.Bgm.ForStage(stageId));   // 선택한 스테이지의 BGM (Stage{id})
         CurrentStage = GameManager.JsonData.GetStageDataFromJson(stageId);
         elapsed = 0f;
 

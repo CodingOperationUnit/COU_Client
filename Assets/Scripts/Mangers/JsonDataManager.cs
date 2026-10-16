@@ -1,11 +1,21 @@
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using Unity.Burst.Intrinsics;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.AdaptivePerformance.Provider;
 using UnityEngine.Networking;
+using UnityEngine.U2D;
+using UnityEngine.UIElements;
+using static Unity.Collections.AllocatorManager;
+using static UnityEditor.UIElements.ToolbarMenu;
+using static UnityEngine.Rendering.DebugUI;
+using static UnityEngine.Rendering.DebugUI.Table;
 
 
 public class JsonDataManager : MonoSingleton<JsonDataManager>
@@ -55,6 +65,16 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
     private Dictionary<long, ItemData> itemDataDic;
     public IReadOnlyDictionary<long, ItemData> ItemDataDic => itemDataDic;
 
+    private Dictionary<long, EquipEffectData> equipEffectDataDic;
+    public IReadOnlyDictionary<long, EquipEffectData> EquipEffectDataDic => equipEffectDataDic;
+
+    private List<ItemGradeEffectData> itemGradeEffectRows;
+    public IReadOnlyList<ItemGradeEffectData> ItemGradeEffectRows => itemGradeEffectRows;
+
+    private Dictionary<long, Dictionary<ItemGrade, List<EquipEffectData>>> itemGradeEffectsByItemId = new();
+
+    private static readonly IReadOnlyList<EquipEffectData> EmptyEquipEffects = Array.Empty<EquipEffectData>();
+
     private PlayerBaseStatData playerBaseStatData;
     public PlayerBaseStatData PlayerBaseStatData => playerBaseStatData;
 
@@ -90,12 +110,24 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
         dropTableDic = LoadTable(GameConstants.Paths.DropTableData_Json_Path, ParseDropTableData);
         accountConstData = LoadTable(GameConstants.Paths.AccountConstData_Json_Path, ParseAccountConstData);
         itemDataDic = LoadTable(GameConstants.Paths.ItemData_Json_Path, ParseItemData);
+        equipEffectDataDic = LoadTable(GameConstants.Paths.EquipEffectData_Json_Path, ParseEquipEffectData);
+        itemGradeEffectRows = LoadTable(GameConstants.Paths.ItemGradeEffectData_Json_Path, ParseItemGradeEffectData);
+        playerBaseStatData = LoadTable(GameConstants.Paths.PlayerBaseStatData_Json_Path, ParsePlayerBaseStatData);
         playerBaseStatData = LoadTable(GameConstants.Paths.PlayerBaseStatData_Json_Path, ParsePlayerBaseStatData);
         itemConstData = LoadTable(GameConstants.Paths.ItemConstData_Json_Path, ParseItemConstData);
         evolutionData = LoadTable(GameConstants.Paths.EvolutionData_Json_Path, ParseEvolutionData);
         achievementDataDic = LoadTable(GameConstants.Paths.AchievementData_Json_Path, ParseAchievementData);
         combatPowerData = LoadTable(GameConstants.Paths.CombatPowerData_Json_Path, ParseCombatPowerData);
 
+        try
+        {
+            itemGradeEffectsByItemId = BuildItemGradeEffectIndex(itemDataDic, equipEffectDataDic, itemGradeEffectRows);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError(
+                $"장비 등급 효과 인덱스 생성 실패: {exception.Message}");
+        }
 
         RebuildMonsterAttackIndex();
     }
@@ -153,11 +185,14 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
             var dropTables = ParseResponseTable(tables, GameConstants.Paths.DropTableData_Json_Path, ParseDropTableData);
             var accountConst = ParseResponseTable(tables, GameConstants.Paths.AccountConstData_Json_Path, ParseAccountConstData);
             var items = ParseResponseTable(tables, GameConstants.Paths.ItemData_Json_Path, ParseItemData);
+            var equipEffects = ParseResponseTable(tables, GameConstants.Paths.EquipEffectData_Json_Path, ParseEquipEffectData);
+            var itemGradeEffects = ParseResponseTable(tables, GameConstants.Paths.ItemGradeEffectData_Json_Path, ParseItemGradeEffectData);
             var playerBaseStat = ParseResponseTable(tables, GameConstants.Paths.PlayerBaseStatData_Json_Path, ParsePlayerBaseStatData);
             var itemConst = ParseResponseTable(tables, GameConstants.Paths.ItemConstData_Json_Path, ParseItemConstData);
             var evolution = ParseResponseTable(tables, GameConstants.Paths.EvolutionData_Json_Path, ParseEvolutionData);
             var achievements = ParseResponseTable(tables, GameConstants.Paths.AchievementData_Json_Path, ParseAchievementData);
             var combatPower = ParseResponseTable(tables, GameConstants.Paths.CombatPowerData_Json_Path, ParseCombatPowerData);
+            var gradeEffectIndex = BuildItemGradeEffectIndex(items ?? itemDataDic, equipEffects ?? equipEffectDataDic, itemGradeEffects ?? itemGradeEffectRows);
 
             SaveLoadHelper.SaveStaticData(version, tables);
 
@@ -175,6 +210,9 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
             itemDataDic = items ?? itemDataDic;
             playerBaseStatData = playerBaseStat ?? playerBaseStatData;
             itemConstData = itemConst ?? itemConstData;
+            equipEffectDataDic = equipEffects ?? equipEffectDataDic;
+            itemGradeEffectRows = itemGradeEffects ?? itemGradeEffectRows;
+            itemGradeEffectsByItemId = gradeEffectIndex;
             evolutionData = evolution ?? evolutionData;
             achievementDataDic = achievements ?? achievementDataDic;
             combatPowerData = combatPower ?? combatPowerData;
@@ -225,6 +263,153 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
         major = 0;
         return !string.IsNullOrEmpty(version) && int.TryParse(version.Split('.')[0], out major);
     }
+
+
+    // 장비 효과 데이터 규칙 검증
+    private static void ValidateEquipEffect(EquipEffectData data)
+    {
+        // NaN, Infinity 방지
+        if (float.IsNaN(data.effectValue)
+            || float.IsInfinity(data.effectValue)
+            || float.IsNaN(data.triggerChance)
+            || float.IsInfinity(data.triggerChance)
+            || float.IsNaN(data.triggerInterval)
+            || float.IsInfinity(data.triggerInterval)
+            || float.IsNaN(data.actionValue)
+            || float.IsInfinity(data.actionValue))
+        {
+            throw new InvalidOperationException(
+                $"EquipEffect {data.effectId}: 잘못된 숫자입니다.");
+        }
+
+        // 79xxx: 제외 효과
+        if (data.IsExcluded)
+        {
+            if (data.Category != EquipEffectCategory.None)
+                throw new InvalidOperationException(
+                    $"EquipEffect {data.effectId}: " +
+                    "제외 효과는 Category가 None이어야 합니다.");
+
+            return;
+        }
+
+        // 제외 효과가 아닌데 Category가 None인 경우
+        if (data.Category == EquipEffectCategory.None)
+        {
+            throw new InvalidOperationException(
+                $"EquipEffect {data.effectId}: " +
+                "유효한 효과 카테고리가 필요합니다.");
+        }
+
+        // Stat형: statType과 valueType 조합 검사
+        if (data.Category == EquipEffectCategory.Stat)
+        {
+            bool percent =
+                data.StatType == EquipEffectStatType.HP
+                || data.StatType == EquipEffectStatType.ATTACK
+                || data.StatType == EquipEffectStatType.MOVE_SPEED;
+
+            bool add =
+                data.StatType == EquipEffectStatType.DEFENSE
+                || data.StatType == EquipEffectStatType.CRITICAL_CHANCE
+                || data.StatType == EquipEffectStatType.CRITICAL_DAMAGE
+                || data.StatType == EquipEffectStatType.DODGE_CHANCE
+                || data.StatType == EquipEffectStatType.DAMAGE_REDUCTION
+                || data.StatType == EquipEffectStatType.HEAL_RECEIVED;
+
+            if (!(percent || add)
+                || (percent && data.ValueType
+                    != EquipEffectValueType.Percent)
+                || (add && data.ValueType
+                    != EquipEffectValueType.Add))
+            {
+                throw new InvalidOperationException(
+                    $"EquipEffect {data.effectId}: " +
+                    "잘못된 statType/valueType 조합입니다.");
+            }
+
+            // HP, ATTACK, DEFENSE는 정수만 허용
+            if ((data.StatType == EquipEffectStatType.HP
+                || data.StatType == EquipEffectStatType.ATTACK
+                || data.StatType == EquipEffectStatType.DEFENSE)
+                && data.effectValue != Math.Truncate(data.effectValue))
+            {
+                throw new InvalidOperationException(
+                    $"EquipEffect {data.effectId}: " +
+                    "HP/ATTACK/DEFENSE 값은 정수여야 합니다.");
+            }
+        }
+
+        // Trigger형: 발동 조건과 실행 동작 필수
+        else if (data.Category == EquipEffectCategory.Trigger)
+        {
+            if (data.TriggerType == EquipEffectTriggerType.None
+                || data.ActionType == EquipEffectActionType.None)
+            {
+                throw new InvalidOperationException(
+                    $"EquipEffect {data.effectId}: " +
+                    "Trigger 설정이 비어 있습니다.");
+            }
+        }
+
+        // Buff, Conditional은 이번 단계에서 계산하지 않음
+    }
+
+
+    // itemId -> grade -> EquipEffectData 목록 생성
+    private static Dictionary<long, Dictionary<ItemGrade, 
+        List<EquipEffectData>>> BuildItemGradeEffectIndex(Dictionary<long, ItemData> items, Dictionary<long, EquipEffectData> effects, List<ItemGradeEffectData> rows)
+    {
+        if (items == null || effects == null || rows == null)
+        {
+            throw new InvalidOperationException(
+                "Item, EquipEffect 또는 ItemGradeEffect가 로드되지 않았습니다.");
+        }
+
+        var index = new Dictionary<long,
+            Dictionary<ItemGrade, List<EquipEffectData>>>();
+
+        foreach (ItemGradeEffectData row in rows)
+        {
+            // Item 테이블 참조 검사
+            if (!items.ContainsKey(row.itemId))
+            {
+                throw new InvalidOperationException(
+                    $"ItemGradeEffect {row.itemGradeEffectId}: " +
+                    $"존재하지 않는 itemId {row.itemId}");
+            }
+
+            // EquipEffect 테이블 참조 검사
+            if (!effects.TryGetValue(row.effectId, out var effect))
+            {
+                throw new InvalidOperationException(
+                    $"ItemGradeEffect {row.itemGradeEffectId}: " +
+                    $"존재하지 않는 effectId {row.effectId}");
+            }
+
+            // 아이템 인덱스 생성
+            if (!index.TryGetValue(row.itemId, out var grades))
+            {
+                grades = new Dictionary<ItemGrade,
+                    List<EquipEffectData>>();
+
+                index.Add(row.itemId, grades);
+            }
+
+            // 등급별 인덱스 생성
+            if (!grades.TryGetValue(row.Grade, out var gradeEffects))
+            {
+                gradeEffects = new List<EquipEffectData>();
+                grades.Add(row.Grade, gradeEffects);
+            }
+
+            // 원본 순서대로 효과 추가
+            gradeEffects.Add(effect);
+        }
+
+        return index;
+    }
+
 
     #region GetMethod
 
@@ -368,6 +553,33 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
         Debug.LogWarning($"등록되지 않은 DropItem 종류: {type}");
         return null;
     }
+
+
+    // effectId로 장비 효과 정의 조회
+    // 존재하지 않는 ID는 null 반환
+    public EquipEffectData GetEquipEffectDataFromJson(long effectId)
+    {
+        if (equipEffectDataDic == null)
+            return null;
+
+        return equipEffectDataDic.TryGetValue(
+            effectId, out var effect) ? effect : null;
+    }
+
+    // 아이템의 특정 등급에서 새롭게 해금되는 효과 조회
+    // 등급 누적 계산은 C2에서 처리
+    public IReadOnlyList<EquipEffectData> GetItemGradeEffectsFromJson(long itemId, ItemGrade grade)
+    {
+        if (itemGradeEffectsByItemId.TryGetValue(
+                itemId, out var grades)
+            && grades.TryGetValue(grade, out var effects))
+        {
+            return effects;
+        }
+
+        return EmptyEquipEffects;
+    }
+
 
     public ItemData GetItemDataFromJson(long itemId)
     {
@@ -842,6 +1054,47 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
         return loadedItems;
     }
 
+
+    private static Dictionary<long, EquipEffectData> ParseEquipEffectData(JObject root)
+    {
+        JArray rows = root["datas"] as JArray;
+
+        if (rows == null || rows.Count == 0)
+            throw new InvalidOperationException(
+                "EquipEffect 데이터 목록이 비어 있습니다.");
+
+        var loaded = new Dictionary<long, EquipEffectData>();
+
+        foreach (JToken row in rows)
+        {
+            if (!(row is JObject))
+                throw new InvalidOperationException(
+                    "EquipEffect 행이 객체 형식이 아닙니다.");
+
+            EquipEffectData data = row.ToObject<EquipEffectData>();
+
+            if (data == null || data.effectId < 70000
+                || data.effectId > 79999)
+            {
+                throw new InvalidOperationException(
+                    "EquipEffect ID는 7xxxx 형식이어야 합니다.");
+            }
+
+            if (loaded.ContainsKey(data.effectId))
+                throw new InvalidOperationException(
+                    $"중복된 EquipEffect ID: {data.effectId}");
+
+            data.OnLoaded();
+
+            ValidateEquipEffect(data);
+
+            loaded.Add(data.effectId, data);
+        }
+
+        return loaded;
+    }
+
+
     private static PlayerBaseStatData ParsePlayerBaseStatData(JObject root)
     {
         JArray rows = root["datas"] as JArray;
@@ -874,6 +1127,55 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
 
         return data;
     }
+
+
+    // ItemGradeEffect.json 파싱
+    private static List<ItemGradeEffectData> ParseItemGradeEffectData(JObject root)
+    {
+        JArray rows = root["datas"] as JArray;
+
+        if (rows == null || rows.Count == 0)
+            throw new InvalidOperationException(
+                "ItemGradeEffect 데이터 목록이 비어 있습니다.");
+
+        var loaded = new List<ItemGradeEffectData>(rows.Count);
+        var usedIds = new HashSet<int>();
+
+        foreach (JToken row in rows)
+        {
+            if (!(row is JObject))
+                throw new InvalidOperationException(
+                    "ItemGradeEffect 행이 객체 형식이 아닙니다.");
+
+            ItemGradeEffectData data =
+                row.ToObject<ItemGradeEffectData>();
+
+            if (data == null
+                || data.itemGradeEffectId <= 0
+                || data.itemId <= 0
+                || data.effectId <= 0)
+            {
+                throw new InvalidOperationException(
+                    "ItemGradeEffect의 ID 값이 올바르지 않습니다.");
+            }
+
+            if (!usedIds.Add(data.itemGradeEffectId))
+            {
+                throw new InvalidOperationException(
+                    $"중복된 ItemGradeEffect ID: " +
+                    $"{data.itemGradeEffectId}");
+            }
+
+            // C1-2에서 구현한 등급 enum 변환
+            data.OnLoaded();
+
+            // 시트 행 순서 유지
+            loaded.Add(data);
+        }
+
+        return loaded;
+    }
+
 
     private static EvolutionData ParseEvolutionData(JObject root)
     {
