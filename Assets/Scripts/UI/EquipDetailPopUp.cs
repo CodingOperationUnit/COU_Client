@@ -110,10 +110,56 @@ public class EquipDetailPopUp : UIPopup
             }
         }
 
-        skillListText.text = string.Join("\n", skillLines);
+        // 장비 등급 효과: 등급별 제목 + 효과 줄, 현재 등급보다 높은 등급은 잠금
+        skillListText.text = BuildGradeEffectText();
 
         RefreshLevelUpArea();
         RefreshEquipButton();
+    }
+
+    private static readonly ItemGrade[] GradeOrder = { ItemGrade.General, ItemGrade.Super, ItemGrade.Rare };
+
+    // 등급별로 제목 줄과 효과 줄을 만든다
+    // - 인스턴스 등급 이하: 등급 색 제목, 해금 효과
+    // - 높은 등급: 회색 제목 + [잠금], 효과도 회색
+    // - 제외(79xxx)는 숨기고, 표시할 효과가 없는 등급은 제목도 생략
+    private string BuildGradeEffectText()
+    {
+        var lines = new List<string>();
+        string lockedHex = ColorUtility.ToHtmlStringRGB(UIPalette.Get(UIColor.SubContent));
+
+        foreach (var grade in GradeOrder)
+        {
+            var effects = GameManager.JsonData.GetItemGradeEffectsFromJson(boundItem.itemId, grade);
+
+            var visible = new List<EquipEffectData>();
+            foreach (var effect in effects)
+            {
+                if (effect != null && !effect.IsExcluded)
+                    visible.Add(effect);
+            }
+
+            if (visible.Count == 0)
+                continue;
+
+            bool unlocked = grade <= boundItem.Grade;
+
+            if (unlocked)
+            {
+                string gradeHex = ColorUtility.ToHtmlStringRGB(GradeColor(grade));
+                lines.Add($"<color=#{gradeHex}><b>{GradeLabel(grade)}</b></color>");
+                foreach (var effect in visible)
+                    lines.Add(" " + FormatSkillLine(effect.effectDescription));
+            }
+            else
+            {
+                lines.Add($"<color=#{lockedHex}><b>{GradeLabel(grade)}</b>  [잠금]</color>");
+                foreach (var effect in visible)
+                    lines.Add($" <color=#{lockedHex}>■ {effect.effectDescription}</color>");
+            }
+        }
+
+        return string.Join("\n", lines);
     }
 
     private string FormatSkillLine(string skill)
