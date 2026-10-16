@@ -119,9 +119,9 @@ public class EquipDetailPopUp : UIPopup
 
     private static readonly ItemGrade[] GradeOrder = { ItemGrade.General, ItemGrade.Super, ItemGrade.Rare };
 
-    // 등급별로 제목 줄과 효과 줄을 만든다
-    // - 인스턴스 등급 이하: 등급 색 제목, 해금 효과
-    // - 높은 등급: 회색 제목 + [잠금], 효과도 회색
+    // 등급별 제목 줄 + 효과 한 줄 (같은 등급의 효과는 " · "로 이어 붙임)
+    // - 인스턴스 등급 이하: 등급 색 제목, 등급 색 박스
+    // - 높은 등급: 회색 제목 + [잠금], 박스·문구 모두 회색
     // - 제외(79xxx)는 숨기고, 표시할 효과가 없는 등급은 제목도 생략
     private string BuildGradeEffectText()
     {
@@ -132,30 +132,29 @@ public class EquipDetailPopUp : UIPopup
         {
             var effects = GameManager.JsonData.GetItemGradeEffectsFromJson(boundItem.itemId, grade);
 
-            var visible = new List<EquipEffectData>();
+            var descriptions = new List<string>();
             foreach (var effect in effects)
             {
                 if (effect != null && !effect.IsExcluded)
-                    visible.Add(effect);
+                    descriptions.Add(effect.effectDescription);
             }
 
-            if (visible.Count == 0)
+            if (descriptions.Count == 0)
                 continue;
 
+            string text = string.Join(" · ", descriptions);
             bool unlocked = grade <= boundItem.Grade;
 
             if (unlocked)
             {
                 string gradeHex = ColorUtility.ToHtmlStringRGB(GradeColor(grade));
                 lines.Add($"<color=#{gradeHex}><b>{GradeLabel(grade)}</b></color>");
-                foreach (var effect in visible)
-                    lines.Add(" " + FormatSkillLine(effect.effectDescription));
+                lines.Add($" <color=#{gradeHex}>■</color> {text}");
             }
             else
             {
                 lines.Add($"<color=#{lockedHex}><b>{GradeLabel(grade)}</b>  [잠금]</color>");
-                foreach (var effect in visible)
-                    lines.Add($" <color=#{lockedHex}>■ {effect.effectDescription}</color>");
+                lines.Add($" <color=#{lockedHex}>■ {text}</color>");
             }
         }
 
