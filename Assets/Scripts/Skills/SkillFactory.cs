@@ -35,28 +35,28 @@ public static class SkillFactory
     //private static readonly Dictionary<int, Action<SkillData>> _debugOverrides = new()
     //{
     //    { 20060, data => {
-    //        data.skillType = "Nearest";
+    //        data.skillTargetType = "Nearest";
     //        data.skillCooldown = 0.75f;
     //        data.skillSpeed = 0.0f;
     //        data.skillDamage = 1.25f;
     //        data.skillRange = 1.0f;
     //    } },
     //    { 20010, data => {
-    //        data.skillType = "Nearest";
+    //        data.skillTargetType ="Nearest";
     //        data.skillCooldown = 1.0f;
     //        data.skillSpeed = 4.0f;
     //        data.skillDamage = 1.0f;
     //        data.skillRange = 5.0f;
     //    } },
     //    { 20020, data => {
-    //        data.skillType = "None";
+    //        data.skillTargetType ="None";
     //        data.skillCooldown = 1.0f;
     //        data.skillSpeed = 0.0f;
     //        data.skillDamage = 1.0f;
     //        data.skillRange = 3.0f;
     //    } },
     //    { 20030, data => {
-    //        data.skillType = "Nearest";
+    //        data.skillTargetType ="Nearest";
     //        data.skillCooldown = 2.0f;
     //        data.skillSpeed = 0.5f;
     //        data.skillDamage = 0.0f;
