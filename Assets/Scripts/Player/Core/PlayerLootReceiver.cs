@@ -45,11 +45,13 @@ public class PlayerLootReceiver : MonoBehaviour, ILootReceiver
         switch (type)
         {
             case DropItemType.Potion:
-                // 포션 회복 = 데이터 값 + 포션 회복량(진화)
-                int potionHeal = GameManager.JsonData.GetDropItemDataFromJson(DropItemType.Potion).value
+                // 포션 회복 = (데이터 값 + 포션 회복량) × (100 + 받는 치유량) ÷ 100
+                int potionBase = GameManager.JsonData.GetDropItemDataFromJson(DropItemType.Potion).value
                                + (playerStats != null ? playerStats.FinalPotionRecovery : 0);
+                int potionHeal = PlayerDamageCalculator.ApplyHealReceived(potionBase, playerStats != null ? playerStats.HealReceived : 0);
                 playerHealth.Heal(potionHeal);
-                Debug.Log("[PlayerLootReceiver] 포션 회복 " + potionHeal);
+                Debug.Log("[PlayerLootReceiver] 포션 회복 " + potionHeal + " (기본 " + potionBase + ", 치유량 +" +
+                          (playerStats != null ? playerStats.HealReceived : 0) + "%)");
                 break;
 
             case DropItemType.Magnet:
