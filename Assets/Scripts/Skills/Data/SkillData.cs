@@ -21,7 +21,7 @@ public class SkillData : ISerializationCallbackReceiver
     public int skillId;
     public string skillName;
     public SkillCategory skillCategory;
-    public string skillType;
+    public string skillTargetType;
     public float skillCooldown;
     public float skillSpeed;
     public float skillDamage;
@@ -45,14 +45,14 @@ public class SkillData : ISerializationCallbackReceiver
 
     public void OnAfterDeserialize()
     {
-        if(string.IsNullOrEmpty(skillType))
+        if(string.IsNullOrEmpty(skillTargetType))
         {
             return;
         }
 
-        if(!Enum.TryParse(skillType, true, out TargetType))
+        if(!Enum.TryParse(skillTargetType, true, out TargetType))
         {
-            Debug.LogWarning($"[SkillData] 알 수 없는 skillType입니다: {skillType} (ID: {skillId})");
+            Debug.LogWarning($"[SkillData] 알 수 없는 skillTargetType입니다: {skillTargetType} (ID: {skillId})");
         }
     }
 

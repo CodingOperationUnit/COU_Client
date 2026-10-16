@@ -201,7 +201,7 @@ public class JsonDataManagerEditor : Editor
         EditorGUILayout.TextField("이름", data.skillName ?? string.Empty);
         EditorGUILayout.EnumPopup("카테고리", data.skillCategory);
         EditorGUILayout.TextField("설명", data.skillDescription ?? string.Empty);
-        EditorGUILayout.TextField("타겟 종류 문자열", data.skillType ?? string.Empty);
+        EditorGUILayout.TextField("타겟 종류 문자열", data.skillTargetType ?? string.Empty);
         EditorGUILayout.EnumPopup("타겟 종류", data.TargetType);
         EditorGUILayout.FloatField("쿨다운 (초)", data.skillCooldown);
         EditorGUILayout.FloatField("속도", data.skillSpeed);

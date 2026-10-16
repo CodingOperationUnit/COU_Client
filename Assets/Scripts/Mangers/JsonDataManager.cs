@@ -40,6 +40,12 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
     private Dictionary<int, SkillData> skillDataDic;
     public IReadOnlyDictionary<int, SkillData> SkillDataDic => skillDataDic;
 
+    // 스킬 ID별 레벨 추가 효과 (레벨 오름차순)
+    private Dictionary<long, List<SkillLevelData>> skillLevelDic;
+    public IReadOnlyDictionary<long, List<SkillLevelData>> SkillLevelDic => skillLevelDic;
+
+    private static readonly List<SkillLevelData> EmptySkillLevels = new();
+
     private Dictionary<DropItemType, DropItemData> dropItemDataDic;
     public IReadOnlyDictionary<DropItemType, DropItemData> DropItemDataDic => dropItemDataDic;
 
@@ -79,6 +85,7 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
         stageDataDic = LoadTable(GameConstants.Paths.StageData_Json_Path, ParseStageData);
         stageRosterDic = LoadTable(GameConstants.Paths.StageRosterData_Json_Path, ParseStageRosterData);
         skillDataDic = LoadTable(GameConstants.Paths.SkillData_Json_Path, ParseSkillData);
+        skillLevelDic = LoadTable(GameConstants.Paths.SkillLevelData_Json_Path, ParseSkillLevelData);
         dropItemDataDic = LoadTable(GameConstants.Paths.DropItemData_Json_Path, ParseDropItemData);
         dropTableDic = LoadTable(GameConstants.Paths.DropTableData_Json_Path, ParseDropTableData);
         accountConstData = LoadTable(GameConstants.Paths.AccountConstData_Json_Path, ParseAccountConstData);
@@ -141,6 +148,7 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
             var stages = ParseResponseTable(tables, GameConstants.Paths.StageData_Json_Path, ParseStageData);
             var stageRosters = ParseResponseTable(tables, GameConstants.Paths.StageRosterData_Json_Path, ParseStageRosterData);
             var skills = ParseResponseTable(tables, GameConstants.Paths.SkillData_Json_Path, ParseSkillData);
+            var skillLevels = ParseResponseTable(tables, GameConstants.Paths.SkillLevelData_Json_Path, ParseSkillLevelData);
             var dropItems = ParseResponseTable(tables, GameConstants.Paths.DropItemData_Json_Path, ParseDropItemData);
             var dropTables = ParseResponseTable(tables, GameConstants.Paths.DropTableData_Json_Path, ParseDropTableData);
             var accountConst = ParseResponseTable(tables, GameConstants.Paths.AccountConstData_Json_Path, ParseAccountConstData);
@@ -160,6 +168,7 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
             stageDataDic = stages ?? stageDataDic;
             stageRosterDic = stageRosters ?? stageRosterDic;
             skillDataDic = skills ?? skillDataDic;
+            skillLevelDic = skillLevels ?? skillLevelDic;
             dropItemDataDic = dropItems ?? dropItemDataDic;
             dropTableDic = dropTables ?? dropTableDic;
             accountConstData = accountConst ?? accountConstData;
@@ -334,6 +343,15 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
 
         Debug.LogWarning($"등록되지 않은 Skill ID: {skillId}");
         return null;
+    }
+
+    // 스킬 ID로 그 스킬의 레벨 추가 효과를 조회합니다. 효과가 없는 스킬은 빈 목록(null 체크 불필요)
+    public IReadOnlyList<SkillLevelData> GetSkillLevelsFromJson(long skillId)
+    {
+        if (skillLevelDic == null)
+            return EmptySkillLevels;
+
+        return skillLevelDic.TryGetValue(skillId, out List<SkillLevelData> rows) ? rows : EmptySkillLevels;
     }
 
     public DropItemData GetDropItemDataFromJson(DropItemType type)
@@ -654,11 +672,52 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
                 throw new InvalidOperationException($"중복된 Skill ID: {data.skillId}");
 
             // Newtonsoft 역직렬화 후 Unity 콜백을 직접 호출하여
-            // skillType 문자열을 TargetType 열거형으로 변환합니다.
+            // skillTargetType 문자열을 TargetType 열거형으로 변환합니다.
             data.OnAfterDeserialize();
 
             loadedDatas.Add(data.skillId, data);
         }
+
+        return loadedDatas;
+    }
+
+    // 레벨 추가 효과가 없는 스킬이 있으므로 행이 비어 있어도 됨. 스킬 ID마다 레벨당 행은 하나
+    private static Dictionary<long, List<SkillLevelData>> ParseSkillLevelData(JObject root)
+    {
+        JArray rows = root["datas"] as JArray;
+        if (rows == null)
+            throw new InvalidOperationException("SkillLevel 데이터 목록이 없습니다.");
+
+        var loadedDatas = new Dictionary<long, List<SkillLevelData>>();
+        foreach (JToken row in rows)
+        {
+            if (!(row is JObject))
+                throw new InvalidOperationException("SkillLevel 데이터 항목이 객체 형식이 아닙니다.");
+
+            SkillLevelData data = row.ToObject<SkillLevelData>();
+            if (data == null || data.skillId <= 0)
+                throw new InvalidOperationException("SkillLevel 데이터 또는 skillId가 올바르지 않습니다.");
+
+            if (data.skillLevel < 1 || data.skillLevel > SkillBase.MaxLevel)
+                throw new InvalidOperationException($"SkillLevel {data.skillId}의 skillLevel은 1~{SkillBase.MaxLevel}이어야 합니다: {data.skillLevel}");
+
+            if (!data.OnLoaded())
+                throw new InvalidOperationException($"SkillLevel {data.skillId} 레벨 {data.skillLevel}의 effect1Type \"{data.effect1Type}\" 또는 effect2Type \"{data.effect2Type}\"을(를) 알 수 없습니다.");
+
+            if (!loadedDatas.TryGetValue(data.skillId, out List<SkillLevelData> skillRows))
+            {
+                skillRows = new List<SkillLevelData>();
+                loadedDatas.Add(data.skillId, skillRows);
+            }
+
+            if (skillRows.Exists(r => r.skillLevel == data.skillLevel))
+                throw new InvalidOperationException($"SkillLevel {data.skillId}의 레벨 {data.skillLevel}이(가) 중복됩니다.");
+
+            skillRows.Add(data);
+        }
+
+        foreach (List<SkillLevelData> skillRows in loadedDatas.Values)
+            skillRows.Sort((a, b) => a.skillLevel.CompareTo(b.skillLevel));
 
         return loadedDatas;
     }

@@ -18,9 +18,15 @@ public static class SkillFactory
         { 20090, () => new Skill_CtrlZ() },
 
         // 패시브 (21000대)
-        // 임시: 실제 효과가 확정되기 전에 동작 확인용으로 기존 테스트 패시브를 연결해 둠
-        //{ 21010, () => new Skill_DamageUp() },
-        //{ 21070, () => new Skill_ProjectileUp() },
+        { 21010, () => new Skill_EnergyDrink() },
+        { 21020, () => new Skill_EyeDrops() },
+        { 21030, () => new Skill_SecondMonitor() },
+        { 21040, () => new Skill_Earbuds() },
+        { 21050, () => new Skill_MousePad() },
+        { 21060, () => new Skill_KeyboardSwitch() },
+        { 21070, () => new Skill_Overclock() },
+        { 21080, () => new Skill_StaticShock() },
+        { 21090, () => new Skill_ShiftKey() },
     };
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -29,28 +35,28 @@ public static class SkillFactory
     //private static readonly Dictionary<int, Action<SkillData>> _debugOverrides = new()
     //{
     //    { 20060, data => {
-    //        data.skillType = "Nearest";
+    //        data.skillTargetType = "Nearest";
     //        data.skillCooldown = 0.75f;
     //        data.skillSpeed = 0.0f;
     //        data.skillDamage = 1.25f;
     //        data.skillRange = 1.0f;
     //    } },
     //    { 20010, data => {
-    //        data.skillType = "Nearest";
+    //        data.skillTargetType ="Nearest";
     //        data.skillCooldown = 1.0f;
     //        data.skillSpeed = 4.0f;
     //        data.skillDamage = 1.0f;
     //        data.skillRange = 5.0f;
     //    } },
     //    { 20020, data => {
-    //        data.skillType = "None";
+    //        data.skillTargetType ="None";
     //        data.skillCooldown = 1.0f;
     //        data.skillSpeed = 0.0f;
     //        data.skillDamage = 1.0f;
     //        data.skillRange = 3.0f;
     //    } },
     //    { 20030, data => {
-    //        data.skillType = "Nearest";
+    //        data.skillTargetType ="Nearest";
     //        data.skillCooldown = 2.0f;
     //        data.skillSpeed = 0.5f;
     //        data.skillDamage = 0.0f;
