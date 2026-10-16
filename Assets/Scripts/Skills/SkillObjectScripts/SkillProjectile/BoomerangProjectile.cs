@@ -44,8 +44,8 @@ public sealed class BoomerangProjectile : SkillProjectile
             target.TryGetComponent(out _targetEnemy);
         }
 
-        // 탄두(up)가 진행 방향을 향하도록 회전
-        transform.up = direction;
+        // 탄두가 진행 방향을 향하도록 회전
+        FaceDirection(direction);
     }
 
     private void Update()
@@ -129,15 +129,13 @@ public sealed class BoomerangProjectile : SkillProjectile
 
         if(toPosition.sqrMagnitude > 0.0001f)
         {
-            direction = toPosition.normalized;
-            transform.up = direction;
+            FaceDirection(toPosition.normalized);
         }
     }
 
     private void Move()
     {
-        // 로컬 좌표 기준이라 회전한 탄두 방향(up)으로 전진
-        transform.Translate(Vector3.up * _speed * Time.deltaTime);
+        MoveForward(_speed);
     }
 
     // 죽었거나 풀로 반환된 적은 따라가지 않음

@@ -31,8 +31,8 @@ public class LinearProjectile : SkillProjectile
         _remainingChains = chainCount;
         _hitEnemies.Clear();
 
-        // 탄두(up)가 발사 방향을 향하도록 회전
-        transform.up = direction;
+        // 탄두가 발사 방향을 향하도록 회전
+        FaceDirection(direction);
     }
 
     private void Update()
@@ -96,8 +96,7 @@ public class LinearProjectile : SkillProjectile
             SteerTowards(homingTarget.transform.position);
         }
 
-        // 로컬 좌표 기준이라 회전한 탄두 방향(up)으로 전진
-        transform.Translate(Vector3.up * currentSpeed * Time.deltaTime);
+        MoveForward(currentSpeed);
     }
 
     // 방금 맞힌 적 주변에서 아직 맞히지 않은 가장 가까운 적에게 튕김. 튕길 적이 없으면 false
@@ -127,8 +126,7 @@ public class LinearProjectile : SkillProjectile
 
         if(toPosition.sqrMagnitude > 0.0001f)
         {
-            direction = toPosition.normalized;
-            transform.up = direction;
+            FaceDirection(toPosition.normalized);
         }
     }
 
