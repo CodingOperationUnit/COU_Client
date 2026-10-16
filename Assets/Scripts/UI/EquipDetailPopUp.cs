@@ -135,7 +135,12 @@ public class EquipDetailPopUp : UIPopup
         if (boundItem.isEquipped)
             GameManager.ServerInventory.Unequip(boundItem, OnRequestFinished);
         else
-            GameManager.ServerInventory.Equip(boundItem, OnRequestFinished);
+            GameManager.ServerInventory.Equip(boundItem, (success, message) =>
+            {
+                // 서버가 장착을 승인했을 때만 효과음
+                if (success) GameManager.Sound.PlaySFX("Equip");
+                OnRequestFinished(success, message);
+            });
         
         // if (boundItem.isEquipped)
         //     PlayerInventory.Instance.Unequip(boundItem.Data.SlotType);

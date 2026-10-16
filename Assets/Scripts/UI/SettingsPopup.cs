@@ -24,14 +24,14 @@ public class SettingsPopup : UIPopup
     public override void Open()
     {
         base.Open();
-        muteMark.SetActive(AudioListener.volume == 0f);
+        muteMark.SetActive(GameManager.Sound.IsMuted);
         RefreshThemeMarks();
     }
 
     private void ToggleMute()
     {
-        AudioListener.volume = AudioListener.volume > 0f ? 0f : 1f;
-        muteMark.SetActive(AudioListener.volume == 0f);
+        GameManager.Sound.ToggleMute();
+        muteMark.SetActive(GameManager.Sound.IsMuted);
         if (muteMark.activeSelf)
             UITween.PopIn(muteMark.transform, 0f, 0f);
     }

@@ -29,6 +29,8 @@ public static class GameConstants
         public const string ItemData_Json_Path = "Data/Item";
         public const string SkillData_Json_Path = "Data/Skill";
         public const string SkillIcon_Path = "Skill/Icons/";
+        public const string BGM_PATH = "Sound/BGM/";   // Resources/Sound/BGM/{name}
+        public const string SFX_PATH = "Sound/SFX/";   // Resources/Sound/SFX/{name}
         public const string DropItemData_Json_Path = "Data/DropItem";
         public const string AccountConstData_Json_Path = "Data/AccountConst";
         public const string PlayerBaseStatData_Json_Path = "Data/PlayerBaseStat";
