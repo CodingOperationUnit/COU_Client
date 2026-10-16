@@ -4518,6 +4518,7 @@ GameObject:
   - component: {fileID: 4625434984997084926}
   - component: {fileID: 4426707485615707938}
   - component: {fileID: 6713048075481349914}
+  - component: {fileID: 7500028756754591137}
   m_Layer: 5
   m_Name: ContinueButton
   m_TagString: Untagged
@@ -4566,7 +4567,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.76862746, b: 0.3647059, a: 1}
+  m_Color: {r: 1, g: 0.7176471, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4641,6 +4642,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
   pressedScale: 0.92
   pulse: 0
+--- !u!114 &7500028756754591137
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1560403536455894769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Shadow
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.34901962}
+  m_EffectDistance: {x: 0, y: -8}
+  m_UseGraphicAlpha: 1
 --- !u!1 &1675889422013491176
 GameObject:
   m_ObjectHideFlags: 0
@@ -12902,7 +12918,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.6}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.7019608}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -18943,7 +18959,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColor: {r: 0.15686275, g: 0.19215687, b: 0.23529412, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:

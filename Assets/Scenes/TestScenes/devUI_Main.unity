@@ -382,7 +382,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1621314660}
-  - component: {fileID: 1621314659}
   - component: {fileID: 1621314658}
   m_Layer: 0
   m_Name: PlayerInventoryTest
@@ -403,20 +402,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4008c03ef6d05c045b518081470f45b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInventory
---- !u!114 &1621314659
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1621314657}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30e403d500734c041b0060361a2427b5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InventoryTestDriver
-  testItemId: 1001
-  testMaterialCount: 2
 --- !u!4 &1621314660
 Transform:
   m_ObjectHideFlags: 0

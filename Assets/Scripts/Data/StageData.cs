@@ -17,8 +17,13 @@ public class StageData
     [NonSerialized] private Color parsedColor;
     public Color IllustrationColor => parsedColor;
 
+    [NonSerialized] private Sprite icon;
+    public Sprite Icon => icon;   // Resources/Backgrounds/StageIcon/stage_{stageId}
+
     public void OnLoaded()
     {
+        icon = Resources.Load<Sprite>($"Backgrounds/StageIcon/stage_{stageId}");
+
         if (!ColorUtility.TryParseHtmlString(stageIllustrationColor, out parsedColor))
         {
             Debug.LogWarning($"[StageData] {stageId}의 stageIllustrationColor \"{stageIllustrationColor}\"을(를) 파싱할 수 없어 회색으로 처리합니다.");

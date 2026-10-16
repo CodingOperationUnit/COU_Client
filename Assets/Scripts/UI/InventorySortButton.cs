@@ -1,10 +1,11 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class InventorySortButton : MonoBehaviour
 {
     [SerializeField] private Button button;
-    [SerializeField] private Text label;
+    [SerializeField] private TMP_Text label;
     [SerializeField] private InventoryListView listView;
 
     private void Awake()

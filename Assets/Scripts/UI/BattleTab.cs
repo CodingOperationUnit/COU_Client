@@ -1,4 +1,3 @@
-using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -26,7 +25,7 @@ public class BattleTab : UIView
         rankingButton.onClick.AddListener(() => UIManager.Instance.Open<RankingPopup>());
     }
 
-    // 다른 스테이지로 바뀌면 일러스트 색이 넘어가고 이름이 튀어나온다 (처음 설정할 때는 바로 적용)
+    // 다른 스테이지로 바뀌면 이름이 튀어나온다 (처음 설정할 때는 바로 적용)
     public void SetStage(StageData stage, int bestTime)
     {
         var changed = currentStageId != 0 && currentStageId != stage.stageId;
@@ -36,16 +35,10 @@ public class BattleTab : UIView
         bestTimeText.text = bestTime > 0
             ? $"최장 생존시간: {bestTime / 60:00}:{bestTime % 60:00}"
             : "최장 생존시간:";
+        illustration.sprite = stage.Icon;
 
-        illustration.DOKill();
-        if (!changed)
-        {
-            illustration.color = stage.IllustrationColor;
-            return;
-        }
-
-        illustration.DOColor(stage.IllustrationColor, 0.3f).AsUI(illustration);
-        UITween.PopIn(stageNameText.transform);
+        if (changed)
+            UITween.PopIn(stageNameText.transform);
     }
 
     public void SetStaminaCost(int cost)

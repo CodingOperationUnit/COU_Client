@@ -202,7 +202,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColor: {r: 0.15686275, g: 0.19215687, b: 0.23529412, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -2188,7 +2188,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.6}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.7019608}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2667,6 +2667,7 @@ GameObject:
   - component: {fileID: 4907423354173007284}
   - component: {fileID: 7393569326008132980}
   - component: {fileID: 8158335309672681896}
+  - component: {fileID: 1030300818541394765}
   m_Layer: 5
   m_Name: ContinueButton
   m_TagString: Untagged
@@ -2715,7 +2716,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.76862746, b: 0.3647059, a: 1}
+  m_Color: {r: 1, g: 0.7176471, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2790,6 +2791,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
   pressedScale: 0.92
   pulse: 0
+--- !u!114 &1030300818541394765
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4087874763049146752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Shadow
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.34901962}
+  m_EffectDistance: {x: 0, y: -8}
+  m_UseGraphicAlpha: 1
 --- !u!1 &4167971315557541521
 GameObject:
   m_ObjectHideFlags: 0
@@ -3327,7 +3343,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.6}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.7019608}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3419,7 +3435,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColor: {r: 0.15686275, g: 0.19215687, b: 0.23529412, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -4602,6 +4618,7 @@ GameObject:
   - component: {fileID: 4620524925210832930}
   - component: {fileID: 8179943794174050273}
   - component: {fileID: 583713762686873482}
+  - component: {fileID: 7519822346943735131}
   m_Layer: 5
   m_Name: Panel
   m_TagString: Untagged
@@ -4683,6 +4700,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
   color: 1
+--- !u!114 &7519822346943735131
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6325707514971929868}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Shadow
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.4509804}
+  m_EffectDistance: {x: 0, y: -16}
+  m_UseGraphicAlpha: 1
 --- !u!1 &6339290548392006536
 GameObject:
   m_ObjectHideFlags: 0
@@ -4935,6 +4967,7 @@ GameObject:
   - component: {fileID: 5749412739726312056}
   - component: {fileID: 114746481425640588}
   - component: {fileID: 7352567572022097018}
+  - component: {fileID: 2503779414816672731}
   m_Layer: 5
   m_Name: StartButton
   m_TagString: Untagged
@@ -4983,7 +5016,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.76862746, b: 0.3647059, a: 1}
+  m_Color: {r: 1, g: 0.7176471, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -5058,6 +5091,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
   pressedScale: 0.92
   pulse: 1
+--- !u!114 &2503779414816672731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6838875515305328459}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Shadow
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.34901962}
+  m_EffectDistance: {x: 0, y: -8}
+  m_UseGraphicAlpha: 1
 --- !u!1 &7139691997100431477
 GameObject:
   m_ObjectHideFlags: 0

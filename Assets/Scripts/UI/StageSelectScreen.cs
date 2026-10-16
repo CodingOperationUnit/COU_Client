@@ -84,7 +84,7 @@ public class StageSelectScreen : UIView, IDragHandler, IEndDragHandler
         index = Mathf.Clamp(target, 0, stages.Length - 1);
         var stage = stages[index];
         titleText.text = stage.stageName;
-        illustration.color = stage.IllustrationColor;
+        illustration.sprite = stage.Icon;
         descriptionText.text = stage.stageDescription;
         selectButton.interactable = index <= lastUnlockedIndex;
         ShowSide(prevIllustration, index - 1);
@@ -96,7 +96,7 @@ public class StageSelectScreen : UIView, IDragHandler, IEndDragHandler
         var exists = sideIndex >= 0 && sideIndex < stages.Length;
         side.gameObject.SetActive(exists);
         if (exists)
-            side.color = stages[sideIndex].IllustrationColor;
+            side.sprite = stages[sideIndex].Icon;
     }
 
     private void Select()

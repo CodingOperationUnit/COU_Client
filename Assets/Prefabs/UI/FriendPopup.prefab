@@ -581,6 +581,7 @@ GameObject:
   - component: {fileID: 4955521417602377496}
   - component: {fileID: 7620501598945636186}
   - component: {fileID: 1077423637673527354}
+  - component: {fileID: 5948919215930393532}
   m_Layer: 5
   m_Name: Panel
   m_TagString: Untagged
@@ -678,6 +679,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
   color: 1
+--- !u!114 &5948919215930393532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1418045362568113192}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Shadow
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.4509804}
+  m_EffectDistance: {x: 0, y: -16}
+  m_UseGraphicAlpha: 1
 --- !u!1 &1707577182159030430
 GameObject:
   m_ObjectHideFlags: 0
@@ -3307,7 +3323,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.6}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.7019608}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3612,7 +3628,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.17254902, g: 0.21176471, b: 0.25882354, a: 1}
+  m_Color: {r: 0.21568628, g: 0.2627451, b: 0.33333334, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
