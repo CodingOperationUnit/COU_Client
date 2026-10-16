@@ -50,7 +50,11 @@ public static class GameConstants
     // 서버 통신 상수
     public static class Server
     {
-        public const string BASE_URL = "http://localhost:8080";
+#if UNITY_EDITOR
+        public const string BASE_URL = "http://localhost:8080";   // 에디터: 로컬 서버
+#else
+        public const string BASE_URL = "http://3.34.14.51:8080";  // 빌드: AWS EC2 (cou-server, 탄력적 IP)
+#endif
         public const string STATIC_DATA_API = "/api/static-data";
         // 이 빌드가 읽을 수 있는 정적 데이터 버전의 첫째 자리
         public const int STATIC_DATA_MAJOR_VERSION = 4;
