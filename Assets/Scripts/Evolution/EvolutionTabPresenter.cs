@@ -27,6 +27,7 @@ public class EvolutionTabPresenter : MonoBehaviour
     private void OnEnable()
     {
         tab.UnlockRequested += HandleUnlockRequested;
+        tab.UnlockBlockLabel = GetUnlockBlockLabel;
 
         if (GameManager.PlayerData != null)
         {
@@ -41,6 +42,7 @@ public class EvolutionTabPresenter : MonoBehaviour
     private void OnDisable()
     {
         tab.UnlockRequested -= HandleUnlockRequested;
+        tab.UnlockBlockLabel = null;
 
         if (isPlayerDataSubscribed && GameManager.PlayerData != null)
             GameManager.PlayerData.OnPlayerDataChanged -= OnPlayerDataChanged;
@@ -94,6 +96,28 @@ public class EvolutionTabPresenter : MonoBehaviour
             icon = iconSet != null ? iconSet.Get(statType) : null,
             iconColor = Color.white,
             cost = EvolutionRules.GetNextCost(evolution, s)
+        };
+    }
+
+    // 다음 노드를 지금 진화할 수 없는 이유 (버튼 글자용 짧은 문구, 진화 가능하면 null)
+    // 판단 순서는 서버와 같음: 최대 단계 → 계정 레벨 → 골드
+    private string GetUnlockBlockLabel(int index)
+    {
+        if (index != currentStep) return null;
+        if (isRequesting) return "진화 중";
+
+        var evolution = EvolutionRules.Data;
+        var saveData = GameManager.PlayerData.currentData;
+
+        var block = EvolutionRules.GetBlock(evolution, currentStep,
+                                            saveData.profile.accountLevel, saveData.currency.currencyGold);
+
+        return block switch
+        {
+            EvolutionBlock.MaxStepReached => "진화 완료",
+            EvolutionBlock.LevelLocked => "레벨 " + EvolutionRules.GetRequiredAccountLevel(evolution, currentStep) + " 필요",
+            EvolutionBlock.NotEnoughGold => "골드 부족",
+            _ => null
         };
     }
 

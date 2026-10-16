@@ -37,6 +37,7 @@ public class EvolutionTab : UIView
     [SerializeField] private GameObject dnaColumnRoot;
 
     public event Action<int> UnlockRequested;
+    public Func<int, string> UnlockBlockLabel;
 
     private bool isLinearMode;
     private readonly List<GameObject> spawned = new();
@@ -158,6 +159,16 @@ public class EvolutionTab : UIView
 
         var view = (RectTransform)column.views[index].transform;
         var position = view.anchoredPosition + new Vector2(0f, view.rect.height / 2);
+
+        if (UnlockBlockLabel != null)
+        {
+            // 다음 노드면 항상 버튼(비용 포함)을 보여 주고, 못 하는 이유가 있으면 비활성 + 사유 표시
+            bool isNext = index == column.unlocked;
+            string blockLabel = isNext ? UnlockBlockLabel(index) : null;
+            tooltip.Show(column.nodes[index], position, isNext, isNext && blockLabel == null, blockLabel, column.currencyColor);
+            return;
+        }
+
         tooltip.Show(column.nodes[index], position, CanUnlock(column, index), column.currencyColor);
     }
 
