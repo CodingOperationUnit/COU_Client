@@ -15,7 +15,9 @@ public class SoundManager : MonoSingleton<SoundManager>
 {
     private const string KEY_BGM_VOLUME = "Sound.BgmVolume";
     private const string KEY_SFX_VOLUME = "Sound.SfxVolume";
-    private const string KEY_MUTED = "Sound.Muted";
+    private const string KEY_BGM_MUTED = "Sound.BgmMuted";
+    private const string KEY_SFX_MUTED = "Sound.SfxMuted";
+    private const string KEY_MUTED = "Sound.Muted"; // 예전 전체 음소거 키. 새 키가 없을 때만 이어받는다
 
     private const int SFX_POOL_INITIAL = 8;
     private const int SFX_POOL_MAX = 24;
@@ -43,7 +45,8 @@ public class SoundManager : MonoSingleton<SoundManager>
 
     private float bgmVolume = 1f;
     private float sfxVolume = 1f;
-    private bool muted;
+    private bool bgmMuted;
+    private bool sfxMuted;
 
     /// <summary>BGM 볼륨 (0~1). 저장됨.</summary>
     public float BgmVolume
@@ -59,18 +62,47 @@ public class SoundManager : MonoSingleton<SoundManager>
         set { sfxVolume = Mathf.Clamp01(value); PlayerPrefs.SetFloat(KEY_SFX_VOLUME, sfxVolume); }
     }
 
-    /// <summary>전체 음소거. AudioListener로 처리하므로 다른 AudioSource도 함께 꺼진다. 저장됨.</summary>
-    public bool IsMuted
+    /// <summary>BGM만 음소거. 볼륨 값은 그대로 두고 소리만 끈다. 저장됨.</summary>
+    public bool BgmMuted
     {
-        get => muted;
+        get => bgmMuted;
         set
         {
-            if (muted == value) return;
-            muted = value;
-            AudioListener.volume = muted ? 0f : 1f;
-            PlayerPrefs.SetInt(KEY_MUTED, muted ? 1 : 0);
+            if (bgmMuted == value) return;
+            bgmMuted = value;
+            PlayerPrefs.SetInt(KEY_BGM_MUTED, bgmMuted ? 1 : 0);
             PlayerPrefs.Save();
-            OnMuteChanged?.Invoke(muted);
+            OnMuteChanged?.Invoke(IsMuted);
+        }
+    }
+
+    /// <summary>효과음만 음소거. 볼륨 값은 그대로 두고 소리만 끈다. 저장됨.</summary>
+    public bool SfxMuted
+    {
+        get => sfxMuted;
+        set
+        {
+            if (sfxMuted == value) return;
+            sfxMuted = value;
+            PlayerPrefs.SetInt(KEY_SFX_MUTED, sfxMuted ? 1 : 0);
+            PlayerPrefs.Save();
+            OnMuteChanged?.Invoke(IsMuted);
+        }
+    }
+
+    /// <summary>BGM과 효과음이 모두 음소거일 때 true. 설정하면 둘을 함께 바꾼다.</summary>
+    public bool IsMuted
+    {
+        get => bgmMuted && sfxMuted;
+        set
+        {
+            if (bgmMuted == value && sfxMuted == value) return;
+            bgmMuted = value;
+            sfxMuted = value;
+            PlayerPrefs.SetInt(KEY_BGM_MUTED, value ? 1 : 0);
+            PlayerPrefs.SetInt(KEY_SFX_MUTED, value ? 1 : 0);
+            PlayerPrefs.Save();
+            OnMuteChanged?.Invoke(IsMuted);
         }
     }
 
@@ -92,8 +124,10 @@ public class SoundManager : MonoSingleton<SoundManager>
 
         bgmVolume = PlayerPrefs.GetFloat(KEY_BGM_VOLUME, 1f);
         sfxVolume = PlayerPrefs.GetFloat(KEY_SFX_VOLUME, 1f);
-        muted = PlayerPrefs.GetInt(KEY_MUTED, 0) == 1;
-        AudioListener.volume = muted ? 0f : 1f;
+        var legacyMuted = PlayerPrefs.GetInt(KEY_MUTED, 0);
+        bgmMuted = PlayerPrefs.GetInt(KEY_BGM_MUTED, legacyMuted) == 1;
+        sfxMuted = PlayerPrefs.GetInt(KEY_SFX_MUTED, legacyMuted) == 1;
+        AudioListener.volume = 1f; // 음소거는 BGM/효과음 각자 처리한다
 
         bgmChannels = new BgmChannel[2];
         for (var i = 0; i < bgmChannels.Length; i++)
@@ -131,7 +165,7 @@ public class SoundManager : MonoSingleton<SoundManager>
 
             if (ch.Source.isPlaying)
             {
-                ch.Source.volume = ch.Level * bgmVolume;
+                ch.Source.volume = bgmMuted ? 0f : ch.Level * bgmVolume;
                 if (ch.Level <= 0f && ch.Target <= 0f)
                     ch.Source.Stop();
             }
@@ -189,7 +223,7 @@ public class SoundManager : MonoSingleton<SoundManager>
 
     public void PlaySFX(AudioClip clip, float volumeScale = 1f, float pitch = 1f)
     {
-        if (clip == null || muted) return;
+        if (clip == null || sfxMuted) return;
 
         var now = Time.unscaledTime;
         if (lastSfxTime.TryGetValue(clip, out var last) && now - last < SFX_MIN_INTERVAL) return;
