@@ -66,6 +66,19 @@ public static class GameConstants
         public const string INVENTORY_API = "/api/inventory";   // Server 클래스에 추가
     }
 
+    // 배경음 이름 (Resources/Sound/BGM/{이름})
+    public static class Bgm
+    {
+        public const string MAIN = "Main";            // 로그인·메인 씬
+        private const string STAGE_PREFIX = "Stage";  // 전투: Stage1, Stage2 ... (스테이지 id 그대로)
+
+        public static string ForStage(int stageId) => STAGE_PREFIX + stageId;
+
+        // 씬 전체가 한 곡을 쓰는 씬의 곡 이름. 전투 씬은 스테이지에 따라 달라서 null
+        public static string ForScene(string sceneName)
+            => sceneName == SceneNames.LOGIN_SCENE || sceneName == SceneNames.MAIN_SCENE ? MAIN : null;
+    }
+
     // 효과음 이름 (Resources/Sound/SFX/{이름})
     public static class Sfx
     {
