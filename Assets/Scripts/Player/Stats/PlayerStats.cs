@@ -21,6 +21,16 @@ public class PlayerStats : MonoBehaviour
     public long? EquippedWeaponItemId { get { EnsureCalculated(); return equippedWeaponItemId; } }   // 무기가 없으면 null
     private int startingSkillId;
 
+    // 장비 등급 효과 (전투 시작 시 고정)
+    private int equipmentCriticalChance;
+    private int equipmentCriticalDamage;
+    private int dodgeChance;
+    private int damageReduction;
+    private int healReceived;
+    private float negateDamageChance;
+    private float intervalHealPercent;
+    private float intervalHealSeconds;
+
     private static PlayerBaseStatData Base => GameManager.JsonData.PlayerBaseStatData;
 
     public int FinalAtk { get { EnsureCalculated(); return finalAtk; } }
@@ -32,8 +42,16 @@ public class PlayerStats : MonoBehaviour
     public int StartingSkillId { get { EnsureCalculated(); return startingSkillId; } }   // 0이면 시작 스킬 없음
 
     // 기본 + 보너스 합
-    public int CriticalChance => Base.playerBaseCriticalChance + GetBonus(PlayerBonusStat.CriticalChance);
-    public int CriticalDamage => Base.playerBaseCriticalDamage + GetBonus(PlayerBonusStat.CriticalDamage);
+    public int CriticalChance { get { EnsureCalculated(); return Base.playerBaseCriticalChance + equipmentCriticalChance + GetBonus(PlayerBonusStat.CriticalChance); } }
+    public int CriticalDamage { get { EnsureCalculated(); return Base.playerBaseCriticalDamage + equipmentCriticalDamage + GetBonus(PlayerBonusStat.CriticalDamage); } }
+
+    // 장비 등급 효과 신규 스탯
+    public int DodgeChance { get { EnsureCalculated(); return dodgeChance; } }              // 회피 확률 %
+    public int DamageReduction { get { EnsureCalculated(); return damageReduction; } }      // 받는 피해 감소 %
+    public int HealReceived { get { EnsureCalculated(); return healReceived; } }            // 받는 치유량 +%
+    public float NegateDamageChance { get { EnsureCalculated(); return negateDamageChance; } }   // 피격 시 피해 무효 확률 %
+    public float IntervalHealPercent { get { EnsureCalculated(); return intervalHealPercent; } } // 주기 회복: 최대 체력의 %
+    public float IntervalHealSeconds { get { EnsureCalculated(); return intervalHealSeconds; } } // 주기 회복 간격 (0이면 없음)
     public int SkillDamage => Base.playerBaseSkillDamage;
     public float Speed { get { EnsureCalculated(); return finalMoveSpeed; } }
     public float LootRadius => Base.playerBaseLootRadius;
@@ -52,8 +70,12 @@ public class PlayerStats : MonoBehaviour
     // 로그용: 기준 피해(배율 1.0)와 시작 스킬 Lv1 피해 (치명타 판정 없이 일반·치명타 값)
     private string GetDamageLog()
     {
+        string log = "\n / 치명타 " + CriticalChance + "% (" + CriticalDamage + "%)" +
+                     " / 회피 " + dodgeChance + "% / 받는 피해 -" + damageReduction + "% / 치유량 +" + healReceived + "%" +
+                     " / 피해 무효 " + negateDamageChance + "% / 주기 회복 " + intervalHealPercent + "% (" + intervalHealSeconds + "초)";
+
         var basic = PlayerDamageCalculator.Preview(1f, this);
-        string log = "\n / 피해(배율 1.0) " + basic.normal + " (치명타 " + basic.critical + ", " + CriticalChance + "%)";
+        log += "\n / 피해(배율 1.0) " + basic.normal + " (치명타 " + basic.critical + ", " + CriticalChance + "%)";
 
         if (startingSkillId == WeaponSkillTable.NoSkill)
             return log;
@@ -93,6 +115,15 @@ public class PlayerStats : MonoBehaviour
         finalDefense = stat.FinalDefense;
         finalPotionRecovery = stat.FinalPotionRecovery;
         finalMoveSpeed = stat.FinalMoveSpeed;
+        var effects = stat.Effects;
+        equipmentCriticalChance = effects.CriticalChance;
+        equipmentCriticalDamage = effects.CriticalDamage;
+        dodgeChance = effects.DodgeChance;
+        damageReduction = effects.DamageReduction;
+        healReceived = effects.HealReceived;
+        negateDamageChance = effects.NegateDamageChance;
+        intervalHealPercent = effects.IntervalHealPercent;
+        intervalHealSeconds = effects.IntervalHealSeconds;
 
         LoadWeapon(equipped);
 
