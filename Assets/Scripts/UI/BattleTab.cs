@@ -10,6 +10,7 @@ public class BattleTab : UIView
     [SerializeField] private Button illustrationButton;
     [SerializeField] private TMP_Text staminaCostText;
     [SerializeField] private Button gameStartButton;
+    [SerializeField] private Button settingsButton;
     [SerializeField] private Button friendButton;
     [SerializeField] private Button rankingButton;
     [SerializeField] private Button chapterChestButton;
@@ -27,6 +28,7 @@ public class BattleTab : UIView
     {
         illustrationButton.onClick.AddListener(() => UIManager.Instance.Open<StageSelectScreen>());
         gameStartButton.onClick.AddListener(StartBattle);
+        settingsButton.onClick.AddListener(() => UIManager.Instance.Open<SettingsPopup>());
         friendButton.onClick.AddListener(() => UIManager.Instance.Open<FriendPopup>());
         rankingButton.onClick.AddListener(() => UIManager.Instance.Open<RankingPopup>());
         chapterChestButton.onClick.AddListener(ClaimChapterChest);
