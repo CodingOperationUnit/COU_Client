@@ -107,13 +107,13 @@ public class BattleTab : UIView
         if (isRequesting) return;
         if (!canPatrol)
         {
-            UIManager.Instance.Get<LogPopup>().Show("알림", "스테이지를 클리어하면 순찰할 수 있습니다.");
+            UIManager.Instance.Get<LogPopup>().Show("알림", "스테이지를 클리어하면 바이브 코딩할 수 있습니다.");
             return;
         }
 
         UIManager.Instance.Get<MessagePopup>().ShowConfirm(
-            $"스태미나 {GameManager.JsonData.AccountConstData.patrolStaminaCost}를 소모해 순찰할까요?\n최고 클리어 스테이지를 한 번 클리어한 만큼 보상을 받습니다.",
-            Patrol, title: "순찰");
+            $"스태미나 {GameManager.JsonData.AccountConstData.patrolStaminaCost}를 소모해 바이브 코딩할까요?\n최고 클리어 스테이지를 한 번 클리어한 만큼 보상을 받습니다.",
+            Patrol, title: "바이브 코딩");
     }
 
     // 서버가 스태미나를 차감하고 최고 클리어 스테이지의 평균 보상을 지급한다
@@ -128,7 +128,7 @@ public class BattleTab : UIView
 
             if (!result.IsSuccess)
             {
-                UIManager.Instance.Get<LogPopup>().Show("알림", result.ToUserMessage("순찰하지 못했습니다."));
+                UIManager.Instance.Get<LogPopup>().Show("알림", result.ToUserMessage("바이브 코딩하지 못했습니다."));
                 return;
             }
 
@@ -140,7 +140,7 @@ public class BattleTab : UIView
             data.currency = response.currency;
             var added = PlayerInventory.Instance.AddServerItems(response.rewards);
 
-            UIManager.Instance.Get<LogPopup>().Show("순찰 완료",
+            UIManager.Instance.Get<LogPopup>().Show("바이브 코딩 완료",
                 $"골드 +{response.grantedGold}\n경험치 +{response.grantedExp}\n장비 {added.Count}개");
             if (added.Count > 0)
                 UIManager.Instance.Get<RewardBoxResultPopup>().Show(added);

@@ -3036,7 +3036,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 8e64c269fec9b4acd898b6d4a5700bb9, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6ec81a450acb9433c96967c28e390b60, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -3125,7 +3125,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uC21C\uCC30"
+  m_text: "\uBC14\uC774\uBE0C \uCF54\uB529"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 03a558460919ccb4aa676e34fb9e90bc, type: 2}
   m_sharedMaterial: {fileID: -6030578890457721097, guid: 03a558460919ccb4aa676e34fb9e90bc, type: 2}
