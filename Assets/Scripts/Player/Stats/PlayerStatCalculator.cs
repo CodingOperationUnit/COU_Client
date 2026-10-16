@@ -27,12 +27,21 @@ public static class PlayerStatCalculator
         public int FinalPotionRecovery;
         public int EquipmentMoveSpeedPercent;
         public float FinalMoveSpeed;
+
+        // 장비 등급 효과
+        public EquipmentEffectSummary Effects;   // 합산 결과 전체 (치명타·회피 등은 C4·C5에서 사용)
+        public int AttackBonusPercent;           // = Effects.AttackPercent
+        public int HpBonusPercent;               // = Effects.HpPercent
+        public int EquipmentDefense;             // = Effects.Defense
+        public int EffectMoveSpeedPercent;       // = Effects.MoveSpeedPercent
     }
 
 
     public static Result Calculate(PlayerBaseStatData baseStat, EvolutionData evolution,
-                                   PlayerStatData playerStat, IReadOnlyCollection<OwnedItem> equipped)
+                               PlayerStatData playerStat, IReadOnlyCollection<OwnedItem> equipped)
     {
+        var effects = EquipmentEffectResolver.Resolve(equipped);
+
         var result = new Result
         {
             BaseAttack = baseStat.playerBaseAttack,
@@ -42,19 +51,29 @@ public static class PlayerStatCalculator
             EquipmentMoveSpeedPercent = equipped.Sum(item => item.Data.moveSpeedBonus),
             EquipmentAttack = equipped.Sum(item => item.ScaledAttack),
             EquipmentHp = equipped.Sum(item => item.ScaledHp),
-            HasEvolutionData = evolution != null
+            HasEvolutionData = evolution != null,
+
+            Effects = effects,
+            AttackBonusPercent = effects.AttackPercent,
+            HpBonusPercent = effects.HpPercent,
+            EquipmentDefense = effects.Defense,
+            EffectMoveSpeedPercent = effects.MoveSpeedPercent
         };
 
-        result.FinalAttack = ApplyBonus(result.BaseAttack + result.EvolutionAttack + result.EquipmentAttack, 0);
-        result.FinalHp = ApplyBonus(result.BaseHp + result.EvolutionHp + result.EquipmentHp, 0);
+        // 최종 = (기본 + 진화 + 장비 고정값) × (100 + 보너스%) / 100, 버림 (서버와 동일)
+        result.FinalAttack = ApplyBonus(result.BaseAttack + result.EvolutionAttack + result.EquipmentAttack, result.AttackBonusPercent);
+        result.FinalHp = ApplyBonus(result.BaseHp + result.EvolutionHp + result.EquipmentHp, result.HpBonusPercent);
 
+        // 방어력 = 진화 + 장비(등급 효과 합)
         result.EvolutionDefense = EvolutionRules.GetBonus(evolution, playerStat, PlayerStatType.Defense);
-        result.FinalDefense = result.EvolutionDefense;
+        result.FinalDefense = result.EvolutionDefense + result.EquipmentDefense;
 
         result.EvolutionPotionRecovery = EvolutionRules.GetBonus(evolution, playerStat, PlayerStatType.PotionRecovery);
         result.FinalPotionRecovery = result.EvolutionPotionRecovery;
 
-        float moveSpeed = baseStat.playerBaseMoveSpeed * (100 + result.EquipmentMoveSpeedPercent) / 100f;
+        // 이동속도 = 기본 × (100 + 장비 moveSpeedBonus 합 + 등급 효과 이동속도%) / 100, 상한
+        int moveSpeedPercent = result.EquipmentMoveSpeedPercent + result.EffectMoveSpeedPercent;
+        float moveSpeed = baseStat.playerBaseMoveSpeed * (100 + moveSpeedPercent) / 100f;
         result.FinalMoveSpeed = Mathf.Min(moveSpeed, baseStat.playerBaseMaxMoveSpeed);
 
         // 전투력 (랭킹용, 서버와 같은 정수 계산)

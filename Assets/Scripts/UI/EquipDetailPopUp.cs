@@ -110,10 +110,55 @@ public class EquipDetailPopUp : UIPopup
             }
         }
 
-        skillListText.text = string.Join("\n", skillLines);
+        // 장비 등급 효과: 등급별 제목 + 효과 줄, 현재 등급보다 높은 등급은 잠금
+        skillListText.text = BuildGradeEffectText();
 
         RefreshLevelUpArea();
         RefreshEquipButton();
+    }
+
+    private static readonly ItemGrade[] GradeOrder = { ItemGrade.General, ItemGrade.Super, ItemGrade.Rare };
+
+    // 등급별 제목 줄 + 효과 한 줄 (같은 등급의 효과는 " · "로 이어 붙임)
+    // - 인스턴스 등급 이하: 등급 색 제목, 등급 색 박스
+    // - 높은 등급: 회색 제목 + [잠금], 박스·문구 모두 회색
+    // - 제외(79xxx)는 숨기고, 표시할 효과가 없는 등급은 제목도 생략
+    private string BuildGradeEffectText()
+    {
+        var lines = new List<string>();
+        string lockedHex = ColorUtility.ToHtmlStringRGB(UIPalette.Get(UIColor.SubContent));
+
+        foreach (var grade in GradeOrder)
+        {
+            var effects = GameManager.JsonData.GetItemGradeEffectsFromJson(boundItem.itemId, grade);
+
+            var descriptions = new List<string>();
+            foreach (var effect in effects)
+            {
+                if (effect != null && !effect.IsExcluded)
+                    descriptions.Add(effect.effectDescription);
+            }
+
+            if (descriptions.Count == 0)
+                continue;
+
+            string text = string.Join(" · ", descriptions);
+            bool unlocked = grade <= boundItem.Grade;
+
+            if (unlocked)
+            {
+                string gradeHex = ColorUtility.ToHtmlStringRGB(GradeColor(grade));
+                lines.Add($"<color=#{gradeHex}><b>{GradeLabel(grade)}</b></color>");
+                lines.Add($" <color=#{gradeHex}>■</color> {text}");
+            }
+            else
+            {
+                lines.Add($"<color=#{lockedHex}><b>{GradeLabel(grade)}</b>  [잠금]</color>");
+                lines.Add($" <color=#{lockedHex}>■ {text}</color>");
+            }
+        }
+
+        return string.Join("\n", lines);
     }
 
     private string FormatSkillLine(string skill)

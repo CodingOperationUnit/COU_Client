@@ -26,6 +26,8 @@ public class PlayerHealth : MonoBehaviour
     public bool IsDead => CurrentLives <= 0;
 
     public event Action OnDamaged;
+    public event Action OnDodged;          // 회피 성공 (피해 0, 피격 모션 없음)
+    public event Action OnDamageNegated;   // 피해 무효 발동 (피해 0, 피격 모션 없음)
 
     [Header("Test")]
     [SerializeField] private int testDamage = 50;
@@ -53,8 +55,24 @@ public class PlayerHealth : MonoBehaviour
             return;
         }
 
-        // 방어력 적용 (모든 받는 피해가 여기로 들어오므로 몬스터·보스 코드 수정 불필요)
-        int finalDamage = PlayerDamageCalculator.ApplyDefense(damage, playerStats.FinalDefense);
+        // 회피 → 피해 무효 → 방어력 → 받는 피해 감소 → 최소 1 (모든 받는 피해가 여기로 들어옴)
+        var received = PlayerDamageCalculator.CalculateReceived(damage, playerStats);
+
+        if (received.isDodged)
+        {
+            Debug.Log("회피: 피해 " + damage + " 무시");
+            OnDodged?.Invoke();
+            return;
+        }
+
+        if (received.isNegated)
+        {
+            Debug.Log("피해 무효: 피해 " + damage + " 무시");
+            OnDamageNegated?.Invoke();
+            return;
+        }
+
+        int finalDamage = received.damage;
 
         OnDamaged?.Invoke();
 
@@ -67,7 +85,8 @@ public class PlayerHealth : MonoBehaviour
             CurrentHealth -= finalDamage;
 
         UpdateHpBar();
-        Debug.Log("피해 " + damage + " → " + finalDamage + " (방어력 " + playerStats.FinalDefense + ")" +
+        Debug.Log("피해 " + damage + " → " + finalDamage +
+                  " (방어력 " + playerStats.FinalDefense + ", 감소 " + playerStats.DamageReduction + "%)" +
                   ", 현재 체력 : " + CurrentHealth + ", 현재 목숨 : " + CurrentLives);
     }
 
@@ -135,5 +154,23 @@ public class PlayerHealth : MonoBehaviour
     private void TestIncreaseLife()
     {
         IncreaseLife();
+    }
+
+    [ContextMenu("Test/받는 피해 판정 100회 (피해 100, 체력 변화 없음)")]
+    private void TestReceivedDamage()
+    {
+        int dodged = 0, negated = 0, hits = 0, total = 0;
+        for (int i = 0; i < 100; i++)
+        {
+            var r = PlayerDamageCalculator.CalculateReceived(100, playerStats);
+            if (r.isDodged) dodged++;
+            else if (r.isNegated) negated++;
+            else { hits++; total += r.damage; }
+        }
+
+        Debug.Log("[PlayerHealth] 회피 " + dodged + "회, 무효 " + negated + "회, 피격 " + hits + "회" +
+                  (hits > 0 ? " (피격 1회 피해 " + (total / hits) + ")" : "") +
+                  " / 회피 " + playerStats.DodgeChance + "%, 무효 " + playerStats.NegateDamageChance + "%" +
+                  ", 방어력 " + playerStats.FinalDefense + ", 감소 " + playerStats.DamageReduction + "%");
     }
 }
