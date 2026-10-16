@@ -133,12 +133,16 @@ public class EquipDetailPopUp : UIPopup
         SetButtonsInteractable(false);
 
         if (boundItem.isEquipped)
-            GameManager.ServerInventory.Unequip(boundItem, OnRequestFinished);
+            GameManager.ServerInventory.Unequip(boundItem, (success, message) =>
+            {
+                if (success) GameManager.Sound.PlaySFX(GameConstants.Sfx.UNEQUIP);
+                OnRequestFinished(success, message);
+            });
         else
             GameManager.ServerInventory.Equip(boundItem, (success, message) =>
             {
                 // 서버가 장착을 승인했을 때만 효과음
-                if (success) GameManager.Sound.PlaySFX("Equip");
+                if (success) GameManager.Sound.PlaySFX(GameConstants.Sfx.EQUIP);
                 OnRequestFinished(success, message);
             });
         
@@ -161,6 +165,7 @@ public class EquipDetailPopUp : UIPopup
 
         // 레벨이 올랐으면 레벨과 스탯이 튕긴다
         if (levelText.text == shownLevel) return;
+        GameManager.Sound.PlaySFX(GameConstants.Sfx.EQUIP_LEVEL_UP);
         UITween.Punch(levelText.transform, 0.25f);
         UITween.Punch(atkText.transform, 0.25f, 0.05f);
         UITween.Punch(hpText.transform, 0.25f, 0.1f);

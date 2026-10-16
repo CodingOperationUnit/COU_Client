@@ -136,7 +136,10 @@ public class EvolutionTabPresenter : MonoBehaviour
 
         tab.SetUnlockInteractable(true);
         if (result.IsSuccess)
+        {
+            GameManager.Sound.PlaySFX(GameConstants.Sfx.EVOLVE);
             tab.PlayUnlocked(currentStep - 1);   // Rebuild로 currentStep은 이미 다음 노드를 가리킨다
+        }
     }
 
     // 서버 에러 code를 진화 차단 이유로 바꿔 같은 문구를 사용

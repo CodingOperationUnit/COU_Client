@@ -66,6 +66,8 @@ public class ShopSupplyBoxCard : MonoBehaviour
             return;
         }
 
+        GameManager.Sound.PlaySFX(GameConstants.Sfx.BUY_SUPPLY_BOX);
+
         if (rewardedItems != null && rewardedItems.Count > 0)
             UIManager.Instance.Get<SupplyResultPopup>().Show(rewardedItems[0]);
     }

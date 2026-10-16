@@ -31,6 +31,7 @@ public class ShopGemCard : MonoBehaviour
             return;
         }
 
+        GameManager.Sound.PlaySFX(GameConstants.Sfx.BUY_GEM);
         UIManager.Instance.Get<LogPopup>().Show("구매 완료!", "보석이 성공적으로 지급되었습니다!");
     }
 }

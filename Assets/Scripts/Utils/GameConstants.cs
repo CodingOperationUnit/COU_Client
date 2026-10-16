@@ -64,6 +64,22 @@ public static class GameConstants
         public const string INVENTORY_API = "/api/inventory";   // Server 클래스에 추가
     }
 
+    // 효과음 이름 (Resources/Sound/SFX/{이름})
+    public static class Sfx
+    {
+        // UI (Resources/Sound/SFX/UI/ 폴더)
+        public const string CLICK = "UI/Click";                   // 모든 버튼 공통 (ButtonClickSound가 자동 재생)
+        public const string EQUIP = "UI/Equip";                   // 장비 장착
+        public const string UNEQUIP = "UI/Unequip";               // 장비 해제
+        public const string EQUIP_LEVEL_UP = "UI/EquipLevelUp";   // 장비 레벨업
+        public const string SYNTHESIZE = "UI/Synthesize";         // 장비 합성
+        public const string EVOLVE = "UI/Evolve";                 // 진화
+        public const string ACHIEVEMENT = "UI/Achievement";       // 업적 보상 수령
+        public const string BUY_SUPPLY_BOX = "UI/BuySupplyBox";   // 전리품 상자 구매
+        public const string BUY_GOLD = "UI/BuyGold";              // 골드 구매
+        public const string BUY_GEM = "UI/BuyGem";                // 젬 구매
+    }
+
     // PlayerPrefs 저장 키
     public static class PrefsKeys
     {

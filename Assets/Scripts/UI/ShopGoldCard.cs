@@ -65,6 +65,7 @@ public class ShopGoldCard : MonoBehaviour
             return;
         }
 
+        GameManager.Sound.PlaySFX(GameConstants.Sfx.BUY_GOLD);
         UIManager.Instance.Get<LogPopup>().Show("구매 완료!", "골드 구매가 완료되었습니다!");
     }
 }
