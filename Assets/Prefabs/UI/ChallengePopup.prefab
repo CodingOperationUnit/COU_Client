@@ -1150,6 +1150,7 @@ GameObject:
   - component: {fileID: 8389800654989241065}
   - component: {fileID: 196740751812381723}
   - component: {fileID: 9069238504315498912}
+  - component: {fileID: 4040231773516037219}
   m_Layer: 5
   m_Name: StartButton
   m_TagString: Untagged
@@ -1273,6 +1274,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ButtonFeedback
   pressedScale: 0.92
   pulse: 0
+--- !u!114 &4040231773516037219
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5737516479737944672}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Shadow
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.34901962}
+  m_EffectDistance: {x: 0, y: -8}
+  m_UseGraphicAlpha: 1
 --- !u!1 &6058504847554417826
 GameObject:
   m_ObjectHideFlags: 0

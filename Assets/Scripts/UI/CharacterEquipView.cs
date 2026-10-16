@@ -31,10 +31,12 @@ public class CharacterEquipView : MonoBehaviour
     private readonly System.Collections.Generic.Dictionary<EquipSlotType, Sprite> emptySlotSprites = new();
 
     // 아이콘 크기
-    [SerializeField] private Vector2 equippedIconSize = new(75f, 75f);
-    [SerializeField] private Vector2 emptySlotIconSize = new(85f, 85f);
+    [SerializeField] private Vector2 equippedIconSize = new(100f, 100f);
+    // 등급 프레임 좌상단 엠블럼을 피해 장착 아이콘을 오른쪽 아래로 옮긴다. 빈 슬롯은 가운데 그대로 둔다.
+    [SerializeField] private Vector2 equippedIconOffset = new(4f, -8f);
+    [SerializeField] private Vector2 emptySlotIconSize = new(156f, 156f);
     // 부위별 빈 슬롯 이미지는 프레임까지 포함돼 있어서 등급 프레임과 같은 크기로 띄운다.
-    [SerializeField] private Vector2 emptySlotFramedSize = new(150f, 150f);
+    [SerializeField] private Vector2 emptySlotFramedSize = new(168f, 168f);
 
     private static readonly System.Collections.Generic.Dictionary<EquipSlotType, Vector2> SlotGridPosition = new()
     {
@@ -153,6 +155,7 @@ public class CharacterEquipView : MonoBehaviour
                 slot.icon.sprite = Resources.Load<Sprite>(data.iconPath);
                 slot.icon.enabled = slot.icon.sprite != null;
                 slot.icon.rectTransform.sizeDelta = equippedIconSize;
+                slot.icon.rectTransform.anchoredPosition = equippedIconOffset;
             }
 
             if (slot.frame != null)
@@ -173,6 +176,7 @@ public class CharacterEquipView : MonoBehaviour
                 slot.icon.sprite = sprite;
                 slot.icon.enabled = sprite != null;
                 slot.icon.rectTransform.sizeDelta = hasPerSlot ? emptySlotFramedSize : emptySlotIconSize;
+                slot.icon.rectTransform.anchoredPosition = Vector2.zero;
             }
 
             if (slot.frame != null)
