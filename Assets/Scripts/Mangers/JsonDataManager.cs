@@ -672,7 +672,7 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
                 throw new InvalidOperationException($"중복된 Skill ID: {data.skillId}");
 
             // Newtonsoft 역직렬화 후 Unity 콜백을 직접 호출하여
-            // skillType 문자열을 TargetType 열거형으로 변환합니다.
+            // skillTargetType 문자열을 TargetType 열거형으로 변환합니다.
             data.OnAfterDeserialize();
 
             loadedDatas.Add(data.skillId, data);
