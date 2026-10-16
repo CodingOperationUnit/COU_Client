@@ -275,6 +275,16 @@ public class EvolutionTab : UIView
     public void SetUnlockInteractable(bool interactable)
         => tooltip.UnlockButton.interactable = interactable;
 
+    // 툴팁이 열려 있으면 현재 선택한 노드로 다시 표시 (진화 요청 전후로 버튼·문구 갱신)
+    public void RefreshTooltip()
+    {
+        if (selectedColumn == null || selectedColumn.nodes == null) return;
+        if (!tooltip.gameObject.activeSelf) return;
+        if (selectedIndex < 0 || selectedIndex >= selectedColumn.nodes.Length) return;
+
+        Select(selectedColumn, selectedIndex);
+    }
+
     // 이전에 만든 노드·선·레벨 표시 정리
     private void Clear()
     {

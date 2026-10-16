@@ -137,7 +137,7 @@ public class EvolutionTabPresenter : MonoBehaviour
         }
 
         isRequesting = true;
-        tab.SetUnlockInteractable(false);
+        tab.RefreshTooltip();
 
         // 탭이 닫혀도 요청이 끝까지 처리되도록, 씬 전환에도 유지되는 PlayerDataManager에서 실행
         GameManager.PlayerData.StartCoroutine(EvolutionService.Upgrade(OnUpgraded));
@@ -156,7 +156,8 @@ public class EvolutionTabPresenter : MonoBehaviour
         if (!result.IsSuccess)
             UIManager.Instance.Get<LogPopup>().Show("알림", GetFailMessage(result));
 
-        if (!isActiveAndEnabled) return;
+        if (isActiveAndEnabled)
+            tab.RefreshTooltip();
 
         tab.SetUnlockInteractable(true);
         if (result.IsSuccess)
