@@ -32,9 +32,9 @@ public enum SkillAddStat
 // 보너스를 등록한 주체(source)별로 보관해서 해제할 때 수치를 되돌릴 필요 없이 통째로 제거함
 public class SkillModifiers
 {
-    private static readonly int PercentStatCount = Enum.GetValues(typeof(SkillPercentStat)).Length;
-    private static readonly int FlatStatCount = Enum.GetValues(typeof(SkillFlatStat)).Length;
-    private static readonly int AddStatCount = Enum.GetValues(typeof(SkillAddStat)).Length;
+    public static readonly int PercentStatCount = Enum.GetValues(typeof(SkillPercentStat)).Length;
+    public static readonly int FlatStatCount = Enum.GetValues(typeof(SkillFlatStat)).Length;
+    public static readonly int AddStatCount = Enum.GetValues(typeof(SkillAddStat)).Length;
 
     private sealed class SourceEntry
     {
@@ -80,18 +80,7 @@ public class SkillModifiers
         }
     }
 
-    // 기본값 * (1 + 퍼센트 보너스 합). 보너스가 없으면 기본값 그대로
-    public float ApplyPercent(SkillPercentStat stat, float baseValue)
-    {
-        return baseValue * (1.0f + _percentTotals[(int)stat]);
-    }
-
-    // 기본값 + 고정 보너스 합. 보너스가 없으면 기본값 그대로
-    public int ApplyFlat(SkillFlatStat stat, int baseValue)
-    {
-        return baseValue + _flatTotals[(int)stat];
-    }
-
+    // 최종값은 스킬의 레벨 추가 효과와 합쳐야 하므로 SkillBase.GetPercentStat/GetFlatStat에서 계산함
     public float GetPercentTotal(SkillPercentStat stat)
     {
         return _percentTotals[(int)stat];
