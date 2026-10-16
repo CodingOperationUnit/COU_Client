@@ -96,10 +96,11 @@ public class PlayerStats : MonoBehaviour
 
         LoadWeapon(equipped);
 
-        Debug.Log("[PlayerStats] 공격력 " + finalAtk + " (기본 " + stat.BaseAttack + " + 진화 " + stat.EvolutionAttack + " + 장비 " + stat.EquipmentAttack + ")" +
-          " / 체력 " + finalHp + " (기본 " + stat.BaseHp + " + 진화 " + stat.EvolutionHp + " + 장비 " + stat.EquipmentHp + ")" +
-          " / 방어력 " + finalDefense + " / 포션 회복량 +" + finalPotionRecovery +
-          " / 이동 속도 " + finalMoveSpeed.ToString("F2") + " (+" + stat.EquipmentMoveSpeedPercent + "%)" +
+        Debug.Log("[PlayerStats] 공격력 " + finalAtk + " ((기본 " + stat.BaseAttack + " + 진화 " + stat.EvolutionAttack + " + 장비 " + stat.EquipmentAttack + ") × " + (100 + stat.AttackBonusPercent) + "%)" +
+          " / 체력 " + finalHp + " ((기본 " + stat.BaseHp + " + 진화 " + stat.EvolutionHp + " + 장비 " + stat.EquipmentHp + ") × " + (100 + stat.HpBonusPercent) + "%)" +
+          " / 방어력 " + finalDefense + " (진화 " + stat.EvolutionDefense + " + 장비 " + stat.EquipmentDefense + ")" +
+          " / 포션 회복량 +" + finalPotionRecovery +
+          " / 이동 속도 " + finalMoveSpeed.ToString("F2") + " (+" + (stat.EquipmentMoveSpeedPercent + stat.EffectMoveSpeedPercent) + "%)" +
           " / 무기: " + (hasWeapon ? equippedWeaponName : "없음") +
           " / 시작 스킬: " + (startingSkillId == WeaponSkillTable.NoSkill ? "없음" : startingSkillId.ToString()) +
           GetDamageLog());
