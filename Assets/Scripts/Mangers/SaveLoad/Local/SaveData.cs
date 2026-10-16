@@ -63,6 +63,7 @@ public class PlayerSaveData
     public List<InventoryData> inventoryList = new List<InventoryData>();
     public StageProgressData stageProgress = new StageProgressData();
     public List<StageRecordSaveData> stageRecords = new List<StageRecordSaveData>();   // 기록이 있는 스테이지만
+    public List<int> claimedChapterChests = new List<int>();   // 챕터 보물상자를 받은 스테이지 ID
     public PlayerStatData playerStat = new PlayerStatData();   // 필드만
 
     /// <summary>

@@ -74,6 +74,28 @@ public class BattleResultResponse
     public List<InventoryData> rewards;    // 보상상자로 지급한 장비
 }
 
+// POST /api/battles/patrol 응답. 최고 클리어 스테이지를 한 번 클리어한 평균 보상
+[Serializable]
+public class PatrolResponse
+{
+    public int stageId;                    // 순찰한 스테이지 (최고 클리어 스테이지)
+    public int grantedGold;
+    public int grantedExp;
+    public PlayerProfileData profile;
+    public CurrencyData currency;          // 스태미나 차감, 골드 지급 후 재화
+    public List<InventoryData> rewards;    // 보상상자로 지급한 장비
+}
+
+// ===== 챕터 보물상자 =====
+
+// POST /api/chapter-chests/{stageId}/claim 응답
+[Serializable]
+public class ChapterChestClaimResponse
+{
+    public int stageId;
+    public List<InventoryData> rewardedItems;
+}
+
 // ===== 인벤토리 / 장비 =====
 
 // GET /api/inventory 응답

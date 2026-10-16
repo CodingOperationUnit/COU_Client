@@ -65,5 +65,11 @@ public class MainUIAccountBinder : MonoBehaviour
         var battleTab = GameManager.UI.Get<BattleTab>();
         battleTab.SetStage(selectedStage, bestTime);
         battleTab.SetStaminaCost(GameManager.JsonData.AccountConstData.battleStaminaCost);
+
+        // 클리어했지만 아직 받지 않은 가장 앞 스테이지의 보물상자
+        var chestStage = stages.FirstOrDefault(stage =>
+            progress.IsCleared(stage.stageId) && !data.claimedChapterChests.Contains(stage.stageId));
+        battleTab.SetChapterChest(chestStage != null ? chestStage.stageId : 0);
+        battleTab.SetPatrolUnlocked(progress.maxClearedStageId.HasValue);
     }
 }
