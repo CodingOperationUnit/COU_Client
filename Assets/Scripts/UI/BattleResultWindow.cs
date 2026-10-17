@@ -31,6 +31,9 @@ public class BattleResultWindow : UIView
         banner.color = ribbon.color = victory ? victoryColor : defeatColor;
         Open();
 
+        GameManager.Sound.StopBGM(0.5f);
+        GameManager.Sound.PlaySFX(victory ? GameConstants.Sfx.STAGE_CLEAR : GameConstants.Sfx.STAGE_FAIL);
+
         UITween.PopIn(banner.transform, 0f, 1.6f, 0.35f);
         UITween.PopIn(ribbon.transform, 0.15f, 0f, 0.3f);
     }
