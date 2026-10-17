@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // 플레이어 주위를 도는 스피커. 풀에 스스로 반환되지 않고 스킬 해제 때까지 유지됨
-// SkillStats: Speed = 초당 회전 각도, Damage = 접촉 대미지 / OrbitData: Radius = 회전 반지름
+// SkillStats: Speed = 초당 회전 각도, Damage = 접촉 대미지, Scale = 크기 배율 / OrbitData: Radius = 회전 반지름
 public sealed class SpeakerObject : SkillObject<OrbitData>
 {
     // 기록이 이 개수 이상 쌓이면 시간이 지난 기록을 정리
@@ -19,9 +19,22 @@ public sealed class SpeakerObject : SkillObject<OrbitData>
     private float _angle;
     private float _radius;
 
+    // 풀에서 다시 꺼낼 때 바뀐 크기가 아니라 프리팹 원래 크기를 기준으로 삼기 위해 첫 Init에서 한 번만 저장
+    private Vector3 _baseScale;
+    private bool _initialized;
+
     protected override void OnInit(OrbitData data)
     {
+        if(!_initialized)
+        {
+            _initialized = true;
+            _baseScale = transform.localScale;
+        }
+
         stats = data.Stats;
+
+        // 범위 증가 보너스는 프리팹 크기에 곱해서 스프라이트와 판정이 함께 커지게 함
+        transform.localScale = _baseScale * stats.Scale;
         _owner = data.Owner;
         _angle = data.StartAngle;
         _radius = data.Radius;
