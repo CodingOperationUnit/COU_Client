@@ -33,7 +33,7 @@ public abstract class SkillBase
     // 5레벨이 되고 짝 패시브를 가지면 진화함 (SkillEvolutionTable). 한 번 진화하면 유지됨
     public bool IsEvolved { get; private set; }
 
-    public int SkillId => skillData != null ? skillData.skillId : -1;
+    public long SkillId => skillData != null ? skillData.skillId : -1;
     // 적 탐지 범위. 사거리증가 보너스 포함
     public float Range => skillData != null ? GetPercentStat(SkillPercentStat.Range, skillData.skillRange) : 0.0f;
 

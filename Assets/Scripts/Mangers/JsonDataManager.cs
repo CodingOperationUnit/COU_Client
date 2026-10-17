@@ -47,8 +47,8 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
     private Dictionary<int, List<StageRosterData>> stageRosterDic;
     public IReadOnlyDictionary<int, List<StageRosterData>> StageRosterDic => stageRosterDic;
 
-    private Dictionary<int, SkillData> skillDataDic;
-    public IReadOnlyDictionary<int, SkillData> SkillDataDic => skillDataDic;
+    private Dictionary<long, SkillData> skillDataDic;
+    public IReadOnlyDictionary<long, SkillData> SkillDataDic => skillDataDic;
 
     // 스킬 ID별 레벨 추가 효과 (레벨 오름차순)
     private Dictionary<long, List<SkillLevelData>> skillLevelDic;
@@ -515,7 +515,7 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
         return null;
     }
 
-    public SkillData GetSkillDataFromJson(int skillId)
+    public SkillData GetSkillDataFromJson(long skillId)
     {
         if (skillDataDic == null)
         {
@@ -861,14 +861,14 @@ public class JsonDataManager : MonoSingleton<JsonDataManager>
         return loadedDatas;
     }
 
-    private static Dictionary<int, SkillData> ParseSkillData(JObject root)
+    private static Dictionary<long, SkillData> ParseSkillData(JObject root)
     {
         JArray rows = root["datas"] as JArray;
 
         if (rows == null || rows.Count == 0)
             throw new InvalidOperationException("Skill 데이터 목록이 비어 있습니다.");
 
-        var loadedDatas = new Dictionary<int, SkillData>();
+        var loadedDatas = new Dictionary<long, SkillData>();
 
         foreach (JToken row in rows)
         {

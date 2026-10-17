@@ -70,7 +70,7 @@ public class SkillController : MonoBehaviour
         }
     }
 
-    public bool EquipSkill(int skillId)
+    public bool EquipSkill(long skillId)
     {
         // 이미 장착한 스킬은 슬롯이 가득 차 있어도 레벨업할 수 있어야 하므로 슬롯 검사보다 먼저 확인
         SkillBase existing = FindSkill(skillId);
@@ -125,7 +125,7 @@ public class SkillController : MonoBehaviour
         return true;
     }
 
-    public bool LevelUpSkill(int skillId)
+    public bool LevelUpSkill(long skillId)
     {
         SkillBase skill = FindSkill(skillId);
 
@@ -157,9 +157,9 @@ public class SkillController : MonoBehaviour
         }
     }
 
-    private bool HasEvolutionPassive(int activeSkillId)
+    private bool HasEvolutionPassive(long activeSkillId)
     {
-        foreach(int passiveId in SkillEvolutionTable.GetPassiveIds(activeSkillId))
+        foreach(long passiveId in SkillEvolutionTable.GetPassiveIds(activeSkillId))
         {
             if(_passiveSkills.Exists(s => s.SkillId == passiveId))
             {
@@ -170,7 +170,7 @@ public class SkillController : MonoBehaviour
         return false;
     }
 
-    public bool UnequipSkill(int skillId)
+    public bool UnequipSkill(long skillId)
     {
         SkillBase skill = FindSkill(skillId);
 
@@ -200,7 +200,7 @@ public class SkillController : MonoBehaviour
     }
 
     // 액티브/패시브 구분 없이 장착된 스킬을 찾음
-    private SkillBase FindSkill(int skillId)
+    private SkillBase FindSkill(long skillId)
     {
         SkillBase skill = _activeSkills.Find(s => s.SkillId == skillId);
 

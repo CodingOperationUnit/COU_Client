@@ -5,13 +5,13 @@ using UnityEngine;
 // 대미지는 스킬 몫인 배율까지만 계산해 두고, 공격력/치명타/반올림은 맞힐 때 플레이어 쪽(PlayerDamageCalculator)에서 계산함
 public readonly struct SkillStats
 {
-    public readonly int SkillId; // 피해를 준 스킬 (업적 '스킬로 처치' 집계용)
+    public readonly long SkillId; // 피해를 준 스킬 (업적 '스킬로 처치' 집계용)
     public readonly float SkillMultiplier; // 반올림하지 않은 스킬 배율 (skillDamage × 레벨 배율 × 패시브)
     public readonly float Speed;
     public readonly float Scale; // 1.0 = 프리팹 원래 크기
     public readonly PlayerStats PlayerStats;
 
-    public SkillStats(int skillId, float skillMultiplier, float speed, float scale, PlayerStats playerStats)
+    public SkillStats(long skillId, float skillMultiplier, float speed, float scale, PlayerStats playerStats)
     {
         SkillId = skillId;
         SkillMultiplier = skillMultiplier;
