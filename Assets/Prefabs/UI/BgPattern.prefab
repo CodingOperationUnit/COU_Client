@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5970887114714394401}
   - component: {fileID: 5491663872053697776}
   - component: {fileID: 4260997315995816217}
+  - component: {fileID: 2020600439718156995}
   m_Layer: 5
   m_Name: BgPattern
   m_TagString: Untagged
@@ -87,3 +88,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ScrollingPatternBackground
   tileSize: 400
   speed: {x: 0.05, y: 0.05}
+--- !u!114 &2020600439718156995
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1603150400362111393}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4e92f3224876794bb9718d1aac59d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemedGraphic
+  color: 5
