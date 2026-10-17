@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2280430909478590370}
   - component: {fileID: 5381331358081311882}
+  - component: {fileID: 8686818565161430273}
   m_Layer: 0
   m_Name: Sprite
   m_TagString: Untagged
@@ -25,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2824739264293670803}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: -0.88294756, w: 0.4694716}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -81,7 +82,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
+  m_Sprite: {fileID: 1405271746883430563, guid: 7426bc4bda1807a439c4af1735391aec, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -91,6 +92,32 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &8686818565161430273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2824739264293670803}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 666050ca232d96346958f372c27de867, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpriteFlipbook
+  _renderer: {fileID: 5381331358081311882}
+  _frames:
+  - {fileID: 1405271746883430563, guid: 7426bc4bda1807a439c4af1735391aec, type: 3}
+  - {fileID: 3765002775848624858, guid: 7426bc4bda1807a439c4af1735391aec, type: 3}
+  - {fileID: -3208743213219259160, guid: 7426bc4bda1807a439c4af1735391aec, type: 3}
+  - {fileID: 423206760155978980, guid: 7426bc4bda1807a439c4af1735391aec, type: 3}
+  - {fileID: 6398361614076032570, guid: 7426bc4bda1807a439c4af1735391aec, type: 3}
+  - {fileID: -232544516021598125, guid: 7426bc4bda1807a439c4af1735391aec, type: 3}
+  - {fileID: -1186480434288009423, guid: 7426bc4bda1807a439c4af1735391aec, type: 3}
+  - {fileID: 8692144759449463940, guid: 7426bc4bda1807a439c4af1735391aec, type: 3}
+  - {fileID: -2998155583483782419, guid: 7426bc4bda1807a439c4af1735391aec, type: 3}
+  - {fileID: 3592067563601828771, guid: 7426bc4bda1807a439c4af1735391aec, type: 3}
+  _duration: 0.4
+  _loop: 0
 --- !u!1 &4193260201367319678
 GameObject:
   m_ObjectHideFlags: 0
@@ -203,3 +230,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HomingProjectile
   lifeTime: 3
   _chainRadius: 3
+  _renderer: {fileID: 5381331358081311882}
+  _hitFlipbook: {fileID: 8686818565161430273}
+  _hitDisplayTime: 0.4

@@ -20,8 +20,8 @@ public class SkillSelectWindow : UIView
         }
     }
 
-    public void SetOption(int index, Sprite icon, string title, string description, int grade, bool isNew)
-        => cards[index].Set(icon, title, description, grade, isNew);
+    public void SetOption(int index, Sprite icon, string title, string description, int grade, bool isNew, SkillCategory? category = null)
+        => cards[index].Set(icon, title, description, grade, isNew, category);
 
     public void SetWeaponSlots(IReadOnlyList<Sprite> icons)
         => SetSlots(weaponSlotIcons, icons);

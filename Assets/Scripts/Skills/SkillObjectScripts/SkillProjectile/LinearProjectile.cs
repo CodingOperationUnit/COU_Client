@@ -86,6 +86,12 @@ public class LinearProjectile : SkillProjectile
             return;
         }
 
+        OnFinishHit();
+    }
+
+    // 더 맞힐 수도, 튕길 수도 없을 때 호출. 기본은 바로 풀에 반환
+    protected virtual void OnFinishHit()
+    {
         ReturnToPool();
     }
 
