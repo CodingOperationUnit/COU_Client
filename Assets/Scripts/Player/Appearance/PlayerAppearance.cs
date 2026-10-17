@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.LowLevel;
+using System.Collections;
 
 
 [RequireComponent(typeof(SPUM_Prefabs))]
@@ -9,6 +10,13 @@ public class PlayerAppearance : MonoBehaviour
     [SerializeField] private SpriteRenderer rightWeapon;
     [SerializeField] private SpriteRenderer leftWeapon;
     [SerializeField] private bool keepInPlace = true;
+
+    [Header("Invulnerable Blink")]
+    [SerializeField][Min(0.02f)] private float blinkInterval = 0.1f;   // 깜빡임 간격(초)
+    [SerializeField][Range(0f, 1f)] private float blinkAlpha = 0.3f;    // 흐려질 때 투명도 배율
+    private SpriteRenderer[] spriteRenderers;
+    private float[] baseAlphas;
+    private Coroutine blinkRoutine;
 
     [Header("Test")]
     [SerializeField] private long testItemId = 6001;
@@ -60,6 +68,11 @@ public class PlayerAppearance : MonoBehaviour
 
         spum.OverrideControllerInit();
         isReady = true;
+
+        spriteRenderers = GetComponentsInChildren<SpriteRenderer>(true);
+        baseAlphas = new float[spriteRenderers.Length];
+        for (int i = 0; i < spriteRenderers.Length; i++)
+            baseAlphas[i] = spriteRenderers[i].color.a;
     }
 
     // === 무기 ===
@@ -117,6 +130,8 @@ public class PlayerAppearance : MonoBehaviour
     public void PlayDeath()
     {
         if (isDead) return;
+
+        StopBlink();
 
         Play(PlayerState.DEATH, 0);
         isDead = true;   // 이후 다른 모션 재생 안 함
@@ -182,6 +197,64 @@ public class PlayerAppearance : MonoBehaviour
         _ => spum.OTHER_List
     };
 
+    // ===== 깜빡임 (무적 표시) =====
+
+    // duration초 동안 깜빡임. 이미 깜빡이는 중이면 처음부터 다시
+    public void PlayBlink(float duration)
+    {
+        if (!isActiveAndEnabled || duration <= 0f) return;
+
+        StopBlink();
+        blinkRoutine = StartCoroutine(BlinkRoutine(duration));
+    }
+
+    // 깜빡임을 멈추고 원래 투명도로 되돌림
+    public void StopBlink()
+    {
+        if (blinkRoutine != null)
+        {
+            StopCoroutine(blinkRoutine);
+            blinkRoutine = null;
+        }
+        SetAlphaMultiplier(1f);
+    }
+
+    private IEnumerator BlinkRoutine(float duration)
+    {
+        float endTime = Time.time + duration;
+        bool dim = true;
+
+        while (Time.time < endTime)
+        {
+            SetAlphaMultiplier(dim ? blinkAlpha : 1f);
+            dim = !dim;
+            yield return new WaitForSeconds(blinkInterval);
+        }
+
+        SetAlphaMultiplier(1f);
+        blinkRoutine = null;
+    }
+
+    // 각 부위의 원래 투명도에 배율을 곱함 (원래 숨겨진 부위는 계속 숨김)
+    private void SetAlphaMultiplier(float multiplier)
+    {
+        if (spriteRenderers == null) return;
+
+        for (int i = 0; i < spriteRenderers.Length; i++)
+        {
+            if (spriteRenderers[i] == null) continue;
+            var color = spriteRenderers[i].color;
+            color.a = baseAlphas[i] * multiplier;
+            spriteRenderers[i].color = color;
+        }
+    }
+
+    private void OnDisable()
+    {
+        // 오브젝트가 꺼질 때 반투명으로 남지 않게
+        StopBlink();
+    }
+
     // ===== 테스트 (Inspector ⋮ 메뉴) =====
 
     [ContextMenu("Test/Idle")] private void TestIdle() => PlayIdle();
@@ -191,4 +264,6 @@ public class PlayerAppearance : MonoBehaviour
     [ContextMenu("Test/Death")] private void TestDeath() => PlayDeath();
     [ContextMenu("Test/Weapon (testItemId)")] private void TestWeapon() => SetWeapon(testItemId);
     [ContextMenu("Test/No Weapon")] private void TestNoWeapon() => SetWeapon(null);
+
+    [ContextMenu("Test/Blink 1초")] private void TestBlink() => PlayBlink(1f);
 }

@@ -28,6 +28,7 @@ public class PlayerHealth : MonoBehaviour
     public event Action OnDamaged;
     public event Action OnDodged;          // 회피 성공 (피해 0, 피격 모션 없음)
     public event Action OnDamageNegated;   // 피해 무효 발동 (피해 0, 피격 모션 없음)
+    public event Action<float> OnInvulnerableStarted;
 
     [Header("Test")]
     [SerializeField] private int testDamage = 50;
@@ -119,6 +120,7 @@ public class PlayerHealth : MonoBehaviour
         {
             CurrentHealth = maxHealth;
             invulnerableEndTime = Time.time + invulnerableTime;
+            OnInvulnerableStarted?.Invoke(invulnerableTime);
         }
     }
 
