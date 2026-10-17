@@ -99,6 +99,18 @@ public static class GameConstants
         public const string ELECTRIC = "UI/Equip";                  // 전기
         public const string LASER = "UI/Unequip";                   // 레이저
         public const string SWIP = "UI/EquipLevelUp";               // 휘두르는 소리
+
+        // 전투 효과음 (Resources/Sound/SFX/Battle/ 폴더)
+        public const string PLAYER_HIT = "Battle/PlayerHit";         // 플레이어 피격
+        public const string GOLD = "Battle/Gold";                    // 골드 획득
+        public const string POTION = "Battle/Potion";                // 포션 획득(회복)
+        public const string MAGNET = "Battle/Magnet";                // 자석 획득
+        public const string BOMB = "Battle/Bomb";                    // 폭탄 획득(폭발)
+        public const string LEVEL_UP = "Battle/LevelUp";             // 스킬 선택창 열림
+        public const string LUCK_TRAIN_TICK = "Battle/LuckTrainTick";     // 행운열차 칸 이동
+        public const string LUCK_TRAIN_RESULT = "Battle/LuckTrainResult"; // 행운열차 결과
+        public const string STAGE_CLEAR = "Battle/StageClear";       // 스테이지 클리어
+        public const string STAGE_FAIL = "Battle/StageFail";         // 스테이지 실패
     }
 
     // PlayerPrefs 저장 키

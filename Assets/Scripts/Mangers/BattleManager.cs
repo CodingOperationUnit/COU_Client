@@ -293,7 +293,8 @@ public class BattleManager : MonoBehaviour
 
             var skill = FindSkill(candidates[i]);
             var data = GameManager.JsonData.GetSkillDataFromJson(candidates[i]);
-            selectWindow.SetOption(i, Resources.Load<Sprite>(data.IconPath), data.skillName, data.skillDescription, skill == null ? 1 : skill.Level + 1, skill == null, data.skillCategory);
+            var grade = skill == null ? 1 : skill.Level + 1;
+            selectWindow.SetOption(i, Resources.Load<Sprite>(data.IconPath), data.skillName, BuildSkillDescription(data, grade, skill == null), grade, skill == null, data.skillCategory);
         }
 
         if (count == 0)
@@ -306,6 +307,23 @@ public class BattleManager : MonoBehaviour
         selectWindow.SetSupportSlots(LoadSkillIcons(skillController.PassiveSkills));
         RequestPause(selectWindow);
         selectWindow.Show(count);
+    }
+
+    // 신규 스킬은 스킬 설명을, 이미 가진 스킬은 선택하면 도달하는 레벨의 레벨업 설명(SkillLevel 시트)을 보여준다
+    private static string BuildSkillDescription(SkillData data, int level, bool isNew)
+    {
+        if (isNew)
+            return data.skillDescription;
+
+        foreach (var row in GameManager.JsonData.GetSkillLevelsFromJson(data.skillId))
+        {
+            if (row.skillLevel != level || string.IsNullOrEmpty(row.description))
+                continue;
+
+            return $"<color=#FFC61A>Lv.{level}</color> {row.description}";
+        }
+
+        return data.skillDescription;   // 시트에 해당 레벨 행이 없으면 기본 설명
     }
 
     private void HandleSkillSelected(int index)

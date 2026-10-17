@@ -97,6 +97,7 @@ GameObject:
   - component: {fileID: 1840985785695172938}
   - component: {fileID: 600662880178459387}
   - component: {fileID: -702029232772180444}
+  - component: {fileID: 7318601574171665918}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -337,6 +338,20 @@ MonoBehaviour:
   flashAlpha: 0.45
   flashTime: 0.08
   cooldown: 0.25
+--- !u!114 &7318601574171665918
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2129776847289895548}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e305e675670ca94098543ae5ecf50d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BattleSfx
+  goldVolume: 0.5
+  itemVolume: 1
 --- !u!1 &5527811092533456015
 GameObject:
   m_ObjectHideFlags: 0

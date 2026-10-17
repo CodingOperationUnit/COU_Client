@@ -38,6 +38,7 @@ public class PlayerVisual : MonoBehaviour
     {
         playerHealth.OnDamaged += HandleDamaged;
         playerHealth.OnDied += HandleDied;
+        playerHealth.OnInvulnerableStarted += HandleInvulnerableStarted;
 
         if (skillController != null)
             skillController.OnSkillFireStarted += HandleSkillFireStarted;
@@ -47,6 +48,7 @@ public class PlayerVisual : MonoBehaviour
     {
         playerHealth.OnDamaged -= HandleDamaged;
         playerHealth.OnDied -= HandleDied;
+        playerHealth.OnInvulnerableStarted -= HandleInvulnerableStarted;
 
         if (skillController != null)
             skillController.OnSkillFireStarted -= HandleSkillFireStarted;
@@ -117,6 +119,12 @@ public class PlayerVisual : MonoBehaviour
     {
         if (appearance != null)
             appearance.PlayDamaged();
+    }
+
+    private void HandleInvulnerableStarted(float duration)
+    {
+        if (appearance != null)
+            appearance.PlayBlink(duration);
     }
 
     private void HandleDied()

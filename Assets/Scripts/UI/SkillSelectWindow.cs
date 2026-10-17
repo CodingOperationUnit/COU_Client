@@ -47,5 +47,6 @@ public class SkillSelectWindow : UIView
             cards[i].gameObject.SetActive(i < count);
         Open();
         UITween.Stagger(cards, 0.08f);
+        GameManager.Sound.PlaySFX(GameConstants.Sfx.LEVEL_UP);
     }
 }
