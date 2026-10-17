@@ -65,7 +65,10 @@ public class InventoryListView : MonoBehaviour
         if (PlayerInventory.Instance == null)
             return;
 
-        IEnumerable<OwnedItem> items = PlayerInventory.Instance.Items.Where(i => !i.isEquipped);
+        // 합성창 목록에서는 더 이상 합성할 수 없는(레어) 장비를 숨긴다
+        var forSynthesis = synthesisWindowRef != null;
+        IEnumerable<OwnedItem> items = PlayerInventory.Instance.Items
+            .Where(i => !i.isEquipped && (!forSynthesis || i.CanSynthesize));
 
         items = CurrentSortMode switch
         {

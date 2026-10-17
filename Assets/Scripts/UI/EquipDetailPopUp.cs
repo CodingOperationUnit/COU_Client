@@ -30,6 +30,10 @@ public class EquipDetailPopUp : UIPopup
     [SerializeField] private Color skillBulletColor = new(0.31f, 0.76f, 0.97f);
 
     private OwnedItem boundItem;
+    private bool isPreview;   // 합성 결과 미리보기: 읽기 전용이라 장착/레벨업을 숨기고 닫기만 남긴다
+    private RectTransform equipButtonRect;
+    private Vector2 equipButtonHomePos;
+    private Vector2 equipButtonPreviewPos;
 
     private void Awake()
     {
@@ -42,6 +46,17 @@ public class EquipDetailPopUp : UIPopup
     public void Show(OwnedItem item)
     {
         boundItem = item;
+        isPreview = false;
+        Refresh();
+        Open();
+    }
+
+    // 합성 결과 미리보기: 같은 장비·레벨에 다음 등급을 준 임시 장비로 상세를 보여 준다 (서버/인벤토리에는 없는 장비)
+    public void ShowPreview(OwnedItem source)
+    {
+        var grade = source.CanSynthesize ? source.NextGrade : source.Grade;
+        boundItem = new OwnedItem(source.itemId) { level = source.level, grade = grade };
+        isPreview = true;
         Refresh();
         Open();
     }
@@ -115,6 +130,23 @@ public class EquipDetailPopUp : UIPopup
 
         RefreshLevelUpArea();
         RefreshEquipButton();
+        RefreshPreviewLayout();
+    }
+
+    // 미리보기에서는 골드/레벨업 영역을 숨기고, 장착 버튼 자리를 가운데 "닫기" 버튼으로 쓴다
+    private void RefreshPreviewLayout()
+    {
+        if (equipButtonRect == null)
+        {
+            equipButtonRect = (RectTransform)equipButton.transform;
+            equipButtonHomePos = equipButtonRect.anchoredPosition;
+            equipButtonPreviewPos = ((RectTransform)levelUpButton.transform).anchoredPosition;
+        }
+
+        goldText.transform.parent.gameObject.SetActive(!isPreview);
+        levelUpButton.gameObject.SetActive(!isPreview);
+        batchLevelUpButton.gameObject.SetActive(!isPreview);
+        equipButtonRect.anchoredPosition = isPreview ? equipButtonPreviewPos : equipButtonHomePos;
     }
 
     private static readonly ItemGrade[] GradeOrder = { ItemGrade.General, ItemGrade.Super, ItemGrade.Rare };
@@ -212,6 +244,12 @@ public class EquipDetailPopUp : UIPopup
 
     private void OnEquipButtonClicked()
     {
+        if (isPreview)
+        {
+            Close();
+            return;
+        }
+
         SetButtonsInteractable(false);
 
         if (boundItem.isEquipped)
@@ -263,7 +301,7 @@ public class EquipDetailPopUp : UIPopup
     private void RefreshEquipButton()
     {
         equipButton.interactable = true;
-        equipButtonText.text = boundItem.isEquipped ? "장착 해제" : "장착";
+        equipButtonText.text = isPreview ? "닫기" : boundItem.isEquipped ? "장착 해제" : "장착";
     }
 
     private static string GradeLabel(ItemGrade grade) => grade switch
