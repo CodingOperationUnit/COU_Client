@@ -1360,7 +1360,7 @@ MonoBehaviour:
   target: {fileID: 0}
   resourcePathFormat: Backgrounds/stage_{0}_background
   fallbackStageNumber: 2
-  insetPixels: 6
+  insetPixels: 0
   tileWorldSize: 8
   activeRadius: 2
   releaseMargin: 1
