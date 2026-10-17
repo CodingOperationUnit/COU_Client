@@ -16,7 +16,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &5217720014842588714
 RectTransform:
   m_ObjectHideFlags: 0
@@ -49,6 +49,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d47c34311383fdd43a52a0d6b39f4b29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InventoryTab
+  panel: {fileID: 0}
 --- !u!1 &7809509270216479446
 GameObject:
   m_ObjectHideFlags: 0

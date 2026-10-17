@@ -27,6 +27,7 @@ public class EvolutionTabPresenter : MonoBehaviour
     private void OnEnable()
     {
         tab.UnlockRequested += HandleUnlockRequested;
+        tab.UnlockBlockLabel = GetUnlockBlockLabel;
 
         if (GameManager.PlayerData != null)
         {
@@ -41,6 +42,7 @@ public class EvolutionTabPresenter : MonoBehaviour
     private void OnDisable()
     {
         tab.UnlockRequested -= HandleUnlockRequested;
+        tab.UnlockBlockLabel = null;
 
         if (isPlayerDataSubscribed && GameManager.PlayerData != null)
             GameManager.PlayerData.OnPlayerDataChanged -= OnPlayerDataChanged;
@@ -97,6 +99,28 @@ public class EvolutionTabPresenter : MonoBehaviour
         };
     }
 
+    // 다음 노드를 지금 진화할 수 없는 이유 (버튼 글자용 짧은 문구, 진화 가능하면 null)
+    // 판단 순서는 서버와 같음: 최대 단계 → 계정 레벨 → 골드
+    private string GetUnlockBlockLabel(int index)
+    {
+        if (index != currentStep) return null;
+        if (isRequesting) return "진화 중";
+
+        var evolution = EvolutionRules.Data;
+        var saveData = GameManager.PlayerData.currentData;
+
+        var block = EvolutionRules.GetBlock(evolution, currentStep,
+                                            saveData.profile.accountLevel, saveData.currency.currencyGold);
+
+        return block switch
+        {
+            EvolutionBlock.MaxStepReached => "진화 완료",
+            EvolutionBlock.LevelLocked => "레벨 " + EvolutionRules.GetRequiredAccountLevel(evolution, currentStep) + " 필요",
+            EvolutionBlock.NotEnoughGold => "골드 부족",
+            _ => null
+        };
+    }
+
     private void HandleUnlockRequested(int index)
     {
         if (isRequesting) return;
@@ -113,7 +137,7 @@ public class EvolutionTabPresenter : MonoBehaviour
         }
 
         isRequesting = true;
-        tab.SetUnlockInteractable(false);
+        tab.RefreshTooltip();
 
         // 탭이 닫혀도 요청이 끝까지 처리되도록, 씬 전환에도 유지되는 PlayerDataManager에서 실행
         GameManager.PlayerData.StartCoroutine(EvolutionService.Upgrade(OnUpgraded));
@@ -132,7 +156,8 @@ public class EvolutionTabPresenter : MonoBehaviour
         if (!result.IsSuccess)
             UIManager.Instance.Get<LogPopup>().Show("알림", GetFailMessage(result));
 
-        if (!isActiveAndEnabled) return;
+        if (isActiveAndEnabled)
+            tab.RefreshTooltip();
 
         tab.SetUnlockInteractable(true);
         if (result.IsSuccess)
