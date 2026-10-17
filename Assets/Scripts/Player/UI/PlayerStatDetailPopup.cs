@@ -44,7 +44,7 @@ public class PlayerStatDetailPopup : UIPopup
 
     private void OnDisable()
     {
-        if (isSubscribed && GameManager.PlayerData != null)
+        if (isSubscribed && PlayerDataManager.HasInstance)
             GameManager.PlayerData.OnPlayerDataChanged -= OnPlayerDataChanged;
         isSubscribed = false;
 
