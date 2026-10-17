@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class PauseWindow : UIView
@@ -12,8 +13,8 @@ public class PauseWindow : UIView
     [SerializeField] private PauseSkillSlot[] supportSlots;
     [SerializeField] private Button homeButton;
     [SerializeField] private Button continueButton;
-    [SerializeField] private Button soundButton;
-    [SerializeField] private GameObject muteMark;
+    [FormerlySerializedAs("soundButton")]
+    [SerializeField] private Button settingsButton;
 
     public event Action OnOpened;
 
@@ -21,13 +22,12 @@ public class PauseWindow : UIView
     {
         homeButton.onClick.AddListener(() => UIManager.Instance.Open<HomePopup>());
         continueButton.onClick.AddListener(Close);
-        soundButton.onClick.AddListener(ToggleMute);
+        settingsButton.onClick.AddListener(() => UIManager.Instance.Open<SettingsPopup>());
     }
 
     public override void Open()
     {
         base.Open();
-        muteMark.SetActive(GameManager.Sound.IsMuted);
         if (BattleManager.Instance != null)
             BattleManager.Instance.RequestPause(this);
         OnOpened?.Invoke();
@@ -61,11 +61,5 @@ public class PauseWindow : UIView
             else
                 slots[i].Clear();
         }
-    }
-
-    private void ToggleMute()
-    {
-        GameManager.Sound.ToggleMute();
-        muteMark.SetActive(GameManager.Sound.IsMuted);
     }
 }

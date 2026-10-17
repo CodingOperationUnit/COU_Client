@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
@@ -25,6 +26,12 @@ public class SettingsPopup : UIPopup
     [SerializeField] private Button lightThemeButton;
     [SerializeField] private GameObject lightThemeMark;
 
+    [Header("진동")]
+    [SerializeField] private Button vibrationButton;
+    [SerializeField] private Image vibrationIcon;
+    [SerializeField] private Sprite vibrationOnSprite;
+    [SerializeField] private Sprite vibrationOffSprite;
+
     [SerializeField] private Button logoutButton;
 
     private void Awake()
@@ -39,6 +46,7 @@ public class SettingsPopup : UIPopup
 
         darkThemeButton.onClick.AddListener(() => SetTheme(UITheme.Dark));
         lightThemeButton.onClick.AddListener(() => SetTheme(UITheme.Light));
+        vibrationButton.onClick.AddListener(ToggleVibration);
         logoutButton.onClick.AddListener(Logout);
     }
 
@@ -51,6 +59,10 @@ public class SettingsPopup : UIPopup
         sfxSlider.SetValueWithoutNotify(GameManager.Sound.SfxVolume);
         RefreshMuteMarks();
         RefreshThemeMarks();
+        RefreshVibrationIcon();
+
+        // 배틀 중에는 로그아웃할 수 없으므로 버튼을 숨긴다
+        logoutButton.gameObject.SetActive(SceneManager.GetActiveScene().name != GameConstants.SceneNames.BATTLE_SCENE);
     }
 
     private static void SetupVolumeSlider(Slider slider, UnityEngine.Events.UnityAction<float> onChanged)
@@ -126,6 +138,19 @@ public class SettingsPopup : UIPopup
         darkThemeMark.SetActive(theme == UITheme.Dark);
         lightThemeMark.SetActive(theme == UITheme.Light);
     }
+
+    private void ToggleVibration()
+    {
+        Haptics.Enabled = !Haptics.Enabled;
+        RefreshVibrationIcon();
+        UITween.PopIn(vibrationIcon.transform, 0f, 0f);
+
+        // 켰을 때 바로 한 번 울려서 진동이 켜졌는지 확인하게 한다 (끄면 Vibrate가 알아서 무시한다)
+        Haptics.Vibrate(40);
+    }
+
+    private void RefreshVibrationIcon()
+        => vibrationIcon.sprite = Haptics.Enabled ? vibrationOnSprite : vibrationOffSprite;
 
     private void Logout()
     {
