@@ -90,7 +90,7 @@ public class SynthesisWindow : UIView
 
         var owned = PlayerInventory.Instance.CountSynthesisMaterials(boundItem);
         var required = ItemLevelConfig.SynthesisMaterialCount;
-        materialCountText.text = $"필수 자료: {required}x {GradeLabel(boundItem.Grade)} {data.itemName} (보유 {owned}/{required})";
+        materialCountText.text = $"필수 재료: {required}x {GradeLabel(boundItem.Grade)} {data.itemName} (보유 {owned}/{required})";
 
         beforeGradeIcon.sprite = currentGradeSprite;
         beforeGradeIcon.enabled = beforeGradeIcon.sprite != null;
