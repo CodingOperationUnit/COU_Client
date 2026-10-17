@@ -8,6 +8,7 @@ public class SynthesisWindow : UIView
 {
     [SerializeField] private Image resultItemIcon;
     [SerializeField] private Image resultGradeIcon;
+    [SerializeField] private Button resultButton;   // 결과 장비를 누르면 합성 후 상세 미리보기
     [SerializeField] private TMP_Text nameText;
     [SerializeField] private TMP_Text gradeBannerText;
     [SerializeField] private Image gradeBanner;
@@ -17,6 +18,7 @@ public class SynthesisWindow : UIView
 
     [SerializeField] private Image materialItemIcon;
     [SerializeField] private TMP_Text materialCountText;
+    [SerializeField] private GameObject combineRow;   // 대상 + 재료 칸 줄 (MAX 일 때 숨김)
 
     [SerializeField] private Image beforeGradeIcon;
     [SerializeField] private Image beforeItemIcon;
@@ -36,6 +38,7 @@ public class SynthesisWindow : UIView
     [SerializeField] private Color rareColor;
 
     private OwnedItem boundItem;
+    private bool animating;   // 합성 연출 중에는 MAX 여도 합성 줄을 보여 준다
     public OwnedItem BoundItem => boundItem;
 
     public event System.Action OnShown;
@@ -43,6 +46,8 @@ public class SynthesisWindow : UIView
     private void Awake()
     {
         backButton.onClick.AddListener(Close);
+        if (resultButton != null)
+            resultButton.onClick.AddListener(OnResultClicked);
         synthesizeButton.onClick.AddListener(OnSynthesizeButtonClicked);
         batchSynthesizeButton.onClick.AddListener(OnBatchSynthesizeButtonClicked);
     }
@@ -90,7 +95,9 @@ public class SynthesisWindow : UIView
 
         var owned = PlayerInventory.Instance.CountSynthesisMaterials(boundItem);
         var required = ItemLevelConfig.SynthesisMaterialCount;
-        materialCountText.text = $"필수 재료: {required}x {GradeLabel(boundItem.Grade)} {data.itemName} (보유 {owned}/{required})";
+        materialCountText.text = boundItem.CanSynthesize
+            ? $"필수 재료: {required}x {GradeLabel(boundItem.Grade)} {data.itemName} (보유 {owned}/{required})"
+            : "최대 등급이라 더 이상 합성할 수 없습니다";
 
         beforeGradeIcon.sprite = currentGradeSprite;
         beforeGradeIcon.enabled = beforeGradeIcon.sprite != null;
@@ -130,6 +137,27 @@ public class SynthesisWindow : UIView
         }
 
         batchSynthesizeButtonText.text = "일괄 합성";
+
+        ApplyMaxLayout();
+    }
+
+    // 레어(MAX)면 쓸 수 없는 스탯 증가 줄과 합성 재료 줄을 숨긴다
+    private void ApplyMaxLayout()
+    {
+        var isMax = boundItem != null && !boundItem.CanSynthesize;
+
+        if (statBonusText != null)
+            statBonusText.transform.parent.gameObject.SetActive(!isMax);
+
+        if (combineRow != null)
+            combineRow.SetActive(!isMax || animating);
+    }
+
+    private void OnResultClicked()
+    {
+        if (boundItem == null) return;
+
+        UIManager.Instance.Get<EquipDetailPopUp>().ShowPreview(boundItem);
     }
 
     private void OnSynthesizeButtonClicked()
@@ -169,6 +197,10 @@ public class SynthesisWindow : UIView
     {
         this.DOKill(true);   // 이전 연출이 남아 있으면 끝내서 칸을 제자리로 돌려 놓는다
 
+        // 마지막 단계(→ 레어)에서도 합성 줄이 연출 동안은 보이도록 한다
+        animating = true;
+        ApplyMaxLayout();
+
         var parts = new[] { beforeGradeIcon.transform, materialSlot1GradeIcon.transform, materialSlot2GradeIcon.transform };
         var homes = new Vector3[parts.Length];
         var scales = new Vector3[parts.Length];
@@ -196,6 +228,9 @@ public class SynthesisWindow : UIView
                     parts[i].localPosition = homes[i];
                     parts[i].localScale = scales[i];
                 }
+
+                animating = false;
+                ApplyMaxLayout();
             })
             .SetTarget(this)
             .AsUI(this);

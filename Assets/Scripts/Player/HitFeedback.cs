@@ -49,6 +49,7 @@ public class HitFeedback : MonoBehaviour
 
         Haptics.Vibrate(vibrateMs);
         Flash();
+        GameManager.Sound.PlaySFX(GameConstants.Sfx.PLAYER_HIT, 0.8f, Random.Range(0.95f, 1.05f));
     }
 
     private void Flash()

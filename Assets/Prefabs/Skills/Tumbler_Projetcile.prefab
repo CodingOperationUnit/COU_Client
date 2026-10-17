@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6747141651139493754}
   - component: {fileID: 3662551921607589375}
+  - component: {fileID: 8478868535336364511}
   m_Layer: 0
   m_Name: Sprite
   m_TagString: Untagged
@@ -81,7 +82,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 75f5f34dc1b5347e0b8351032682f224, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 29986394a63ca934592e9066498c6601, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -91,6 +92,19 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &8478868535336364511
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6999960745208674203}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ab7257c1eb9ad44f803b3ff43baef46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpinAnimation
+  _degreesPerSecond: 720
 --- !u!1 &8339034260200281928
 GameObject:
   m_ObjectHideFlags: 0
@@ -174,6 +188,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26895a5655afa9147959df07361a2ec4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LinearProjectile
+  _sfx: {fileID: 0}
   lifeTime: 3
   _chainRadius: 3
 --- !u!50 &6024709397990492591

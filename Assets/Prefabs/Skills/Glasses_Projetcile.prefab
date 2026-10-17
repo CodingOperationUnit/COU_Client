@@ -110,6 +110,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26895a5655afa9147959df07361a2ec4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LinearProjectile
+  _sfx: {fileID: 0}
   lifeTime: 3
   _chainRadius: 3
 --- !u!1 &6821921413492626282
@@ -139,7 +140,7 @@ Transform:
   m_GameObject: {fileID: 6821921413492626282}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
-  m_LocalPosition: {x: -0.044, y: -0.121, z: 0}
+  m_LocalPosition: {x: -0.102, y: 0.015, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -9,11 +9,14 @@ public sealed class Skill_Speaker : PersistentSkillBase
         // 스피커 사이 간격이 균등하도록 시작 각도를 나눔. 한 번만 계산해서 오브젝트마다 공유
         SkillStats objectStats = BuildStats();
 
+        // 회전 반지름은 사거리 증가 보너스까지 반영한 Range를 씀
+        float radius = Range;
+
         for(int i = 0; i < count; i++)
         {
             float startAngle = 360.0f / count * i;
 
-            SpawnPersistent(transform.position, new OrbitData(objectStats, transform, startAngle, skillData.skillRange));
+            SpawnPersistent(transform.position, new OrbitData(objectStats, transform, startAngle, radius));
         }
     }
 }
