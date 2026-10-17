@@ -120,6 +120,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26895a5655afa9147959df07361a2ec4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LinearProjectile
+  _sfx: {fileID: 8300000, guid: 0bf75cb2ec872da4683c0fb91d568e0d, type: 3}
   lifeTime: 0.5
   _chainRadius: 3
 --- !u!1 &4213195692300046445

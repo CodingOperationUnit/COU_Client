@@ -233,6 +233,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 165e2f68a9dd1c843a2859b75fd0653e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KeyboardObject
+  _sfx: {fileID: 8300000, guid: 5c27cfed4e9cd504ea191f0a0afa730a, type: 3}
   _hitArea: {fileID: 0}
   _hitDelay: 0
   _lifeTime: 0.2
