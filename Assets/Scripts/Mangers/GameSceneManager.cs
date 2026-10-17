@@ -30,6 +30,8 @@ public class GameSceneManager : MonoSingleton<GameSceneManager>
     // 다만 가는 씬이 지금 곡을 그대로 쓰면(로그인 ↔ 메인) 끊지 않고 이어서 들려준다
     private static void StopBgmForScene(string nextSceneName)
     {
+        GameManager.Sound.StopAllSFX();
+
         string next = GameConstants.Bgm.ForScene(nextSceneName);
         if (next != null && GameManager.Sound.CurrentBgmName == next) return;
 

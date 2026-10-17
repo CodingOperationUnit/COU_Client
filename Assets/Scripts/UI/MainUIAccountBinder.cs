@@ -14,7 +14,7 @@ public class MainUIAccountBinder : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (GameManager.PlayerData != null)
+        if (PlayerDataManager.HasInstance)
             GameManager.PlayerData.OnPlayerDataChanged -= RefreshAll;
     }
 
