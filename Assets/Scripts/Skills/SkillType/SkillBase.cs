@@ -30,6 +30,9 @@ public abstract class SkillBase
     public int Level => level;
     public bool IsEquipped { get; private set; }
 
+    // 5레벨이 되고 짝 패시브를 가지면 진화함 (SkillEvolutionTable). 한 번 진화하면 유지됨
+    public bool IsEvolved { get; private set; }
+
     public int SkillId => skillData != null ? skillData.skillId : -1;
     // 적 탐지 범위. 사거리증가 보너스 포함
     public float Range => skillData != null ? GetPercentStat(SkillPercentStat.Range, skillData.skillRange) : 0.0f;
@@ -41,6 +44,7 @@ public abstract class SkillBase
     {
         skillData = data;
         level = 0;
+        IsEvolved = false;
 
         _levelBonuses = GameManager.JsonData.GetSkillLevelsFromJson(data.skillId);
         RecalculateLevelBonuses();
@@ -87,6 +91,23 @@ public abstract class SkillBase
         level = Math.Clamp(level + 1, 1, MaxLevel);
         RecalculateLevelBonuses();
         NotifyLevelChanged();
+    }
+
+    // 진화 조건을 만족했을 때 SkillController가 부름. 이미 진화한 스킬은 무시
+    public void Evolve()
+    {
+        if(IsEvolved)
+        {
+            return;
+        }
+
+        IsEvolved = true;
+        OnEvolved();
+    }
+
+    // 진화했을 때 스킬별 효과를 적용하는 곳. 진화 효과가 없는 스킬은 오버라이드하지 않음
+    protected virtual void OnEvolved()
+    {
     }
 
     public virtual void LevelDown()

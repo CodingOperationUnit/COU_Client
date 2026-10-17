@@ -78,6 +78,7 @@ public class SkillController : MonoBehaviour
         if(existing != null)
         {
             existing.Levelup();
+            RefreshEvolutions();
             return true;
         }
 
@@ -118,6 +119,9 @@ public class SkillController : MonoBehaviour
 
 
         slots.Add(skill);
+
+        // 방금 얻은 패시브가 이미 5레벨인 액티브의 짝일 수 있으므로 슬롯에 넣은 뒤 확인
+        RefreshEvolutions();
         return true;
     }
 
@@ -131,7 +135,39 @@ public class SkillController : MonoBehaviour
         }
 
         skill.Levelup();
+        RefreshEvolutions();
         return true;
+    }
+
+    // 액티브가 5레벨이고 짝 패시브(SkillEvolutionTable)를 하나라도 가지고 있으면 진화시킴
+    // 액티브가 5레벨이 되는 순간과 패시브를 얻는 순간 모두 여기서 확인하므로 어느 쪽이 먼저여도 진화함. 한 번 진화하면 유지됨
+    private void RefreshEvolutions()
+    {
+        foreach(SkillBase active in _activeSkills)
+        {
+            if(active.IsEvolved || active.Level < SkillBase.MaxLevel)
+            {
+                continue;
+            }
+
+            if(HasEvolutionPassive(active.SkillId))
+            {
+                active.Evolve();
+            }
+        }
+    }
+
+    private bool HasEvolutionPassive(int activeSkillId)
+    {
+        foreach(int passiveId in SkillEvolutionTable.GetPassiveIds(activeSkillId))
+        {
+            if(_passiveSkills.Exists(s => s.SkillId == passiveId))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public bool UnequipSkill(int skillId)

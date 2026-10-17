@@ -50,6 +50,12 @@ public abstract class PersistentSkillBase : SkillBase
         Respawn();
     }
 
+    // 진화하면 개수 등이 달라질 수 있으므로 다시 생성
+    protected override void OnEvolved()
+    {
+        Respawn();
+    }
+
     // 오브젝트는 생성 시점의 수치(개수, 대미지 등)를 그대로 쓰므로, 관련 보너스가 바뀌면 다시 만들어야 반영됨
     private void HandleModifiersChanged()
     {
