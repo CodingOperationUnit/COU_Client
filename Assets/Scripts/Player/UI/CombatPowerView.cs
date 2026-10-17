@@ -48,7 +48,7 @@ public class CombatPowerView : MonoBehaviour
         if (isInventorySubscribed && PlayerInventory.Instance != null)
             PlayerInventory.Instance.OnInventoryChanged -= Refresh;
 
-        if (isPlayerDataSubscribed && GameManager.PlayerData != null)
+        if (isPlayerDataSubscribed && PlayerDataManager.HasInstance)
             GameManager.PlayerData.OnPlayerDataChanged -= OnPlayerDataChanged;
     }
 

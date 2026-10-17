@@ -44,7 +44,7 @@ public class EvolutionTabPresenter : MonoBehaviour
         tab.UnlockRequested -= HandleUnlockRequested;
         tab.UnlockBlockLabel = null;
 
-        if (isPlayerDataSubscribed && GameManager.PlayerData != null)
+        if (isPlayerDataSubscribed && PlayerDataManager.HasInstance)
             GameManager.PlayerData.OnPlayerDataChanged -= OnPlayerDataChanged;
         isPlayerDataSubscribed = false;
     }

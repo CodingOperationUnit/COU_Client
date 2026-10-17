@@ -97,7 +97,7 @@ public class CharacterEquipView : MonoBehaviour
     {
         if (PlayerInventory.Instance != null)
             PlayerInventory.Instance.OnInventoryChanged -= Refresh;
-        if (GameManager.PlayerData != null)                                   // 추가
+        if (PlayerDataManager.HasInstance)
             GameManager.PlayerData.OnPlayerDataChanged -= OnPlayerDataChanged;
     }
 
