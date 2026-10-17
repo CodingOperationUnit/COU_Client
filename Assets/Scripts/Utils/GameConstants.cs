@@ -93,8 +93,6 @@ public static class GameConstants
         public const string BUY_SUPPLY_BOX = "UI/BuySupplyBox";   // 전리품 상자 구매
         public const string BUY_GOLD = "UI/BuyGold";              // 골드 구매
         public const string BUY_GEM = "UI/BuyGem";                // 젬 구매
-        public const string LUCK_TRAIN_COIN = "UI/LuckTrainCoin";   // 행운열차 칸 이동 (칸마다 1회)
-        public const string LUCK_TRAIN_RESULT = "UI/LuckTrainResult";   // 행운열차 당첨 칸 결정 (칸마다 1회)
 
         // UI (Resources/Sound/SFX/UI/폴더)
         public const string EXPLOSION = "UI/Click";                 // 폭발
@@ -110,7 +108,7 @@ public static class GameConstants
         public const string BOMB = "Battle/Bomb";                    // 폭탄 획득(폭발)
         public const string LEVEL_UP = "Battle/LevelUp";             // 스킬 선택창 열림
         public const string LUCK_TRAIN_TICK = "Battle/LuckTrainTick";     // 행운열차 칸 이동
-        // public const string LUCK_TRAIN_RESULT = "Battle/LuckTrainResult"; // 행운열차 결과
+        public const string LUCK_TRAIN_RESULT = "Battle/LuckTrainResult"; // 행운열차 결과
         public const string STAGE_CLEAR = "Battle/StageClear";       // 스테이지 클리어
         public const string STAGE_FAIL = "Battle/StageFail";         // 스테이지 실패
     }

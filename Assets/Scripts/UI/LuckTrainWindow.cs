@@ -76,7 +76,7 @@ public class LuckTrainWindow : UIView
         resultPanel.SetActive(false);
         for (var i = 0; i < rewardCards.Length; i++)
             rewardCards[i].gameObject.SetActive(i < count);
-        GameManager.Sound.PreloadSFX(GameConstants.Sfx.LUCK_TRAIN_COIN, GameConstants.Sfx.LUCK_TRAIN_RESULT);
+        GameManager.Sound.PreloadSFX(GameConstants.Sfx.LUCK_TRAIN_TICK, GameConstants.Sfx.LUCK_TRAIN_RESULT);
         Open();
     }
 
@@ -153,7 +153,7 @@ public class LuckTrainWindow : UIView
 
     // 칸에 들어갈 때 코인 효과음 (음량은 coinVolume × 설정창 효과음 볼륨)
     private void PlayCoin()
-        => GameManager.Sound.PlaySFX(GameConstants.Sfx.LUCK_TRAIN_COIN, coinVolume);
+        => GameManager.Sound.PlaySFX(GameConstants.Sfx.LUCK_TRAIN_TICK, coinVolume);
 
     // 당첨 칸이 결정될 때 결과 효과음
     private void PlayResult()
