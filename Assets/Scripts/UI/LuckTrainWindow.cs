@@ -74,6 +74,7 @@ public class LuckTrainWindow : UIView
         resultPanel.SetActive(false);
         for (var i = 0; i < rewardCards.Length; i++)
             rewardCards[i].gameObject.SetActive(i < count);
+        GameManager.Sound.PreloadSFX(GameConstants.Sfx.LUCK_TRAIN_COIN);
         Open();
     }
 
@@ -86,6 +87,7 @@ public class LuckTrainWindow : UIView
         totalSteps = spinLaps * slotHighlights.Length + selected[0];
         highlighted = 0;
         slotHighlights[highlighted].SetActive(true);
+        GameManager.Sound.PlaySFX(GameConstants.Sfx.LUCK_TRAIN_COIN);
         timer = 0f;
         state = State.Spin;
     }
@@ -103,6 +105,7 @@ public class LuckTrainWindow : UIView
             slotHighlights[index].SetActive(true);
             highlighted = index;
             UITween.Punch(slotIcons[index].transform, 0.12f);
+            GameManager.Sound.PlaySFX(GameConstants.Sfx.LUCK_TRAIN_COIN);
         }
         goldText.text = Mathf.FloorToInt(gold * progress).ToString();
 

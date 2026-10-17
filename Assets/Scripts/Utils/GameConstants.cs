@@ -93,6 +93,7 @@ public static class GameConstants
         public const string BUY_SUPPLY_BOX = "UI/BuySupplyBox";   // 전리품 상자 구매
         public const string BUY_GOLD = "UI/BuyGold";              // 골드 구매
         public const string BUY_GEM = "UI/BuyGem";                // 젬 구매
+        public const string LUCK_TRAIN_COIN = "UI/LuckTrainCoin";   // 행운열차 칸 이동 (칸마다 1회)
 
         // UI (Resources/Sound/SFX/UI/폴더)
         public const string EXPLOSION = "UI/Click";                 // 폭발
