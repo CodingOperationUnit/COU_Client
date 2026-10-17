@@ -195,6 +195,6 @@ public abstract class CooldownSkillBase : SkillBase
         }
 
         // 쿨타임 감소 패시브가 겹쳐도 0 이하로 내려가 매 프레임 발동하지 않도록 하한을 둠
-        cooldownTimer = Mathf.Max(GetPercentStat(SkillPercentStat.Cooldown, skillData.skillCooldown * CooldownMultiplier), 0.01f);
+        cooldownTimer = Mathf.Max(GetPercentStat(SkillPercentStat.Cooldown, skillData.skillCooldown), 0.01f);
     }
 }

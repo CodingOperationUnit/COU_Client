@@ -6,13 +6,6 @@ public abstract class SkillBase
 {
     public const int MaxLevel = 5;
 
-    // 수정 예정
-    // ==============================================================================================================
-    // 레벨당 배율 (레벨 1 = 1.0 기준으로 누적)
-    private const float CooldownMultiplierPerLevel = 0.758f;
-    private const float DamageMultiplierPerLevel = 1.2f;
-    // ==============================================================================================================
-
     protected SkillData skillData;
     protected int level = 0;
 
@@ -36,9 +29,6 @@ public abstract class SkillBase
 
     public int Level => level;
     public bool IsEquipped { get; private set; }
-
-    public float CooldownMultiplier => Mathf.Pow(CooldownMultiplierPerLevel, Mathf.Max(level - 1, 0));
-    public float DamageMultiplier => Mathf.Pow(DamageMultiplierPerLevel, Mathf.Max(level - 1, 0));
 
     public int SkillId => skillData != null ? skillData.skillId : -1;
     // 적 탐지 범위. 사거리증가 보너스 포함
@@ -239,11 +229,11 @@ public abstract class SkillBase
         return Mathf.Max(value, 0);
     }
 
-    // 스킬 오브젝트에 넘길 최종 수치 계산 (레벨 배율, 패시브 보너스 반영)
+    // 스킬 오브젝트에 넘길 최종 수치 계산 (SkillLevel 테이블의 레벨 효과, 패시브 보너스 반영)
     protected SkillStats BuildStats()
     {
         // 반올림하지 않고 배율 그대로 넘김 (공격력, 치명타, 반올림은 맞힐 때 PlayerDamageCalculator가 처리)
-        float skillMultiplier = GetPercentStat(SkillPercentStat.Damage, skillData.skillDamage * DamageMultiplier) * DamageScale;
+        float skillMultiplier = GetPercentStat(SkillPercentStat.Damage, skillData.skillDamage) * DamageScale;
         float speed = GetPercentStat(SkillPercentStat.Speed, skillData.skillSpeed);
         float scale = GetPercentStat(SkillPercentStat.Area, 1.0f);
 

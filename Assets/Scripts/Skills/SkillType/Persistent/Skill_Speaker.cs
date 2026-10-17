@@ -2,7 +2,7 @@ public sealed class Skill_Speaker : PersistentSkillBase
 {
     protected override void SpawnObjects()
     {
-        // 3레벨: 3개, 5레벨: 5개
+        // 3레벨: 3개, 5레벨: 5개. 개수 증가 패시브 보너스는 여기에 더해짐
         int baseCount = level >= 5 ? 5 : level >= 3 ? 3 : 1;
         int count = GetFlatStat(SkillFlatStat.ProjectileCount, baseCount);
 
