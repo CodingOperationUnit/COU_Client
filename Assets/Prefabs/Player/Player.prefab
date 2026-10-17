@@ -96,6 +96,7 @@ GameObject:
   - component: {fileID: 2995784205717459434}
   - component: {fileID: 1840985785695172938}
   - component: {fileID: 600662880178459387}
+  - component: {fileID: -702029232772180444}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -318,6 +319,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8acada53aa09aea4e8cf4558de0b0585, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerIntervalHeal
+--- !u!114 &-702029232772180444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2129776847289895548}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c50b6f1b458a81943a137f221819f229, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitFeedback
+  playerHealth: {fileID: 0}
+  vibrateMs: 40
+  borderImage: {fileID: 0}
+  flashAlpha: 0.45
+  flashTime: 0.08
+  cooldown: 0.25
 --- !u!1 &5527811092533456015
 GameObject:
   m_ObjectHideFlags: 0
