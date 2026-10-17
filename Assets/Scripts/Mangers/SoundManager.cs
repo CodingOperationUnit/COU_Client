@@ -245,6 +245,17 @@ public class SoundManager : MonoSingleton<SoundManager>
             LoadClip(sfxCache, GameConstants.Paths.SFX_PATH, n);
     }
 
+    /// <summary>재생 중인 효과음을 모두 즉시 정지한다. (씬을 떠날 때 긴 효과음이 다음 씬으로 이어지지 않게)</summary>
+    public void StopAllSFX()
+    {
+        foreach (var source in sfxPool)
+        {
+            if (source == null || !source.isPlaying) continue;
+            source.Stop();
+            source.clip = null;
+        }
+    }
+
     private AudioSource GetFreeSfxSource()
     {
         foreach (var s in sfxPool)
