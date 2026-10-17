@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8550011257249591864}
   - component: {fileID: 5294392969929632986}
   - component: {fileID: 3618473855360933245}
-  - component: {fileID: 7578933503343459729}
+  - component: {fileID: 1795480418005466387}
   m_Layer: 10
   m_Name: Monitor_Projetcile
   m_TagString: Untagged
@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.5, y: 1.5, z: 1}
+  m_LocalScale: {x: 1.5, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7100313529810160894}
@@ -108,7 +108,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &7578933503343459729
+--- !u!114 &1795480418005466387
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -117,10 +117,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 671241773216192966}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 17207021b92e83f4c8a916e4e0b95d1d, type: 3}
+  m_Script: {fileID: 11500000, guid: 26895a5655afa9147959df07361a2ec4, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PiercingProjectile
+  m_EditorClassIdentifier: Assembly-CSharp::LinearProjectile
+  _sfx: {fileID: 8300000, guid: 0bf75cb2ec872da4683c0fb91d568e0d, type: 3}
   lifeTime: 0.5
+  _chainRadius: 3
 --- !u!1 &4213195692300046445
 GameObject:
   m_ObjectHideFlags: 0
@@ -131,6 +133,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7100313529810160894}
   - component: {fileID: 3640390186701319891}
+  - component: {fileID: 3746259385571147470}
   m_Layer: 0
   m_Name: Sprite
   m_TagString: Untagged
@@ -147,8 +150,8 @@ Transform:
   m_GameObject: {fileID: 4213195692300046445}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0.12, z: 0}
+  m_LocalScale: {x: 1, y: 5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8550011257249591864}
@@ -202,7 +205,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  m_Sprite: {fileID: 8852551827979054909, guid: f7ef3aca42b0e87439fb28f99a8e9e07, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -212,3 +215,25 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &3746259385571147470
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4213195692300046445}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 666050ca232d96346958f372c27de867, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpriteFlipbook
+  _renderer: {fileID: 0}
+  _frames:
+  - {fileID: 8852551827979054909, guid: f7ef3aca42b0e87439fb28f99a8e9e07, type: 3}
+  - {fileID: -8013616983468875789, guid: f7ef3aca42b0e87439fb28f99a8e9e07, type: 3}
+  - {fileID: 3695492288912404985, guid: f7ef3aca42b0e87439fb28f99a8e9e07, type: 3}
+  - {fileID: 4833036727539891820, guid: f7ef3aca42b0e87439fb28f99a8e9e07, type: 3}
+  - {fileID: -5558526262876272675, guid: f7ef3aca42b0e87439fb28f99a8e9e07, type: 3}
+  - {fileID: -1318116876, guid: f7ef3aca42b0e87439fb28f99a8e9e07, type: 3}
+  _duration: 0.5
+  _loop: 0

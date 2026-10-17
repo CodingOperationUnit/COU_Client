@@ -293,7 +293,7 @@ public class BattleManager : MonoBehaviour
 
             var skill = FindSkill(candidates[i]);
             var data = GameManager.JsonData.GetSkillDataFromJson(candidates[i]);
-            selectWindow.SetOption(i, Resources.Load<Sprite>(data.IconPath), data.skillName, data.skillDescription, skill == null ? 1 : skill.Level + 1, skill == null);
+            selectWindow.SetOption(i, Resources.Load<Sprite>(data.IconPath), data.skillName, data.skillDescription, skill == null ? 1 : skill.Level + 1, skill == null, data.skillCategory);
         }
 
         if (count == 0)

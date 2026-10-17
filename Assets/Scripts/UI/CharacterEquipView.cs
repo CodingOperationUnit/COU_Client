@@ -13,6 +13,8 @@ public class CharacterEquipView : MonoBehaviour
         public Image frame;  
         public Image icon; 
         public Button button;
+        public GameObject levelBg;   // 레벨 배지 배경
+        public TMP_Text levelText;   // 장착한 장비의 "Lv1" 표시
 
         [NonSerialized] public Sprite defaultFrameSprite;
         [NonSerialized] public bool cached;
@@ -164,6 +166,8 @@ public class CharacterEquipView : MonoBehaviour
                 slot.frame.sprite = gradeSprite != null ? gradeSprite : slot.defaultFrameSprite;
                 slot.frame.enabled = slot.frame.sprite != null;
             }
+
+            SetLevel(slot, equippedItem.level);
         }
         else
         {
@@ -184,6 +188,24 @@ public class CharacterEquipView : MonoBehaviour
                 slot.frame.sprite = slot.defaultFrameSprite;
                 slot.frame.enabled = slot.frame.sprite != null;
             }
+
+            SetLevel(slot, null);
+        }
+    }
+
+    // 장착 중이면 레벨을 보여 주고, 빈 슬롯이면 배지를 숨긴다
+    private static void SetLevel(SlotUI slot, int? level)
+    {
+        var show = level.HasValue;
+
+        if (slot.levelBg != null)
+            slot.levelBg.SetActive(show);
+
+        if (slot.levelText != null)
+        {
+            slot.levelText.gameObject.SetActive(show);
+            if (show)
+                slot.levelText.text = $"Lv{level.Value}";
         }
     }
 }

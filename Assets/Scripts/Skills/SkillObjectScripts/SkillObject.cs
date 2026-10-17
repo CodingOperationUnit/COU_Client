@@ -19,7 +19,7 @@ public abstract class SkillObject<TInitData> : SkillObjectBase, ISkillPoolable
     // 활성화 되고 나서
     public virtual void OnSpawn()
     {
-
+        PlaySfx();
     }
 
     public virtual void OnDespawn()

@@ -90,7 +90,7 @@ SpriteRenderer:
   m_Size: {x: 0.17944536, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_SpriteSortPoint: 0
 --- !u!114 &4697970477075628775
 MonoBehaviour:
@@ -158,4 +158,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebaa4ed55733d7b41bf47165b3eccf51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LightningObject
+  _sfx: {fileID: 8300000, guid: fddb37fee45e04040b2a2c6e94dd09bf, type: 3}
   _displayTime: 0.2

@@ -2,23 +2,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class TemporaryConstClass
-{
-    // 액티브
-    public const int Tumbler = 20010;
-    public const int Glasses = 20020;
-    public const int Monitor = 20030;
-    public const int Speaker = 20040;
-    public const int Mouse = 20050;
-    public const int Keyboard = 20060;
-    public const int CPU = 20070;
-    public const int PowerStrip = 20080;
-    public const int CtrlZ = 20090;
-
-    // 패시브
-
-}
-
 public class SkillController : MonoBehaviour
 {
     // 액티브 슬롯 수 (외부에서 참조하므로 이름 유지)
