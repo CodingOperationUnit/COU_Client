@@ -10,8 +10,16 @@ public static class EvolutionService
     {
         yield return EvolutionApi.Upgrade(result =>
         {
-            if (result.IsSuccess && result.Data != null)
-                Apply(result.Data);
+            try
+            {
+                if (result.IsSuccess && result.Data != null)
+                    Apply(result.Data);
+            }
+            catch (Exception e)
+            {
+                // 화면 갱신 중 에러가 나도 요청 완료 처리(onComplete)는 반드시 실행
+                UnityEngine.Debug.LogException(e);
+            }
 
             onComplete?.Invoke(result);
         });

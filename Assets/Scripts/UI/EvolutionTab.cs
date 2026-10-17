@@ -37,6 +37,7 @@ public class EvolutionTab : UIView
     [SerializeField] private GameObject dnaColumnRoot;
 
     public event Action<int> UnlockRequested;
+    public Func<int, string> UnlockBlockLabel;
 
     private bool isLinearMode;
     private readonly List<GameObject> spawned = new();
@@ -158,6 +159,16 @@ public class EvolutionTab : UIView
 
         var view = (RectTransform)column.views[index].transform;
         var position = view.anchoredPosition + new Vector2(0f, view.rect.height / 2);
+
+        if (UnlockBlockLabel != null)
+        {
+            // 다음 노드면 항상 버튼(비용 포함)을 보여 주고, 못 하는 이유가 있으면 비활성 + 사유 표시
+            bool isNext = index == column.unlocked;
+            string blockLabel = isNext ? UnlockBlockLabel(index) : null;
+            tooltip.Show(column.nodes[index], position, isNext, isNext && blockLabel == null, blockLabel, column.currencyColor);
+            return;
+        }
+
         tooltip.Show(column.nodes[index], position, CanUnlock(column, index), column.currencyColor);
     }
 
@@ -263,6 +274,16 @@ public class EvolutionTab : UIView
     // 서버 요청 중 해금 버튼 잠금
     public void SetUnlockInteractable(bool interactable)
         => tooltip.UnlockButton.interactable = interactable;
+
+    // 툴팁이 열려 있으면 현재 선택한 노드로 다시 표시 (진화 요청 전후로 버튼·문구 갱신)
+    public void RefreshTooltip()
+    {
+        if (selectedColumn == null || selectedColumn.nodes == null) return;
+        if (!tooltip.gameObject.activeSelf) return;
+        if (selectedIndex < 0 || selectedIndex >= selectedColumn.nodes.Length) return;
+
+        Select(selectedColumn, selectedIndex);
+    }
 
     // 이전에 만든 노드·선·레벨 표시 정리
     private void Clear()
