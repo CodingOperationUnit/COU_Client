@@ -121,6 +121,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LinearProjectile
   _sfx: {fileID: 8300000, guid: 0bf75cb2ec872da4683c0fb91d568e0d, type: 3}
+  _hitSfx: {fileID: 8300000, guid: 96fa9377a17a51d45b577ff1a17acd5e, type: 3}
   lifeTime: 0.5
   _chainRadius: 3
 --- !u!1 &4213195692300046445
