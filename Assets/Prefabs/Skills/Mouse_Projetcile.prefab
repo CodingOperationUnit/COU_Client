@@ -228,7 +228,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19a1d67d1d5e06c4b9fd17af289a6050, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HomingProjectile
-  _sfx: {fileID: 0}
+  _sfx: {fileID: 8300000, guid: d3fa132418b0b574490ab57670f6d866, type: 3}
+  _hitSfx: {fileID: 8300000, guid: 84c084fb51e40094faf9563f6bbfcfd2, type: 3}
   lifeTime: 3
   _chainRadius: 3
   _renderer: {fileID: 5381331358081311882}

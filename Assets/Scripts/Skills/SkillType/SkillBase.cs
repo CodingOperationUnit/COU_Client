@@ -6,13 +6,6 @@ public abstract class SkillBase
 {
     public const int MaxLevel = 5;
 
-    // 수정 예정
-    // ==============================================================================================================
-    // 레벨당 배율 (레벨 1 = 1.0 기준으로 누적)
-    private const float CooldownMultiplierPerLevel = 0.758f;
-    private const float DamageMultiplierPerLevel = 1.2f;
-    // ==============================================================================================================
-
     protected SkillData skillData;
     protected int level = 0;
 
@@ -37,10 +30,10 @@ public abstract class SkillBase
     public int Level => level;
     public bool IsEquipped { get; private set; }
 
-    public float CooldownMultiplier => Mathf.Pow(CooldownMultiplierPerLevel, Mathf.Max(level - 1, 0));
-    public float DamageMultiplier => Mathf.Pow(DamageMultiplierPerLevel, Mathf.Max(level - 1, 0));
+    // 5레벨이 되고 짝 패시브를 가지면 진화함 (SkillEvolutionTable). 한 번 진화하면 유지됨
+    public bool IsEvolved { get; private set; }
 
-    public int SkillId => skillData != null ? skillData.skillId : -1;
+    public long SkillId => skillData != null ? skillData.skillId : -1;
     // 적 탐지 범위. 사거리증가 보너스 포함
     public float Range => skillData != null ? GetPercentStat(SkillPercentStat.Range, skillData.skillRange) : 0.0f;
 
@@ -51,6 +44,7 @@ public abstract class SkillBase
     {
         skillData = data;
         level = 0;
+        IsEvolved = false;
 
         _levelBonuses = GameManager.JsonData.GetSkillLevelsFromJson(data.skillId);
         RecalculateLevelBonuses();
@@ -97,6 +91,23 @@ public abstract class SkillBase
         level = Math.Clamp(level + 1, 1, MaxLevel);
         RecalculateLevelBonuses();
         NotifyLevelChanged();
+    }
+
+    // 진화 조건을 만족했을 때 SkillController가 부름. 이미 진화한 스킬은 무시
+    public void Evolve()
+    {
+        if(IsEvolved)
+        {
+            return;
+        }
+
+        IsEvolved = true;
+        OnEvolved();
+    }
+
+    // 진화했을 때 스킬별 효과를 적용하는 곳. 진화 효과가 없는 스킬은 오버라이드하지 않음
+    protected virtual void OnEvolved()
+    {
     }
 
     public virtual void LevelDown()
@@ -216,6 +227,13 @@ public abstract class SkillBase
     // 두 보너스는 합산한 뒤 한 번에 곱함 (레벨 +5%, 패시브 +10% → 기본값 × 1.15)
     protected float GetPercentStat(SkillPercentStat stat, float baseValue)
     {
+        return baseValue * (1.0f + GetPercentTotal(stat));
+    }
+
+    // 기본값에 곱하기 전의 비율 합계 (레벨 추가 효과 + 패시브 보너스). 감소 효과는 음수
+    // 상한처럼 합계 자체에 규칙을 두어야 하는 스탯(쿨타임)이 직접 읽음
+    protected float GetPercentTotal(SkillPercentStat stat)
+    {
         float total = _levelPercentTotals[(int)stat];
 
         if(modifiers != null)
@@ -223,7 +241,7 @@ public abstract class SkillBase
             total += modifiers.GetPercentTotal(stat);
         }
 
-        return baseValue * (1.0f + total);
+        return total;
     }
 
     // 개수처럼 고정값으로 늘어나는 스탯용. 0 미만은 0으로 맞춤
@@ -239,11 +257,11 @@ public abstract class SkillBase
         return Mathf.Max(value, 0);
     }
 
-    // 스킬 오브젝트에 넘길 최종 수치 계산 (레벨 배율, 패시브 보너스 반영)
+    // 스킬 오브젝트에 넘길 최종 수치 계산 (SkillLevel 테이블의 레벨 효과, 패시브 보너스 반영)
     protected SkillStats BuildStats()
     {
         // 반올림하지 않고 배율 그대로 넘김 (공격력, 치명타, 반올림은 맞힐 때 PlayerDamageCalculator가 처리)
-        float skillMultiplier = GetPercentStat(SkillPercentStat.Damage, skillData.skillDamage * DamageMultiplier) * DamageScale;
+        float skillMultiplier = GetPercentStat(SkillPercentStat.Damage, skillData.skillDamage) * DamageScale;
         float speed = GetPercentStat(SkillPercentStat.Speed, skillData.skillSpeed);
         float scale = GetPercentStat(SkillPercentStat.Area, 1.0f);
 

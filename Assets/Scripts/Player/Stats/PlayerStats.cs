@@ -19,7 +19,7 @@ public class PlayerStats : MonoBehaviour
     private string equippedWeaponName;
     private long? equippedWeaponItemId;
     public long? EquippedWeaponItemId { get { EnsureCalculated(); return equippedWeaponItemId; } }   // 무기가 없으면 null
-    private int startingSkillId;
+    private long startingSkillId;
 
     // 장비 등급 효과 (전투 시작 시 고정)
     private int equipmentCriticalChance;
@@ -39,7 +39,7 @@ public class PlayerStats : MonoBehaviour
     public int FinalPotionRecovery { get { EnsureCalculated(); return finalPotionRecovery; } }
     public bool HasWeapon { get { EnsureCalculated(); return hasWeapon; } }
     public string EquippedWeaponName { get { EnsureCalculated(); return equippedWeaponName; } }
-    public int StartingSkillId { get { EnsureCalculated(); return startingSkillId; } }   // 0이면 시작 스킬 없음
+    public long StartingSkillId { get { EnsureCalculated(); return startingSkillId; } }   // 0이면 시작 스킬 없음
 
     // 기본 + 보너스 합
     public int CriticalChance { get { EnsureCalculated(); return Base.playerBaseCriticalChance + equipmentCriticalChance + GetBonus(PlayerBonusStat.CriticalChance); } }

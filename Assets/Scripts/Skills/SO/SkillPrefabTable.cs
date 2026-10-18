@@ -5,7 +5,7 @@ using UnityEngine;
 [Serializable]
 public class SkillPrefabEntry
 {
-    public int SkillId;
+    public long SkillId;
     public SkillObjectBase Prefab;
 }
 
@@ -14,9 +14,9 @@ public class SkillPrefabTable : ScriptableObject
 {
     [SerializeField] private List<SkillPrefabEntry> _entries = new();
 
-    private Dictionary<int, SkillObjectBase> _prefabById;
+    private Dictionary<long, SkillObjectBase> _prefabById;
 
-    public SkillObjectBase Get(int skillId)
+    public SkillObjectBase Get(long skillId)
     {
         if(_prefabById == null)
         {
@@ -34,7 +34,7 @@ public class SkillPrefabTable : ScriptableObject
 
     private void Build()
     {
-        _prefabById = new Dictionary<int, SkillObjectBase>();
+        _prefabById = new Dictionary<long, SkillObjectBase>();
 
         foreach(SkillPrefabEntry entry in _entries)
         {

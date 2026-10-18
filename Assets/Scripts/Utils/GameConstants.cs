@@ -82,7 +82,7 @@ public static class GameConstants
     // 효과음 이름 (Resources/Sound/SFX/{이름})
     public static class Sfx
     {
-        // UI (Resources/Sound/SFX/Skill/ 폴더)
+        // UI (Resources/Sound/SFX/UI/폴더)
         public const string CLICK = "UI/Click";                   // 모든 버튼 공통 (ButtonClickSound가 자동 재생)
         public const string EQUIP = "UI/Equip";                   // 장비 장착
         public const string UNEQUIP = "UI/Unequip";               // 장비 해제
@@ -93,12 +93,6 @@ public static class GameConstants
         public const string BUY_SUPPLY_BOX = "UI/BuySupplyBox";   // 전리품 상자 구매
         public const string BUY_GOLD = "UI/BuyGold";              // 골드 구매
         public const string BUY_GEM = "UI/BuyGem";                // 젬 구매
-
-        // UI (Resources/Sound/SFX/UI/폴더)
-        public const string EXPLOSION = "UI/Click";                 // 폭발
-        public const string ELECTRIC = "UI/Equip";                  // 전기
-        public const string LASER = "UI/Unequip";                   // 레이저
-        public const string SWIP = "UI/EquipLevelUp";               // 휘두르는 소리
 
         // 전투 효과음 (Resources/Sound/SFX/Battle/ 폴더)
         public const string PLAYER_HIT = "Battle/PlayerHit";         // 플레이어 피격
@@ -132,17 +126,25 @@ public static class GameConstants
     public static class TemporaryConstClass
     {
         // 액티브
-        public const int Tumbler = 20010;
-        public const int Glasses = 20020;
-        public const int Monitor = 20030;
-        public const int Speaker = 20040;
-        public const int Mouse = 20050;
-        public const int Keyboard = 20060;
-        public const int CPU = 20070;
-        public const int PowerStrip = 20080;
-        public const int CtrlZ = 20090;
+        public const long TUMBLER = 20010;
+        public const long GLASSES = 20020;
+        public const long MONITOR = 20030;
+        public const long SPEAKER = 20040;
+        public const long MOUSE = 20050;
+        public const long KEYBOARD = 20060;
+        public const long CPU = 20070;
+        public const long POWER_STRIP = 20080;
+        public const long CTRL_Z = 20090;
 
         // 패시브
-
+        public const long ENERGY_DRINK = 21010;
+        public const long EYE_DROPS = 21020;
+        public const long SECOND_MONITOR = 21030;
+        public const long EARBUDS = 21040;
+        public const long MOUSE_PAD = 21050;
+        public const long KEYBOARD_SWITCH = 21060;
+        public const long OVERCLOCK = 21070;
+        public const long STATIC_SHOCK = 21080;
+        public const long SHIFT_KEY = 21090;
     }
 }

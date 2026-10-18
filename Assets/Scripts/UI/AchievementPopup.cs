@@ -228,7 +228,7 @@ public class AchievementPopup : UIPopup
         }
     }
 
-    private static string GetSkillName(int skillId)
+    private static string GetSkillName(long skillId)
     {
         return GameManager.JsonData.SkillDataDic.TryGetValue(skillId, out SkillData skill)
             ? skill.skillDescription

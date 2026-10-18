@@ -5,6 +5,9 @@ using UnityEngine;
 // 쿨타임마다 사거리 안의 적을 찾아 발동하는 스킬의 공통 베이스
 public abstract class CooldownSkillBase : SkillBase
 {
+    // 쿨타임 감소 합계의 상한 (0.5 = 최대 50% 감소). 이 이상 쌓아도 쿨타임은 더 줄지 않음
+    private const float MaxCooldownReduction = 0.5f;
+
     // 반복 발동 사이 간격 (초). 임시 수치
     private const float RepeatInterval = 0.15f;
 
@@ -194,7 +197,10 @@ public abstract class CooldownSkillBase : SkillBase
             return;
         }
 
-        // 쿨타임 감소 패시브가 겹쳐도 0 이하로 내려가 매 프레임 발동하지 않도록 하한을 둠
-        cooldownTimer = Mathf.Max(GetPercentStat(SkillPercentStat.Cooldown, skillData.skillCooldown * CooldownMultiplier), 0.01f);
+        // 쿨타임 감소는 레벨 효과와 패시브를 합쳐 최대 MaxCooldownReduction까지만 적용됨
+        float total = Mathf.Max(GetPercentTotal(SkillPercentStat.Cooldown), -MaxCooldownReduction);
+
+        // 시트 쿨타임이 0이어도 매 프레임 발동하지 않도록 하한을 둠
+        cooldownTimer = Mathf.Max(skillData.skillCooldown * (1.0f + total), 0.01f);
     }
 }

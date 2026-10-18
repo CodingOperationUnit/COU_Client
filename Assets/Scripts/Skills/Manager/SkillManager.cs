@@ -4,7 +4,7 @@ public class SkillManager : MonoSingleton<SkillManager>
 {
     [SerializeField] private SkillPrefabTable _prefabTable;
 
-    public GameObject GetPrefab(int skillId)
+    public GameObject GetPrefab(long skillId)
     {
         if(_prefabTable == null)
         {

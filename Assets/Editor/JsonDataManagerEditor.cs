@@ -13,7 +13,7 @@ public class JsonDataManagerEditor : Editor
     private readonly HashSet<int> expandedSpawnPatterns = new();
     private readonly HashSet<int> expandedStages = new();
     private readonly HashSet<int> expandedStageRosters = new();
-    private readonly HashSet<int> expandedSkills = new();
+    private readonly HashSet<long> expandedSkills = new();
     private readonly HashSet<DropItemType> expandedDropItems = new();
     private readonly HashSet<MonsterType> expandedDropTables = new();
     private readonly HashSet<long> expandedItems = new();
@@ -200,7 +200,7 @@ public class JsonDataManagerEditor : Editor
 
     private static void DrawSkill(SkillData data)
     {
-        EditorGUILayout.IntField("스킬 ID", data.skillId);
+        EditorGUILayout.LongField("스킬 ID", data.skillId);
         EditorGUILayout.TextField("이름", data.skillName ?? string.Empty);
         EditorGUILayout.EnumPopup("카테고리", data.skillCategory);
         EditorGUILayout.TextField("설명", data.skillDescription ?? string.Empty);
@@ -415,7 +415,7 @@ public class JsonDataManagerEditor : Editor
         EditorGUILayout.TextField("설명", data.achievementDescription ?? string.Empty);
         EditorGUILayout.TextField("조건 종류 문자열", data.achievementConditionType ?? string.Empty);
         EditorGUILayout.EnumPopup("조건 종류", data.ConditionType);
-        EditorGUILayout.IntField("대상 스킬 ID", data.targetSkillId);
+        EditorGUILayout.LongField("대상 스킬 ID", data.targetSkillId);
         EditorGUILayout.TextField("대상 드롭 아이템 문자열", data.targetDropItemType ?? string.Empty);
         if (data.HasTargetDropItem)
             EditorGUILayout.EnumPopup("대상 드롭 아이템", data.TargetDropItemType);
