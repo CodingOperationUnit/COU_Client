@@ -18,7 +18,7 @@ public enum SkillCategory
 [Serializable]
 public class SkillData : ISerializationCallbackReceiver
 {
-    public int skillId;
+    public long skillId;
     public string skillName;
     public SkillCategory skillCategory;
     public string skillTargetType;

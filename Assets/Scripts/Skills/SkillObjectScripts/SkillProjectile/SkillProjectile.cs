@@ -37,5 +37,8 @@ public abstract class SkillProjectile : SkillObject<ProjectileData>, ISkillPoola
         PlayerDamageCalculator.HitResult hit = stats.CalculateHit();
 
         enemy.Damaged(hit.damage, stats.SkillId);
+
+        // 투사체(마우스, 텀블러, 안경, CtrlZ)의 타격음은 모두 여기서 재생됨
+        PlayHitSfx();
     }
 }

@@ -70,7 +70,7 @@ public class SkillController : MonoBehaviour
         }
     }
 
-    public bool EquipSkill(int skillId)
+    public bool EquipSkill(long skillId)
     {
         // 이미 장착한 스킬은 슬롯이 가득 차 있어도 레벨업할 수 있어야 하므로 슬롯 검사보다 먼저 확인
         SkillBase existing = FindSkill(skillId);
@@ -78,6 +78,7 @@ public class SkillController : MonoBehaviour
         if(existing != null)
         {
             existing.Levelup();
+            RefreshEvolutions();
             return true;
         }
 
@@ -118,10 +119,13 @@ public class SkillController : MonoBehaviour
 
 
         slots.Add(skill);
+
+        // 방금 얻은 패시브가 이미 5레벨인 액티브의 짝일 수 있으므로 슬롯에 넣은 뒤 확인
+        RefreshEvolutions();
         return true;
     }
 
-    public bool LevelUpSkill(int skillId)
+    public bool LevelUpSkill(long skillId)
     {
         SkillBase skill = FindSkill(skillId);
 
@@ -131,10 +135,42 @@ public class SkillController : MonoBehaviour
         }
 
         skill.Levelup();
+        RefreshEvolutions();
         return true;
     }
 
-    public bool UnequipSkill(int skillId)
+    // 액티브가 5레벨이고 짝 패시브(SkillEvolutionTable)를 하나라도 가지고 있으면 진화시킴
+    // 액티브가 5레벨이 되는 순간과 패시브를 얻는 순간 모두 여기서 확인하므로 어느 쪽이 먼저여도 진화함. 한 번 진화하면 유지됨
+    private void RefreshEvolutions()
+    {
+        foreach(SkillBase active in _activeSkills)
+        {
+            if(active.IsEvolved || active.Level < SkillBase.MaxLevel)
+            {
+                continue;
+            }
+
+            if(HasEvolutionPassive(active.SkillId))
+            {
+                active.Evolve();
+            }
+        }
+    }
+
+    private bool HasEvolutionPassive(long activeSkillId)
+    {
+        foreach(long passiveId in SkillEvolutionTable.GetPassiveIds(activeSkillId))
+        {
+            if(_passiveSkills.Exists(s => s.SkillId == passiveId))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public bool UnequipSkill(long skillId)
     {
         SkillBase skill = FindSkill(skillId);
 
@@ -164,7 +200,7 @@ public class SkillController : MonoBehaviour
     }
 
     // 액티브/패시브 구분 없이 장착된 스킬을 찾음
-    private SkillBase FindSkill(int skillId)
+    private SkillBase FindSkill(long skillId)
     {
         SkillBase skill = _activeSkills.Find(s => s.SkillId == skillId);
 

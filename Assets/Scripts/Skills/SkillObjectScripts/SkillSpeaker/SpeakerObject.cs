@@ -100,6 +100,7 @@ public sealed class SpeakerObject : SkillObject<OrbitData>
         Debug.Log($"[Speaker#{GetInstanceID()}] -> Enemy#{enemyId} dmg={hit.damage} crit={hit.isCritical} frame={Time.frameCount} time={now:F2}");
 
         enemy.Damaged(hit.damage, stats.SkillId);
+        PlayHitSfx();
     }
 
     // 쿨타임이 지난 기록을 제거해서 죽은 적의 기록이 계속 쌓이지 않게 함

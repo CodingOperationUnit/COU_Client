@@ -70,7 +70,7 @@ public class PlayerManager : MonoBehaviour
 
     private void EquipStartingSkill()
     {
-        int skillId = Stats.StartingSkillId;
+        long skillId = Stats.StartingSkillId;
 
         if (skillId == WeaponSkillTable.NoSkill)
         {

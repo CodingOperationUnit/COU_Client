@@ -56,8 +56,8 @@ public class BattleResultRequest
     public int rewardBoxes;
     
     // 업적 진행 집계
-    public Dictionary<int, int> skillKills = new();
-    public Dictionary<int, int> skillUpgrades = new();
+    public Dictionary<long, int> skillKills = new();
+    public Dictionary<long, int> skillUpgrades = new();
     public Dictionary<string, int> pickups = new();
     public int luckTrains;   // 행운열차 완주 횟수
 }

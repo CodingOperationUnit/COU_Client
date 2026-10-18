@@ -59,7 +59,7 @@ public abstract class Enemy : MonoBehaviour, IPoolable
     public event Action<Enemy> OnHpChanged;
 
     // 마지막으로 피해를 준 스킬. 0이면 스킬이 아닌 피해(폭탄 등)
-    public int LastHitSkillId { get; private set; }
+    public long LastHitSkillId { get; private set; }
     
     public MonsterType Type => Data != null ? Data.Type : MonsterType.Normal;
     public bool IsBoss => Data != null && Data.IsBoss;
@@ -226,7 +226,7 @@ public abstract class Enemy : MonoBehaviour, IPoolable
         => baseDamage <= 0 ? 0 : Mathf.Max(1, Mathf.RoundToInt(baseDamage * damageScale));
 
     // 몬스터의 피격
-    public virtual void Damaged(int damage, int sourceSkillId = 0)
+    public virtual void Damaged(int damage, long sourceSkillId = 0)
     {
         // 몬스터가 죽은 상태면 return
         if (isDead) { return; }

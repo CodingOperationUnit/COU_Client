@@ -24,8 +24,8 @@ public class PlayerLuckTrain : MonoBehaviour
     private bool isShowing;
     private int rewardGold;
 
-    private readonly int[] slotSkillIds = new int[SlotCount];
-    private readonly List<int> selectedSkillIds = new();
+    private readonly long[] slotSkillIds = new long[SlotCount];
+    private readonly List<long> selectedSkillIds = new();
 
     public int Pending => pending;
     public bool IsShowing => isShowing;
@@ -97,7 +97,7 @@ public class PlayerLuckTrain : MonoBehaviour
         // 중복 허용
         for (int i = 0; i < SlotCount; i++)
         {
-            int skillId = candidates[Random.Range(0, candidates.Count)].SkillId;
+            long skillId = candidates[Random.Range(0, candidates.Count)].SkillId;
             slotSkillIds[i] = skillId;
             window.SetSlot(i, Resources.Load<Sprite>(GameManager.JsonData.GetSkillDataFromJson(skillId).IconPath));
         }
@@ -105,11 +105,11 @@ public class PlayerLuckTrain : MonoBehaviour
         int[] selected = DrawSelection(candidates);
 
         selectedSkillIds.Clear();
-        var previewLevels = new Dictionary<int, int>();
+        var previewLevels = new Dictionary<long, int>();
 
         for (int i = 0; i < selected.Length; i++)
         {
-            int skillId = slotSkillIds[selected[i]];
+            long skillId = slotSkillIds[selected[i]];
             selectedSkillIds.Add(skillId);
 
             if (!previewLevels.TryGetValue(skillId, out int level))
@@ -163,26 +163,26 @@ public class PlayerLuckTrain : MonoBehaviour
         return 1;
     }
 
-    private static Dictionary<int, int> BuildRemain(List<SkillBase> candidates)
+    private static Dictionary<long, int> BuildRemain(List<SkillBase> candidates)
     {
-        var remain = new Dictionary<int, int>();
+        var remain = new Dictionary<long, int>();
         foreach (var skill in candidates)
             remain[skill.SkillId] = SkillBase.MaxLevel - skill.Level;
         return remain;
     }
 
-    private int[] TryDrawFive(Dictionary<int, int> remain)
+    private int[] TryDrawFive(Dictionary<long, int> remain)
     {
         var validStarts = new List<int>();
 
         for (int start = 0; start < SlotCount; start++)
         {
-            var counts = new Dictionary<int, int>();
+            var counts = new Dictionary<long, int>();
             bool valid = true;
 
             for (int k = 0; k < 5; k++)
             {
-                int skillId = slotSkillIds[(start + k) % SlotCount];
+                long skillId = slotSkillIds[(start + k) % SlotCount];
                 counts.TryGetValue(skillId, out int count);
                 counts[skillId] = ++count;
 
@@ -207,7 +207,7 @@ public class PlayerLuckTrain : MonoBehaviour
         return result;
     }
 
-    private int[] TryDrawSpread(int count, Dictionary<int, int> remain)
+    private int[] TryDrawSpread(int count, Dictionary<long, int> remain)
     {
         var order = new int[SlotCount];
         for (int i = 0; i < SlotCount; i++)
@@ -226,7 +226,7 @@ public class PlayerLuckTrain : MonoBehaviour
             if (picked.Count == count) break;
             if (IsAdjacentToAny(index, picked)) continue;
 
-            int skillId = slotSkillIds[index];
+            long skillId = slotSkillIds[index];
             if (remain[skillId] <= 0) continue;
 
             picked.Add(index);
@@ -256,7 +256,7 @@ public class PlayerLuckTrain : MonoBehaviour
     private void HandleFinished()
     {
         // 행운열차 레벨업은 연마 업적에 넣지 않는다 (BattleManager의 skillUpgrades 집계를 거치지 않음)
-        foreach (int skillId in selectedSkillIds)
+        foreach (long skillId in selectedSkillIds)
         {
             bool result = skillController.LevelUpSkill(skillId);
             Debug.Log("[PlayerLuckTrain] 스킬 " + skillId + " 등급 상승: " + (result ? "성공" : "실패"));
@@ -283,7 +283,7 @@ public class PlayerLuckTrain : MonoBehaviour
     private bool IsBattleEnded()
         => resultWindow != null && resultWindow.IsOpen;
 
-    private int FindLevel(int skillId)
+    private int FindLevel(long skillId)
     {
         foreach (var skill in skillController.ActiveSkills)
         {
