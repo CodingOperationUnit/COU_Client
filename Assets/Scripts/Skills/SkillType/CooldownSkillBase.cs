@@ -9,7 +9,7 @@ public abstract class CooldownSkillBase : SkillBase
     private const float MaxCooldownReduction = 0.5f;
 
     // 반복 발동 사이 간격 (초). 임시 수치
-    private const float RepeatInterval = 0.15f;
+    private const float RepeatInterval = 0.1f;
 
     // 반복으로 다시 발동한 스킬의 대미지 비율
     private const float RepeatDamageRatio = 0.5f;
