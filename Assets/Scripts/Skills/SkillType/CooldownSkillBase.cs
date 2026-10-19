@@ -191,16 +191,21 @@ public abstract class CooldownSkillBase : SkillBase
 
     protected void ResetCooldown()
     {
+        cooldownTimer = GetCooldown();
+    }
+
+    // 레벨 효과와 패시브를 반영한 최종 쿨타임(초)
+    protected float GetCooldown()
+    {
         if(skillData == null)
         {
-            cooldownTimer = 0.01f;
-            return;
+            return 0.01f;
         }
 
         // 쿨타임 감소는 레벨 효과와 패시브를 합쳐 최대 MaxCooldownReduction까지만 적용됨
         float total = Mathf.Max(GetPercentTotal(SkillPercentStat.Cooldown), -MaxCooldownReduction);
 
         // 시트 쿨타임이 0이어도 매 프레임 발동하지 않도록 하한을 둠
-        cooldownTimer = Mathf.Max(skillData.skillCooldown * (1.0f + total), 0.01f);
+        return Mathf.Max(skillData.skillCooldown * (1.0f + total), 0.01f);
     }
 }

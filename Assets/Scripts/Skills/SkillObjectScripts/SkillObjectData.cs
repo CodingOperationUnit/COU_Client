@@ -105,3 +105,18 @@ public readonly struct LinkData
         Target = target;
     }
 }
+
+// 사용자를 따라다니며 바라보는 방향에 범위를 유지하는 오브젝트 (FacingFieldObject)
+public readonly struct FacingFieldData
+{
+    public readonly SkillStats Stats;
+    public readonly Transform Owner;          // 따라갈 대상 (스킬 사용자)
+    public readonly PlayerMovement Movement;  // 바라보는 방향(FacingDirection)을 읽음
+
+    public FacingFieldData(SkillStats stats, Transform owner, PlayerMovement movement)
+    {
+        Stats = stats;
+        Owner = owner;
+        Movement = movement;
+    }
+}
