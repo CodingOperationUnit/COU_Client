@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// 소환된 자리에서 한 번만 대미지를 주는 범위 (휘두르기, 폭발 등). 판정 시점에 콜라이더와 겹친 적 모두에게 한 번씩 대미지
+// 소환된 자리에서 대미지를 주는 범위 (휘두르기, 폭발, 도트 필드 등). 판정 시점에 콜라이더와 겹친 적 모두에게 한 번씩 대미지
+// _tickInterval이 0이면 첫 판정 한 번뿐이고, 0보다 크면 수명이 끝날 때까지 간격마다 _tickDamageRatio 비율로 반복 판정(도트 필드)
 // 범위의 모양/크기는 프리팹 콜라이더로 정하고 스프라이트와 맞춤. 애니메이션이 끝나는 시간(_lifeTime)에 풀에 반환
 // AoEData.Direction이 있으면 오브젝트의 right(+X)가 그 방향을 향하도록 회전 (프리팹은 오른쪽을 보고 만듦), 없으면 회전하지 않음
 // 적에게 주는 효과가 다른 범위는 이 클래스를 상속해 OnHitEnemy를 오버라이드
@@ -15,6 +16,15 @@ public class AoeHitObject : SkillObject<AoEData>
     // 풀에 반환되기까지의 시간 (애니메이션 길이). 판정 시간보다 짧아도 판정은 끝낸 뒤 반환
     [SerializeField] private float _lifeTime = 0.3f;
 
+    // 첫 판정 뒤 이 간격(초)마다 반복 판정함 (도트 필드). 0이면 한 번만 판정. _lifeTime이 끝날 때까지 반복
+    [SerializeField] private float _tickInterval = 0.0f;
+
+    // 반복 판정(틱) 한 번의 대미지 비율. 첫 판정은 항상 100%이고 이후 틱마다 이 비율 (0.2 = 20%)
+    [SerializeField] private float _tickDamageRatio = 0.2f;
+
+    // 틱 간격이 너무 짧아 한 프레임에 판정이 몰리지 않도록 하는 최소값
+    private const float MinTickInterval = 0.05f;
+
     private readonly List<Collider2D> _overlaps = new();
     private readonly HashSet<Enemy> _hitEnemies = new();
 
@@ -23,6 +33,10 @@ public class AoeHitObject : SkillObject<AoEData>
     private bool _initialized;
     private float _elapsed;
     private bool _hasHit;
+
+    // 다음 틱이 일어날 시각(_elapsed 기준)과 지금 판정의 대미지 비율
+    private float _nextTickTime;
+    private float _damageRatio = 1.0f;
 
     protected override void OnInit(AoEData data)
     {
@@ -53,13 +67,15 @@ public class AoeHitObject : SkillObject<AoEData>
     {
         _elapsed = 0.0f;
         _hasHit = false;
+        _nextTickTime = 0.0f;
+        _damageRatio = 1.0f;
         _hitEnemies.Clear();
     }
 
-    // 판정에 걸린 적 하나에 주는 효과. 기본은 대미지
+    // 판정에 걸린 적 하나에 주는 효과. 기본은 대미지 (첫 판정은 100%, 도트 필드의 틱은 _tickDamageRatio)
     protected virtual void OnHitEnemy(Enemy enemy)
     {
-        PlayerDamageCalculator.HitResult hit = stats.CalculateHit();
+        PlayerDamageCalculator.HitResult hit = stats.CalculateHit(_damageRatio);
 
         enemy.Damaged(hit.damage, stats.SkillId);
     }
@@ -71,12 +87,36 @@ public class AoeHitObject : SkillObject<AoEData>
         if(!_hasHit && _elapsed >= _hitDelay)
         {
             _hasHit = true;
+            _damageRatio = 1.0f;
             Hit();
+
+            _nextTickTime = _hitDelay + Mathf.Max(_tickInterval, MinTickInterval);
+        }
+        else if(_hasHit && _tickInterval > 0.0f)
+        {
+            TickField();
         }
 
         if(_elapsed >= Mathf.Max(_lifeTime, _hitDelay))
         {
             ReturnToPool();
+        }
+    }
+
+    // 첫 판정 뒤 _tickInterval마다 한 번씩 다시 판정. 수명이 끝나는 시각까지 예정된 틱은 프레임이 늦어도 빠뜨리지 않음
+    private void TickField()
+    {
+        float interval = Mathf.Max(_tickInterval, MinTickInterval);
+
+        // 부동소수점 오차로 수명 끝의 마지막 틱이 빠지지 않도록 약간의 여유를 둠
+        while(_nextTickTime <= _lifeTime + 0.0001f && _elapsed >= _nextTickTime)
+        {
+            _nextTickTime += interval;
+            _damageRatio = _tickDamageRatio;
+
+            // 이번 틱에서 같은 적을 한 번만 때리도록, 이전 틱의 기록은 지움
+            _hitEnemies.Clear();
+            Hit();
         }
     }
 

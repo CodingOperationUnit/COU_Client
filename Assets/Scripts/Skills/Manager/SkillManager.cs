@@ -16,4 +16,17 @@ public class SkillManager : MonoSingleton<SkillManager>
 
         return prefab != null ? prefab.gameObject : null;
     }
+
+    // 진화용 프리팹. 지정하지 않은 스킬은 null
+    public GameObject GetEvolvedPrefab(long skillId)
+    {
+        if(_prefabTable == null)
+        {
+            return null;
+        }
+
+        SkillObjectBase prefab = _prefabTable.GetEvolved(skillId);
+
+        return prefab != null ? prefab.gameObject : null;
+    }
 }

@@ -105,6 +105,7 @@ public class SkillController : MonoBehaviour
         if(!isPassive)
         {
             skill.SetPrefab(SkillManager.Instance.GetPrefab(skillId));
+            skill.SetEvolvedPrefab(SkillManager.Instance.GetEvolvedPrefab(skillId));
         }
 
         // 최초 레벨 설정 후 장착해야 OnEquip에서 현재 레벨 기준으로 동작할 수 있음

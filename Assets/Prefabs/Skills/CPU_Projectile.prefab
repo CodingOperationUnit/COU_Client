@@ -153,6 +153,7 @@ MonoBehaviour:
   _sfx: {fileID: 8300000, guid: 9f45e54cd64ad1f4d9da984958f0c7ab, type: 3}
   _hitSfx: {fileID: 0}
   _landingPrefab: {fileID: -2090970527807985498, guid: 3531badab426591429973f63544c8b8e, type: 3}
+  _evolvedLandingPrefab: {fileID: -2090970527807985498, guid: cac479d2bb27ba94691bea254202deff, type: 3}
   _jumpPower: 1.5
   _defaultFlightTime: 0.6
   _minFlightTime: 0.2

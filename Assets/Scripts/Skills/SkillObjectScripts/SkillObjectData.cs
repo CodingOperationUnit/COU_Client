@@ -10,20 +10,28 @@ public readonly struct SkillStats
     public readonly float Speed;
     public readonly float Scale; // 1.0 = 프리팹 원래 크기
     public readonly PlayerStats PlayerStats;
+    public readonly bool IsEvolved; // 이 스킬이 진화한 상태인지. 진화 여부에 따라 다르게 동작하는 오브젝트가 읽음
 
-    public SkillStats(long skillId, float skillMultiplier, float speed, float scale, PlayerStats playerStats)
+    public SkillStats(long skillId, float skillMultiplier, float speed, float scale, PlayerStats playerStats, bool isEvolved = false)
     {
         SkillId = skillId;
         SkillMultiplier = skillMultiplier;
         Speed = speed;
         Scale = scale;
         PlayerStats = playerStats;
+        IsEvolved = isEvolved;
     }
 
     // 적을 맞힐 때마다 호출. 치명타는 맞힐 때마다 따로 판정됨
     public PlayerDamageCalculator.HitResult CalculateHit()
     {
-        return PlayerDamageCalculator.Calculate(SkillMultiplier, PlayerStats);
+        return CalculateHit(1.0f);
+    }
+
+    // 스킬 배율의 damageRatio배만 주는 타격 (도트 필드의 틱 등). 1이면 일반 타격과 같음
+    public PlayerDamageCalculator.HitResult CalculateHit(float damageRatio)
+    {
+        return PlayerDamageCalculator.Calculate(SkillMultiplier * damageRatio, PlayerStats);
     }
 }
 

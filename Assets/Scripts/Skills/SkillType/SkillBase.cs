@@ -10,6 +10,7 @@ public abstract class SkillBase
     protected int level = 0;
 
     protected GameObject prefab;
+    protected GameObject evolvedPrefab;
     protected Transform transform;
     protected PlayerMovement movement;
     protected PlayerStats stats;
@@ -62,6 +63,12 @@ public abstract class SkillBase
     public void SetPrefab(GameObject prefab)
     {
         this.prefab = prefab;
+    }
+
+    // 진화했을 때 prefab 대신 소환할 프리팹. 없으면 진화해도 prefab을 씀
+    public void SetEvolvedPrefab(GameObject evolvedPrefab)
+    {
+        this.evolvedPrefab = evolvedPrefab;
     }
 
     // 매 프레임 호출. 발동 방식은 스킬 유형마다 다르므로 서브클래스가 구현
@@ -265,19 +272,22 @@ public abstract class SkillBase
         float speed = GetPercentStat(SkillPercentStat.Speed, skillData.skillSpeed);
         float scale = GetPercentStat(SkillPercentStat.Area, 1.0f);
 
-        return new SkillStats(SkillId, skillMultiplier, speed, scale, stats);
+        return new SkillStats(SkillId, skillMultiplier, speed, scale, stats, IsEvolved);
     }
 
     // 풀에서 스킬 오브젝트를 꺼내 초기화. 초기화 인자 구조체 타입(TInitData)은 호출부에서 추론됨
+    // 진화했고 진화용 프리팹이 있으면 그 프리팹을, 아니면 기본 프리팹을 소환함
     protected GameObject Spawn<TInitData>(Vector3 position, TInitData initData)
     {
-        if(prefab == null)
+        GameObject spawnPrefab = IsEvolved && evolvedPrefab != null ? evolvedPrefab : prefab;
+
+        if(spawnPrefab == null)
         {
             Debug.LogWarning($"[SkillBase] 프리팹이 없습니다: {SkillId}");
             return null;
         }
 
-        return SkillObjectPool.Instance.Get(prefab, position, Quaternion.identity, instance =>
+        return SkillObjectPool.Instance.Get(spawnPrefab, position, Quaternion.identity, instance =>
         {
             if(instance.TryGetComponent(out SkillObject<TInitData> skillObject))
             {
