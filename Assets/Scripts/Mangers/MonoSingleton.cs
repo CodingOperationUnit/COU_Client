@@ -32,6 +32,10 @@ public class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
     
     private static T instance;
 
+    // 인스턴스를 새로 만들지 않고 이미 있는지만 확인. 씬 정리(OnDisable/OnDestroy) 중 구독 해제할 때는 Instance 대신 이걸 써야 함
+    // (Instance는 없으면 GameObject를 새로 만들어서 "Some objects were not cleaned up when closing the scene" 경고가 남)
+    public static bool HasInstance => instance != null;
+
     public static T Instance
     {
         get

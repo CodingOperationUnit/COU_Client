@@ -25,6 +25,8 @@ public class LuckTrainWindow : UIView
     [SerializeField] private float spinDuration = 2.5f;
     [SerializeField] private int spinLaps = 2;
     [SerializeField] private float revealInterval = 0.3f;
+    [SerializeField][Range(0f, 1f)] private float coinVolume = 0.5f;   // 코인 효과음 음량 배율
+    [SerializeField][Range(0f, 1f)] private float resultVolume = 0.5f;   // 결과 칸 효과음 음량 배율
 
     public event Action OnFinished;
 
@@ -74,6 +76,7 @@ public class LuckTrainWindow : UIView
         resultPanel.SetActive(false);
         for (var i = 0; i < rewardCards.Length; i++)
             rewardCards[i].gameObject.SetActive(i < count);
+        GameManager.Sound.PreloadSFX(GameConstants.Sfx.LUCK_TRAIN_TICK, GameConstants.Sfx.LUCK_TRAIN_RESULT);
         Open();
     }
 
@@ -86,6 +89,7 @@ public class LuckTrainWindow : UIView
         totalSteps = spinLaps * slotHighlights.Length + selected[0];
         highlighted = 0;
         slotHighlights[highlighted].SetActive(true);
+        PlayCoin();
         timer = 0f;
         state = State.Spin;
     }
@@ -103,11 +107,13 @@ public class LuckTrainWindow : UIView
             slotHighlights[index].SetActive(true);
             highlighted = index;
             UITween.Punch(slotIcons[index].transform, 0.12f);
+            PlayCoin();
         }
         goldText.text = Mathf.FloorToInt(gold * progress).ToString();
 
         if (t < 1f) return;
         UITween.Punch(slotIcons[highlighted].transform, 0.35f);
+        PlayResult();
         revealed = 1;
         timer = 0f;
         state = State.Reveal;
@@ -125,6 +131,7 @@ public class LuckTrainWindow : UIView
             slotHighlights[slot].SetActive(true);
             UITween.PopIn(slotHighlights[slot].transform, 0f, 0.5f);
             UITween.Punch(slotIcons[slot].transform, 0.35f);
+            PlayResult();
         }
         else
             ShowResult();
@@ -143,6 +150,15 @@ public class LuckTrainWindow : UIView
         UITween.Stagger(rewardCards, 0.1f);
         state = State.Result;
     }
+
+    // 칸에 들어갈 때 코인 효과음 (음량은 coinVolume × 설정창 효과음 볼륨)
+    private void PlayCoin()
+        => GameManager.Sound.PlaySFX(GameConstants.Sfx.LUCK_TRAIN_TICK, coinVolume);
+
+    // 당첨 칸이 결정될 때 결과 효과음
+    private void PlayResult()
+        => GameManager.Sound.PlaySFX(GameConstants.Sfx.LUCK_TRAIN_RESULT, resultVolume);
+
 
     private void Finish()
     {
