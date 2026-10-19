@@ -99,7 +99,7 @@ public sealed class SpeakerObject : SkillObject<OrbitData>
         // 대미지 확인용 임시 로그 (확인이 끝나면 삭제)
         Debug.Log($"[Speaker#{GetInstanceID()}] -> Enemy#{enemyId} dmg={hit.damage} crit={hit.isCritical} frame={Time.frameCount} time={now:F2}");
 
-        enemy.Damaged(hit.damage, stats.SkillId);
+        enemy.Damaged(hit.damage, stats.SkillId, KnockbackEnabled);
         PlayHitSfx();
     }
 

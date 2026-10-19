@@ -38,6 +38,9 @@ public class AoeHitObject : SkillObject<AoEData>
     private float _nextTickTime;
     private float _damageRatio = 1.0f;
 
+    // 지금 판정이 반복 판정(틱)인지. 틱은 넉백 없이 피해만 줌 (필드 안의 적이 밀려 나가지 않도록)
+    private bool _isTickHit;
+
     protected override void OnInit(AoEData data)
     {
         EnsureInitialized();
@@ -69,15 +72,16 @@ public class AoeHitObject : SkillObject<AoEData>
         _hasHit = false;
         _nextTickTime = 0.0f;
         _damageRatio = 1.0f;
+        _isTickHit = false;
         _hitEnemies.Clear();
     }
 
-    // 판정에 걸린 적 하나에 주는 효과. 기본은 대미지 (첫 판정은 100%, 도트 필드의 틱은 _tickDamageRatio)
+    // 판정에 걸린 적 하나에 주는 효과. 기본은 대미지 (첫 판정은 100%이고 인스펙터의 넉백 설정을 따름, 도트 필드의 틱은 _tickDamageRatio이고 항상 넉백 없음)
     protected virtual void OnHitEnemy(Enemy enemy)
     {
         PlayerDamageCalculator.HitResult hit = stats.CalculateHit(_damageRatio);
 
-        enemy.Damaged(hit.damage, stats.SkillId);
+        enemy.Damaged(hit.damage, stats.SkillId, KnockbackEnabled && !_isTickHit);
     }
 
     private void Update()
@@ -88,6 +92,7 @@ public class AoeHitObject : SkillObject<AoEData>
         {
             _hasHit = true;
             _damageRatio = 1.0f;
+            _isTickHit = false;
             Hit();
 
             _nextTickTime = _hitDelay + Mathf.Max(_tickInterval, MinTickInterval);
@@ -113,6 +118,7 @@ public class AoeHitObject : SkillObject<AoEData>
         {
             _nextTickTime += interval;
             _damageRatio = _tickDamageRatio;
+            _isTickHit = true;
 
             // 이번 틱에서 같은 적을 한 번만 때리도록, 이전 틱의 기록은 지움
             _hitEnemies.Clear();

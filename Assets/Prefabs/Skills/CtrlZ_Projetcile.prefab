@@ -217,6 +217,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BoomerangProjectile
   _sfx: {fileID: 8300000, guid: 9f45e54cd64ad1f4d9da984958f0c7ab, type: 3}
   _hitSfx: {fileID: 8300000, guid: 96fa9377a17a51d45b577ff1a17acd5e, type: 3}
+  _knockback: 1
   _catchDistance: 0.3
   _maxOutboundTime: 3
   _maxLifeTime: 10

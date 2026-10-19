@@ -31,4 +31,12 @@ public abstract class SkillObjectBase : MonoBehaviour
 
         GameManager.Sound.PlaySFX(_hitSfx, volumeScale, pitch);
     }
+
+    // 프리팹마다 인스펙터에서 정하는 넉백 여부. 체크하면 이 오브젝트가 준 피해로 적이 밀려남 (기본은 넉백 없음)
+    // 보스와 상자는 체크해도 밀리지 않음 (Enemy의 넉백 저항)
+    [Tooltip("체크하면 이 스킬 오브젝트에 맞은 적이 밀려납니다. 보스와 상자는 체크해도 밀리지 않습니다.")]
+    [SerializeField] private bool _knockback = false;
+
+    // 서브클래스가 적에게 피해를 줄 때 Enemy.Damaged의 applyKnockback 인자로 넘김
+    protected bool KnockbackEnabled => _knockback;
 }

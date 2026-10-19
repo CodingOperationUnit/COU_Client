@@ -294,6 +294,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AoeHitObject
   _sfx: {fileID: 8300000, guid: 596b7e8b51402504a92c032dd412731b, type: 3}
   _hitSfx: {fileID: 0}
+  _knockback: 0
   _hitArea: {fileID: 0}
   _hitDelay: 0
   _lifeTime: 3

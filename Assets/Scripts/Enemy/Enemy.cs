@@ -226,7 +226,8 @@ public abstract class Enemy : MonoBehaviour, IPoolable
         => baseDamage <= 0 ? 0 : Mathf.Max(1, Mathf.RoundToInt(baseDamage * damageScale));
 
     // 몬스터의 피격
-    public virtual void Damaged(int damage, long sourceSkillId = 0)
+    // applyKnockback: false면 넉백 없이 피해만 줌 (기본값 true로 기존 호출은 그대로 넉백). 보스와 상자는 true여도 넉백 저항 때문에 밀리지 않음
+    public virtual void Damaged(int damage, long sourceSkillId = 0, bool applyKnockback = true)
     {
         // 몬스터가 죽은 상태면 return
         if (isDead) { return; }
@@ -251,8 +252,11 @@ public abstract class Enemy : MonoBehaviour, IPoolable
             hitEndTime = Time.time + hitAnimDuration;
         }
 
-        // 살아남았을 때만 넉백
-        ApplyKnockback();
+        // 살아남았을 때만 넉백 (호출한 쪽이 넉백을 끈 피해는 제외)
+        if (applyKnockback)
+        {
+            ApplyKnockback();
+        }
     }
 
     // 플레이어 반대 방향으로 knockbackDuration 동안 (거리 × 저항 반영)만큼 밀어냄
