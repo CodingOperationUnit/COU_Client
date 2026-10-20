@@ -281,6 +281,12 @@ public abstract class SkillBase
     {
         GameObject spawnPrefab = IsEvolved && evolvedPrefab != null ? evolvedPrefab : prefab;
 
+        return Spawn(spawnPrefab, position, initData);
+    }
+
+    // 소환할 프리팹을 직접 지정하는 버전. 진화 후에도 기본 프리팹을 계속 쓰면서 진화 프리팹을 따로 소환하는 스킬(멀티탭 등)이 씀
+    protected GameObject Spawn<TInitData>(GameObject spawnPrefab, Vector3 position, TInitData initData)
+    {
         if(spawnPrefab == null)
         {
             Debug.LogWarning($"[SkillBase] 프리팹이 없습니다: {SkillId}");
