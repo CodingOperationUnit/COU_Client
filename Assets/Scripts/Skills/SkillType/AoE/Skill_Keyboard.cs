@@ -60,7 +60,7 @@ public sealed class Skill_Keyboard : AoeSkillBase
 
         // 쿨타임 감소, 반복, 대미지 보너스가 플레이 중에 바뀔 수 있으므로 틱마다 현재 값으로 다시 계산
         _fieldTickTimer = GetFieldTickInterval();
-        _field.Hit(BuildStats());
+        _field.Hit(BuildStats(), _fieldTickTimer);
 
         return true;
     }

@@ -6,7 +6,7 @@ using UnityEngine;
 // 범위의 모양/크기는 프리팹 콜라이더로 정하고 스프라이트와 맞춤. 애니메이션이 끝나는 시간(_lifeTime)에 풀에 반환
 // AoEData.Direction이 있으면 오브젝트의 right(+X)가 그 방향을 향하도록 회전 (프리팹은 오른쪽을 보고 만듦), 없으면 회전하지 않음
 // 적에게 주는 효과가 다른 범위는 이 클래스를 상속해 OnHitEnemy를 오버라이드
-public class AoeHitObject : SkillObject<AoEData>
+public class AoeHitObject : SkillAttackObject<AoEData>
 {
     [SerializeField] private Collider2D _hitArea;
 
@@ -82,6 +82,7 @@ public class AoeHitObject : SkillObject<AoEData>
         PlayerDamageCalculator.HitResult hit = stats.CalculateHit(_damageRatio);
 
         enemy.Damaged(hit.damage, stats.SkillId, KnockbackEnabled && !_isTickHit);
+        SpawnOnHit(enemy, stats);
     }
 
     private void Update()

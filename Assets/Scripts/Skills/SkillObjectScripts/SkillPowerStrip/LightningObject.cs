@@ -2,7 +2,7 @@ using UnityEngine;
 
 // 주인과 대상 적 사이에 늘어나는 번개. 생성되는 순간 대상에게 대미지를 주고, 잠깐 보인 뒤 풀에 반환
 // 프리팹은 pivot을 가운데에 두고 오른쪽(+X)으로 길이 1인 모양으로 만듦 (X 스케일 = 두 지점 사이 거리)
-public sealed class LightningObject : SkillObject<LinkData>
+public sealed class LightningObject : SkillAttackObject<LinkData>
 {
     // 번개가 보이는 시간 (대미지는 생성 즉시 들어감)
     [SerializeField] private float _displayTime = 0.2f;
@@ -42,6 +42,7 @@ public sealed class LightningObject : SkillObject<LinkData>
             PlayerDamageCalculator.HitResult hit = stats.CalculateHit();
 
             enemy.Damaged(hit.damage, stats.SkillId, KnockbackEnabled);
+            SpawnOnHit(enemy, stats);
         }
 
         UpdateShape();

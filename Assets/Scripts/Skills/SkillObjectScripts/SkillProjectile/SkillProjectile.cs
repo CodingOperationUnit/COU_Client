@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public abstract class SkillProjectile : SkillObject<ProjectileData>, ISkillPoolable
+public abstract class SkillProjectile : SkillAttackObject<ProjectileData>, ISkillPoolable
 {
     protected Vector2 direction;
     protected Transform target;
@@ -40,5 +40,6 @@ public abstract class SkillProjectile : SkillObject<ProjectileData>, ISkillPoola
 
         // 투사체(마우스, 텀블러, 안경, CtrlZ)의 타격음은 모두 여기서 재생됨
         PlayHitSfx();
+        SpawnOnHit(enemy, stats);
     }
 }

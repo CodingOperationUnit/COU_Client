@@ -3,7 +3,7 @@ using UnityEngine;
 
 // 플레이어 주위를 도는 스피커. 풀에 스스로 반환되지 않고 스킬 해제 때까지 유지됨
 // SkillStats: Speed = 초당 회전 각도, Damage = 접촉 대미지, Scale = 크기 배율 / OrbitData: Radius = 회전 반지름
-public sealed class SpeakerObject : SkillObject<OrbitData>
+public sealed class SpeakerObject : SkillAttackObject<OrbitData>
 {
     // 기록이 이 개수 이상 쌓이면 시간이 지난 기록을 정리
     private const int PurgeThreshold = 64;
@@ -101,6 +101,7 @@ public sealed class SpeakerObject : SkillObject<OrbitData>
 
         enemy.Damaged(hit.damage, stats.SkillId, KnockbackEnabled);
         PlayHitSfx();
+        SpawnOnHit(enemy, stats);
     }
 
     // 쿨타임이 지난 기록을 제거해서 죽은 적의 기록이 계속 쌓이지 않게 함
