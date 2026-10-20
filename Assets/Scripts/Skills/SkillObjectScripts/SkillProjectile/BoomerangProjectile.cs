@@ -2,6 +2,7 @@ using UnityEngine;
 
 // 타겟을 쫓아가다 적에게 처음 닿으면 대미지를 주고 주인(Owner)에게 돌아오는 탄환. 주인에게 도착하면 풀에 반환
 // 타겟이 사라지거나 너무 오래 나가 있으면 맞추지 못해도 돌아옴
+// _catchHealRatio가 0보다 크면 주인에게 돌아와 도착할 때마다 주인의 최대 체력 비율만큼 회복시킴 (적을 맞혔는지와 무관)
 public sealed class BoomerangProjectile : SkillProjectile
 {
     private enum State
@@ -19,7 +20,12 @@ public sealed class BoomerangProjectile : SkillProjectile
     // 주인에게 닿지 못하는 상황을 대비한 최대 수명. 지나면 그 자리에서 풀에 반환
     [SerializeField] private float _maxLifeTime = 10.0f;
 
+    // 주인에게 도착했을 때 회복시킬 주인의 최대 체력 비율 (0.01 = 1%). 0이면 회복 없음. 진화 프리팹에만 지정함
+    // 회복량은 최소 1이고 받는 치유량 보너스가 곱해짐. 반복 발동으로 나간 부메랑도 같은 양을 회복함
+    [SerializeField] private float _catchHealRatio = 0.0f;
+
     private Transform _owner;
+    private PlayerHealth _ownerHealth;
     private Enemy _targetEnemy;
     private State _state;
     private float _elapsed;
@@ -29,6 +35,13 @@ public sealed class BoomerangProjectile : SkillProjectile
     {
         // base.OnInit 안에서 OnLaunch가 불리므로 그 전에 주인을 받아 둠
         _owner = data.Owner;
+        _ownerHealth = null;
+
+        if(_owner != null)
+        {
+            _owner.TryGetComponent(out _ownerHealth);
+        }
+
         base.OnInit(data);
     }
 
@@ -97,12 +110,27 @@ public sealed class BoomerangProjectile : SkillProjectile
         // 이번 프레임 이동량이 남은 거리보다 크면 지나쳐 버리므로 도착으로 처리
         if(toOwner.magnitude <= Mathf.Max(_catchDistance, _speed * Time.deltaTime))
         {
+            HealOwner();
             ReturnToPool();
             return;
         }
 
         SteerTowards(_owner.position);
         Move();
+    }
+
+    // 주인에게 도착했을 때 주인의 최대 체력 _catchHealRatio만큼 회복 (최소 1, 받는 치유량 보너스 적용)
+    private void HealOwner()
+    {
+        if(_catchHealRatio <= 0.0f || _ownerHealth == null)
+        {
+            return;
+        }
+
+        int amount = Mathf.Max(1, Mathf.RoundToInt(_ownerHealth.MaxHealth * _catchHealRatio));
+        int healReceived = stats.PlayerStats != null ? stats.PlayerStats.HealReceived : 0;
+
+        _ownerHealth.Heal(PlayerDamageCalculator.ApplyHealReceived(amount, healReceived));
     }
 
     private void OnTriggerEnter2D(Collider2D other)
