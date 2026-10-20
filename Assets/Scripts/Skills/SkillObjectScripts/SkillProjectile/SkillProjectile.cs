@@ -8,6 +8,11 @@ public abstract class SkillProjectile : SkillAttackObject<ProjectileData>, ISkil
     protected int pierceCount;
     protected int chainCount;
 
+    // 체크를 끄면 이 투사체는 맞은 적에게 직접 피해를 주지 않음 (타격 시 소환한 폭발 등이 대신 피해를 주는 경우, 같은 적이 두 번 맞지 않도록)
+    // 타격음과 타격 시 소환은 그대로 동작함
+    [Tooltip("끄면 투사체가 맞은 적에게 직접 피해를 주지 않습니다. 타격 시 소환한 폭발이 대신 피해를 줄 때 같은 적이 두 번 맞지 않도록 끄세요. 타격음과 타격 시 소환은 그대로 동작합니다.")]
+    [SerializeField] private bool _directDamage = true;
+
     // 풀에서 다시 꺼낼 때 바뀐 크기가 아니라 프리팹 원래 크기를 기준으로 삼기 위해 첫 Init에서 한 번만 저장
     private Vector3 _baseScale;
     private bool _initialized;
@@ -55,9 +60,12 @@ public abstract class SkillProjectile : SkillAttackObject<ProjectileData>, ISkil
 
     protected virtual void ApplyDamage(Enemy enemy)
     {
-        PlayerDamageCalculator.HitResult hit = stats.CalculateHit();
+        if(_directDamage)
+        {
+            PlayerDamageCalculator.HitResult hit = stats.CalculateHit();
 
-        enemy.Damaged(hit.damage, stats.SkillId, KnockbackEnabled);
+            enemy.Damaged(hit.damage, stats.SkillId, KnockbackEnabled);
+        }
 
         // 투사체(마우스, 텀블러, 안경, CtrlZ)의 타격음은 모두 여기서 재생됨
         PlayHitSfx();

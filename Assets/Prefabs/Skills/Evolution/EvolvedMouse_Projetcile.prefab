@@ -232,6 +232,7 @@ MonoBehaviour:
   _hitSfx: {fileID: 8300000, guid: 84c084fb51e40094faf9563f6bbfcfd2, type: 3}
   _knockback: 1
   _hitSpawnPrefab: {fileID: -2090970527807985498, guid: 08af671f4851cc0409ea3bee5cf75bb9, type: 3}
+  _directDamage: 0
   lifeTime: 3
   _chainRadius: 3
   _renderer: {fileID: 5381331358081311882}
