@@ -41,6 +41,9 @@ public abstract class SkillBase
     // 이번 발동의 대미지 비율 (반복으로 다시 발동한 스킬은 낮춤)
     protected virtual float DamageScale => 1.0f;
 
+    // 대미지 증가 합계(레벨 효과 + 패시브)에 더해지는 스킬 고유의 추가 증가 비율 (0.1 = +10%). 진화 효과처럼 스킬만의 대미지 증가가 있을 때 오버라이드
+    protected virtual float ExtraDamagePercent => 0.0f;
+
     public virtual void Initialize(SkillData data)
     {
         skillData = data;
@@ -268,7 +271,7 @@ public abstract class SkillBase
     protected SkillStats BuildStats()
     {
         // 반올림하지 않고 배율 그대로 넘김 (공격력, 치명타, 반올림은 맞힐 때 PlayerDamageCalculator가 처리)
-        float skillMultiplier = GetPercentStat(SkillPercentStat.Damage, skillData.skillDamage) * DamageScale;
+        float skillMultiplier = skillData.skillDamage * (1.0f + GetPercentTotal(SkillPercentStat.Damage) + ExtraDamagePercent) * DamageScale;
         float speed = GetPercentStat(SkillPercentStat.Speed, skillData.skillSpeed);
         float scale = GetPercentStat(SkillPercentStat.Area, 1.0f);
 
