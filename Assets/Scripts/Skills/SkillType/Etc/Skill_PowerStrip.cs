@@ -1,13 +1,15 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 // 탐지 범위 안의 모든 적에게 번개(LightningObject)를 하나씩 소환. 번개가 생기는 순간 대미지가 들어감
 // 연쇄 패시브가 있으면 맞은 적에게서 아직 안 맞은 가까운 적에게 번개가 이어짐
 // 발동 조건(쿨타임, 범위 안에 적이 있는지)은 CooldownSkillBase를 따름
-// 진화: 기본 번개는 그대로 두고, 쿨타임과 따로 StrikeInterval마다 탐지 범위 안에서 가장 가까운 적 StrikeCount명에게 낙뢰를 내리침 (케넨 궁극기처럼)
-//       낙뢰는 SkillPrefabTable의 EvolvedPrefab으로 소환함 (AoeHitObject가 붙은 프리팹, 적 위치에 소환되며 판정 타이밍/범위는 프리팹이 정함)
-//       기본 번개는 진화 후에도 기본 프리팹으로 소환함
+// 진화: 기본 번개는 그대로 두고, 발동할 때마다 탐지 범위 안의 무작위 적에게 낙뢰(LightningStrikeObject)를 추가로 내리침 (케넨 궁극기처럼)
+//       낙뢰는 기본 번개와 같은 수치(대미지, 범위 증가)의 단일 대상 공격이고 연쇄는 적용되지 않음
+//       낙뢰 수 = 1 + 연쇄 횟수. 한 번의 발동에서 같은 적을 두 번 맞히지 않으므로 범위 안에 적이 적으면 그만큼만 내리침
+//       기본 번개와 같은 발동 안에서 정해지므로 쿨타임과 반복(반복 발동은 대미지 50%)을 그대로 따름
+//       낙뢰는 기본 번개보다 StrikeDelay만큼 늦게 내리쳐서, 두 대미지가 시간차를 두고 들어가 따로 보이게 함
+//       낙뢰는 SkillPrefabTable의 EvolvedPrefab으로 소환함 (LightningStrikeObject가 붙은 프리팹). 기본 번개는 진화 후에도 기본 프리팹으로 소환함
 public sealed class Skill_PowerStrip : CooldownSkillBase
 {
     // 연쇄 번개가 다음 적을 찾는 반경 (직전에 맞은 적 기준). 임시 수치
@@ -16,30 +18,25 @@ public sealed class Skill_PowerStrip : CooldownSkillBase
     // 장착할 때 미리 만들어 둘 번개 수 (첫 발동에 Instantiate가 몰리지 않도록). 임시 수치
     private const int PrewarmCount = 64;
 
-    // 진화 낙뢰 간격 (초). 임시 수치
-    private const float StrikeInterval = 1.0f;
-
-    // 낙뢰 한 번에 맞힐 적 수 (가까운 순). 임시 수치
-    private const int StrikeCount = 3;
-
-    // 낙뢰 대미지 비율 (1 = 기본 번개 한 번과 같은 대미지). 임시 수치
-    private const float StrikeDamageRatio = 1.0f;
-
     // 진화할 때 미리 만들어 둘 낙뢰 수. 임시 수치
     private const int StrikePrewarmCount = 16;
 
-    private struct StrikeTarget
+    // 기본 번개가 나간 뒤 낙뢰가 소환되기까지의 시간 (초). 두 대미지가 따로 보이도록 하는 간격. 임시 수치
+    // 낙뢰 프리팹의 _hitDelay(소환 후 대미지까지)는 이 시간에 더해짐
+    private const float StrikeDelay = 0.3f;
+
+    // 낙뢰 소환을 기다리는 중인 대상. 발동 시점의 수치(대미지 비율 등)를 그대로 가져감
+    private struct PendingStrike
     {
         public Enemy Enemy;
-        public float SqrDistance;
+        public SkillStats Stats;
+        public float Timer;
     }
 
-    // 가까운 순 정렬에 쓰는 비교 함수 (정렬할 때마다 델리게이트를 새로 만들지 않도록 캐시)
-    private static readonly Comparison<StrikeTarget> CompareByDistance = (a, b) => a.SqrDistance.CompareTo(b.SqrDistance);
+    private readonly List<PendingStrike> _pendingStrikes = new();
 
-    private readonly List<StrikeTarget> _strikeTargets = new();
-    private readonly HashSet<Enemy> _strikeRegistered = new();
-    private float _strikeTimer;
+    // 이번 발동에서 낙뢰를 맞을 적 (탐지 범위 안에서 무작위로 고름)
+    private readonly List<Enemy> _strikeTargets = new();
 
     // 진화 프리팹이 비어 있다는 경고를 한 번만 띄우기 위함
     private bool _isStrikeUnavailable;
@@ -71,17 +68,21 @@ public sealed class Skill_PowerStrip : CooldownSkillBase
     {
         base.Tick(deltaTime);
 
-        if(IsEvolved)
+        if(_pendingStrikes.Count > 0)
         {
-            TickStrike(deltaTime);
+            TickPendingStrikes(deltaTime);
         }
     }
 
-    // 진화하자마자 첫 낙뢰가 나가도록 함
+    protected override void OnUnequip()
+    {
+        base.OnUnequip();
+        _pendingStrikes.Clear();
+    }
+
+    // 진화할 때 낙뢰를 미리 만들어 둠
     protected override void OnEvolved()
     {
-        _strikeTimer = 0.0f;
-
         if(evolvedPrefab != null)
         {
             SkillObjectPool.Instance.Prewarm(evolvedPrefab, StrikePrewarmCount);
@@ -96,6 +97,12 @@ public sealed class Skill_PowerStrip : CooldownSkillBase
 
         CollectCandidates(chainCount);
 
+        // 번개 대미지로 적이 죽기 전에 낙뢰 대상을 먼저 정함
+        if(IsEvolved)
+        {
+            SelectStrikeTargets(1 + chainCount);
+        }
+
         foreach(int index in _initialIndices)
         {
             Spawn(prefab, transform.position, new LinkData(skillStats, transform, _candidates[index].Enemy.transform));
@@ -104,6 +111,11 @@ public sealed class Skill_PowerStrip : CooldownSkillBase
             {
                 Chain(index, chainCount, skillStats);
             }
+        }
+
+        if(IsEvolved)
+        {
+            Strike(skillStats);
         }
     }
 
@@ -210,88 +222,85 @@ public sealed class Skill_PowerStrip : CooldownSkillBase
         return nearestIndex;
     }
 
-    // 진화 낙뢰 타이머. 범위 안에 적이 없으면 타이머를 0에 두고 기다렸다가 적이 들어오는 즉시 내리침
-    private void TickStrike(float deltaTime)
-    {
-        if(_isStrikeUnavailable)
-        {
-            return;
-        }
-
-        if(_strikeTimer > 0.0f)
-        {
-            _strikeTimer -= deltaTime;
-            return;
-        }
-
-        if(Strike())
-        {
-            _strikeTimer = StrikeInterval;
-        }
-    }
-
-    // 탐지 범위 안에서 가장 가까운 적부터 StrikeCount명에게 낙뢰를 소환. 맞힐 적이 없으면 false
-    private bool Strike()
-    {
-        if(evolvedPrefab == null)
-        {
-            Debug.LogWarning($"[Skill_PowerStrip] 진화 프리팹(SkillPrefabTable의 EvolvedPrefab)이 비어 있어 낙뢰가 나가지 않습니다: {SkillId}");
-            _isStrikeUnavailable = true;
-            return false;
-        }
-
-        CollectStrikeTargets();
-
-        if(_strikeTargets.Count == 0)
-        {
-            return false;
-        }
-
-        SkillStats strikeStats = BuildStrikeStats();
-        int count = Mathf.Min(StrikeCount, _strikeTargets.Count);
-
-        for(int i = 0; i < count; i++)
-        {
-            Vector2 position = _strikeTargets[i].Enemy.transform.position;
-
-            Spawn(evolvedPrefab, position, new AoEData(strikeStats, position));
-        }
-
-        return true;
-    }
-
-    // 탐지 범위 안의 살아 있는 적을 가까운 순으로 _strikeTargets에 담음
-    private void CollectStrikeTargets()
+    // 탐지 범위 안(_initialIndices)의 살아 있는 적 중 무작위로 최대 count명을 _strikeTargets에 담음
+    // 같은 적은 한 번만 담기므로 적이 count명보다 적으면 그만큼만 담김
+    private void SelectStrikeTargets(int count)
     {
         _strikeTargets.Clear();
-        _strikeRegistered.Clear();
 
-        Vector2 origin = transform.position;
-
-        // 공유 버퍼를 순회하는 중에는 다시 탐색하지 않음
-        foreach(Collider2D other in SkillTargeting.OverlapEnemies(origin, Range))
+        foreach(int index in _initialIndices)
         {
-            // 콜라이더가 여러 개인 적이 중복으로 들어가지 않도록 함
-            if(!other.TryGetComponent(out Enemy enemy) || enemy.isDead || !_strikeRegistered.Add(enemy))
+            _strikeTargets.Add(_candidates[index].Enemy);
+        }
+
+        // 앞에서부터 count자리만 무작위로 채우면 되므로 부분 셔플 (뽑은 적은 앞자리에 두어 다시 뽑히지 않게 함)
+        int pickCount = Mathf.Min(count, _strikeTargets.Count);
+
+        for(int i = 0; i < pickCount; i++)
+        {
+            int swapIndex = Random.Range(i, _strikeTargets.Count);
+
+            (_strikeTargets[i], _strikeTargets[swapIndex]) = (_strikeTargets[swapIndex], _strikeTargets[i]);
+        }
+
+        if(_strikeTargets.Count > pickCount)
+        {
+            _strikeTargets.RemoveRange(pickCount, _strikeTargets.Count - pickCount);
+        }
+    }
+
+    // SelectStrikeTargets로 정한 적에게 낙뢰를 소환
+    private void Strike(SkillStats skillStats)
+    {
+        if(_strikeTargets.Count == 0)
+        {
+            return;
+        }
+
+        if(evolvedPrefab == null)
+        {
+            if(!_isStrikeUnavailable)
             {
+                _isStrikeUnavailable = true;
+                Debug.LogWarning($"[Skill_PowerStrip] 진화 프리팹(SkillPrefabTable의 EvolvedPrefab)이 비어 있어 낙뢰가 나가지 않습니다: {SkillId}");
+            }
+
+            return;
+        }
+
+        // 바로 소환하지 않고 StrikeDelay 뒤에 소환 (기본 번개와 시간차를 둠)
+        foreach(Enemy target in _strikeTargets)
+        {
+            _pendingStrikes.Add(new PendingStrike
+            {
+                Enemy = target,
+                Stats = skillStats,
+                Timer = StrikeDelay
+            });
+        }
+    }
+
+    // 기다리던 낙뢰의 시간이 되면 소환. 그 사이 대상이 죽었으면 소환하지 않음
+    private void TickPendingStrikes(float deltaTime)
+    {
+        for(int i = _pendingStrikes.Count - 1; i >= 0; i--)
+        {
+            PendingStrike pending = _pendingStrikes[i];
+
+            pending.Timer -= deltaTime;
+
+            if(pending.Timer > 0.0f)
+            {
+                _pendingStrikes[i] = pending;
                 continue;
             }
 
-            _strikeTargets.Add(new StrikeTarget
+            _pendingStrikes.RemoveAt(i);
+
+            if(pending.Enemy != null && !pending.Enemy.isDead && pending.Enemy.gameObject.activeInHierarchy)
             {
-                Enemy = enemy,
-                SqrDistance = ((Vector2)enemy.transform.position - origin).sqrMagnitude
-            });
+                Spawn(evolvedPrefab, pending.Enemy.transform.position, new StrikeData(pending.Stats, pending.Enemy.transform));
+            }
         }
-
-        _strikeTargets.Sort(CompareByDistance);
-    }
-
-    // 현재 수치에 낙뢰 대미지 비율만 곱한 수치
-    private SkillStats BuildStrikeStats()
-    {
-        SkillStats skillStats = BuildStats();
-
-        return new SkillStats(skillStats.SkillId, skillStats.SkillMultiplier * StrikeDamageRatio, skillStats.Speed, skillStats.Scale, skillStats.PlayerStats, skillStats.IsEvolved);
     }
 }
