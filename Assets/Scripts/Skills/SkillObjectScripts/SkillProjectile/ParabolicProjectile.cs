@@ -9,9 +9,6 @@ public class ParabolicProjectile : SkillProjectile
     // 도착하면 소환할 오브젝트. SkillObject<AoEData>가 붙은 프리팹이어야 함 (AoeHitObject 등). 비워두면 아무것도 소환하지 않음
     [SerializeField] private SkillObjectBase _landingPrefab;
 
-    // 진화한 스킬이 도착했을 때 _landingPrefab 대신 소환할 오브젝트 (도트 필드 등). 비워두면 진화해도 _landingPrefab을 씀
-    [SerializeField] private SkillObjectBase _evolvedLandingPrefab;
-
     // 포물선 높이 (월드 단위)
     [SerializeField] private float _jumpPower = 1.5f;
 
@@ -62,9 +59,7 @@ public class ParabolicProjectile : SkillProjectile
 
     private void SpawnLanding()
     {
-        SkillObjectBase landingPrefab = stats.IsEvolved && _evolvedLandingPrefab != null ? _evolvedLandingPrefab : _landingPrefab;
-
-        if(landingPrefab == null)
+        if(_landingPrefab == null)
         {
             return;
         }
@@ -72,7 +67,7 @@ public class ParabolicProjectile : SkillProjectile
         Vector3 position = transform.position;
         AoEData data = new AoEData(stats, position);
 
-        SkillObjectPool.Instance.Get(landingPrefab.gameObject, position, Quaternion.identity, instance =>
+        SkillObjectPool.Instance.Get(_landingPrefab.gameObject, position, Quaternion.identity, instance =>
         {
             if(instance.TryGetComponent(out SkillObject<AoEData> landing))
             {

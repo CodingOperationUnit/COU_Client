@@ -111,8 +111,13 @@ MonoBehaviour:
   - {fileID: -8852901816074696542, guid: 2a71ba2979fc3554e9deb8c370765348, type: 3}
   - {fileID: -4602223305688644920, guid: 0d90a20bd32e7a74f84638ad697b41b2, type: 3}
   - {fileID: 814638035702513216, guid: 635bf6243d56f814db2addfdc7b794bc, type: 3}
+  - {fileID: 2806544284753480583, guid: 22712c6bfdd4a364b9fd74b4bbd8b903, type: 3}
+  - {fileID: -8617916312281327213, guid: 93c30a35ca29b334d91560f4c6d82017, type: 3}
+  - {fileID: 1247037573410855324, guid: dae78052f46fdbc45882c67015d8664f, type: 3}
+  - {fileID: -8337202458009736734, guid: 926d2caebcabbf145988b95b2d200102, type: 3}
+  - {fileID: 4067185420343384206, guid: dd4c5e3348b62f14f9c79a6d4b8aa821, type: 3}
   _duration: 0.2
-  _loop: 0
+  _loop: 1
 --- !u!1 &8922130877381923334
 GameObject:
   m_ObjectHideFlags: 0
@@ -124,7 +129,7 @@ GameObject:
   - component: {fileID: 87063120606551851}
   - component: {fileID: 2114549043315865193}
   - component: {fileID: 7034198875868452484}
-  - component: {fileID: 156895646617383541}
+  - component: {fileID: 7817725124237295204}
   m_Layer: 10
   m_Name: EvolvedKeyboard_AttackObject
   m_TagString: Untagged
@@ -142,7 +147,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3, y: 5.25, z: 1}
+  m_LocalScale: {x: 2, y: 3.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8070983975422107078}
@@ -221,7 +226,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &156895646617383541
+--- !u!114 &7817725124237295204
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -230,13 +235,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 8922130877381923334}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 165e2f68a9dd1c843a2859b75fd0653e, type: 3}
+  m_Script: {fileID: 11500000, guid: 7273fa4dd6b41f749a813607473d7259, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::KeyboardObject
+  m_EditorClassIdentifier: Assembly-CSharp::FacingFieldObject
   _sfx: {fileID: 8300000, guid: 5c27cfed4e9cd504ea191f0a0afa730a, type: 3}
   _hitSfx: {fileID: 0}
+  _knockback: 0
   _hitArea: {fileID: 0}
-  _hitDelay: 0
-  _lifeTime: 0.2
-  _tickInterval: 0
-  _tickDamageRatio: 0.2
