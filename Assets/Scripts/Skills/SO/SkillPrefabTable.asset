@@ -27,7 +27,7 @@ MonoBehaviour:
     EvolvedPrefab: {fileID: 0}
   - SkillId: 20050
     Prefab: {fileID: 3662629856818879847, guid: a39695b8c8b80a34ba1d4e6b69fbbcb8, type: 3}
-    EvolvedPrefab: {fileID: 0}
+    EvolvedPrefab: {fileID: 3662629856818879847, guid: 08fbf71c03419d3449f2011557f1030f, type: 3}
   - SkillId: 20060
     Prefab: {fileID: 156895646617383541, guid: cb6041c47824d2c4293311d7109683bc, type: 3}
     EvolvedPrefab: {fileID: 7817725124237295204, guid: 284786c6d408f9d4594012beb501cefe, type: 3}
