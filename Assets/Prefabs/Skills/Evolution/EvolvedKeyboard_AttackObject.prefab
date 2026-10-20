@@ -238,7 +238,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7273fa4dd6b41f749a813607473d7259, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FacingFieldObject
-  _sfx: {fileID: 8300000, guid: 5c27cfed4e9cd504ea191f0a0afa730a, type: 3}
+  _sfx: {fileID: 0}
   _hitSfx: {fileID: 0}
   _knockback: 0
+  _hitSpawnPrefab: {fileID: 0}
   _hitArea: {fileID: 0}
+  _loopSfx: {fileID: 8300000, guid: bf905a8adbf88fe48a03410f41ea5525, type: 3}
+  _loopReferenceTickInterval: 0.13
+  _loopMinPitch: 0.8
+  _loopMaxPitch: 1.6
