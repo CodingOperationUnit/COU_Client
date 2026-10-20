@@ -10,6 +10,13 @@ public sealed class SkillEffectObject : SkillObject<AoEData>
 
     private float _elapsed;
 
+    public override bool CanSpawnOnHit => true;
+
+    public override void InitFromHit(HitSpawnData hit)
+    {
+        Init(new AoEData(hit.Stats, hit.Position));
+    }
+
     protected override void OnInit(AoEData data)
     {
         stats = data.Stats;

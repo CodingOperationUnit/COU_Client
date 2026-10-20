@@ -17,4 +17,13 @@ public abstract class SkillObjectBase : MonoBehaviour
 
         GameManager.Sound.PlaySFX(_sfx, volumeScale, pitch);
     }
+
+    // 다른 스킬 오브젝트가 적을 때렸을 때 이 오브젝트가 소환될 수 있는지. 소환할 수 있는 오브젝트만 true로 오버라이드함
+    // 스킬이 직접 해제해야 사라지는 지속형(스피커, 지속 범위)은 타격 때마다 소환되면 쌓이기만 하므로 false로 둠
+    public virtual bool CanSpawnOnHit => false;
+
+    // 타격 시 소환된 오브젝트가 맞힌 정보(HitSpawnData)로 자기 초기화 데이터를 만들어 Init을 부르는 곳. CanSpawnOnHit가 true인 오브젝트가 구현
+    public virtual void InitFromHit(HitSpawnData hit)
+    {
+    }
 }

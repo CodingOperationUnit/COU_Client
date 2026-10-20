@@ -120,3 +120,36 @@ public readonly struct FacingFieldData
         Movement = movement;
     }
 }
+
+// 대상 적 하나의 위치에 내리치는 오브젝트 (LightningStrikeObject)
+public readonly struct StrikeData
+{
+    public readonly SkillStats Stats;
+    public readonly Transform Target; // 대미지를 받을 적
+
+    public StrikeData(SkillStats stats, Transform target)
+    {
+        Stats = stats;
+        Target = target;
+    }
+}
+
+// 스킬 오브젝트가 적을 때렸을 때 소환되는 오브젝트(SkillObjectBase.InitFromHit)가 받는 정보
+// 소환된 오브젝트가 자기 초기화 데이터(ProjectileData, LinkData 등)를 이 정보로 직접 만듦
+public readonly struct HitSpawnData
+{
+    public readonly SkillStats Stats;    // 맞힌 공격의 수치
+    public readonly Vector2 Position;    // 맞은 적의 위치
+    public readonly Vector2 Direction;   // 때린 오브젝트에서 적으로 향하는 방향 (겹쳐 있으면 오른쪽)
+    public readonly Transform Owner;     // 스킬 사용자 (플레이어)
+    public readonly Transform Target;    // 맞은 적
+
+    public HitSpawnData(SkillStats stats, Vector2 position, Vector2 direction, Transform owner, Transform target)
+    {
+        Stats = stats;
+        Position = position;
+        Direction = direction;
+        Owner = owner;
+        Target = target;
+    }
+}

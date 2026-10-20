@@ -41,6 +41,14 @@ public class AoeHitObject : SkillAttackObject<AoEData>
     // 지금 판정이 반복 판정(틱)인지. 틱은 넉백 없이 피해만 줌 (필드 안의 적이 밀려 나가지 않도록)
     private bool _isTickHit;
 
+    // 타격 시 소환되면 맞은 적의 위치에 범위가 생김 (방향 회전 없음)
+    public override bool CanSpawnOnHit => true;
+
+    public override void InitFromHit(HitSpawnData hit)
+    {
+        Init(new AoEData(hit.Stats, hit.Position));
+    }
+
     protected override void OnInit(AoEData data)
     {
         EnsureInitialized();

@@ -13,12 +13,12 @@ public abstract class SkillAttackObject<TInitData> : SkillObject<TInitData>
     [SerializeField] private bool _knockback = false;
 
     // 이 오브젝트가 적에게 피해를 줄 때마다 적 위치에 소환할 프리팹. 비워 두면 소환하지 않음
-    // 공격 스킬이든 이펙트만 있는 프리팹이든 상관없고, 프리팹 최상위의 스크립트(SkillObject<AoEData>)를 지정함
-    // 소환된 오브젝트는 맞힌 공격의 수치(SkillStats)와 적 위치를 AoEData로 받아 초기화됨
-    [Tooltip("이 스킬 오브젝트가 적에게 피해를 줄 때마다 적 위치에 소환할 프리팹. 공격 스킬이나 이펙트(SkillEffectObject)의 최상위 스크립트를 지정합니다. 비워 두면 소환하지 않습니다.")]
+    // 이펙트든 공격 스킬이든 프리팹 최상위의 스킬 오브젝트 스크립트를 지정하면 되고, 소환된 오브젝트가 맞힌 정보(HitSpawnData)로 알아서 초기화됨
+    // 단, 지속형(스피커, 지속 범위)은 소환할 수 없음 (CanSpawnOnHit)
+    [Tooltip("이 스킬 오브젝트가 적에게 피해를 줄 때마다 적 위치에 소환할 프리팹. 이펙트나 공격 스킬 프리팹의 최상위 스크립트를 지정합니다. 비워 두면 소환하지 않습니다.")]
     [SerializeField] private SkillObjectBase _hitSpawnPrefab;
 
-    // 소환할 프리팹이 AoEData를 받을 수 있는지 확인한 결과 (0 = 아직 확인 안 함, 1 = 가능, 2 = 불가). 경고를 한 번만 띄우고 매 타격마다 컴포넌트를 찾지 않기 위함
+    // 소환할 프리팹이 타격 시 소환을 지원하는지 확인한 결과 (0 = 아직 확인 안 함, 1 = 가능, 2 = 불가). 경고를 한 번만 띄우기 위함
     private int _hitSpawnState;
 
     // 서브클래스가 적에게 피해를 줄 때 Enemy.Damaged의 applyKnockback 인자로 넘김
@@ -45,11 +45,11 @@ public abstract class SkillAttackObject<TInitData> : SkillObject<TInitData>
 
         if(_hitSpawnState == 0)
         {
-            _hitSpawnState = _hitSpawnPrefab.TryGetComponent(out SkillObject<AoEData> _) ? 1 : 2;
+            _hitSpawnState = _hitSpawnPrefab.CanSpawnOnHit ? 1 : 2;
 
             if(_hitSpawnState == 2)
             {
-                Debug.LogWarning($"[SkillAttackObject] 타격 시 소환할 프리팹({_hitSpawnPrefab.name})이 SkillObject<AoEData>가 아니라서 소환하지 않습니다. 범위/이펙트 계열 스크립트(AoeHitObject, SkillEffectObject 등)만 지정할 수 있습니다: {name}");
+                Debug.LogWarning($"[SkillAttackObject] 타격 시 소환할 수 없는 프리팹입니다({_hitSpawnPrefab.name}). 지속형 스킬 오브젝트는 지정할 수 없습니다: {name}");
             }
         }
 
@@ -58,14 +58,18 @@ public abstract class SkillAttackObject<TInitData> : SkillObject<TInitData>
             return;
         }
 
-        Vector3 position = enemy.transform.position;
-        AoEData data = new AoEData(hitStats, position);
+        Vector2 position = enemy.transform.position;
+        Vector2 direction = position - (Vector2)transform.position;
+        direction = direction.sqrMagnitude > 0.0001f ? direction.normalized : Vector2.right;
+
+        Transform owner = hitStats.PlayerStats != null ? hitStats.PlayerStats.transform : null;
+        HitSpawnData data = new HitSpawnData(hitStats, position, direction, owner, enemy.transform);
 
         SkillObjectPool.Instance.Get(_hitSpawnPrefab.gameObject, position, Quaternion.identity, instance =>
         {
-            if(instance.TryGetComponent(out SkillObject<AoEData> spawned))
+            if(instance.TryGetComponent(out SkillObjectBase spawned))
             {
-                spawned.Init(data);
+                spawned.InitFromHit(data);
             }
         });
     }

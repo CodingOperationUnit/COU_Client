@@ -15,6 +15,14 @@ public sealed class LightningObject : SkillAttackObject<LinkData>
     private bool _initialized;
     private float _elapsed;
 
+    // 타격 시 소환되면 스킬 사용자에서 맞은 적까지 이어지는 번개가 생김
+    public override bool CanSpawnOnHit => true;
+
+    public override void InitFromHit(HitSpawnData hit)
+    {
+        Init(new LinkData(hit.Stats, hit.Owner, hit.Target));
+    }
+
     protected override void OnInit(LinkData data)
     {
         // 풀에서 다시 꺼낼 때 바뀐 스케일이 아니라 프리팹 원래 스케일을 기준으로 삼기 위해 첫 Init에서 한 번만 저장
