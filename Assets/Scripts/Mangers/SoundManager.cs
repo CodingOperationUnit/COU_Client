@@ -21,6 +21,7 @@ public class SoundManager : MonoSingleton<SoundManager>
 
     private const int SFX_POOL_INITIAL = 8;
     private const int SFX_POOL_MAX = 24;
+    private const int SFX_LOOP_MAX = 8; // 동시에 돌릴 수 있는 루프 효과음 수. 일반 효과음 풀(SFX_POOL_MAX)과는 따로 쓴다
     private const float SFX_MIN_INTERVAL = 0.04f; // 같은 클립이 한 프레임에 겹쳐 터지는 걸 방지
     private const float DEFAULT_BGM_FADE = 1f;
 
@@ -39,6 +40,18 @@ public class SoundManager : MonoSingleton<SoundManager>
     private readonly HashSet<string> missing = new(); // 없는 클립은 경고 한 번만, 이후엔 다시 찾지 않는다
     private readonly List<AudioSource> sfxPool = new();
     private readonly Dictionary<AudioClip, float> lastSfxTime = new();
+
+    // 루프 효과음 한 채널. Token이 0이면 비어 있고, 쓸 때마다 새 번호를 받는다 (끝난 소리를 가리키는 오래된 핸들을 걸러내기 위함)
+    private class SfxLoop
+    {
+        public AudioSource Source;
+        public int Token;
+        public float VolumeScale;
+        public bool IsPaused;
+    }
+
+    private readonly List<SfxLoop> sfxLoops = new();
+    private int nextLoopToken = 1;
 
     private BgmChannel[] bgmChannels;
     private int currentBgm;
@@ -170,6 +183,8 @@ public class SoundManager : MonoSingleton<SoundManager>
                     ch.Source.Stop();
             }
         }
+
+        UpdateSfxLoops();
     }
 
     // ───────────────────────── BGM ─────────────────────────
@@ -254,6 +269,112 @@ public class SoundManager : MonoSingleton<SoundManager>
             source.Stop();
             source.clip = null;
         }
+
+        StopAllLoopSFX();
+    }
+
+    // ───────────────────────── SFX 루프 ─────────────────────────
+
+    /// <summary>
+    /// 효과음을 반복 재생한다. 돌려받은 핸들로 피치를 바꾸거나 멈춘다. 채널이 가득 차면 None(IsValid가 false)을 돌려준다.
+    /// 볼륨과 음소거는 재생 중에도 설정을 따라가고, Time.timeScale이 0이면 일시정지한다.
+    /// </summary>
+    public SfxLoopHandle PlayLoopSFX(AudioClip clip, float volumeScale = 1f, float pitch = 1f)
+    {
+        if (clip == null) return SfxLoopHandle.None;
+
+        var loop = GetFreeSfxLoop();
+        if (loop == null) return SfxLoopHandle.None;
+
+        loop.Token = nextLoopToken++;
+        loop.VolumeScale = Mathf.Clamp01(volumeScale);
+        loop.IsPaused = false;
+
+        var source = loop.Source;
+        source.clip = clip;
+        source.loop = true;
+        source.pitch = pitch;
+        source.volume = GetLoopVolume(loop);
+        source.Play();
+
+        return new SfxLoopHandle(sfxLoops.IndexOf(loop), loop.Token);
+    }
+
+    /// <summary>재생 중인 루프의 피치를 바꾼다. 이미 끝났거나 다른 소리가 쓰는 채널이면 무시한다.</summary>
+    public void SetLoopPitch(SfxLoopHandle handle, float pitch)
+    {
+        if (TryGetLoop(handle, out var loop))
+            loop.Source.pitch = pitch;
+    }
+
+    /// <summary>루프를 멈추고 채널을 돌려준다. 이미 끝난 핸들이면 무시한다.</summary>
+    public void StopLoopSFX(SfxLoopHandle handle)
+    {
+        if (TryGetLoop(handle, out var loop))
+            ReleaseLoop(loop);
+    }
+
+    private void StopAllLoopSFX()
+    {
+        foreach (var loop in sfxLoops)
+            if (loop.Token != 0) ReleaseLoop(loop);
+    }
+
+    private bool TryGetLoop(SfxLoopHandle handle, out SfxLoop loop)
+    {
+        loop = null;
+        if (!handle.IsValid || handle.Slot >= sfxLoops.Count) return false;
+
+        var candidate = sfxLoops[handle.Slot];
+        if (candidate.Token != handle.Token) return false; // 이미 끝났거나 다른 소리가 쓰는 채널
+
+        loop = candidate;
+        return true;
+    }
+
+    private static void ReleaseLoop(SfxLoop loop)
+    {
+        loop.Source.Stop();
+        loop.Source.clip = null;
+        loop.Token = 0;
+    }
+
+    private SfxLoop GetFreeSfxLoop()
+    {
+        foreach (var loop in sfxLoops)
+            if (loop.Token == 0) return loop;
+
+        if (sfxLoops.Count >= SFX_LOOP_MAX) return null;
+
+        var added = new SfxLoop { Source = CreateSource($"SFXLoop_{sfxLoops.Count}") };
+        sfxLoops.Add(added);
+        return added;
+    }
+
+    private float GetLoopVolume(SfxLoop loop) => sfxMuted ? 0f : loop.VolumeScale * sfxVolume;
+
+    // 재생 중인 루프에 현재 볼륨/음소거를 반영하고, 게임이 멈춰 있는 동안(Time.timeScale 0)은 일시정지한다.
+    private void UpdateSfxLoops()
+    {
+        var gamePaused = Time.timeScale <= 0f;
+
+        foreach (var loop in sfxLoops)
+        {
+            if (loop.Token == 0) continue;
+
+            loop.Source.volume = GetLoopVolume(loop);
+
+            if (gamePaused && !loop.IsPaused)
+            {
+                loop.Source.Pause();
+                loop.IsPaused = true;
+            }
+            else if (!gamePaused && loop.IsPaused)
+            {
+                loop.Source.UnPause();
+                loop.IsPaused = false;
+            }
+        }
     }
 
     private AudioSource GetFreeSfxSource()
@@ -303,4 +424,21 @@ public class SoundManager : MonoSingleton<SoundManager>
         PlayerPrefs.Save();
         base.OnDestroy();
     }
+}
+
+/// <summary>SoundManager.PlayLoopSFX가 돌려주는 루프 효과음 조작권. 피치 변경과 정지에 쓴다. default나 None은 유효하지 않은 핸들이다.</summary>
+public readonly struct SfxLoopHandle
+{
+    public static readonly SfxLoopHandle None = default;
+
+    public readonly int Slot;
+    public readonly int Token;
+
+    public SfxLoopHandle(int slot, int token)
+    {
+        Slot = slot;
+        Token = token;
+    }
+
+    public bool IsValid => Token != 0;
 }
