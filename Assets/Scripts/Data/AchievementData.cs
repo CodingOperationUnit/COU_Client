@@ -17,7 +17,7 @@ public class AchievementData
     public string achievementName;
     public string achievementDescription;   // {0}에 그 단계의 목표값을 넣어 표시
     public string achievementConditionType;
-    public int targetSkillId;               // 0이면 대상 없음
+    public long targetSkillId;               // 0이면 대상 없음
     public string targetDropItemType;       // DropItemType 이름 또는 "None"
     public int[] targetValue;
     public string[] rewardItemType;

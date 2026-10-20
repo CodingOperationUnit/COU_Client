@@ -4,58 +4,58 @@ using UnityEngine;
 
 public static class SkillFactory
 {
-    private static readonly Dictionary<int, Func<SkillBase>> _creators = new()
+    private static readonly Dictionary<long, Func<SkillBase>> _creators = new()
     {
         // 액티브 (20000대)
-        { 20010, () => new Skill_Tumbler() },
-        { 20020, () => new Skill_Glasses() },
-        { 20030, () => new Skill_Monitor() },
-        { 20040, () => new Skill_Speaker() },
-        { 20050, () => new Skill_Mouse() },
-        { 20060, () => new Skill_Keyboard() },
-        { 20070, () => new Skill_CPU() },
-        { 20080, () => new Skill_PowerStrip() },
-        { 20090, () => new Skill_CtrlZ() },
+        { GameConstants.TemporaryConstClass.TUMBLER, () => new Skill_Tumbler() },
+        { GameConstants.TemporaryConstClass.GLASSES, () => new Skill_Glasses() },
+        { GameConstants.TemporaryConstClass.MONITOR, () => new Skill_Monitor() },
+        { GameConstants.TemporaryConstClass.SPEAKER, () => new Skill_Speaker() },
+        { GameConstants.TemporaryConstClass.MOUSE, () => new Skill_Mouse() },
+        { GameConstants.TemporaryConstClass.KEYBOARD, () => new Skill_Keyboard() },
+        { GameConstants.TemporaryConstClass.CPU, () => new Skill_CPU() },
+        { GameConstants.TemporaryConstClass.POWER_STRIP, () => new Skill_PowerStrip() },
+        { GameConstants.TemporaryConstClass.CTRL_Z, () => new Skill_CtrlZ() },
 
         // 패시브 (21000대)
-        { 21010, () => new Skill_EnergyDrink() },
-        { 21020, () => new Skill_EyeDrops() },
-        { 21030, () => new Skill_SecondMonitor() },
-        { 21040, () => new Skill_Earbuds() },
-        { 21050, () => new Skill_MousePad() },
-        { 21060, () => new Skill_KeyboardSwitch() },
-        { 21070, () => new Skill_Overclock() },
-        { 21080, () => new Skill_StaticShock() },
-        { 21090, () => new Skill_ShiftKey() },
+        { GameConstants.TemporaryConstClass.ENERGY_DRINK, () => new Skill_EnergyDrink() },
+        { GameConstants.TemporaryConstClass.EYE_DROPS, () => new Skill_EyeDrops() },
+        { GameConstants.TemporaryConstClass.SECOND_MONITOR, () => new Skill_SecondMonitor() },
+        { GameConstants.TemporaryConstClass.EARBUDS, () => new Skill_Earbuds() },
+        { GameConstants.TemporaryConstClass.MOUSE_PAD, () => new Skill_MousePad() },
+        { GameConstants.TemporaryConstClass.KEYBOARD_SWITCH, () => new Skill_KeyboardSwitch() },
+        { GameConstants.TemporaryConstClass.OVERCLOCK, () => new Skill_Overclock() },
+        { GameConstants.TemporaryConstClass.STATIC_SHOCK, () => new Skill_StaticShock() },
+        { GameConstants.TemporaryConstClass.SHIFT_KEY, () => new Skill_ShiftKey() },
     };
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
     // 테스트용: 시트 값을 무시하고 여기서 스킬 수치를 직접 덮어씀. 쓰지 않을 땐 항목을 지우거나 주석 처리할 것
     // 수정 후 재생을 다시 시작하거나, 이미 장착한 스킬은 해제 후 다시 장착해야 반영됨
-    //private static readonly Dictionary<int, Action<SkillData>> _debugOverrides = new()
+    //private static readonly Dictionary<long, Action<SkillData>> _debugOverrides = new()
     //{
-    //    { 20060, data => {
+    //    { GameConstants.TemporaryConstClass.KEYBOARD, data => {
     //        data.skillTargetType = "Nearest";
     //        data.skillCooldown = 0.75f;
     //        data.skillSpeed = 0.0f;
     //        data.skillDamage = 1.25f;
     //        data.skillRange = 1.0f;
     //    } },
-    //    { 20010, data => {
+    //    { GameConstants.TemporaryConstClass.TUMBLER, data => {
     //        data.skillTargetType ="Nearest";
     //        data.skillCooldown = 1.0f;
     //        data.skillSpeed = 4.0f;
     //        data.skillDamage = 1.0f;
     //        data.skillRange = 5.0f;
     //    } },
-    //    { 20020, data => {
+    //    { GameConstants.TemporaryConstClass.GLASSES, data => {
     //        data.skillTargetType ="None";
     //        data.skillCooldown = 1.0f;
     //        data.skillSpeed = 0.0f;
     //        data.skillDamage = 1.0f;
     //        data.skillRange = 3.0f;
     //    } },
-    //    { 20030, data => {
+    //    { GameConstants.TemporaryConstClass.MONITOR, data => {
     //        data.skillTargetType ="Nearest";
     //        data.skillCooldown = 2.0f;
     //        data.skillSpeed = 0.5f;
@@ -65,9 +65,9 @@ public static class SkillFactory
     //};
 #endif
 
-    public static bool IsRegistered(int skillId) => _creators.ContainsKey(skillId);
+    public static bool IsRegistered(long skillId) => _creators.ContainsKey(skillId);
 
-    public static SkillBase Create(int skillId)
+    public static SkillBase Create(long skillId)
     {
         if(!_creators.TryGetValue(skillId, out Func<SkillBase> creator))
         {

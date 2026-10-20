@@ -5,8 +5,8 @@ public sealed class Skill_Tumbler : ProjectileSkillBase
 
     protected override void Fire()
     {
-        // 3레벨: 3발, 5레벨: 5발
-        int baseCount = level >= 5 ? 5 : level >= 3 ? 3 : 1;
+        // 기본 1발, 진화(5레벨 + 에너지드링크)하면 부채꼴 3발. 개수 증가 패시브 보너스는 여기에 더해짐
+        int baseCount = IsEvolved ? 3 : 1;
         int count = GetFlatStat(SkillFlatStat.ProjectileCount, baseCount);
 
         FireSpread(count, AnglePerProjectile * (count - 1));

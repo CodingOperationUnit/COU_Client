@@ -3,21 +3,29 @@ guid: 29ef7938aec3b774091dbc58b166f116
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3587935226093753963
-    second: "\uD3EC\uC2A4 \uD478\uC2DC \uC2E0\uB4DC\uB86C \uAC8C\uC784 \uC544\uC774\uCF58
-      \uC2DC\uD2B8_0"
+      213: -5172327350847632646
+    second: Icon_Main
   - first:
-      213: 8183919528644835609
-    second: "\uD3EC\uC2A4 \uD478\uC2DC \uC2E0\uB4DC\uB86C \uAC8C\uC784 \uC544\uC774\uCF58
-      \uC2DC\uD2B8_1"
+      213: -7172904331917910618
+    second: Icon_Medium
   - first:
-      213: -3774442944513004015
-    second: "\uD3EC\uC2A4 \uD478\uC2DC \uC2E0\uB4DC\uB86C \uAC8C\uC784 \uC544\uC774\uCF58
-      \uC2DC\uD2B8_2"
+      213: -4093707865505844268
+    second: Icon_Small
   - first:
-      213: -9065711925278180434
-    second: "\uD3EC\uC2A4 \uD478\uC2DC \uC2E0\uB4DC\uB86C \uAC8C\uC784 \uC544\uC774\uCF58
-      \uC2DC\uD2B8_3"
+      213: -3641025303076165649
+    second: Icon_Mini
+  - first:
+      213: 5842019307928691061
+    second: Icon_Cloud
+  - first:
+      213: 3938040791639714867
+    second: Icon_Code
+  - first:
+      213: -6359879432955678752
+    second: Icon_Logo
+  - first:
+      213: 520291406737403592
+    second: Icon_LogoClean
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,93 +134,177 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "\uD3EC\uC2A4 \uD478\uC2DC \uC2E0\uB4DC\uB86C \uAC8C\uC784 \uC544\uC774\uCF58
-        \uC2DC\uD2B8_0"
+      name: Icon_Main
       rect:
         serializedVersion: 2
-        x: 28
-        y: 0
-        width: 1095
-        height: 1011
+        x: 37
+        y: 388
+        width: 684
+        height: 617
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 599229bebe7153ec0800000000000000
-      internalID: -3587935226093753963
+      spriteID: 42576ba1ea65c99a00a20f5cb7c8bca3
+      internalID: -5172327350847632646
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uD3EC\uC2A4 \uD478\uC2DC \uC2E0\uB4DC\uB86C \uAC8C\uC784 \uC544\uC774\uCF58
-        \uC2DC\uD2B8_1"
+      name: Icon_Medium
       rect:
         serializedVersion: 2
-        x: 737
-        y: 386
-        width: 780
-        height: 544
+        x: 746
+        y: 396
+        width: 337
+        height: 337
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 919f147737f139170800000000000000
-      internalID: 8183919528644835609
+      spriteID: 7f1521eb1d580f9e091610a511f17f04
+      internalID: -7172904331917910618
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uD3EC\uC2A4 \uD478\uC2DC \uC2E0\uB4DC\uB86C \uAC8C\uC784 \uC544\uC774\uCF58
-        \uC2DC\uD2B8_2"
+      name: Icon_Small
       rect:
         serializedVersion: 2
-        x: 1354
-        y: 414
-        width: 154
-        height: 158
+        x: 1105
+        y: 404
+        width: 236
+        height: 237
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 11ea25bc32c7e9bc0800000000000000
-      internalID: -3774442944513004015
+      spriteID: 5937eb008b2b8427a816d092f60bae6d
+      internalID: -4093707865505844268
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\uD3EC\uC2A4 \uD478\uC2DC \uC2E0\uB4DC\uB86C \uAC8C\uC784 \uC544\uC774\uCF58
-        \uC2DC\uD2B8_3"
+      name: Icon_Mini
       rect:
         serializedVersion: 2
-        x: 1132
-        y: 23
-        width: 381
-        height: 348
+        x: 1361
+        y: 418
+        width: 144
+        height: 147
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: eab75c1490f103280800000000000000
-      internalID: -9065711925278180434
+      spriteID: d9882773280e4bc74995537869d8b357
+      internalID: -3641025303076165649
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Icon_Cloud
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 37
+        width: 349
+        height: 332
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f2332d09d9c251c63313e99f0697b47
+      internalID: 5842019307928691061
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Icon_MainLogo
+      rect:
+        serializedVersion: 2
+        x: 426
+        y: 40
+        width: 334
+        height: 330
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5c7ac10a176c0de630323e5ebdccc34
+      internalID: 3938040791639714867
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Icon_Logo
+      rect:
+        serializedVersion: 2
+        x: 787
+        y: 40
+        width: 333
+        height: 328
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a2999596d40594e3745ad5932018c7e
+      internalID: -6359879432955678752
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Icon_LogoClean
+      rect:
+        serializedVersion: 2
+        x: 1147
+        y: 41
+        width: 342
+        height: 327
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a72a0633572d2e86e05b76bf731dc19
+      internalID: 520291406737403592
       vertices: []
       indices: 
       edges: []
@@ -221,7 +313,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: a9ca3067bd782cd42b2f0d2be236512f
     internalID: 0
     vertices: []
     indices: 
@@ -231,10 +323,14 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "\uD3EC\uC2A4 \uD478\uC2DC \uC2E0\uB4DC\uB86C \uAC8C\uC784 \uC544\uC774\uCF58 \uC2DC\uD2B8_0": -3587935226093753963
-      "\uD3EC\uC2A4 \uD478\uC2DC \uC2E0\uB4DC\uB86C \uAC8C\uC784 \uC544\uC774\uCF58 \uC2DC\uD2B8_1": 8183919528644835609
-      "\uD3EC\uC2A4 \uD478\uC2DC \uC2E0\uB4DC\uB86C \uAC8C\uC784 \uC544\uC774\uCF58 \uC2DC\uD2B8_2": -3774442944513004015
-      "\uD3EC\uC2A4 \uD478\uC2DC \uC2E0\uB4DC\uB86C \uAC8C\uC784 \uC544\uC774\uCF58 \uC2DC\uD2B8_3": -9065711925278180434
+      Icon_Cloud: 5842019307928691061
+      Icon_Logo: -6359879432955678752
+      Icon_LogoClean: 520291406737403592
+      Icon_Main: -5172327350847632646
+      Icon_MainLogo: 3938040791639714867
+      Icon_Medium: -7172904331917910618
+      Icon_Mini: -3641025303076165649
+      Icon_Small: -4093707865505844268
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -100,7 +100,7 @@ public partial class DevPanel
         }
     }
 
-    private static SkillBase FindSkill(SkillController skills, int skillId)
+    private static SkillBase FindSkill(SkillController skills, long skillId)
     {
         foreach (var skill in skills.ActiveSkills)
         {

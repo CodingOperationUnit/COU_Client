@@ -22,13 +22,13 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private float bossVictoryDelay = 2f;
 
     private readonly HashSet<object> pauseRequests = new();
-    private readonly List<int> candidates = new();
+    private readonly List<long> candidates = new();
     private readonly List<Sprite> slotIcons = new();
     private readonly List<int> slotGrades = new();
 
     // 업적 진행 집계 (전투 결과와 함께 서버로 보낸다)
-    private readonly Dictionary<int, int> skillKills = new();
-    private readonly Dictionary<int, int> skillUpgrades = new();
+    private readonly Dictionary<long, int> skillKills = new();
+    private readonly Dictionary<long, int> skillUpgrades = new();
     private readonly Dictionary<string, int> pickups = new();
     
     private InGameHUD hud;
@@ -372,7 +372,7 @@ public class BattleManager : MonoBehaviour
         return slotGrades;
     }
 
-    private SkillBase FindSkill(int skillId)
+    private SkillBase FindSkill(long skillId)
     {
         foreach (var skill in skillController.ActiveSkills)
         {
@@ -419,8 +419,8 @@ public class BattleManager : MonoBehaviour
             kills = kills,
             gold = gold,
             rewardBoxes = rewardBoxes,
-            skillKills = new Dictionary<int, int>(skillKills),
-            skillUpgrades = new Dictionary<int, int>(skillUpgrades),
+            skillKills = new Dictionary<long, int>(skillKills),
+            skillUpgrades = new Dictionary<long, int>(skillUpgrades),
             pickups = new Dictionary<string, int>(pickups),
             luckTrains = luckTrains
         };
