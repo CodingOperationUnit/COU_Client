@@ -6,10 +6,18 @@ using UnityEngine;
 // homingTarget이 있으면 그 적을 쫓아감 (유도탄, 연쇄로 튕긴 뒤)
 public class LinearProjectile : SkillProjectile
 {
+    // 안전장치용 최대 비행 시간. 평소에는 사거리 기반 최대 비행 거리(MaxDistanceRangeRatio)에서 먼저 사라지고,
+    // 사거리 정보가 없을 때만 이 시간이 수명이 됨. 거리 기반으로 날아갈 시간이 이보다 길면 그 시간까지 늘어남
     [SerializeField] protected float lifeTime = 3f;
 
     // 연쇄로 튕길 다음 적을 찾는 반경 (방금 맞힌 적 기준)
     [SerializeField] private float _chainRadius = 3.0f;
+
+    // 최대 비행 거리 = 사거리 × 이 비율 (넉넉하게 2배). 연쇄로 튕기면 거리를 다시 셈
+    private const float MaxDistanceRangeRatio = 2.0f;
+
+    // 거리 기반 비행에 걸리는 시간에 곱하는 여유 (속도가 줄거나 방향을 틀어 돌아가도 거리보다 시간이 먼저 끊기지 않도록)
+    private const float TimeSafetyMargin = 1.5f;
 
     // 같은 적을 두 번 맞히거나, 튕길 때 이미 맞힌 적에게 돌아가지 않도록 기록
     private readonly HashSet<Enemy> _hitEnemies = new();
@@ -21,6 +29,12 @@ public class LinearProjectile : SkillProjectile
     private int _remainingHits;
     private int _remainingChains;
 
+    // 발사(또는 마지막 연쇄) 이후 실제로 날아간 거리와 최대 비행 거리, 시간 안전장치
+    private float _traveled;
+    private float _maxDistance;
+    private float _timeLimit;
+    private Vector3 _lastPosition;
+
     protected override void OnLaunch()
     {
         elapsed = 0f;
@@ -30,6 +44,12 @@ public class LinearProjectile : SkillProjectile
         _remainingHits = pierceCount;
         _remainingChains = chainCount;
         _hitEnemies.Clear();
+
+        // 사거리 정보가 있으면 거리로 수명을 정하고, 시간은 안전장치로만 씀
+        _traveled = 0f;
+        _lastPosition = transform.position;
+        _maxDistance = stats.Range > 0f ? stats.Range * MaxDistanceRangeRatio : float.PositiveInfinity;
+        _timeLimit = float.IsInfinity(_maxDistance) ? lifeTime : Mathf.Max(lifeTime, _maxDistance / currentSpeed * TimeSafetyMargin);
 
         // 탄두가 발사 방향을 향하도록 회전
         FaceDirection(direction);
@@ -41,7 +61,10 @@ public class LinearProjectile : SkillProjectile
 
         elapsed += Time.deltaTime;
 
-        if(elapsed >= lifeTime)
+        _traveled += Vector3.Distance(transform.position, _lastPosition);
+        _lastPosition = transform.position;
+
+        if(_traveled >= _maxDistance || elapsed >= _timeLimit)
         {
             ReturnToPool();
         }
@@ -119,8 +142,9 @@ public class LinearProjectile : SkillProjectile
         _remainingHits = 1;
         homingTarget = next;
 
-        // 튕긴 뒤 날아갈 시간을 확보하도록 수명을 다시 셈
+        // 튕긴 뒤 날아갈 시간과 거리를 확보하도록 수명을 다시 셈
         elapsed = 0f;
+        _traveled = 0f;
 
         SteerTowards(next.transform.position);
         return true;

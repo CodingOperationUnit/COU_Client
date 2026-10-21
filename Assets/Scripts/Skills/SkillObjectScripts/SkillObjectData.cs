@@ -9,10 +9,11 @@ public readonly struct SkillStats
     public readonly float SkillMultiplier; // 반올림하지 않은 스킬 배율 (skillDamage × 레벨 배율 × 패시브)
     public readonly float Speed;
     public readonly float Scale; // 1.0 = 프리팹 원래 크기
+    public readonly float Range; // 레벨 효과와 패시브가 반영된 최종 사거리. 투사체가 날아갈 수 있는 최대 거리의 기준 (0이면 모름)
     public readonly PlayerStats PlayerStats;
     public readonly bool IsEvolved; // 이 스킬이 진화한 상태인지. 진화 여부에 따라 다르게 동작하는 오브젝트가 읽음
 
-    public SkillStats(long skillId, float skillMultiplier, float speed, float scale, PlayerStats playerStats, bool isEvolved = false)
+    public SkillStats(long skillId, float skillMultiplier, float speed, float scale, PlayerStats playerStats, bool isEvolved = false, float range = 0.0f)
     {
         SkillId = skillId;
         SkillMultiplier = skillMultiplier;
@@ -20,6 +21,7 @@ public readonly struct SkillStats
         Scale = scale;
         PlayerStats = playerStats;
         IsEvolved = isEvolved;
+        Range = range;
     }
 
     // 적을 맞힐 때마다 호출. 치명타는 맞힐 때마다 따로 판정됨

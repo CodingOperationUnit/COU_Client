@@ -41,6 +41,9 @@ public abstract class SkillBase
     // 이번 발동의 대미지 비율 (반복으로 다시 발동한 스킬은 낮춤)
     protected virtual float DamageScale => 1.0f;
 
+    // 퍼센트 증가 합계(레벨 효과 + 패시브)의 상한 (1.0 = +100%, 최대 2배). 쿨타임은 감소 상한(CooldownSkillBase.MaxCooldownReduction)을 따로 가지므로 제외
+    private const float MaxPercentBonus = 1.0f;
+
     // 대미지 증가 합계(레벨 효과 + 패시브)에 더해지는 스킬 고유의 추가 증가 비율 (0.1 = +10%). 진화 효과처럼 스킬만의 대미지 증가가 있을 때 오버라이드
     protected virtual float ExtraDamagePercent => 0.0f;
 
@@ -251,6 +254,12 @@ public abstract class SkillBase
             total += modifiers.GetPercentTotal(stat);
         }
 
+        // 쿨타임을 제외한 증가 스탯(대미지, 범위, 속도, 사거리)은 합계가 MaxPercentBonus를 넘지 못함
+        if(stat != SkillPercentStat.Cooldown)
+        {
+            total = Mathf.Min(total, MaxPercentBonus);
+        }
+
         return total;
     }
 
@@ -271,11 +280,13 @@ public abstract class SkillBase
     protected SkillStats BuildStats()
     {
         // 반올림하지 않고 배율 그대로 넘김 (공격력, 치명타, 반올림은 맞힐 때 PlayerDamageCalculator가 처리)
-        float skillMultiplier = skillData.skillDamage * (1.0f + GetPercentTotal(SkillPercentStat.Damage) + ExtraDamagePercent) * DamageScale;
+        // 스킬 고유의 추가 증가까지 합산한 뒤에 상한을 적용함 (합계가 MaxPercentBonus를 넘지 못함)
+        float damageBonus = Mathf.Min(GetPercentTotal(SkillPercentStat.Damage) + ExtraDamagePercent, MaxPercentBonus);
+        float skillMultiplier = skillData.skillDamage * (1.0f + damageBonus) * DamageScale;
         float speed = GetPercentStat(SkillPercentStat.Speed, skillData.skillSpeed);
         float scale = GetPercentStat(SkillPercentStat.Area, 1.0f);
 
-        return new SkillStats(SkillId, skillMultiplier, speed, scale, stats, IsEvolved);
+        return new SkillStats(SkillId, skillMultiplier, speed, scale, stats, IsEvolved, Range);
     }
 
     // 풀에서 스킬 오브젝트를 꺼내 초기화. 초기화 인자 구조체 타입(TInitData)은 호출부에서 추론됨
